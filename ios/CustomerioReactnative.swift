@@ -17,11 +17,6 @@ class CustomerioReactnative: NSObject {
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
         
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
-        // TODO: Add SDK configuration in Phase 3
-        CustomerIO.config {
-            $0.logLevel = .debug
-            $0.autoTrackScreenViews = true
-        }
     }
     
     private func getLocation(from regionStr : String) -> Region{
