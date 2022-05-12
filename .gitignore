@@ -49,3 +49,4 @@ buck-out/
 /ios/Pods/
 
 package-lock.json
+lib/module/index.js
