@@ -5,14 +5,24 @@ import CioTracking
 class CustomerioReactnative: NSObject {
 
     @objc static func requiresMainQueueSetup() -> Bool {
-        false
+        false /// false because our native module's initialization does not require access to UIKit
     }
     
+    /**
+     Initialize the package before sending any calls to the package
+     */
     @objc(initialize:apiKey:region:)
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
     }
     
+    /**
+     Identify a customer, note that only one customer is identified at a time
+
+     - Parameters:
+     - identifier: unique ID of the customer.
+     - body (Optional): attributes of a customer.
+     */
     @objc(identify:body:)
     func identify(identifier: String, body: [AnyHashable: Any]?) -> Void {
     
@@ -24,6 +34,10 @@ class CustomerioReactnative: NSObject {
         }
     }
     
+    /**
+     To stop identifying the user.
+     Once the identity is cleared then the user can not be tracked, hence no events/activities are sent to the workspace
+     */
     @objc(clearIdentify)
     func clearIdentify() {
         CustomerIO.shared.clearIdentify()
