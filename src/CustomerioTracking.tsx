@@ -23,6 +23,14 @@ class CustomerIO {
     static initialize(siteId: string, apiKey: string, region: Region = Region.US) {
       return CustomerioReactnative.initialize(siteId, apiKey, region)
     }
+
+    static identify(identifier: string, body: Object) {
+      CustomerioReactnative.identify(identifier, body)
+    }
+
+    static clearIdentify() {
+      CustomerioReactnative.clearIdentify()
+    }
   }
 
   export {
