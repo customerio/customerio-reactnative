@@ -14,9 +14,6 @@ class CustomerioReactnative: NSObject {
     @objc(initialize:apiKey:region:)
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
-        CustomerIO.config {
-            $0.logLevel = .debug
-        }
     }
     
     /**
