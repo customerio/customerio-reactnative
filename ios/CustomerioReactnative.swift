@@ -14,6 +14,9 @@ class CustomerioReactnative: NSObject {
     @objc(initialize:apiKey:region:)
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
+        CustomerIO.config {
+            $0.logLevel = .debug
+        }
     }
     
     /**
@@ -24,14 +27,13 @@ class CustomerioReactnative: NSObject {
      - body (Optional): attributes of a customer.
      */
     @objc(identify:body:)
-    func identify(identifier: String, body: [AnyHashable: Any]?) -> Void {
+    func identify(identifier: String, body: Dictionary<String, AnyHashable>?) -> Void {
     
-        // TODO : Encodable type, would that really matter with react native?
-        if let body = body as? [String: Any] {
-            CustomerIO.shared.identify(identifier: identifier, body: body)
-        } else {
+        guard let data = body else {
             CustomerIO.shared.identify(identifier: identifier)
+            return
         }
+        CustomerIO.shared.identify(identifier: identifier, body: data)
     }
     
     /**
@@ -53,4 +55,15 @@ class CustomerioReactnative: NSObject {
             return Region.US
         }
     }
+}
+
+
+extension Encodable {
+  func asDictionary() throws -> [String: Any] {
+    let data = try JSONEncoder().encode(self)
+    guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+      throw NSError()
+    }
+    return dictionary
+  }
 }
