@@ -11,4 +11,7 @@ RCT_EXTERN_METHOD(identify: (nonnull NSString *) identifier
 
 RCT_EXTERN_METHOD(clearIdentify)
 
+RCT_EXTERN_METHOD(track: (nonnull NSString *) name
+                  data : (NSDictionary *) data)
+
 @end

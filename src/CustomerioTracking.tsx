@@ -31,6 +31,10 @@ class CustomerIO {
     static clearIdentify() {
       CustomerioReactnative.clearIdentify()
     }
+
+    static track(name: string, data : Object) {
+      CustomerioReactnative.track(name, data)
+    }
   }
 
   export {
