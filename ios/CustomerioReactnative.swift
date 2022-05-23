@@ -14,6 +14,9 @@ class CustomerioReactnative: NSObject {
     @objc(initialize:apiKey:region:)
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
+        CustomerIO.config {
+            $0.logLevel = .debug
+        }
     }
     
     /**
@@ -42,6 +45,15 @@ class CustomerioReactnative: NSObject {
         CustomerIO.shared.clearIdentify()
     }
     
+    
+    @objc(track:data:)
+    func track(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
+        guard let body = data else {
+            CustomerIO.shared.track(name: name)
+            return
+        }
+        CustomerIO.shared.track(name: name, data: body)
+    }
     private func getLocation(from regionStr : String) -> Region{
         switch regionStr {
         case "US" :
