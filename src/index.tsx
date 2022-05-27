@@ -1,4 +1,4 @@
-import { CustomerioConfig } from 'customerio-reactnative/src/CustomerioConfig';
+import { CustomerioConfig } from './CustomerioConfig';
 import { CustomerIO, Region } from './CustomerioTracking';
 import {CioLogLevel} from './CustomerioEnum'
 
