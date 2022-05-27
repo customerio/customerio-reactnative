@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+import { CustomerioConfig } from './CustomerioConfig';
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -34,6 +35,14 @@ class CustomerIO {
 
     static track(name: string, data : Object) {
       CustomerioReactnative.track(name, data)
+    }
+
+    static setDeviceAttributes(data : Object) {
+      CustomerioReactnative.setDeviceAttributes(data)
+    }
+
+    static config(data : CustomerioConfig = new CustomerioConfig()) {
+      CustomerioReactnative.config(data)
     }
   }
 
