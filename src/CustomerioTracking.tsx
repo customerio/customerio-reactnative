@@ -44,6 +44,10 @@ class CustomerIO {
     static config(data : CustomerioConfig = new CustomerioConfig()) {
       CustomerioReactnative.config(data)
     }
+
+    static setProfileAttributes(data : Object) {
+      CustomerioReactnative.setProfileAttributes(data)
+    }
   }
 
   export {
