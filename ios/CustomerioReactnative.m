@@ -14,4 +14,8 @@ RCT_EXTERN_METHOD(clearIdentify)
 RCT_EXTERN_METHOD(track: (nonnull NSString *) name
                   data : (NSDictionary *) data)
 
+RCT_EXTERN_METHOD(setDeviceAttributes : (nonnull NSDictionary *) data)
+
+RCT_EXTERN_METHOD(config : (nonnull NSDictionary *) data)
+
 @end

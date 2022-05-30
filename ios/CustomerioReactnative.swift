@@ -13,10 +13,7 @@ class CustomerioReactnative: NSObject {
      */
     @objc(initialize:apiKey:region:)
     func initialize(siteId: String, apiKey: String, region :String) -> Void {
-        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: getLocation(from: region))
-        CustomerIO.config {
-            $0.logLevel = .debug
-        }
+        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
     }
     
     /**
@@ -54,25 +51,26 @@ class CustomerioReactnative: NSObject {
         }
         CustomerIO.shared.track(name: name, data: body)
     }
-    private func getLocation(from regionStr : String) -> Region{
-        switch regionStr {
-        case "US" :
-            return Region.US
-        case "EU" :
-            return Region.EU
-        default:
-            return Region.US
+    
+    @objc(setDeviceAttributes:)
+    func setDeviceAttributes(data: Dictionary<String, AnyHashable>) -> Void{
+        CustomerIO.shared.deviceAttributes = data
+    }
+    
+    @objc(config:)
+    func config(data : Dictionary<String, AnyHashable>) -> Void{
+        if let trackingApiUrl = data["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
+            CustomerIO.config {
+                $0.trackingApiUrl = trackingApiUrl
+            }
+        }
+        CustomerIO.config {
+            $0.autoTrackDeviceAttributes = data["autoTrackDeviceAttributes"] as! Bool
+            $0.logLevel = CioLogLevel.getLogValue(for: data["logLevel"] as! Int)
+            $0.autoTrackPushEvents = data["autoTrackPushEvents"] as! Bool
+            $0.backgroundQueueMinNumberOfTasks = data["backgroundQueueMinNumberOfTasks"] as! Int
+            $0.backgroundQueueSecondsDelay = data["backgroundQueueSecondsDelay"] as! Seconds
         }
     }
 }
 
-
-extension Encodable {
-  func asDictionary() throws -> [String: Any] {
-    let data = try JSONEncoder().encode(self)
-    guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
-      throw NSError()
-    }
-    return dictionary
-  }
-}
