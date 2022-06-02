@@ -72,5 +72,10 @@ class CustomerioReactnative: NSObject {
             $0.backgroundQueueSecondsDelay = data["backgroundQueueSecondsDelay"] as! Seconds
         }
     }
+    
+    @objc(setProfileAttributes:)
+    func setProfileAttributes(data: Dictionary<String, AnyHashable>) -> Void{
+        CustomerIO.shared.profileAttributes = data
+    }
 }
 

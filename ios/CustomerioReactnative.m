@@ -18,4 +18,7 @@ RCT_EXTERN_METHOD(setDeviceAttributes : (nonnull NSDictionary *) data)
 
 RCT_EXTERN_METHOD(config : (nonnull NSDictionary *) data)
 
+RCT_EXTERN_METHOD(setProfileAttributes : (nonnull NSDictionary *) data)
+
+
 @end
