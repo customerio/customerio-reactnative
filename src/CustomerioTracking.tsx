@@ -48,6 +48,10 @@ class CustomerIO {
     static setProfileAttributes(data : Object) {
       CustomerioReactnative.setProfileAttributes(data)
     }
+
+    static screen(name : string, data : Object) {
+      CustomerioReactnative.screen(name, data)
+    }
   }
 
   export {

@@ -20,5 +20,7 @@ RCT_EXTERN_METHOD(config : (nonnull NSDictionary *) data)
 
 RCT_EXTERN_METHOD(setProfileAttributes : (nonnull NSDictionary *) data)
 
+RCT_EXTERN_METHOD(screen: (nonnull NSString *) name
+                  data : (NSDictionary *) data)
 
 @end

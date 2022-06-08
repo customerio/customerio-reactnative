@@ -77,5 +77,15 @@ class CustomerioReactnative: NSObject {
     func setProfileAttributes(data: Dictionary<String, AnyHashable>) -> Void{
         CustomerIO.shared.profileAttributes = data
     }
+    
+    @objc(screen:data:)
+    func screen(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
+        
+        guard let body = data else {
+            CustomerIO.shared.screen(name: name)
+            return
+        }
+        CustomerIO.shared.screen(name: name, data: body)
+    }
 }
 
