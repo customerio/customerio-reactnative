@@ -43,6 +43,9 @@ class CustomerioReactnative: NSObject {
     }
     
     
+    /**
+    Track user events with optional data
+     */
     @objc(track:data:)
     func track(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
         guard let body = data else {
@@ -52,11 +55,17 @@ class CustomerioReactnative: NSObject {
         CustomerIO.shared.track(name: name, data: body)
     }
     
+    /**
+    Set custom device attributes such as app preferences, timezone etc
+     */
     @objc(setDeviceAttributes:)
     func setDeviceAttributes(data: Dictionary<String, AnyHashable>) -> Void{
         CustomerIO.shared.deviceAttributes = data
     }
     
+    /**
+     Configure properties like autoTrackDeviceAttributes, logLevel etc
+f     */
     @objc(config:)
     func config(data : Dictionary<String, AnyHashable>) -> Void{
         if let trackingApiUrl = data["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
@@ -73,11 +82,17 @@ class CustomerioReactnative: NSObject {
         }
     }
     
+    /**
+     Set custom profile attributes specific to a user
+     */
     @objc(setProfileAttributes:)
     func setProfileAttributes(data: Dictionary<String, AnyHashable>) -> Void{
         CustomerIO.shared.profileAttributes = data
     }
     
+    /**
+     Track screen events to record the screens a user visits with optional data
+     */
     @objc(screen:data:)
     func screen(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
         
