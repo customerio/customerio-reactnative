@@ -1,0 +1,34 @@
+name: Deployment 
+on:
+  push:
+    branches: [main, beta, alpha]
+
+jobs:
+  deploy:
+    name: Deploy to npm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+
+      - name: Compile 
+        run: yarn typescript
+        
+      - name: Deploy via semantic release 
+        uses: cycjimmy/semantic-release-action@v2
+        with: 
+          # version numbers below can be in many forms: M, M.m, M.m.p
+          semantic_version: 19
+          extra_plugins: |
+            conventional-changelog-conventionalcommits@4
+            @semantic-release/changelog@6
+            @semantic-release/npm@9
+            @semantic-release/git@10
+            @semantic-release/github@8
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_PUSH_TOKEN }}        
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} 
