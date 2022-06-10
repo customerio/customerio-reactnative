@@ -1,0 +1,20 @@
+name: Promote a release
+
+on: 
+  workflow_dispatch: # manually run this Action so you decide when deployments happen
+
+jobs:
+  promote-release:
+    name: Promote a branch to the next release 
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Prepare for release 
+        # Find private email address that github uses for CI account at: https://github.com/settings/emails
+        run: |
+          git config --global user.email "21171259+ami-ci@users.noreply.github.com"
+          git config --global user.name "Ami CI"
+      - name: Promote release 
+        uses: levibostian/action-promote-semantic-release@v1
+        with:
+          sequence: "develop,alpha,beta,main"
+          githubToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
