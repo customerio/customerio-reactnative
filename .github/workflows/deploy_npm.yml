@@ -19,7 +19,8 @@ jobs:
         run: yarn typescript
         
       - name: Deploy via semantic release 
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3
+        id: semantic-release
         with: 
           # version numbers below can be in many forms: M, M.m, M.m.p
           semantic_version: 19
@@ -30,5 +31,28 @@ jobs:
             @semantic-release/git@10
             @semantic-release/github@8
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_PUSH_TOKEN }}        
+          # Needs to push git commits to repo. Needs write access. 
+          GITHUB_TOKEN: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}        
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }} 
+
+      - name: Prepare to sync branches 
+        run: |
+          git config user.email "frontend@customer.io"
+          git config user.name "Ami CI"
+      - name: Copy commits into develop after main deployment 
+        uses: levibostian/action-sync-branches@v1
+        with:
+          behind: develop
+          ahead: main 
+          githubToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
+    
+      - name: Notify team of git tag being created 
+        uses: openhousepvt/slack@v1.3.2
+        if: steps.semantic-release.outputs.new_release_published == 'true'
+        with:
+          status: 'success' # in progress status because need to now deploy SDK to maven central for full deployment 
+          version: ${{ steps.semantic-release.outputs.new_release_version }}
+          platform: 'ReactNative SDK - deployed'
+          channel: '#squad-mobile'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}

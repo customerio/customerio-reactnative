@@ -1,0 +1,18 @@
+name: Semantic PR helper 
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, labeled]
+
+jobs:
+  pr-help:
+    name: Semantic PR helper 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Semantic PR helper 
+        uses: levibostian/action-semantic-pr@v2
+        with:
+          readToken: ${{ secrets.READ_ONLY_BOT_TOKEN }}
+          writeToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
+          # Sets rules on the types of commits allowed on a specific branch. Example: {"beta": "fix,docs"} gives a warning on the pull request if a pull request is made into the beta branch with a type thats not fix.
+          branchTypeWarning: '{"beta": "fix", "main": "fix"}'
