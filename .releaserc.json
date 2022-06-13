@@ -15,9 +15,7 @@
       ["@semantic-release/changelog", {
           "changelogFile": "CHANGELOG.md"
       }],
-      ["@semantic-release/npm", {
-          "pkgRoot": "lib"
-      }],
+      "@semantic-release/npm",
       "@semantic-release/git",
       "@semantic-release/github"
     ]
