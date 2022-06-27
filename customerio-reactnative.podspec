@@ -11,10 +11,10 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "13.0" }
-  s.source       = { :git => "https://github.com/adk-kapur/react-native-customer-io.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "CustomerIOTracking", '~> 1.1.0-beta.1'
+  s.dependency "CustomerIOTracking", '~> 1.1.1'
 end
