@@ -1,7 +1,12 @@
-name: Deployment 
+name: Deploy SDK npm 
+
+# If deployment tries to push to npm and then push git tags
+# when git tag deployment fails, you cannot push to npm again
+# as it doesn't allow overwriting previously deployed artifacts. Deploy 
+# tag first, then deploy to npm on successful tag deployment. 
 on:
-  push:
-    branches: [main, beta, alpha]
+  release:
+    types: [published]
 
 jobs:
   deploy:
@@ -17,42 +22,73 @@ jobs:
 
       - name: Compile 
         run: yarn typescript
-        
-      - name: Deploy via semantic release 
-        uses: cycjimmy/semantic-release-action@v3
-        id: semantic-release
-        with: 
-          # version numbers below can be in many forms: M, M.m, M.m.p
-          semantic_version: 19
-          extra_plugins: |
-            conventional-changelog-conventionalcommits@4
-            @semantic-release/changelog@6
-            @semantic-release/npm@9
-            @semantic-release/git@10
-            @semantic-release/github@8
-        env:
-          # Needs to push git commits to repo. Needs write access. 
-          GITHUB_TOKEN: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}        
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }} 
 
-      - name: Prepare to sync branches 
-        run: |
-          git config --global user.email "21171259+ami-ci@users.noreply.github.com"
-          git config --global user.name "Ami CI"          
-      - name: Copy commits into develop after main deployment 
-        uses: levibostian/action-sync-branches@v1
+      - name: Deploy to npm 
+        uses: JS-DevTools/npm-publish@v1
         with:
-          behind: develop
-          ahead: main 
-          githubToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
-    
-      - name: Notify team of git tag being created 
-        uses: openhousepvt/slack@v1.3.2
-        if: steps.semantic-release.outputs.new_release_published == 'true'
+          token: ${{ secrets.NPM_TOKEN }}
+
+      - name: Notify team of successful deployment 
+        uses: slackapi/slack-github-action@v1.18.0        
+        if: ${{ success() }}
         with:
-          status: 'success' # in progress status because need to now deploy SDK to maven central for full deployment 
-          version: ${{ steps.semantic-release.outputs.new_release_version }}
-          platform: 'ReactNative SDK - deployed'
-          channel: '#squad-mobile'
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployed to npm",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK deployed to npm! (deployment step 2 of 2)"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Version ${{ github.event.release.tag_name }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ github.event.release.tag_name }}|create git tag>~\n~2. deploy to npm~\n\n"
+                  }
+                }
+              ]
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      
+      - name: Notify team of failure 
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ failure() }} # only run this if any previous step failed 
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployment failure",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK deployment :warning: failure :warning:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "ReactNative SDK failed deployment during step *deploy to npm*. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          
