@@ -8,13 +8,45 @@ jobs:
     name: Promote a branch to the next release 
     runs-on: ubuntu-latest 
     steps:
-      - name: Prepare for release 
-        # Find private email address that github uses for CI account at: https://github.com/settings/emails
-        run: |
-          git config --global user.email "21171259+ami-ci@users.noreply.github.com"
-          git config --global user.name "Ami CI"
       - name: Promote release 
         uses: levibostian/action-promote-semantic-release@v1
         with:
           sequence: "develop,alpha,beta,main"
           githubToken: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}
+          # Find private email address that github uses for CI account at: https://github.com/settings/emails
+          gitName: "Ami CI"
+          gitEmail: "21171259+ami-ci@users.noreply.github.com"
+
+      - name: Notify team of failure 
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ failure() }} # only run this if any previous step failed 
+        with:
+          # Use block kit for format of the JSON payloads: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployment failure",
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "*ReactNative* SDK deployment :warning: failure :warning:"
+                      }
+                  },
+                  {
+                      "type": "divider"
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "ReactNative SDK failed deployment during step *promote*. The best way to fix this particular issue is <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|viewing the CI server logs> to learn why and fix the issue. <https://github.com/customerio/mobile/blob/main/GIT-WORKFLOW.md|Learn more about the deployment process and how to fix errors>."
+                      }
+                  }
+              ]
+            }
+        env:
+          # Incoming webhook URL that sends message into the correct Slack channel. 
+          # Help on how to get the webhook URL: https://github.com/marketplace/actions/slack-send#setup-2
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
