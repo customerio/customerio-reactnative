@@ -11,8 +11,9 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:)
-    func initialize(siteId: String, apiKey: String, region :String) -> Void {
+    @objc(initialize:apiKey:region:configData:)
+    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>?) -> Void {
+        print(configData)
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
     }
     
