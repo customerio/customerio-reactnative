@@ -127,4 +127,6 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation 'io.customer.android:tracking:2.0.0-beta.1'
+  implementation 'io.customer.android:messaging-push-fcm:2.0.0-beta.1'
 }
