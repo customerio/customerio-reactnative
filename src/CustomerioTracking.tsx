@@ -34,7 +34,7 @@ class CustomerIO {
    * @param region (Optional) Specifies region where your workspace data center is located
    * @returns 
    */
-    static initialize(siteId: string, apiKey: string, region: Region = Region.US) {
+    static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
       return CustomerioReactnative.initialize(siteId, apiKey, region)
     }
 
