@@ -4,7 +4,8 @@
 
 RCT_EXTERN_METHOD(initialize: (nonnull NSString *) siteId
                   apiKey : (nonnull NSString *) apiKey
-                  region : (NSString *) region)
+                  region : (NSString *) region
+                  config : (NSDictionary *) configData)
 
 RCT_EXTERN_METHOD(identify: (nonnull NSString *) identifier
                   body : (NSDictionary *) body)
