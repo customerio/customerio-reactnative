@@ -34,9 +34,9 @@ class CustomerIO {
    * @param region (Optional) Specifies region where your workspace data center is located
    * @returns 
    */
-    static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
-      return CustomerioReactnative.initialize(siteId, apiKey, region)
-    }
+   static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
+    return CustomerioReactnative.initialize(siteId, apiKey, region, config)
+  }
 
     /**
      * Identify a person using a unique identifier, eg. email id.
@@ -80,15 +80,6 @@ class CustomerIO {
      */
     static setDeviceAttributes(data : Object) {
       CustomerioReactnative.setDeviceAttributes(data)
-    }
-
-    /**
-     * Configure package by updating the default values
-     * 
-     * @param data Update CustomerioConfig as configuration option 
-     */
-    static config(data : CustomerioConfig = new CustomerioConfig()) {
-      CustomerioReactnative.config(data)
     }
 
     /**
