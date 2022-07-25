@@ -11,9 +11,10 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:)
-    func initialize(siteId: String, apiKey: String, region :String) -> Void {
+    @objc(initialize:apiKey:region:configData:)
+    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>) -> Void {
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
+        config(data: configData)
     }
     
     /**
@@ -66,8 +67,7 @@ class CustomerioReactnative: NSObject {
     /**
      Configure properties like autoTrackDeviceAttributes, logLevel etc
 f     */
-    @objc(config:)
-    func config(data : Dictionary<String, AnyHashable>) -> Void{
+    private func config(data : Dictionary<String, AnyHashable>) -> Void{
         if let trackingApiUrl = data["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
             CustomerIO.config {
                 $0.trackingApiUrl = trackingApiUrl

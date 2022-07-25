@@ -23,9 +23,9 @@ jobs:
           extra_plugins: |
             conventional-changelog-conventionalcommits@4
             @semantic-release/changelog@6
-            @semantic-release/npm@9
             @semantic-release/git@10
             @semantic-release/github@8
+            @semantic-release/exec@6
         env:
           # Needs to push git commits to repo. Needs write access. 
           GITHUB_TOKEN: ${{ secrets.WRITE_ACCESS_BOT_TOKEN }}        
@@ -70,7 +70,7 @@ jobs:
               ]
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       
       - name: Notify team of failure 
@@ -96,11 +96,11 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "ReactNative SDK failed deployment during step *create git tag*. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
+                    "text": "ReactNative SDK failed deployment during step *create git tag*. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue. <https://github.com/customerio/mobile/blob/main/GIT-WORKFLOW.md|Learn more about the deployment process and how to fix errors>."
                   }
                 }
               ]
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NOTIFY_RELEASES_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
