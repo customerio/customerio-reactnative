@@ -1,3 +1,15 @@
+## [1.0.0-alpha.3](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.2...1.0.0-alpha.3) (2022-07-25)
+
+
+### Features
+
+* android updates in package ([#13](https://github.com/customerio/customerio-reactnative/issues/13)) ([b708fce](https://github.com/customerio/customerio-reactnative/commit/b708fcea40ae7a6586742fc39ec1c2e06eb7a559))
+
+
+### Bug Fixes
+
+* change in way to update config in ios ([#15](https://github.com/customerio/customerio-reactnative/issues/15)) ([8680b28](https://github.com/customerio/customerio-reactnative/commit/8680b2850cf6f1823514ece8205ac8b354d17c04))
+
 ## [1.0.0-alpha.2](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.1...1.0.0-alpha.2) (2022-06-28)
 
 
