@@ -19,7 +19,7 @@ fi
 
 echo "Setting up configuration file that will authenticate your computer with npm server..."
 
-NPM_CONFIG_FILE_PATH ="$(npm config get userconfig)"
+NPM_CONFIG_FILE_PATH="$(npm config get userconfig)"
 if [[ "$NPM_CONFIG_FILE_PATH" == "" ]]; then # makes sure auth token is set. 
     NPM_CONFIG_FILE_PATH="~/.npmrc"
 fi 
