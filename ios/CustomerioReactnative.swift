@@ -1,5 +1,6 @@
 import Foundation
 import CioTracking
+import Common
 
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -13,8 +14,12 @@ class CustomerioReactnative: NSObject {
      */
     @objc(initialize:apiKey:region:configData:)
     func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>) -> Void {
-        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
-        config(data: configData)
+//        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
+//        config(data: configData)
+
+        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
+            config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version:"1.0.0-alpha.4" )
+        }
     }
     
     /**
