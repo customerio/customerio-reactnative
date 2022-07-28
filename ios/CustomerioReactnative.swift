@@ -12,13 +12,13 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:configData:)
-    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>) -> Void {
+    @objc(initialize:apiKey:region:configData:pversion:)
+    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
 //        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
 //        config(data: configData)
 
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
-            config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version:"1.0.0-alpha.4" )
+            config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version: pversion )
         }
     }
     
