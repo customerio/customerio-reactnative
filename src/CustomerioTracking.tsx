@@ -36,9 +36,11 @@ class CustomerIO {
    * @returns 
    */
    static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
-    console.log("Super one")
-    console.log(pjson.dependencies["customerio-reactnative"])
 
+    let pversion = pjson.version
+    if (pjson.version == undefined) {
+      pversion = ""
+    }
     return CustomerioReactnative.initialize(siteId, apiKey, region, config, pversion)
   }
 
