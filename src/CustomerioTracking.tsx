@@ -1,6 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
 import { CustomerioConfig } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
+var pjson = require('../package.json');
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -35,7 +36,10 @@ class CustomerIO {
    * @returns 
    */
    static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
-    return CustomerioReactnative.initialize(siteId, apiKey, region, config)
+    console.log("Super one")
+    console.log(pjson.dependencies["customerio-reactnative"])
+
+    return CustomerioReactnative.initialize(siteId, apiKey, region, config, pversion)
   }
 
     /**
