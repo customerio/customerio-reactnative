@@ -37,10 +37,7 @@ class CustomerIO {
    */
    static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
 
-    let pversion = pjson.version
-    if (pjson.version == undefined) {
-      pversion = ""
-    }
+    let pversion = pjson.version ?? ""
     return CustomerioReactnative.initialize(siteId, apiKey, region, config, pversion)
   }
 
