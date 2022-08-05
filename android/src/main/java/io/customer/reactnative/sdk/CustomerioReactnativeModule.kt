@@ -1,4 +1,4 @@
-package com.customerioreactnative
+package io.customer.reactnative.sdk
 
 import android.app.Application
 import android.util.Log

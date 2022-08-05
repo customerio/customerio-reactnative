@@ -1,4 +1,4 @@
-package com.customerioreactnative
+package io.customer.reactnative.sdk
 
 import com.facebook.react.bridge.ReadableMap
 import io.customer.sdk.data.model.Region

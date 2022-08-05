@@ -1,4 +1,4 @@
-package com.customerioreactnative
+package io.customer.reactnative.sdk
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
