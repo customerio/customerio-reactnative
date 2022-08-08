@@ -1,5 +1,6 @@
 import Foundation
 import CioTracking
+import Common
 
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -11,10 +12,20 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:configData:)
-    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>) -> Void {
-        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region))
-        config(data: configData)
+    @objc(initialize:apiKey:region:configData:pversion:)
+    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
+        
+        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
+            config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version: pversion )
+            config.autoTrackDeviceAttributes = configData["autoTrackDeviceAttributes"] as! Bool
+            config.logLevel = CioLogLevel.getLogValue(for: configData["logLevel"] as! Int)
+            config.autoTrackPushEvents = configData["autoTrackPushEvents"] as! Bool
+            config.backgroundQueueMinNumberOfTasks = configData["backgroundQueueMinNumberOfTasks"] as! Int
+            config.backgroundQueueSecondsDelay = configData["backgroundQueueSecondsDelay"] as! Seconds
+            if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
+                config.trackingApiUrl = trackingApiUrl
+            }
+        }
     }
     
     /**
