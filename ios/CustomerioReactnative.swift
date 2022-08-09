@@ -1,6 +1,7 @@
 import Foundation
 import CioTracking
 import Common
+import CioMessagingInApp
 
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
