@@ -98,7 +98,9 @@ class CustomerioReactnative: NSObject {
     
     @objc(initializeInApp:)
     func initializeInApp(organizationId: String) -> Void{
-        MessagingInApp.shared.initialize(organizationId: organizationId)
+        DispatchQueue.main.async {
+            MessagingInApp.shared.initialize(organizationId: organizationId)
+        }
     }
 }
 
