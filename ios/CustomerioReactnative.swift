@@ -76,24 +76,6 @@ class CustomerioReactnative: NSObject {
     }
     
     /**
-     Configure properties like autoTrackDeviceAttributes, logLevel etc
-f     */
-    private func config(data : Dictionary<String, AnyHashable>) -> Void{
-        if let trackingApiUrl = data["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
-            CustomerIO.config {
-                $0.trackingApiUrl = trackingApiUrl
-            }
-        }
-        CustomerIO.config {
-            $0.autoTrackDeviceAttributes = data["autoTrackDeviceAttributes"] as! Bool
-            $0.logLevel = CioLogLevel.getLogValue(for: data["logLevel"] as! Int)
-            $0.autoTrackPushEvents = data["autoTrackPushEvents"] as! Bool
-            $0.backgroundQueueMinNumberOfTasks = data["backgroundQueueMinNumberOfTasks"] as! Int
-            $0.backgroundQueueSecondsDelay = data["backgroundQueueSecondsDelay"] as! Seconds
-        }
-    }
-    
-    /**
      Set custom profile attributes specific to a user
      */
     @objc(setProfileAttributes:)
