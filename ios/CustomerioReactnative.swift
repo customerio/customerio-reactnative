@@ -96,6 +96,9 @@ class CustomerioReactnative: NSObject {
         CustomerIO.shared.screen(name: name, data: body)
     }
     
+    /**
+        Intialize in-app using customerio package
+     */
     @objc(initializeInApp:)
     func initializeInApp(organizationId: String) -> Void{
         DispatchQueue.main.async {
