@@ -104,6 +104,10 @@ class CustomerIO {
     static screen(name : string, data : Object) {
       CustomerioReactnative.screen(name, data)
     }
+
+    static initializeInApp(organisationId: string) {
+      CustomerioReactnative.initializeInApp(organisationId)
+    }
   }
 
   export {
