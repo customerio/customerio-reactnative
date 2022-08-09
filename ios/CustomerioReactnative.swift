@@ -95,5 +95,10 @@ class CustomerioReactnative: NSObject {
         }
         CustomerIO.shared.screen(name: name, data: body)
     }
+    
+    @objc(initializeInApp:)
+    func initializeInApp(organizationId: String) -> Void{
+        MessagingInApp.shared.initialize(organizationId: organizationId)
+    }
 }
 
