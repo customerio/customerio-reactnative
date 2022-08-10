@@ -2,10 +2,9 @@
 
 @interface RCT_EXTERN_MODULE(CustomerioReactnative, NSObject)
 
-RCT_EXTERN_METHOD(initialize: (nonnull NSString *) siteId
-                  apiKey : (nonnull NSString *) apiKey
-                  region : (NSString *) region
-                  configData : (NSDictionary *) configData)
+RCT_EXTERN_METHOD(initialize: (nonnull NSDictionary *) env
+                  configData : (NSDictionary *) configData
+                  pversion: (nonnull NSString *) pversion)
 
 RCT_EXTERN_METHOD(identify: (nonnull NSString *) identifier
                   body : (NSDictionary *) body)

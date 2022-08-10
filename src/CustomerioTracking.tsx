@@ -1,6 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
-import { CustomerioConfig } from './CustomerioConfig';
+import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
+var pjson = require('../package.json');
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -29,13 +30,14 @@ class CustomerIO {
    * To initialize the package using workspace credentials 
    * such as siteId, APIKey and region as optional. 
    *   
-   * @param siteId Site Id specific to your workspace
-   * @param apiKey App Api Key specific to your workspace
-   * @param region (Optional) Specifies region where your workspace data center is located
+   * @param env use CustomerIOEnv class to set environment variables such as siteId, apiKey, region, org id  
+   * @param config set config for the package eg trackApiUrl etc
    * @returns 
    */
-   static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
-    return CustomerioReactnative.initialize(siteId, apiKey, region, config)
+   static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
+
+    let pversion = pjson.version ?? ""
+    return CustomerioReactnative.initialize(env, config, pversion)
   }
 
     /**

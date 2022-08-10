@@ -1,4 +1,4 @@
-import {CioLogLevel} from './CustomerioEnum'
+import {CioLogLevel, Region} from './CustomerioEnum'
 
 /**
  * Configure package using CustomerioConfig
@@ -19,6 +19,14 @@ class CustomerioConfig {
     backgroundQueueSecondsDelay : number = 30
 }
 
+class CustomerIOEnv {
+    siteId: string = ""
+    apiKey: string = ""
+    region: Region = Region.US
+    organizationId: string = ""
+}
+
 export {
-    CustomerioConfig
+    CustomerioConfig,
+    CustomerIOEnv
 }

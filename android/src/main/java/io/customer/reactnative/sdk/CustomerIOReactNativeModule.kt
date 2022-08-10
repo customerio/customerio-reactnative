@@ -1,4 +1,4 @@
-package com.customerioreactnative
+package io.customer.reactnative.sdk
 
 import android.app.Application
 import android.util.Log
@@ -10,7 +10,7 @@ import io.customer.sdk.CustomerIO
 import io.customer.sdk.data.model.Region
 import io.customer.sdk.util.CioLogLevel
 
-class CustomerioReactnativeModule(
+class CustomerIOReactNativeModule(
     reactApplicationContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactApplicationContext) {
     private val application: Application = reactApplicationContext.applicationContext as Application
