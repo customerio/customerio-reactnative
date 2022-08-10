@@ -1,3 +1,12 @@
+## [1.0.0-alpha.4](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2022-08-10)
+
+
+### Features
+
+* android: package updates ([e87c6eb](https://github.com/customerio/customerio-reactnative/commit/e87c6eb05f5d357a626e982702dc1ff7171e4e09))
+* in-app functionality in react native package ([488c0c0](https://github.com/customerio/customerio-reactnative/commit/488c0c06b852a220c13c9bbffb3d5b254c7fb9ff))
+* user-agent updates in package ([efff4fc](https://github.com/customerio/customerio-reactnative/commit/efff4fc30d3050e410b5e56cdd2464b7c2f6de41))
+
 ## [1.0.0-alpha.3](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.2...1.0.0-alpha.3) (2022-07-25)
 
 
