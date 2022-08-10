@@ -13,8 +13,12 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:configData:pversion:)
-    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
+    @objc(initialize:configData:pversion:)
+    func initialize(env: Dictionary<String, AnyHashable>, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
+        
+        guard let siteId = env["siteId"] as? String, let apiKey = env["apiKey"] as? String, let region = env["region"] as? String, let organizationId = env["organizationId"] as? String else {
+            return
+        }
         
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
             config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version: pversion )
@@ -26,6 +30,10 @@ class CustomerioReactnative: NSObject {
             if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
                 config.trackingApiUrl = trackingApiUrl
             }
+        }
+        
+        if organizationId != "" {
+            initializeInApp(organizationId: organizationId)
         }
     }
     
