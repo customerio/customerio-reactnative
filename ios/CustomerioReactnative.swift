@@ -15,11 +15,9 @@ class CustomerioReactnative: NSObject {
      */
     @objc(initialize:configData:pversion:)
     func initialize(env: Dictionary<String, AnyHashable>, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
-        
         guard let siteId = env["siteId"] as? String, let apiKey = env["apiKey"] as? String, let region = env["region"] as? String, let organizationId = env["organizationId"] as? String else {
             return
         }
-        
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
             config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version: pversion )
             config.autoTrackDeviceAttributes = configData["autoTrackDeviceAttributes"] as! Bool
@@ -31,7 +29,6 @@ class CustomerioReactnative: NSObject {
                 config.trackingApiUrl = trackingApiUrl
             }
         }
-        
         if organizationId != "" {
             initializeInApp(organizationId: organizationId)
         }
