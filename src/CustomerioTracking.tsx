@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { CustomerioConfig } from './CustomerioConfig';
+import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 var pjson = require('../package.json');
 
@@ -35,10 +35,10 @@ class CustomerIO {
    * @param region (Optional) Specifies region where your workspace data center is located
    * @returns 
    */
-   static initialize(siteId: string, apiKey: string, region: Region = Region.US, config: CustomerioConfig = new CustomerioConfig()) {
+   static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
 
     let pversion = pjson.version ?? ""
-    return CustomerioReactnative.initialize(siteId, apiKey, region, config, pversion)
+    return CustomerioReactnative.initialize(env, config, pversion)
   }
 
     /**
