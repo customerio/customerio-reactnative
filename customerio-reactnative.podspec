@@ -17,4 +17,5 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   s.dependency "CustomerIOTracking", '~> 1.2.0-alpha.3'
+  s.dependency "CustomerIOMessagingInApp", '~> 1.2.0-alpha.3'
 end

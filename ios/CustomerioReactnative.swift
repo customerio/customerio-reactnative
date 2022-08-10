@@ -1,6 +1,7 @@
 import Foundation
 import CioTracking
 import Common
+import CioMessagingInApp
 
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -12,9 +13,11 @@ class CustomerioReactnative: NSObject {
     /**
      Initialize the package before sending any calls to the package
      */
-    @objc(initialize:apiKey:region:configData:pversion:)
-    func initialize(siteId: String, apiKey: String, region :String, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
-        
+    @objc(initialize:configData:pversion:)
+    func initialize(env: Dictionary<String, AnyHashable>, configData: Dictionary<String, AnyHashable>, pversion: String) -> Void {
+        guard let siteId = env["siteId"] as? String, let apiKey = env["apiKey"] as? String, let region = env["region"] as? String, let organizationId = env["organizationId"] as? String else {
+            return
+        }
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
             config._sdkWrapperConfig = SdkWrapperConfig(source: SdkWrapperConfig.Source.reactNative, version: pversion )
             config.autoTrackDeviceAttributes = configData["autoTrackDeviceAttributes"] as! Bool
@@ -25,6 +28,9 @@ class CustomerioReactnative: NSObject {
             if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
                 config.trackingApiUrl = trackingApiUrl
             }
+        }
+        if organizationId != "" {
+            initializeInApp(organizationId: organizationId)
         }
     }
     
@@ -76,24 +82,6 @@ class CustomerioReactnative: NSObject {
     }
     
     /**
-     Configure properties like autoTrackDeviceAttributes, logLevel etc
-f     */
-    private func config(data : Dictionary<String, AnyHashable>) -> Void{
-        if let trackingApiUrl = data["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
-            CustomerIO.config {
-                $0.trackingApiUrl = trackingApiUrl
-            }
-        }
-        CustomerIO.config {
-            $0.autoTrackDeviceAttributes = data["autoTrackDeviceAttributes"] as! Bool
-            $0.logLevel = CioLogLevel.getLogValue(for: data["logLevel"] as! Int)
-            $0.autoTrackPushEvents = data["autoTrackPushEvents"] as! Bool
-            $0.backgroundQueueMinNumberOfTasks = data["backgroundQueueMinNumberOfTasks"] as! Int
-            $0.backgroundQueueSecondsDelay = data["backgroundQueueSecondsDelay"] as! Seconds
-        }
-    }
-    
-    /**
      Set custom profile attributes specific to a user
      */
     @objc(setProfileAttributes:)
@@ -112,6 +100,15 @@ f     */
             return
         }
         CustomerIO.shared.screen(name: name, data: body)
+    }
+    
+    /**
+        Intialize in-app using customerio package
+     */
+    private func initializeInApp(organizationId: String) -> Void{
+        DispatchQueue.main.async {
+            MessagingInApp.shared.initialize(organizationId: organizationId)
+        }
     }
 }
 
