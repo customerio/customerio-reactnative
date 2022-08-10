@@ -103,14 +103,6 @@ class CustomerIO {
     static screen(name : string, data : Object) {
       CustomerioReactnative.screen(name, data)
     }
-
-    /**
-     * Intialize in-app to receive in-app messages in the app
-     * @param organisationId unique organisation id
-     */
-    static initializeInApp(organisationId: string) {
-      CustomerioReactnative.initializeInApp(organisationId)
-    }
   }
 
   export {
