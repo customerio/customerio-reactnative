@@ -30,9 +30,8 @@ class CustomerIO {
    * To initialize the package using workspace credentials 
    * such as siteId, APIKey and region as optional. 
    *   
-   * @param siteId Site Id specific to your workspace
-   * @param apiKey App Api Key specific to your workspace
-   * @param region (Optional) Specifies region where your workspace data center is located
+   * @param env use CustomerIOEnv class to set environment variables such as siteId, apiKey, region, org id  
+   * @param config set config for the package eg trackApiUrl etc
    * @returns 
    */
    static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
