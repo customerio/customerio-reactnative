@@ -1,0 +1,36 @@
+package io.customer.reactnative.sdk.extension
+
+import io.customer.reactnative.sdk.CustomerIOReactNative
+
+@Throws(IllegalArgumentException::class)
+internal inline fun <reified T> Map<String, Any>.getPropertyUnsafe(key: String): T {
+    val property = get(key)
+
+    if (property !is T) {
+        throw IllegalArgumentException(
+            "Invalid value provided for key: $key, value $property must be of type ${T::class.java.simpleName}"
+        )
+    }
+    return property
+}
+
+internal inline fun <reified T> Map<String, Any>.getProperty(key: String): T? = try {
+    getPropertyUnsafe(key)
+} catch (ex: IllegalArgumentException) {
+    CustomerIOReactNative.instance().logger.error(
+        ex.message ?: "getProperty($key) -> IllegalArgumentException"
+    )
+    null
+}
+
+@Throws(IllegalArgumentException::class)
+internal fun Map<String, Any>.getString(key: String): String = try {
+    getPropertyUnsafe<String>(key).takeIf { it.isNotBlank() } ?: throw IllegalArgumentException(
+        "Invalid value provided for $key, must not be blank"
+    )
+} catch (ex: IllegalArgumentException) {
+    CustomerIOReactNative.instance().logger.error(
+        ex.message ?: "getString($key) -> IllegalArgumentException"
+    )
+    throw ex
+}
