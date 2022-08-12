@@ -25,7 +25,7 @@ internal inline fun <reified T> Map<String, Any>.getProperty(key: String): T? = 
 
 @Throws(IllegalArgumentException::class)
 internal fun Map<String, Any>.getString(key: String): String = try {
-    getPropertyUnsafe<String>(key).takeIf { it.isNotBlank() } ?: throw IllegalArgumentException(
+    getPropertyUnsafe<String>(key).takeIfNotBlank() ?: throw IllegalArgumentException(
         "Invalid value provided for $key, must not be blank"
     )
 } catch (ex: IllegalArgumentException) {

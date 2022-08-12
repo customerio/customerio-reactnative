@@ -64,10 +64,14 @@ class CustomerIOReactNativeModule(
         try {
             val siteId = env.getString(Keys.Environment.SITE_ID)
             val apiKey = env.getString(Keys.Environment.API_KEY)
-            val region = env.getProperty<String>(Keys.Environment.REGION).toRegion()
-            val organizationId = env.getProperty<String>(Keys.Environment.ORGANIZATION_ID)
-            val client = source?.let { src -> Client.fromSource(src) } ?: Client.ReactNative
+            val region = env.getProperty<String>(
+                Keys.Environment.REGION
+            )?.takeIfNotBlank().toRegion()
+            val organizationId = env.getProperty<String>(
+                Keys.Environment.ORGANIZATION_ID
+            )?.takeIfNotBlank()
 
+            val client = source?.let { src -> Client.fromSource(src) } ?: Client.ReactNative
             customerIO = CustomerIO.Builder(
                 siteId = siteId,
                 apiKey = apiKey,
@@ -84,20 +88,21 @@ class CustomerIOReactNativeModule(
         } catch (ex: IllegalArgumentException) {
             logger.error(ex.message ?: "$MODULE_NAME -> initialize -> IllegalArgumentException")
         }
+        logger.info("Customer.io instance initialized successfully")
     }
 
     private fun CustomerIO.Builder.setupConfig(config: Map<String, Any>?): CustomerIO.Builder {
         if (config == null) return this
 
-        setLogLevel(level = config.getProperty<Int>(Keys.Config.LOG_LEVEL).toCIOLogLevel())
-        config.getProperty<String>(Keys.Config.TRACKING_API_URL)?.let { value ->
+        setLogLevel(level = config.getProperty<Double>(Keys.Config.LOG_LEVEL).toCIOLogLevel())
+        config.getProperty<String>(Keys.Config.TRACKING_API_URL)?.takeIfNotBlank()?.let { value ->
             setTrackingApiURL(value)
         }
         config.getProperty<Boolean>(Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES)?.let { value ->
             autoTrackDeviceAttributes(shouldTrackDeviceAttributes = value)
         }
-        config.getProperty<Int>(Keys.Config.BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS)?.let { value ->
-            setBackgroundQueueMinNumberOfTasks(backgroundQueueMinNumberOfTasks = value)
+        config.getProperty<Double>(Keys.Config.BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS)?.let { value ->
+            setBackgroundQueueMinNumberOfTasks(backgroundQueueMinNumberOfTasks = value.toInt())
         }
         config.getProperty<Double>(Keys.Config.BACKGROUND_QUEUE_SECONDS_DELAY)?.let { value ->
             setBackgroundQueueSecondsDelay(backgroundQueueSecondsDelay = value)

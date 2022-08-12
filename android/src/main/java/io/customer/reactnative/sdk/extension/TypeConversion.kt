@@ -16,7 +16,7 @@ internal fun String?.toRegion(fallback: Region = Region.US): Region {
     ).find { value -> value.code.equals(this, ignoreCase = true) } ?: fallback
 }
 
-internal fun Int?.toCIOLogLevel(fallback: CioLogLevel = CioLogLevel.NONE): CioLogLevel {
+internal fun Double?.toCIOLogLevel(fallback: CioLogLevel = CioLogLevel.NONE): CioLogLevel {
     return if (this == null) fallback
-    else CioLogLevel.values().getOrNull(index = this) ?: fallback
+    else CioLogLevel.values().getOrNull(index = this.toInt()) ?: fallback
 }

@@ -5,7 +5,6 @@ buildscript {
   repositories {
     google()
     mavenCentral()
-    maven { url 'https://maven.gist.build' }
   }
 
   dependencies {
@@ -53,6 +52,7 @@ android {
 repositories {
   mavenCentral()
   google()
+  maven { url 'https://maven.gist.build' }
 
   def found = false
   def defaultDir = null
