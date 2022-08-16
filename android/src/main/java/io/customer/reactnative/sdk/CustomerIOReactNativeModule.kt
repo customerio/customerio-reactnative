@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.messaginginapp.ModuleMessagingInApp
+import io.customer.messagingpush.CustomerIOFirebaseMessagingService
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.reactnative.sdk.constant.Keys
@@ -19,16 +20,16 @@ import io.customer.sdk.util.Logger
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
+    private val logger: Logger = CustomerIOReactNativeInstance.logger
+    private lateinit var customerIO: CustomerIO
+
     init {
         val isDebuggable = 0 != reactContext.applicationInfo.flags and
                 ApplicationInfo.FLAG_DEBUGGABLE
-        CustomerIOReactNative.initialize(
+        CustomerIOReactNativeInstance.setLogLevel(
             logLevel = if (isDebuggable) CioLogLevel.DEBUG else CioLogLevel.NONE,
         )
     }
-
-    private lateinit var customerIO: CustomerIO
-    private val logger: Logger = CustomerIOReactNative.instance().logger
 
     override fun getName(): String {
         return MODULE_NAME
@@ -39,11 +40,11 @@ class CustomerIOReactNativeModule(
     }
 
     private fun isNotInitialized(): Boolean {
-        val isNotInitialized = !isInstanceValid()
-        if (isNotInitialized) {
+        val isInstanceInvalid = !isInstanceValid()
+        if (isInstanceInvalid) {
             logger.error("Customer.io instance not initialized")
         }
-        return isNotInitialized
+        return isInstanceInvalid
     }
 
     @JvmOverloads
@@ -51,7 +52,7 @@ class CustomerIOReactNativeModule(
     fun initialize(
         environment: ReadableMap,
         configuration: ReadableMap? = null,
-        source: String? = null,
+        sdkVersion: String? = null,
     ) {
         if (isInstanceValid()) {
             logger.info("Customer.io instance already initialized")
@@ -71,14 +72,14 @@ class CustomerIOReactNativeModule(
                 Keys.Environment.ORGANIZATION_ID
             )?.takeIfNotBlank()
 
-            val client = source?.let { src -> Client.fromSource(src) } ?: Client.ReactNative
             customerIO = CustomerIO.Builder(
                 siteId = siteId,
                 apiKey = apiKey,
                 region = region,
                 appContext = reactApplicationContext.applicationContext as Application,
             ).apply {
-                setClient(client)
+                // TODO: Update when sdk version is released
+                setClient(Client.ReactNative)
                 setupConfig(config)
                 addCustomerIOModule(module = configureModuleMessagingPushFCM(config))
                 if (!organizationId.isNullOrBlank()) {
@@ -88,7 +89,11 @@ class CustomerIOReactNativeModule(
         } catch (ex: IllegalArgumentException) {
             logger.error(ex.message ?: "$MODULE_NAME -> initialize -> IllegalArgumentException")
         }
-        logger.info("Customer.io instance initialized successfully")
+        CustomerIOReactNativeInstance.onSDKInitialized()
+        val fcmToken = CustomerIOReactNativeInstance.cachedFCMToken
+        if (!fcmToken.isNullOrBlank() && CustomerIOReactNativeInstance.setFCMTokenRegistered()) {
+            CustomerIOFirebaseMessagingService.onNewToken(fcmToken)
+        }
     }
 
     private fun CustomerIO.Builder.setupConfig(config: Map<String, Any>?): CustomerIO.Builder {

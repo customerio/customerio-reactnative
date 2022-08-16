@@ -121,13 +121,12 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
+ext.cioAndroidSDKVersion = getExtOrDefault('androidSDKVersion')
+
+apply from: "./cio-core.gradle"
 
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  String customerIOVersion = getExtOrDefault('androidSDKVersion')
-  implementation "io.customer.android:tracking:$customerIOVersion"
-  implementation "io.customer.android:messaging-push-fcm:$customerIOVersion"
-  implementation "io.customer.android:messaging-in-app:$customerIOVersion"
 }

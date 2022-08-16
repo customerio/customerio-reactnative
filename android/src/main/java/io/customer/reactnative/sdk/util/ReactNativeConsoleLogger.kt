@@ -4,8 +4,8 @@ import android.util.Log
 import io.customer.sdk.util.CioLogLevel
 import io.customer.sdk.util.Logger
 
-class ReactNativeConsoleLogger(
-    private val logLevel: CioLogLevel
+internal class ReactNativeConsoleLogger(
+    internal var logLevel: CioLogLevel
 ) : Logger {
     private fun runIfMeetsLogLevelCriteria(levelForMessage: CioLogLevel, block: () -> Unit) {
         val shouldLog = logLevel.shouldLog(levelForMessage)
