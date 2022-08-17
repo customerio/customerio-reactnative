@@ -27,7 +27,7 @@ class CustomerIOReactNativeModule(
         val isDebuggable = 0 != reactContext.applicationInfo.flags and
                 ApplicationInfo.FLAG_DEBUGGABLE
         CustomerIOReactNativeInstance.setLogLevel(
-            logLevel = if (isDebuggable) CioLogLevel.DEBUG else CioLogLevel.NONE,
+            logLevel = if (isDebuggable) CioLogLevel.DEBUG else CioLogLevel.ERROR,
         )
     }
 
@@ -99,7 +99,9 @@ class CustomerIOReactNativeModule(
     private fun CustomerIO.Builder.setupConfig(config: Map<String, Any>?): CustomerIO.Builder {
         if (config == null) return this
 
-        setLogLevel(level = config.getProperty<Double>(Keys.Config.LOG_LEVEL).toCIOLogLevel())
+        val logLevel = config.getProperty<Double>(Keys.Config.LOG_LEVEL).toCIOLogLevel()
+        CustomerIOReactNativeInstance.setLogLevel(logLevel = logLevel)
+        setLogLevel(level = logLevel)
         config.getProperty<String>(Keys.Config.TRACKING_API_URL)?.takeIfNotBlank()?.let { value ->
             setTrackingApiURL(value)
         }

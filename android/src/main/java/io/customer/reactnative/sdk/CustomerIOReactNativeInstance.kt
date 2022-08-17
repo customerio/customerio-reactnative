@@ -17,12 +17,11 @@ object CustomerIOReactNativeInstance {
 
     internal val logger: Logger = ReactNativeConsoleLogger(CioLogLevel.ERROR)
     internal var cachedFCMToken: String? = null
-    private val isFCMTokenRegistered = AtomicBoolean(false)
 
+    private val isFCMTokenRegistered = AtomicBoolean(false)
     private val initializationStateFlow = MutableStateFlow(value = false)
     private val initializationFlow = initializationStateFlow.asStateFlow()
         .filter { isInitialized -> isInitialized }
-        .distinctUntilChanged()
         .catch { ex -> logger.error(ex.message ?: "CustomerIOReactNative -> initialization") }
 
     fun setLogLevel(logLevel: CioLogLevel) {
