@@ -13,10 +13,14 @@ class CustomerIOReactNativeFCMService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         with(CustomerIOReactNativeInstance) {
             cachedFCMToken = token
-            awaitSDKInitializationWithTimeout {
+            awaitSDKInitializationWithTimeout(timeoutDuration = SDK_INITIALIZATION_TIMEOUT) {
                 setFCMTokenRegistered()
                 CustomerIOFirebaseMessagingService.onNewToken(token)
             }
         }
+    }
+
+    companion object {
+        private const val SDK_INITIALIZATION_TIMEOUT = 5_000L
     }
 }
