@@ -1,6 +1,6 @@
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['CustomerioReactnative_kotlinVersion']
+  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['customerio.reactnative.kotlinVersion']
 
   repositories {
     google()
@@ -18,11 +18,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['CustomerioReactnative_' + name]
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['customerio.reactnative.' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['CustomerioReactnative_' + name]).toInteger()
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['customerio.reactnative.' + name]).toInteger()
 }
 
 android {
@@ -52,6 +52,7 @@ android {
 repositories {
   mavenCentral()
   google()
+  maven { url 'https://maven.gist.build' }
 
   def found = false
   def defaultDir = null
@@ -120,11 +121,12 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
+ext.cioAndroidSDKVersion = getExtOrDefault('androidSDKVersion')
+
+apply from: "./cio-core.gradle"
 
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'io.customer.android:tracking:2.0.0-beta.1'
-  implementation 'io.customer.android:messaging-push-fcm:2.0.0-beta.1'
 }
