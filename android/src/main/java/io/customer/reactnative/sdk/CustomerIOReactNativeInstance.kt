@@ -7,10 +7,6 @@ import com.google.android.gms.tasks.Tasks
 import io.customer.reactnative.sdk.util.ReactNativeConsoleLogger
 import io.customer.sdk.util.CioLogLevel
 import io.customer.sdk.util.Logger
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filter
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -23,10 +19,6 @@ object CustomerIOReactNativeInstance {
     internal var cachedFCMToken: String? = null
 
     private val isFCMTokenRegistered = AtomicBoolean(false)
-    private val initializationStateFlow = MutableStateFlow(value = false)
-    private val initializationFlow = initializationStateFlow.asStateFlow()
-        .filter { isInitialized -> isInitialized }
-        .catch { ex -> logger.error(ex.message ?: "CustomerIOReactNative -> initialization") }
     private val initializationTaskSource = TaskCompletionSource<Boolean>()
     private val initializationTask: Task<Boolean?> = initializationTaskSource.task
 
@@ -40,7 +32,6 @@ object CustomerIOReactNativeInstance {
 
     internal fun onSDKInitialized() {
         initializationTaskSource.trySetResult(true)
-        initializationStateFlow.value = true
         logger.info("Customer.io instance initialized successfully")
     }
 
