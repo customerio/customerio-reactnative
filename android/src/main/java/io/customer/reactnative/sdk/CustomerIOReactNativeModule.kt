@@ -77,7 +77,7 @@ class CustomerIOReactNativeModule(
                 region = region,
                 appContext = reactApplicationContext.applicationContext as Application,
             ).apply {
-                setClient(Client.reactNative(sdkVersion = sdkVersion ?: "n/a"))
+                setClient(Client.ReactNative(sdkVersion = sdkVersion ?: "n/a"))
                 setupConfig(config)
                 addCustomerIOModule(module = configureModuleMessagingPushFCM(config))
                 if (!organizationId.isNullOrBlank()) {
