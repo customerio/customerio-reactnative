@@ -7,7 +7,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.messaginginapp.ModuleMessagingInApp
-import io.customer.messagingpush.CustomerIOFirebaseMessagingService
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.reactnative.sdk.constant.Keys
@@ -78,8 +77,7 @@ class CustomerIOReactNativeModule(
                 region = region,
                 appContext = reactApplicationContext.applicationContext as Application,
             ).apply {
-                // TODO: Update when sdk version is released
-                setClient(Client.ReactNative)
+                setClient(Client.ReactNative(sdkVersion = sdkVersion ?: "n/a"))
                 setupConfig(config)
                 addCustomerIOModule(module = configureModuleMessagingPushFCM(config))
                 if (!organizationId.isNullOrBlank()) {
@@ -88,11 +86,6 @@ class CustomerIOReactNativeModule(
             }.build()
         } catch (ex: IllegalArgumentException) {
             logger.error(ex.message ?: "$MODULE_NAME -> initialize -> IllegalArgumentException")
-        }
-        CustomerIOReactNativeInstance.onSDKInitialized()
-        val fcmToken = CustomerIOReactNativeInstance.cachedFCMToken
-        if (!fcmToken.isNullOrBlank() && CustomerIOReactNativeInstance.setFCMTokenRegistered()) {
-            CustomerIOFirebaseMessagingService.onNewToken(fcmToken)
         }
     }
 
