@@ -1,3 +1,18 @@
+## [1.0.0-alpha.5](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2022-09-01)
+
+
+### Features
+
+* android: setup config with initialization ([e915343](https://github.com/customerio/customerio-reactnative/commit/e915343be1e9967e3d3f5214b2ebcf313486c531))
+* update package version ([8526a69](https://github.com/customerio/customerio-reactnative/commit/8526a6979405d19922a18f0bf281298b850f3e27))
+* updated to android sdk 3.0.0-alpha.2 ([91978d7](https://github.com/customerio/customerio-reactnative/commit/91978d78cb5b10c90caeb088af2fc4f2a15e952b))
+* updating ios sdk version in podspec ([1b1c26f](https://github.com/customerio/customerio-reactnative/commit/1b1c26fdedd14e837df2d117a6ab59a4916dc227))
+
+
+### Reverts
+
+* update package version ([e02e6e5](https://github.com/customerio/customerio-reactnative/commit/e02e6e55cc569f1434efa523781e6805c27d4e2b))
+
 ## [1.0.0-alpha.4](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2022-08-10)
 
 
