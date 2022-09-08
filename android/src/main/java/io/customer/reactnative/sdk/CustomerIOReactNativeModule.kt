@@ -21,7 +21,7 @@ class CustomerIOReactNativeModule(
     init {
         val isDebuggable = 0 != reactContext.applicationInfo.flags and
                 ApplicationInfo.FLAG_DEBUGGABLE
-        CustomerIOReactNativeInstance.setLogLevel(
+        CustomerIOReactNativeInstance.setReactNativeLogLevel(
             logLevel = if (isDebuggable) CioLogLevel.DEBUG else CioLogLevel.ERROR,
         )
     }

@@ -21,7 +21,7 @@ import io.customer.sdk.util.Logger
 object CustomerIOReactNativeInstance {
     internal val logger: Logger = ReactNativeConsoleLogger(CioLogLevel.ERROR)
 
-    fun setLogLevel(logLevel: CioLogLevel) {
+    fun setReactNativeLogLevel(logLevel: CioLogLevel) {
         (logger as ReactNativeConsoleLogger).logLevel = logLevel
     }
 
@@ -77,7 +77,7 @@ object CustomerIOReactNativeInstance {
         if (config == null) return this
 
         val logLevel = config.getProperty<Double>(Keys.Config.LOG_LEVEL).toCIOLogLevel()
-        setLogLevel(logLevel = logLevel)
+        setReactNativeLogLevel(logLevel = logLevel)
         setLogLevel(level = logLevel)
         config.getProperty<String>(Keys.Config.TRACKING_API_URL)?.takeIfNotBlank()?.let { value ->
             setTrackingApiURL(value)
