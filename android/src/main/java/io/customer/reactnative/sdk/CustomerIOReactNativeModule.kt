@@ -50,8 +50,7 @@ class CustomerIOReactNativeModule(
         sdkVersion: String? = null,
     ) {
         if (isInstanceValid()) {
-            logger.info("Customer.io instance already initialized")
-            return
+            logger.info("Customer.io instance already initialized, reinitializing")
         }
 
         val env = environment.toMap()
