@@ -1,3 +1,10 @@
+## [1.0.0-alpha.6](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.5...1.0.0-alpha.6) (2022-09-13)
+
+
+### Bug Fixes
+
+* initialized sdk from storage using context ([e3e609a](https://github.com/customerio/customerio-reactnative/commit/e3e609ae2fee6183050d993624bd4bd287a7ec97))
+
 ## [1.0.0-alpha.5](https://github.com/customerio/customerio-reactnative/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2022-09-01)
 
 
