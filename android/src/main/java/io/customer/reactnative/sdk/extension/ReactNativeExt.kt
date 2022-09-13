@@ -3,7 +3,7 @@ package io.customer.reactnative.sdk.extension
 import io.customer.reactnative.sdk.CustomerIOReactNativeInstance
 
 @Throws(IllegalArgumentException::class)
-internal inline fun <reified T> Map<String, Any>.getPropertyUnsafe(key: String): T {
+internal inline fun <reified T> Map<String, Any?>.getPropertyUnsafe(key: String): T {
     val property = get(key)
 
     if (property !is T) {
@@ -14,7 +14,7 @@ internal inline fun <reified T> Map<String, Any>.getPropertyUnsafe(key: String):
     return property
 }
 
-internal inline fun <reified T> Map<String, Any>.getProperty(key: String): T? = try {
+internal inline fun <reified T> Map<String, Any?>.getProperty(key: String): T? = try {
     getPropertyUnsafe(key)
 } catch (ex: IllegalArgumentException) {
     CustomerIOReactNativeInstance.logger.error(
@@ -24,7 +24,7 @@ internal inline fun <reified T> Map<String, Any>.getProperty(key: String): T? = 
 }
 
 @Throws(IllegalArgumentException::class)
-internal fun Map<String, Any>.getString(key: String): String = try {
+internal fun Map<String, Any?>.getString(key: String): String = try {
     getPropertyUnsafe<String>(key).takeIfNotBlank() ?: throw IllegalArgumentException(
         "Invalid value provided for $key, must not be blank"
     )
