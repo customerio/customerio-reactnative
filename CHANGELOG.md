@@ -1,3 +1,10 @@
+## [1.0.0-beta.2](https://github.com/customerio/customerio-reactnative/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-10-07)
+
+
+### Bug Fixes
+
+* updating gist dependency version ([9f8ac3f](https://github.com/customerio/customerio-reactnative/commit/9f8ac3f1d0ea0320d94f000a91b1bc482eba2b1d))
+
 ## 1.0.0-beta.1 (2022-09-15)
 
 
