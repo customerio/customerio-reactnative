@@ -1,3 +1,10 @@
+## [1.0.0-beta.3](https://github.com/customerio/customerio-reactnative/compare/1.0.0-beta.2...1.0.0-beta.3) (2022-10-19)
+
+
+### Bug Fixes
+
+* added support for android sdk 3.1.0 ([44a1b91](https://github.com/customerio/customerio-reactnative/commit/44a1b91c1ccdedecea526c09ff04654333137daa))
+
 ## [1.0.0-beta.2](https://github.com/customerio/customerio-reactnative/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-10-07)
 
 
