@@ -8,10 +8,9 @@ import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.*
 import io.customer.reactnative.sdk.storage.PreferencesStorage
-import io.customer.reactnative.sdk.util.ReactNativeConsoleLogger
 import io.customer.sdk.CustomerIO
+import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.data.store.Client
-import io.customer.sdk.util.CioLogLevel
 import io.customer.sdk.util.Logger
 
 /**
@@ -19,11 +18,8 @@ import io.customer.sdk.util.Logger
  * initialization challenges
  */
 object CustomerIOReactNativeInstance {
-    internal val logger: Logger = ReactNativeConsoleLogger(CioLogLevel.ERROR)
-
-    fun setReactNativeLogLevel(logLevel: CioLogLevel) {
-        (logger as ReactNativeConsoleLogger).logLevel = logLevel
-    }
+    private val logger: Logger
+        get() = CustomerIOShared.instance().diGraph.logger
 
     internal fun initializeSDKFromContext(context: Context) {
         if (CustomerIO.instanceOrNull() != null) return
@@ -77,7 +73,6 @@ object CustomerIOReactNativeInstance {
         if (config == null) return this
 
         val logLevel = config.getProperty<Double>(Keys.Config.LOG_LEVEL).toCIOLogLevel()
-        setReactNativeLogLevel(logLevel = logLevel)
         setLogLevel(level = logLevel)
         config.getProperty<String>(Keys.Config.TRACKING_API_URL)?.takeIfNotBlank()?.let { value ->
             setTrackingApiURL(value)
