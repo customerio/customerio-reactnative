@@ -121,7 +121,16 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
-ext.cioAndroidSDKVersion = getExtOrDefault('androidSDKVersion')
+ext.cioAndroidSDKVersion = getExtOrDefault('cioSDKVersionAndroid')
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.RequiresOptIn',
+                '-Xopt-in=io.customer.base.internal.InternalCustomerIOApi',
+        ]
+    }
+}
 
 apply from: "./cio-core.gradle"
 

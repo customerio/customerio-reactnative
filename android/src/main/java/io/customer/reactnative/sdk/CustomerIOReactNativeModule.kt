@@ -1,6 +1,5 @@
 package io.customer.reactnative.sdk
 
-import android.content.pm.ApplicationInfo
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -8,23 +7,16 @@ import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.storage.PreferencesStorage
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.util.CioLogLevel
+import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
-    private val logger: Logger = CustomerIOReactNativeInstance.logger
+    private val logger: Logger
+        get() = CustomerIOShared.instance().diGraph.logger
     private val preferencesStorage = PreferencesStorage(context = reactContext)
     private lateinit var customerIO: CustomerIO
-
-    init {
-        val isDebuggable = 0 != reactContext.applicationInfo.flags and
-                ApplicationInfo.FLAG_DEBUGGABLE
-        CustomerIOReactNativeInstance.setReactNativeLogLevel(
-            logLevel = if (isDebuggable) CioLogLevel.DEBUG else CioLogLevel.ERROR,
-        )
-    }
 
     override fun getName(): String {
         return MODULE_NAME
