@@ -2,11 +2,6 @@ import { NativeModules, Platform } from 'react-native';
 import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 var pjson = require('../package.json');
-import fs from 'fs';
-let expoPjson: any;
-if (fs.existsSync('node_modules/customerio-expo-plugin/package.json')) {
-  expoPjson = require('../../node_modules/customerio-expo-plugin/package.json');
-}
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -46,8 +41,8 @@ class CustomerIO {
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
-    let pversion = pjson.version ?? '';
-    let expoPversion = expoPjson ? expoPjson.version ?? '' : null;
+    const pversion = pjson.version ?? '';
+    const expoPversion = pjson.expoVersion ?? null;
     UserAgent.version = pversion;
     UserAgent.expoVersion = expoPversion;
     return CustomerioReactnative.initialize(env, config, UserAgent);
