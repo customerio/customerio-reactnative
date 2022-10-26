@@ -4,7 +4,7 @@
 
 RCT_EXTERN_METHOD(initialize: (nonnull NSDictionary *) env
                   configData : (NSDictionary *) configData
-                  pversion: (nonnull NSString *) pversion)
+                  packageConfig: (nonnull NSDictionary *) packageConfig)
 
 RCT_EXTERN_METHOD(identify: (nonnull NSString *) identifier
                   body : (NSDictionary *) body)
