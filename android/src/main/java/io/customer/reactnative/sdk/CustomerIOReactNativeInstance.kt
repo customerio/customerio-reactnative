@@ -30,7 +30,7 @@ object CustomerIOReactNativeInstance {
                 context = context,
                 environment = preferencesStorage.loadEnvironmentSettings(),
                 configuration = preferencesStorage.loadConfigurationSettings(),
-                sdkVersion = preferencesStorage.loadSDKVersion(),
+                packageConfig = preferencesStorage.loadPackageConfigurations(),
             )
             logger.info("Customer.io instance initialized successfully from preferences")
         } catch (ex: Exception) {
@@ -43,7 +43,7 @@ object CustomerIOReactNativeInstance {
         context: Context,
         environment: Map<String, Any?>,
         configuration: Map<String, Any?>?,
-        sdkVersion: String?,
+        packageConfig: Map<String, Any?>?,
     ): CustomerIO {
         val siteId = environment.getString(Keys.Environment.SITE_ID)
         val apiKey = environment.getString(Keys.Environment.API_KEY)
@@ -60,13 +60,30 @@ object CustomerIOReactNativeInstance {
             region = region,
             appContext = context.applicationContext as Application,
         ).apply {
-            setClient(Client.ReactNative(sdkVersion = sdkVersion ?: "n/a"))
+            setClient(client = getUserAgentClient(packageConfig = packageConfig))
             setupConfig(configuration)
             addCustomerIOModule(module = configureModuleMessagingPushFCM(configuration))
             if (!organizationId.isNullOrBlank()) {
                 addCustomerIOModule(module = configureModuleMessagingInApp(organizationId))
             }
         }.build()
+    }
+
+    private fun getUserAgentClient(packageConfig: Map<String, Any?>?): Client {
+        val sourceSDK = packageConfig?.getProperty<String>(
+            Keys.PackageConfig.SOURCE_SDK
+        )?.takeIfNotBlank()
+        val sourceSDKVersion = packageConfig?.getProperty<String>(
+            Keys.PackageConfig.SOURCE_SDK_VERSION
+        )?.takeIfNotBlank() ?: packageConfig?.getProperty<String>(
+            Keys.PackageConfig.SOURCE_SDK_VERSION_COMPAT
+        )?.takeIfNotBlank() ?: "n/a"
+        return when {
+            sourceSDK?.equals(
+                other = "expo", ignoreCase = true,
+            ) == true -> Client.Expo(sdkVersion = sourceSDKVersion)
+            else -> Client.ReactNative(sdkVersion = sourceSDKVersion)
+        }
     }
 
     private fun CustomerIO.Builder.setupConfig(config: Map<String, Any?>?): CustomerIO.Builder {
