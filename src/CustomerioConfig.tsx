@@ -26,7 +26,13 @@ class CustomerIOEnv {
     organizationId: string = ""
 }
 
+class PackageConfig {
+    version: string = ""
+    source: string = ""
+}
+
 export {
     CustomerioConfig,
-    CustomerIOEnv
+    CustomerIOEnv,
+    PackageConfig
 }
