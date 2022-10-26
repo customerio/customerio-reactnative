@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
+import { CustomerioConfig, CustomerIOEnv, PackageConfig } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 var pjson = require('../package.json');
 
@@ -37,7 +37,17 @@ class CustomerIO {
    static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
 
     let pversion = pjson.version ?? ""
-    return CustomerioReactnative.initialize(env, config, pversion)
+    let expoVersion = pjson.expoVersion ?? ""
+
+    const packageConfig = new PackageConfig()
+    packageConfig.source = "ReactNative"
+    packageConfig.version = pversion
+    if (expoVersion != "") {
+      packageConfig.source = "Expo"
+      packageConfig.version = expoVersion
+    }
+    
+    return CustomerioReactnative.initialize(env, config, packageConfig)
   }
 
     /**
