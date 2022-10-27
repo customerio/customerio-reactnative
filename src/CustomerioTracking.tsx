@@ -6,6 +6,7 @@ import {
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 import { expoVersion, version } from '../package.json';
+var pjson = require('../package.json');
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -50,6 +51,8 @@ class CustomerIO {
       packageConfig.version = expoVersion || '';
     }
 
+    console.warn(pjson);
+    console.warn(expoVersion);
     console.warn(packageConfig);
 
     return CustomerioReactnative.initialize(env, config, packageConfig);
