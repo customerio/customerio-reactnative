@@ -40,12 +40,11 @@ class CustomerIO {
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
-    let expoVersion = pjson.expoVersion ?? '1.2.3';
 
     const packageConfig = new PackageConfig();
 
     packageConfig.source = 'Expo';
-    packageConfig.version = expoVersion;
+    packageConfig.version = '1.2.3';
 
     console.warn(packageConfig);
 
