@@ -13,16 +13,6 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-async function importModule(moduleName: string): Promise<any> {
-  console.log('importing ', moduleName);
-  const importedModule = await import(moduleName);
-  console.log('\timported ...');
-  return importedModule;
-}
-
-let moduleName = '../../customerio-expo-plugin/package.json';
-let importedModule = await importModule(moduleName);
-console.log('importedModule', importedModule);
 /**
  * Get CustomerioReactnative native module
  */
@@ -46,20 +36,25 @@ class CustomerIO {
    * @param config set config for the package eg trackApiUrl etc
    * @returns
    */
-  static initialize(
+  static async initialize(
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
     let pversion = pjson.version ?? '';
-    let expoVersion = pjson.expoVersion ?? '';
 
     const packageConfig = new PackageConfig();
     packageConfig.source = 'ReactNative';
     packageConfig.version = pversion;
-    if (expoVersion != '') {
-      packageConfig.source = 'Expo';
-      packageConfig.version = expoVersion;
-    }
+
+    try {
+      var m = require('../../customerio-expo-plugin/src/version.ts');
+      if (m && m.LIB_VERSION) {
+        packageConfig.source = 'Expo';
+        packageConfig.version = m.LIB_VERSION;
+        console.log(`Expo plugin detected: V: ${m.LIB_VERSION}`);
+      }
+      // do stuff
+    } catch (ex) {}
 
     return CustomerioReactnative.initialize(env, config, packageConfig);
   }
