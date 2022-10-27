@@ -5,7 +5,6 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
-import fs from 'fs';
 var pjson = require('../package.json');
 
 const LINKING_ERROR =
@@ -14,11 +13,16 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const isNode =
-  typeof process !== 'undefined' &&
-  process.versions != null &&
-  process.versions.node != null;
+async function importModule(moduleName: string): Promise<any> {
+  console.log('importing ', moduleName);
+  const importedModule = await import(moduleName);
+  console.log('\timported ...');
+  return importedModule;
+}
 
+let moduleName = '../../customerio-expo-plugin/package.json';
+let importedModule = await importModule(moduleName);
+console.log('importedModule', importedModule);
 /**
  * Get CustomerioReactnative native module
  */
@@ -47,19 +51,14 @@ class CustomerIO {
     config: CustomerioConfig = new CustomerioConfig()
   ) {
     let pversion = pjson.version ?? '';
+    let expoVersion = pjson.expoVersion ?? '';
 
     const packageConfig = new PackageConfig();
     packageConfig.source = 'ReactNative';
     packageConfig.version = pversion;
-
-    if (isNode) {
-      if (fs.existsSync('node_modules/customerio-expo-plugin/package.json')) {
-        const expoPjson = require('../../node_modules/customerio-expo-plugin/package.json');
-        if (expoPjson) {
-          packageConfig.source = 'Expo';
-          packageConfig.version = expoPjson.version;
-        }
-      }
+    if (expoVersion != '') {
+      packageConfig.source = 'Expo';
+      packageConfig.version = expoVersion;
     }
 
     return CustomerioReactnative.initialize(env, config, packageConfig);
