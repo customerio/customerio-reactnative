@@ -40,8 +40,8 @@ class CustomerIO {
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
-    let pversion = pjson.version ?? '';
-    let expoVersion = pjson.expoVersion ?? '';
+    let pversion = pjson.version || '';
+    let expoVersion = pjson.expoVersion || '';
 
     const packageConfig = new PackageConfig();
     packageConfig.source = 'ReactNative';
