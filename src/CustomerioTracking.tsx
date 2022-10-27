@@ -47,7 +47,7 @@ class CustomerIO {
       packageConfig.version = expoVersion
     }
 
-    console.log(packageConfig);
+    console.warn(packageConfig);
 
     return CustomerioReactnative.initialize(env, config, packageConfig)
   }
