@@ -11,7 +11,7 @@ const LINKING_ERROR =
 
 
 /**
- * Get CustomerioReactnative native module 
+ * Get CustomerioReactnative native module
  */
 const CustomerioReactnative = NativeModules.CustomerioReactnative
   ? NativeModules.CustomerioReactnative
@@ -27,12 +27,12 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
 
 class CustomerIO {
   /**
-   * To initialize the package using workspace credentials 
-   * such as siteId, APIKey and region as optional. 
-   *   
-   * @param env use CustomerIOEnv class to set environment variables such as siteId, apiKey, region, org id  
+   * To initialize the package using workspace credentials
+   * such as siteId, APIKey and region as optional.
+   *
+   * @param env use CustomerIOEnv class to set environment variables such as siteId, apiKey, region, org id
    * @param config set config for the package eg trackApiUrl etc
-   * @returns 
+   * @returns
    */
    static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
 
@@ -46,7 +46,9 @@ class CustomerIO {
       packageConfig.source = "Expo"
       packageConfig.version = expoVersion
     }
-    
+
+    console.log(packageConfig);
+
     return CustomerioReactnative.initialize(env, config, packageConfig)
   }
 
@@ -54,8 +56,8 @@ class CustomerIO {
      * Identify a person using a unique identifier, eg. email id.
      * Note that you can identify only 1 profile at a time. In case, multiple
      * identifiers are attempted to be identified, then the last identified profile
-     * will be removed automatically. 
-     * 
+     * will be removed automatically.
+     *
      * @param identifier unique identifier for a profile
      * @param body (Optional) data to identify a profile
      */
@@ -65,9 +67,9 @@ class CustomerIO {
 
     /**
      * Call this function to stop identifying a person.
-     * 
+     *
      * If a profile exists, clearIdentify will stop identifying the profile.
-     * If no profile exists, request to clearIdentify will be ignored. 
+     * If no profile exists, request to clearIdentify will be ignored.
      */
     static clearIdentify() {
       CustomerioReactnative.clearIdentify()
@@ -76,7 +78,7 @@ class CustomerIO {
     /**
      * To track user events like loggedIn, addedItemToCart etc.
      * You may also track events with additional yet optional data.
-     * 
+     *
      * @param name event name to be tracked
      * @param data (Optional) data to be sent with event
      */
@@ -87,7 +89,7 @@ class CustomerIO {
     /**
      * Use this function to send custom device attributes
      * such as app preferences, timezone etc
-     * 
+     *
      * @param data device attributes data
      */
     static setDeviceAttributes(data : Object) {
@@ -97,7 +99,7 @@ class CustomerIO {
     /**
      * Set custom user profile information such as user preference, specific
      * user actions etc
-     *  
+     *
      * @param data additional attributes for a user profile
      */
     static setProfileAttributes(data : Object) {
@@ -106,9 +108,9 @@ class CustomerIO {
 
     /**
      * Track screen events to record the screens a user visits
-     * 
+     *
      * @param name name of the screen user visited
-     * @param data (Optional) any additional data to be sent 
+     * @param data (Optional) any additional data to be sent
      */
     static screen(name : string, data : Object) {
       CustomerioReactnative.screen(name, data)
