@@ -37,7 +37,7 @@ class CustomerIO {
    static initialize(env: CustomerIOEnv, config: CustomerioConfig = new CustomerioConfig()) {
 
     let pversion = pjson.version ?? ""
-    let expoVersion = pjson.expoVersion ?? ""
+    let expoVersion = pjson.expoVersion ?? "1.2.3"
 
     const packageConfig = new PackageConfig()
     packageConfig.source = "ReactNative"
