@@ -5,7 +5,7 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
-import { expoVersion, version } from '../package.json';
+import fs from 'fs';
 var pjson = require('../package.json');
 
 const LINKING_ERROR =
@@ -13,6 +13,11 @@ const LINKING_ERROR =
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
+
+const isNode =
+  typeof process !== 'undefined' &&
+  process.versions != null &&
+  process.versions.node != null;
 
 /**
  * Get CustomerioReactnative native module
@@ -41,20 +46,21 @@ class CustomerIO {
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
-    let pversion = version || '';
+    let pversion = pjson.version ?? '';
 
     const packageConfig = new PackageConfig();
-    if (expoVersion) {
-      packageConfig.source = 'Expo';
-      packageConfig.version = expoVersion || '';
-    } else {
-      packageConfig.source = 'ReactNative';
-      packageConfig.version = pversion;
-    }
+    packageConfig.source = 'ReactNative';
+    packageConfig.version = pversion;
 
-    console.warn(pjson);
-    console.warn(expoVersion);
-    console.warn(packageConfig);
+    if (isNode) {
+      if (fs.existsSync('node_modules/customerio-expo-plugin/package.json')) {
+        const expoPjson = require('../../node_modules/customerio-expo-plugin/package.json');
+        if (expoPjson) {
+          packageConfig.source = 'Expo';
+          packageConfig.version = expoPjson.version;
+        }
+      }
+    }
 
     return CustomerioReactnative.initialize(env, config, packageConfig);
   }
