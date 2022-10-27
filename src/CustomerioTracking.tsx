@@ -44,11 +44,12 @@ class CustomerIO {
     let pversion = version || '';
 
     const packageConfig = new PackageConfig();
-    packageConfig.source = 'ReactNative';
-    packageConfig.version = pversion;
     if (expoVersion) {
       packageConfig.source = 'Expo';
       packageConfig.version = expoVersion || '';
+    } else {
+      packageConfig.source = 'ReactNative';
+      packageConfig.version = pversion;
     }
 
     console.warn(pjson);
