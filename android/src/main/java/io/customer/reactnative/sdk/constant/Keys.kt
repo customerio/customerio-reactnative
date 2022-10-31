@@ -16,4 +16,10 @@ internal object Keys {
         const val BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS = "backgroundQueueMinNumberOfTasks"
         const val BACKGROUND_QUEUE_SECONDS_DELAY = "backgroundQueueSecondsDelay"
     }
+
+    object PackageConfig {
+        const val SOURCE_SDK = "source"
+        const val SOURCE_SDK_VERSION = "version"
+        const val SOURCE_SDK_VERSION_COMPAT = "sdkVersion"
+    }
 }

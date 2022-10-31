@@ -39,7 +39,7 @@ class CustomerIOReactNativeModule(
     fun initialize(
         environment: ReadableMap,
         configuration: ReadableMap? = null,
-        sdkVersion: String? = null,
+        packageConfiguration: ReadableMap? = null,
     ) {
         if (isInstanceValid()) {
             logger.info("Customer.io instance already initialized, reinitializing")
@@ -47,18 +47,19 @@ class CustomerIOReactNativeModule(
 
         val env = environment.toMap()
         val config = configuration?.toMap()
+        val packageConfig = packageConfiguration?.toMap()
 
         preferencesStorage.saveSettings(
             environment = env,
             configuration = config,
-            sdkVersion = sdkVersion
+            packageConfig = packageConfig
         )
         try {
             customerIO = CustomerIOReactNativeInstance.initialize(
                 context = reactApplicationContext,
                 environment = env,
                 configuration = config,
-                sdkVersion = sdkVersion,
+                packageConfig = packageConfig,
             )
             logger.info("Customer.io instance initialized successfully from app")
         } catch (ex: Exception) {

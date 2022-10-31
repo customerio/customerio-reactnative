@@ -23,6 +23,9 @@ class PreferencesStorage(context: Context) {
             BACKGROUND_QUEUE_SECONDS_DELAY,
         )
     }
+    private val packageConfigKeys = with(Keys.PackageConfig) {
+        arrayOf(SOURCE_SDK, SOURCE_SDK_VERSION)
+    }
 
     init {
         sharedPref = context.getSharedPreferences(
@@ -33,7 +36,7 @@ class PreferencesStorage(context: Context) {
     fun saveSettings(
         environment: Map<String, Any?>,
         configuration: Map<String, Any?>?,
-        sdkVersion: String?,
+        packageConfig: Map<String, Any?>?,
     ) = with(sharedPref.edit()) {
         for (key in environmentKeys) {
             putString(key, environment[key]?.toString()?.encodeToBase64())
@@ -43,7 +46,11 @@ class PreferencesStorage(context: Context) {
                 putString(key, configuration[key]?.toString()?.encodeToBase64())
             }
         }
-        putString(SDK_VERSION_KEY, sdkVersion?.encodeToBase64())
+        if (packageConfig != null) {
+            for (key in packageConfigKeys) {
+                putString(key, packageConfig[key]?.toString()?.encodeToBase64())
+            }
+        }
         apply()
     }
 
@@ -62,7 +69,10 @@ class PreferencesStorage(context: Context) {
         return map
     }
 
-    fun loadSDKVersion() = sharedPref.getString(SDK_VERSION_KEY, null)?.decodeFromBase64()
+    fun loadPackageConfigurations() = loadSettings(
+        keys = packageConfigKeys.plus(Keys.PackageConfig.SOURCE_SDK_VERSION_COMPAT),
+    )
+
     fun loadEnvironmentSettings() = loadSettings(environmentKeys)
     fun loadConfigurationSettings() = loadSettings(configKeys) { key, value ->
         with(Keys.Config) {
@@ -81,8 +91,6 @@ class PreferencesStorage(context: Context) {
     }
 
     companion object {
-        private const val SDK_VERSION_KEY = "sdkVersion"
-
         private fun String.encodeToBase64(): String {
             return Base64.encodeToString(toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
         }
