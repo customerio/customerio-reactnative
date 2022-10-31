@@ -1,3 +1,10 @@
+### [1.0.1-alpha.1](https://github.com/customerio/customerio-reactnative/compare/1.0.0...1.0.1-alpha.1) (2022-10-31)
+
+
+### Bug Fixes
+
+* support for expo client ([b641fd8](https://github.com/customerio/customerio-reactnative/commit/b641fd8b94ab023c8a3577dd47ebdf02e431a4d4))
+
 ## 1.0.0 (2022-10-24)
 
 
