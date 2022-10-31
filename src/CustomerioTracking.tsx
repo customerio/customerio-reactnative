@@ -36,25 +36,20 @@ class CustomerIO {
    * @param config set config for the package eg trackApiUrl etc
    * @returns
    */
-  static async initialize(
+  static initialize(
     env: CustomerIOEnv,
     config: CustomerioConfig = new CustomerioConfig()
   ) {
     let pversion = pjson.version ?? '';
+    let expoVersion = pjson.expoVersion ?? '';
 
     const packageConfig = new PackageConfig();
     packageConfig.source = 'ReactNative';
     packageConfig.version = pversion;
-
-    try {
-      var m = require('../../customerio-expo-plugin/src/version.ts');
-      if (m && m.LIB_VERSION) {
-        packageConfig.source = 'Expo';
-        packageConfig.version = m.LIB_VERSION;
-        console.log(`Expo plugin detected: V: ${m.LIB_VERSION}`);
-      }
-      // do stuff
-    } catch (ex) {}
+    if (expoVersion != '') {
+      packageConfig.source = 'Expo';
+      packageConfig.version = expoVersion;
+    }
 
     return CustomerioReactnative.initialize(env, config, packageConfig);
   }
