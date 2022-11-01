@@ -90,7 +90,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
 # More information
 
-See our complete SDK documentation at [https://customer.io/docs/sdk/react-native/](https://customer.io/docs/sdk/ios/)
+See our complete SDK documentation at [https://customer.io/docs/sdk/react-native/](https://customer.io/docs/sdk/react-native/)
 
 # Contributing
 
