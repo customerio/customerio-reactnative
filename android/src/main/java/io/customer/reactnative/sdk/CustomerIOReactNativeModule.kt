@@ -5,7 +5,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.extension.toMap
-import io.customer.reactnative.sdk.storage.PreferencesStorage
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
@@ -14,8 +13,7 @@ class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
-        get() = CustomerIOShared.instance().diGraph.logger
-    private val preferencesStorage = PreferencesStorage(context = reactContext)
+        get() = CustomerIOShared.instance().diStaticGraph.logger
     private lateinit var customerIO: CustomerIO
 
     override fun getName(): String {
@@ -49,11 +47,6 @@ class CustomerIOReactNativeModule(
         val config = configuration?.toMap()
         val packageConfig = packageConfiguration?.toMap()
 
-        preferencesStorage.saveSettings(
-            environment = env,
-            configuration = config,
-            packageConfig = packageConfig
-        )
         try {
             customerIO = CustomerIOReactNativeInstance.initialize(
                 context = reactApplicationContext,
