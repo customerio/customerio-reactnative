@@ -21,7 +21,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 1. Open your terminal and run `npm install customerio-reactnative`
 1. Add iOS dependencies to your project by going to the iOS subfolder and running `pod install`. 
 
-   Make sure your deployment target is set to at least 13.0. Before you perform this step, you may want to update your podfile to support [push notifications](/docs/sdk/react-native/push/#install-the-push-package) and [rich push](/docs/sdk/react-native/rich-push/#rich-push) respectively.
+   Make sure your deployment target is set to at least 13.0. Before you perform this step, you may want to update your podfile to support [APNs and/or FCM push notifications](https://customer.io/docs/sdk/react-native/push/#install-the-push-package) and [rich push](https://customer.io/docs/sdk/react-native/rich-push/#rich-push) respectively.
 
 1. For Android, add the following lines to the project-level `android/build.gradle` file:  
       ```groovy
@@ -68,7 +68,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
 1. Add an import statement to your project for the react native library. We haven't included it below, but you can import `CioLogLevel` to set log outputs to something other than `error`; this may help you debug your application.
    ```javascript 
-   import { CustomerIO, CustomerioConfig, CustomerIOEnv, Region } from ‘customerio-reactnative’;
+   import { CustomerIO, CustomerioConfig, CustomerIOEnv, CioLogLevel, Region } from ‘customerio-reactnative’;
    ```
 1. In `useEffect`, initialize the package with your `CustomerioConfig` options and `CustomerIOEnv` variables. You can find your Site ID and API Key credentials—or create new ones—under *Data & Integrations* > *Integrations* > *Customer.io API*:
    ```javascript
@@ -94,9 +94,9 @@ See our complete SDK documentation at [https://customer.io/docs/sdk/react-native
 
 # Contributing
 
-Thanks for taking an interest in our project! We welcome your contributions. Check out [our development instructions](docs/dev-notes/DEVELOPMENT.md) to get your environment set up and start contributing.
+Thanks for taking an interest in our project! We welcome your contributions.
 
-> **Note**: We value an open, welcoming, diverse, inclusive, and healthy community for this project. We expect all  contributors to follow our [code of conduct](CODE_OF_CONDUCT.md). 
+We value an open, welcoming, diverse, inclusive, and healthy community for this project. We expect all  contributors to follow our [code of conduct](CODE_OF_CONDUCT.md). 
 
 # License
 
