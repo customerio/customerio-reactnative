@@ -7,7 +7,7 @@
   "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
-  "expoVersion": "",
+  "expoVersion": "1.0.0-alpha.3",
   "files": [
     "src",
     "lib",
@@ -29,7 +29,8 @@
     "prepare": "bob build",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods"
+    "bootstrap": "yarn example && yarn && yarn pods",
+    "postinstall": "node src/postInstall.js"
   },
   "keywords": [
     "react-native",
@@ -123,5 +124,8 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "customerio-expo-plugin": "^1.0.0-alpha.2"
   }
 }
