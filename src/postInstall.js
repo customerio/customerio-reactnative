@@ -29,14 +29,14 @@ if (fs.existsSync(expoPJsonFile)) {
     if (existatch && !missingMmatch) {
       const index = lines.findIndex((line) => expoVersionRegex.test(line));
 
-      // set expoVersion to current version in expo plugin package
+      // set react native SDK expoVersion to current version in expo plugin package
       const content = [
         ...lines.slice(0, index),
         `  ${expoVersionSnippet},`,
         ...lines.slice(index + 1),
       ];
 
-      // save package.json file
+      // save react native SDK package.json file
       fs.writeFileSync(rnPJsonFile, content.join('\n'), 'utf8');
     }
   } catch (error) {} // do nothing if this operation fails
