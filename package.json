@@ -124,8 +124,5 @@
         }
       ]
     ]
-  },
-  "dependencies": {
-    "customerio-expo-plugin": "^1.0.0-alpha.2"
   }
 }
