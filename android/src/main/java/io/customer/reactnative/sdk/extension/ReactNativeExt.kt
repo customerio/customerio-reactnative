@@ -17,7 +17,7 @@ internal inline fun <reified T> Map<String, Any?>.getPropertyUnsafe(key: String)
 internal inline fun <reified T> Map<String, Any?>.getProperty(key: String): T? = try {
     getPropertyUnsafe(key)
 } catch (ex: IllegalArgumentException) {
-    CustomerIOShared.instance().diGraph.logger.error(
+    CustomerIOShared.instance().diStaticGraph.logger.error(
         ex.message ?: "getProperty($key) -> IllegalArgumentException"
     )
     null
@@ -29,7 +29,7 @@ internal fun Map<String, Any?>.getString(key: String): String = try {
         "Invalid value provided for $key, must not be blank"
     )
 } catch (ex: IllegalArgumentException) {
-    CustomerIOShared.instance().diGraph.logger.error(
+    CustomerIOShared.instance().diStaticGraph.logger.error(
         ex.message ?: "getString($key) -> IllegalArgumentException"
     )
     throw ex

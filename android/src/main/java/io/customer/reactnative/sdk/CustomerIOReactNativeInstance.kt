@@ -7,37 +7,14 @@ import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.*
-import io.customer.reactnative.sdk.storage.PreferencesStorage
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.data.store.Client
-import io.customer.sdk.util.Logger
 
 /**
  * Static property holder for ReactNative package to overcome SDK
  * initialization challenges
  */
 object CustomerIOReactNativeInstance {
-    private val logger: Logger
-        get() = CustomerIOShared.instance().diGraph.logger
-
-    internal fun initializeSDKFromContext(context: Context) {
-        if (CustomerIO.instanceOrNull() != null) return
-
-        try {
-            val preferencesStorage = PreferencesStorage(context = context)
-            initialize(
-                context = context,
-                environment = preferencesStorage.loadEnvironmentSettings(),
-                configuration = preferencesStorage.loadConfigurationSettings(),
-                packageConfig = preferencesStorage.loadPackageConfigurations(),
-            )
-            logger.info("Customer.io instance initialized successfully from preferences")
-        } catch (ex: Exception) {
-            logger.error("Failed to initialize Customer.io instance from preferences, ${ex.message}")
-        }
-    }
-
     @Throws(IllegalArgumentException::class)
     internal fun initialize(
         context: Context,

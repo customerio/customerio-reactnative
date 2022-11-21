@@ -8,7 +8,6 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.1'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -122,6 +121,15 @@ repositories {
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
 ext.cioAndroidSDKVersion = getExtOrDefault('cioSDKVersionAndroid')
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-Xopt-in=kotlin.RequiresOptIn',
+                '-Xopt-in=io.customer.base.internal.InternalCustomerIOApi',
+        ]
+    }
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
