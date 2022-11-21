@@ -5,7 +5,7 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
-var pjson = require('../package.json');
+var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
