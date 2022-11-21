@@ -1,3 +1,14 @@
+### [1.0.1-alpha.2](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.1...1.0.1-alpha.2) (2022-11-21)
+
+
+### Bug Fixes
+
+* added support for android sdk 3.2.0 ([c0407be](https://github.com/customerio/customerio-reactnative/commit/c0407bed6df4582be8646ed44662d80a5868ad17))
+* for test case failure due to file path ([ce43198](https://github.com/customerio/customerio-reactnative/commit/ce431983f45dcb0503e248a36393fff6fb12db15))
+* ios sdk latest version ([66c4607](https://github.com/customerio/customerio-reactnative/commit/66c46075160001f30da8097062cd85898dd0c50d))
+* updated ios sdk to 1.2.2 ([6605d56](https://github.com/customerio/customerio-reactnative/commit/6605d563fe28fae7464d336c2673bb8620fdba5b))
+* updating to latest iOS SDK version ([a9c90f0](https://github.com/customerio/customerio-reactnative/commit/a9c90f0358e1500103a474ea93e912bd2b7d2804))
+
 ### [1.0.1-alpha.1](https://github.com/customerio/customerio-reactnative/compare/1.0.0...1.0.1-alpha.1) (2022-10-31)
 
 
