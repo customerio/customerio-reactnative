@@ -22,10 +22,6 @@
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
-  "exports": {
-    ".": "./lib/commonjs/index.js",
-    "./postinstall": "./lib/commonjs/helpers/runPostInstall.js"
-  },
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
