@@ -1,13 +1,14 @@
 const fs = require('fs');
+const ex = require('customerio-expo-plugin/version');
 
 // set package.json file paths
 const expoPJsonFile = `${__dirname}/../../customerio-expo-plugin/package.json`;
 const rnPJsonFile = `${__dirname}/../package.json`;
 
-// check if expo plugin is installed
-if (fs.existsSync(expoPJsonFile)) {
-  // try and catch to revent errors
-  try {
+// try and catch to revent errors
+try {
+  // check if expo plugin is installed
+  if (fs.existsSync(expoPJsonFile)) {
     // read package.json file for current package
     const rnPJson = fs.readFileSync(rnPJsonFile, 'utf8');
 
@@ -18,5 +19,5 @@ if (fs.existsSync(expoPJsonFile)) {
     rnPackage.expoVersion = expoPJson.version;
 
     fs.writeFileSync(rnPJsonFile, JSON.stringify(rnPackage, null, 2));
-  } catch (error) {} // do nothing if this operation fails
-}
+  }
+} catch (error) {} // do nothing if this operation fails
