@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+const ex = require('customerio-expo-plugin');
 // set package.json file paths
 const expoPJsonFile = `${__dirname}/../../customerio-expo-plugin/package.json`;
 const rnPJsonFile = `${__dirname}/../package.json`;
