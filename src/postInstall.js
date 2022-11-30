@@ -1,3 +1,3 @@
-const ph = require('customerio-expo-plugin//version');
+const ph = require('customerio-expo-plugin/postinstall');
 
-console.log(ph);
+ph.runPostInstall();
