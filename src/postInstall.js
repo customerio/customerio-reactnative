@@ -1,5 +1,5 @@
 const postInstall = `${__dirname}/../../customerio-expo-plugin/src/postInstallHelper.js`;
 
-const ph = require('expo-build-properties');
+const ph = require(postInstall);
 
-// ph.runPostInstall();
+ph.runPostInstall();
