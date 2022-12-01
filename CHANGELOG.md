@@ -1,3 +1,10 @@
+### [1.0.1-alpha.3](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.2...1.0.1-alpha.3) (2022-12-01)
+
+
+### Bug Fixes
+
+* ios and android sdk version update ([28e9ad3](https://github.com/customerio/customerio-reactnative/commit/28e9ad37e93da5d29745068ae3a722d3a32c8460))
+
 ### [1.0.1-alpha.2](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.1...1.0.1-alpha.2) (2022-11-21)
 
 
