@@ -1,3 +1,19 @@
+## [2.0.0-alpha.1](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.3...2.0.0-alpha.1) (2022-12-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* bumped ios version to 2.0.0
+
+### Features
+
+* expo user agent ([#49](https://github.com/customerio/customerio-reactnative/issues/49)) ([377300c](https://github.com/customerio/customerio-reactnative/commit/377300c76d1e8856908c0b231bb8cc2c4b51f97c))
+
+
+### Bug Fixes
+
+* bumped ios version to 2.0.0 ([95f74b9](https://github.com/customerio/customerio-reactnative/commit/95f74b9c5e25e7d60e688de11459c83e30b50ae6))
+
 ### [1.0.1-alpha.3](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.2...1.0.1-alpha.3) (2022-12-01)
 
 
