@@ -24,6 +24,7 @@ jobs:
         run: ./scripts/deploy-code.sh 
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }} # true or false boolean if a prerelease github release
 
       - name: Notify team of successful deployment 
         uses: slackapi/slack-github-action@v1.18.0        

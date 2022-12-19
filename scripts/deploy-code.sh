@@ -11,6 +11,14 @@ set -e
 # version in package.json has already been updated when the git tag was made. 
 # we just need to push. 
 
+if [[ "$IS_PRERELEASE" == "" ]]; then # makes sure it's determined if prerelease or not. 
+    echo "Forgot to set environment variable IS_PRERELEASE. Value is \"false\" if deploying to production. Otherwise, set to \"true\"."
+    echo "Set variable with command (yes, with the double quotes around the variable value): export NAME_OF_VAR=\"foo\""
+    exit 1
+fi
+
+echo "Deploying npm package. Is pre-release: $IS_PRERELEASE"
+
 if [[ "$NPM_TOKEN" == "" ]]; then # makes sure auth token is set. 
     echo "Forgot to set environment variable NPM_TOKEN (value found in 1password for Ami npm account). Set it, then try again."
     echo "Set variable with command (yes, with the double quotes around the variable value): export NAME_OF_VAR=\"foo\""
@@ -38,6 +46,15 @@ echo "Compiling typescript code so it's ready to be uploaded"
 yarn typescript
 echo "compiling code done"
 
-echo "Publishing npm package...."
-npm publish 
+# npmjs registry dist-tag for the release. 
+# "latest" is usually used for production. You can use whatever other value that you want for non-production builds. 
+# https://docs.npmjs.com/cli/v9/commands/npm-dist-tag
+PUBLISH_DIST_TAG="latest"
+if [[ "$IS_PRERELEASE" == "true" || "$IS_PRERELEASE" == true ]]; then 
+    PUBLISH_DIST_TAG="next" # common pattern to see for npm packages is to use next for non-production builds. 
+fi 
+
+echo "Publishing npm package... with tag: $PUBLISH_DIST_TAG"
+
+npm publish --tag $PUBLISH_DIST_TAG
 echo "Publishing npm package complete"
