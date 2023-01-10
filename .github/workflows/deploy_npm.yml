@@ -36,7 +36,7 @@ jobs:
               "text": "ReactNative SDK deployed to npm",
               "username": "ReactNative deployment bot",
               "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
-              "channel": "#squad-mobile",
+              "channel": "#mobile-deployments",
               "blocks": [
                 {
                   "type": "section",
@@ -71,7 +71,7 @@ jobs:
               "text": "ReactNative SDK deployment failure",
               "username": "ReactNative deployment bot",
               "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
-              "channel": "#squad-mobile",
+              "channel": "#mobile-deployments",
               "blocks": [
                 {
                   "type": "section",
