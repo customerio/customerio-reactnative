@@ -51,6 +51,12 @@ class CustomerIO {
       packageConfig.version = expoVersion;
     }
 
+    if (env.organizationId && env.organizationId != '') {
+      console.warn('{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}');
+      config.enableInApp = true;
+      console.warn('{config.enableInApp} set to {true} because {organizationId} was added');
+    }
+
     return CustomerioReactnative.initialize(env, config, packageConfig);
   }
 
