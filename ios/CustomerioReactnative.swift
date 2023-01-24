@@ -39,10 +39,20 @@ class CustomerioReactnative: NSObject {
             if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
                 config.trackingApiUrl = trackingApiUrl
             }
+            if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
+                // TODO: - Uncomment the following code once iOS SDK has feature to enable in-app using siteId
+                // config.isEnableInApp = true
+            }
         }
+        
+        /*
+         organizationId will be removed in future releases. To enable in-app use config option
+         config.isEnableInApp = true
+         */
         if organizationId != "" {
             initializeInApp(organizationId: organizationId)
         }
+        
     }
     
     /**
