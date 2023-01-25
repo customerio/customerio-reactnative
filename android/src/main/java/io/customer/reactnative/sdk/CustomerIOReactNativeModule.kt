@@ -11,6 +11,7 @@ import io.customer.sdk.util.Logger
 
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
+    private val inAppEventListener: RNCIOInAppEventListener,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
         get() = CustomerIOShared.instance().diStaticGraph.logger
@@ -53,6 +54,7 @@ class CustomerIOReactNativeModule(
                 environment = env,
                 configuration = config,
                 packageConfig = packageConfig,
+                inAppEventListener = inAppEventListener,
             )
             logger.info("Customer.io instance initialized successfully from app")
         } catch (ex: Exception) {

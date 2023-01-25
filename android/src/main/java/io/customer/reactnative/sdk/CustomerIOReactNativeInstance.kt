@@ -2,7 +2,9 @@ package io.customer.reactnative.sdk
 
 import android.app.Application
 import android.content.Context
+import io.customer.messaginginapp.MessagingInAppModuleConfig
 import io.customer.messaginginapp.ModuleMessagingInApp
+import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.reactnative.sdk.constant.Keys
@@ -21,6 +23,7 @@ object CustomerIOReactNativeInstance {
         environment: Map<String, Any?>,
         configuration: Map<String, Any?>?,
         packageConfig: Map<String, Any?>?,
+        inAppEventListener: InAppEventListener? = null,
     ): CustomerIO {
         val siteId = environment.getString(Keys.Environment.SITE_ID)
         val apiKey = environment.getString(Keys.Environment.API_KEY)
@@ -41,7 +44,12 @@ object CustomerIOReactNativeInstance {
             setupConfig(configuration)
             addCustomerIOModule(module = configureModuleMessagingPushFCM(configuration))
             if (!organizationId.isNullOrBlank()) {
-                addCustomerIOModule(module = configureModuleMessagingInApp(organizationId))
+                addCustomerIOModule(
+                    module = configureModuleMessagingInApp(
+                        organizationId = organizationId,
+                        inAppEventListener = inAppEventListener,
+                    ),
+                )
             }
         }.build()
     }
@@ -93,7 +101,13 @@ object CustomerIOReactNativeInstance {
         )
     }
 
-    private fun configureModuleMessagingInApp(organizationId: String) = ModuleMessagingInApp(
+    private fun configureModuleMessagingInApp(
+        organizationId: String,
+        inAppEventListener: InAppEventListener? = null,
+    ) = ModuleMessagingInApp(
         organizationId = organizationId,
+        config = MessagingInAppModuleConfig.Builder().apply {
+            inAppEventListener?.let { listener -> setEventListener(listener) }
+        }.build(),
     )
 }

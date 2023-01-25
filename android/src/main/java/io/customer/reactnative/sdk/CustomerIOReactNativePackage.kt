@@ -7,8 +7,13 @@ import com.facebook.react.uimanager.ViewManager
 
 class CustomerIOReactNativePackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+        val inAppEventListener = RNCIOInAppEventListener(reactContext)
         return listOf(
-            CustomerIOReactNativeModule(reactContext),
+            inAppEventListener,
+            CustomerIOReactNativeModule(
+                reactContext = reactContext,
+                inAppEventListener = inAppEventListener,
+            ),
         )
     }
 

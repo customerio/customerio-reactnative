@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 import {
   CustomerioConfig,
   CustomerIOEnv,
@@ -26,6 +26,21 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
         },
       }
     );
+
+
+/**
+ * Get CustomerIOInAppEventListener native module
+ */
+const CustomerIOInAppEventListener = NativeModules.CustomerIOInAppEventListener
+  ? NativeModules.CustomerIOInAppEventListener
+  : new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(LINKING_ERROR);
+      },
+    }
+  );
 
 class CustomerIO {
   /**
@@ -117,6 +132,19 @@ class CustomerIO {
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
   }
+
+  static inAppMessaging(): InAppMessaging {
+    return new InAppMessaging();
+  }
 }
+
+class InAppMessaging {
+  eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
+  eventName: string = 'InAppEventListener';
+
+  registerEventsListener(listener: any) {
+    return this.eventEmitter.addListener('InAppEventListener', listener);
+  }
+};
 
 export { CustomerIO, Region };
