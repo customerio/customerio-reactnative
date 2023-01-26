@@ -43,6 +43,7 @@ class CustomerioReactnative: NSObject {
         if organizationId != "" {
             initializeInApp(organizationId: organizationId)
         }
+        tellJS()
     }
     
     /**
@@ -120,6 +121,12 @@ class CustomerioReactnative: NSObject {
         DispatchQueue.main.async {
             MessagingInApp.shared.initialize(organizationId: organizationId)
         }
+    }
+    
+    // In-app messages
+    func tellJS(){
+        print("If you see this message that means this function have been called")
+        CustomerioInAppMessaging.shared?.sendEvent(withName: "messageShown", body: ["hello buddy"])
     }
 }
 

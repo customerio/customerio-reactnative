@@ -8,7 +8,6 @@ class CustomerioInAppMessaging: RCTEventEmitter {
         super.init()
         CustomerioInAppMessaging.shared = self
     }
-
     /**
      * Overriding  supportedEvents method to return an array of supported event names
      */
