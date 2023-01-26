@@ -8,4 +8,13 @@ class CustomerioInAppMessaging: RCTEventEmitter {
         super.init()
         CustomerioInAppMessaging.shared = self
     }
+
+    open override func supportedEvents() -> [String]! {
+        return [
+            "messageShown",
+            "messageDismissed",
+            "errorWithMessage",
+            "errorWithMessage"
+        ]
+    }
 }
