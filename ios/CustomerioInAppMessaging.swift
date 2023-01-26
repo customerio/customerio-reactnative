@@ -9,6 +9,9 @@ class CustomerioInAppMessaging: RCTEventEmitter {
         CustomerioInAppMessaging.shared = self
     }
 
+    /**
+     * Overriding  supportedEvents method to return an array of supported event names
+     */
     open override func supportedEvents() -> [String]! {
         return [
             "messageShown",
