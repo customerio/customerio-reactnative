@@ -118,7 +118,7 @@ class CustomerioReactnative: NSObject {
      */
     @objc(registerDeviceToken:)
     func registerDeviceToken(token: String) -> Void {
-        CustomerIO.shared.registerDeviceToken(token: token)
+        CustomerIO.shared.registerDeviceToken(token)
     }
     /**
         Intialize in-app using customerio package
