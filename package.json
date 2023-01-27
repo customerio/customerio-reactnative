@@ -26,13 +26,12 @@
     "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "npx eslint --fix \"**/*.{js,ts,tsx}\"",
-    "lint-no-failure": "npx eslint --fix \"**/*.{js,ts,tsx}\" || true",
     "prepare": "bob build",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods",
     "postinstall": "node src/postInstall.js && npx lefthook install",
-    "format": "npx prettier --write \"src/**/*.tsx\" && npm run lint-no-failure"
+    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
   "keywords": [
     "react-native",
