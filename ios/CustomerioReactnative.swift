@@ -115,7 +115,7 @@ class CustomerioReactnative: NSObject {
     
     @objc(registerDeviceToken:)
     func registerDeviceToken(token: String) -> Void {
-        print("If you see this it means I am called - \(token)")
+        CustomerIO.shared.registerDeviceToken(token: token)
     }
     /**
         Intialize in-app using customerio package
