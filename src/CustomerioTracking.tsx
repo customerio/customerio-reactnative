@@ -125,6 +125,9 @@ class CustomerIO {
    * @param token device token (iOS/Android)
    */
   static registerDeviceToken(token: string) {
+    if (token == null) {
+      return
+    }
     CustomerioReactnative.registerDeviceToken(token)
   }
 }
