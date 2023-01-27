@@ -30,7 +30,8 @@
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods",
-    "postinstall": "node src/postInstall.js"
+    "postinstall": "node src/postInstall.js",
+    "format": "npx prettier --write \"src/**/*.tsx\""
   },
   "keywords": [
     "react-native",
