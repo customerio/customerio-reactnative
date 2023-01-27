@@ -118,10 +118,14 @@ class CustomerIO {
     CustomerioReactnative.screen(name, data);
   }
 
+  /**
+   * Register a device with respect to a profile.
+   * If no profile is identified, no device will be registered.
+   *
+   * @param token device token (iOS/Android)
+   */
   static registerDeviceToken(token: string) {
-    console.log("Step 1 ok")
     CustomerioReactnative.registerDeviceToken(token)
-    console.log("Step 2 ok")
   }
 }
 
