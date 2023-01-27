@@ -25,7 +25,7 @@
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "lint": "npx eslint --fix \"**/*.{js,ts,tsx}\"",
+    "lint": "npx eslint --fix \"**/*.{js,ts,tsx}\" --output-file eslint_report.json --format json",
     "prepare": "bob build",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
