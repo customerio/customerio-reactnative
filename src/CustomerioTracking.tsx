@@ -117,6 +117,12 @@ class CustomerIO {
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
   }
+
+  static registerDeviceToken(token: string) {
+    console.log("Step 1 ok")
+    CustomerioReactnative.registerDeviceToken(token)
+    console.log("Step 2 ok")
+  }
 }
 
 export { CustomerIO, Region };
