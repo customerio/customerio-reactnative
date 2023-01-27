@@ -113,6 +113,10 @@ class CustomerioReactnative: NSObject {
         CustomerIO.shared.screen(name: name, data: body)
     }
     
+    @objc(registerDeviceToken:)
+    func registerDeviceToken(token: String) -> Void {
+        print("If you see this it means I am called - \(token)")
+    }
     /**
         Intialize in-app using customerio package
      */
