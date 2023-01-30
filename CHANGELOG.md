@@ -1,3 +1,10 @@
+### [2.0.1](https://github.com/customerio/customerio-reactnative/compare/2.0.0...2.0.1) (2023-01-30)
+
+
+### Bug Fixes
+
+* add register device token ([f865261](https://github.com/customerio/customerio-reactnative/commit/f86526193267692f68291406a61b75c5c700b2b6))
+
 ## [2.0.0](https://github.com/customerio/customerio-reactnative/compare/1.0.0...2.0.0) (2023-01-18)
 
 
