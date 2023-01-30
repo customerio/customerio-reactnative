@@ -102,6 +102,13 @@ class CustomerIOReactNativeModule(
         customerIO.screen(name, attributes.toMap())
     }
 
+    @ReactMethod
+    fun registerDeviceToken(token: String) {
+        if (isNotInitialized()) return
+
+        customerIO.registerDeviceToken(token)
+    }
+
     companion object {
         internal const val MODULE_NAME = "CustomerioReactnative"
     }
