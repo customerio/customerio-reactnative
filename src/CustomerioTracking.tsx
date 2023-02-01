@@ -132,12 +132,17 @@ class CustomerIO {
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
   }
-
-  static inAppMessaging(): InAppMessaging {
-    return new InAppMessaging();
+  
+  // Code by Aman
+  static inAppMessaging(): CustomerioInAppMessaging {
+    return new CustomerioInAppMessaging();
   }
+  // Code by Rehan
+  // static inAppMessaging(): InAppMessaging {
+  //   return new InAppMessaging();
+  // }
 }
-
+// Code by Rehan
 class InAppMessaging {
   eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
   eventName: string = 'InAppEventListener';
@@ -147,4 +152,14 @@ class InAppMessaging {
   }
 };
 
+class CustomerioInAppMessaging {
+
+  static registerEvents() {
+    const eventEmitter = new NativeEventEmitter(NativeModules.CustomerioInAppMessaging);
+    eventEmitter.addListener('messageShown', (message: any) => {
+      console.log("CIOInApp - messageShown:");
+      console.log(message);
+    });
+  }
+}
 export { CustomerIO, Region };
