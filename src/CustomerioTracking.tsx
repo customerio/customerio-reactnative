@@ -42,12 +42,14 @@ const CustomerIOInAppEventListener = NativeModules.CustomerioInAppMessaging
     }
   );
 
+  // TODO : Might want to move this to another file
 const eventsList = [
   "messageShown",
   "messageDismissed",
   "errorWithMessage",
   "messageActionTaken"
 ]
+
 class CustomerIO {
   /**
    * To initialize the package using workspace credentials
@@ -142,14 +144,16 @@ class CustomerIO {
   // In-App
 
   // Code by Aman
-  static registerInAppListeners() {
+  static registerInAppListeners(handler: (eventName: string, data: any) => void,
+  ): void {
+
+    // TODO: Remove old listeners if any, before adding new ones
     const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
 
     for (let i = 0; i < eventsList.length; i++) {
       let eventName = eventsList[i];
       eventEmitter.addListener(eventName, (message: any) => {
-        console.log("CIOInApp - ", eventName);
-        console.log(message);
+        handler(eventName, message)
       });
     }
     
