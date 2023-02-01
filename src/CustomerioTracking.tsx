@@ -143,14 +143,14 @@ class CustomerIO {
   // }
 }
 // Code by Rehan
-class InAppMessaging {
-  eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
-  eventName: string = 'InAppEventListener';
+// class InAppMessaging {
+//   eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
+//   eventName: string = 'InAppEventListener';
 
-  registerEventsListener(listener: any) {
-    return this.eventEmitter.addListener('InAppEventListener', listener);
-  }
-};
+//   registerEventsListener(listener: any) {
+//     return this.eventEmitter.addListener('InAppEventListener', listener);
+//   }
+// };
 
 class CustomerioInAppMessaging {
 
