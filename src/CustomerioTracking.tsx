@@ -134,7 +134,7 @@ class CustomerIO {
   }
   
   // Code by Aman
-  static registerInAppListenerEvents() {
+  static registerInAppListeners() {
     const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
     eventEmitter.addListener('messageShown', (message: any) => {
       console.log("CIOInApp - messageShown:");
