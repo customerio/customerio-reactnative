@@ -127,6 +127,7 @@ class CustomerioReactnative: NSObject {
     func tellJS(){
         print("If you see this message that means this function have been called")
         CustomerioInAppMessaging.shared?.sendEvent(withName: "messageShown", body: ["hello buddy"])
+        CustomerioInAppMessaging.shared?.sendEvent(withName: "messageDismissed", body: ["delivery-id": "Del-123456", "message-id": "msg123456"])
+        
     }
 }
-
