@@ -15,4 +15,4 @@ Thanks for taking an interest in our project! We welcome your contributions. Che
 
 # License
 
-[MIT](https://github.com/customerio/mobile/blob/HEAD/LICENSE)
+[MIT](LICENSE)
