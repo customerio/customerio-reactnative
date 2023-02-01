@@ -4,7 +4,7 @@ This is the official Customer.io SDK for ReactNative.
 
 # More information
 
-See our complete SDK documentation at [https://customer.io/docs/sdk/react-native/](https://customer.io/docs/sdk/react-native/)
+See our complete SDK documentation at [https://customer.io/docs/sdk/react-native/](https://customer.io/docs/sdk/react-native/).
 
 # Contributing
 
