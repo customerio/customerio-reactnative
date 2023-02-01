@@ -42,6 +42,12 @@ const CustomerIOInAppEventListener = NativeModules.CustomerioInAppMessaging
     }
   );
 
+const eventsList = [
+  "messageShown",
+  "messageDismissed",
+  "errorWithMessage",
+  "messageActionTaken"
+]
 class CustomerIO {
   /**
    * To initialize the package using workspace credentials
@@ -133,13 +139,20 @@ class CustomerIO {
     CustomerioReactnative.screen(name, data);
   }
   
+  // In-App
+
   // Code by Aman
   static registerInAppListeners() {
     const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
-    eventEmitter.addListener('messageShown', (message: any) => {
-      console.log("CIOInApp - messageShown:");
-      console.log(message);
-    });
+
+    for (let i = 0; i < eventsList.length; i++) {
+      let eventName = eventsList[i];
+      eventEmitter.addListener(eventName, (message: any) => {
+        console.log("CIOInApp - ", eventName);
+        console.log(message);
+      });
+    }
+    
   }
   // Code by Rehan
   // static inAppMessaging(): InAppMessaging {
