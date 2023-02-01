@@ -31,16 +31,16 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
 /** Code by Rehan
  * Get CustomerIOInAppEventListener native module
  */
-// const CustomerIOInAppEventListener = NativeModules.CustomerIOInAppEventListener
-//   ? NativeModules.CustomerIOInAppEventListener
-//   : new Proxy(
-//     {},
-//     {
-//       get() {
-//         throw new Error(LINKING_ERROR);
-//       },
-//     }
-//   );
+const CustomerIOInAppEventListener = NativeModules.CustomerioInAppMessaging
+  ? NativeModules.CustomerioInAppMessaging
+  : new Proxy(
+    {},
+    {
+      get() {
+        throw new Error(LINKING_ERROR);
+      },
+    }
+  );
 
 class CustomerIO {
   /**
@@ -134,8 +134,12 @@ class CustomerIO {
   }
   
   // Code by Aman
-  static inAppMessaging(): CustomerioInAppMessaging {
-    return new CustomerioInAppMessaging();
+  static registerInAppListenerEvents() {
+    const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
+    eventEmitter.addListener('messageShown', (message: any) => {
+      console.log("CIOInApp - messageShown:");
+      console.log(message);
+    });
   }
   // Code by Rehan
   // static inAppMessaging(): InAppMessaging {
@@ -151,15 +155,4 @@ class CustomerIO {
 //     return this.eventEmitter.addListener('InAppEventListener', listener);
 //   }
 // };
-
-class CustomerioInAppMessaging {
-
-  static registerEvents() {
-    const eventEmitter = new NativeEventEmitter(NativeModules.CustomerioInAppMessaging);
-    eventEmitter.addListener('messageShown', (message: any) => {
-      console.log("CIOInApp - messageShown:");
-      console.log(message);
-    });
-  }
-}
 export { CustomerIO, Region };
