@@ -147,11 +147,11 @@ class CustomerIO {
   static registerInAppListeners(handler: (eventName: string, data: any) => void,
   ): void {
 
-    // TODO: Remove old listeners if any, before adding new ones
     const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
-
     for (let i = 0; i < eventsList.length; i++) {
       let eventName = eventsList[i];
+      // Remove existing listeners to avoid duplicate listeners for same event
+      eventEmitter.removeAllListeners(eventName)
       eventEmitter.addListener(eventName, (message: any) => {
         handler(eventName, message)
       });
