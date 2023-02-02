@@ -19,9 +19,29 @@ const LINKING_ERROR =
    }
  );
 
- const eventsList = [
-  "messageShown",
-  "messageDismissed",
-  "errorWithMessage",
-  "messageActionTaken"
-]
+const eventsList = [
+    "messageShown",
+    "messageDismissed",
+    "errorWithMessage",
+    "messageActionTaken"
+  ]
+
+class CustomerioInAppEventsManager {
+
+  static registerInAppEventListeners(handler: (eventName: string, data: any) => void,
+  ): void  {
+    const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
+    for (let i = 0; i < eventsList.length; i++) {
+      let eventName = eventsList[i];
+      // Remove existing listeners to avoid duplicate listeners for same event
+      eventEmitter.removeAllListeners(eventName)
+
+      // Add listeners
+      eventEmitter.addListener(eventName, (message: any) => {
+        handler(eventName, message)
+      });
+    }
+  } 
+}
+
+export { CustomerioInAppEventsManager };
