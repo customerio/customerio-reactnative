@@ -44,15 +44,6 @@ class CustomerioReactnative: NSObject {
                 // config.isEnableInApp = true
             }
         }
-        
-        /*
-         organizationId will be removed in future releases. To enable in-app use config option
-         config.isEnableInApp = true
-         */
-        if organizationId != "" {
-            initializeInApp(organizationId: organizationId)
-        }
-        
     }
     
     /**
