@@ -113,15 +113,5 @@ class CustomerioReactnative: NSObject {
         }
         CustomerIO.shared.screen(name: name, data: body)
     }
-    
-    /**
-        Intialize in-app using customerio package
-     */
-    @available(*, deprecated, message: "Enable in-app using SDK configuration")
-    private func initializeInApp(organizationId: String) -> Void{
-        DispatchQueue.main.async {
-            MessagingInApp.shared.initialize(organizationId: organizationId)
-        }
-    }
 }
 
