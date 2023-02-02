@@ -1,10 +1,11 @@
-import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import {
   CustomerioConfig,
   CustomerIOEnv,
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
+import { CustomerioInAppEventsManager } from './CustomerioInAppEventManager';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -26,29 +27,6 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
         },
       }
     );
-
-
-/** Code by Rehan
- * Get CustomerIOInAppEventListener native module
- */
-const CustomerIOInAppEventListener = NativeModules.CustomerioInAppMessaging
-  ? NativeModules.CustomerioInAppMessaging
-  : new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(LINKING_ERROR);
-      },
-    }
-  );
-
-  // TODO : Might want to move this to another file
-const eventsList = [
-  "messageShown",
-  "messageDismissed",
-  "errorWithMessage",
-  "messageActionTaken"
-]
 
 class CustomerIO {
   /**
@@ -146,17 +124,9 @@ class CustomerIO {
   // Code by Aman
   static registerInAppListeners(handler: (eventName: string, data: any) => void,
   ): void {
-
-    const eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
-    for (let i = 0; i < eventsList.length; i++) {
-      let eventName = eventsList[i];
-      // Remove existing listeners to avoid duplicate listeners for same event
-      eventEmitter.removeAllListeners(eventName)
-      eventEmitter.addListener(eventName, (message: any) => {
-        handler(eventName, message)
-      });
-    }
-    
+    CustomerioInAppEventsManager.registerInAppEventListeners((name, data) => {
+      handler(name, data)
+    })
   }
   // Code by Rehan
   // static inAppMessaging(): InAppMessaging {
