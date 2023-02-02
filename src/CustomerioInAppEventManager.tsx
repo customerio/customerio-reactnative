@@ -18,3 +18,10 @@ const LINKING_ERROR =
      },
    }
  );
+
+ const eventsList = [
+  "messageShown",
+  "messageDismissed",
+  "errorWithMessage",
+  "messageActionTaken"
+]
