@@ -5,7 +5,8 @@ const LINKING_ERROR =
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
-/** Code by Rehan
+  
+/**
  * Get CustomerioInAppMessaging native module
  */
  const CustomerIOInAppEventListener = NativeModules.CustomerioInAppMessaging
