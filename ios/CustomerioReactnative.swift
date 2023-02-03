@@ -40,8 +40,7 @@ class CustomerioReactnative: NSObject {
                 config.trackingApiUrl = trackingApiUrl
             }
             if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
-                // TODO: - Uncomment the following code once iOS SDK has feature to enable in-app using siteId
-                // config.isEnableInApp = true
+                initializeInApp()
             }
         }
     }
@@ -113,5 +112,15 @@ class CustomerioReactnative: NSObject {
         }
         CustomerIO.shared.screen(name: name, data: body)
     }
+    
+    /**
+        Initialize in-app using customerio package
+     */
+    private func initializeInApp(organizationId: String) -> Void{
+        DispatchQueue.main.async {
+            MessagingInApp.shared.initialize()
+        }
+    }
+
 }
 
