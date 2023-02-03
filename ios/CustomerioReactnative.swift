@@ -116,7 +116,7 @@ class CustomerioReactnative: NSObject {
     /**
         Initialize in-app using customerio package
      */
-    private func initializeInApp(organizationId: String) -> Void{
+    private func initializeInApp() -> Void{
         DispatchQueue.main.async {
             MessagingInApp.shared.initialize()
         }
