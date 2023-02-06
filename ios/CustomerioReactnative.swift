@@ -121,6 +121,5 @@ class CustomerioReactnative: NSObject {
             MessagingInApp.shared.initialize()
         }
     }
-
 }
 
