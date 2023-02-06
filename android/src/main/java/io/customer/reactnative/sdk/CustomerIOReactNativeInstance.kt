@@ -30,9 +30,9 @@ object CustomerIOReactNativeInstance {
         val region = environment.getProperty<String>(
             Keys.Environment.REGION
         )?.takeIfNotBlank().toRegion()
-        val organizationId = environment.getProperty<String>(
-            Keys.Environment.ORGANIZATION_ID
-        )?.takeIfNotBlank()
+        val enableInApp = configuration?.getProperty<Boolean>(
+            Keys.Config.ENABLE_IN_APP
+        ) ?: false
 
         return CustomerIO.Builder(
             siteId = siteId,
@@ -43,12 +43,9 @@ object CustomerIOReactNativeInstance {
             setClient(client = getUserAgentClient(packageConfig = packageConfig))
             setupConfig(configuration)
             addCustomerIOModule(module = configureModuleMessagingPushFCM(configuration))
-            if (!organizationId.isNullOrBlank()) {
+            if (enableInApp) {
                 addCustomerIOModule(
-                    module = configureModuleMessagingInApp(
-                        organizationId = organizationId,
-                        inAppEventListener = inAppEventListener,
-                    ),
+                    module = configureModuleMessagingInApp(inAppEventListener = inAppEventListener),
                 )
             }
         }.build()
@@ -102,10 +99,8 @@ object CustomerIOReactNativeInstance {
     }
 
     private fun configureModuleMessagingInApp(
-        organizationId: String,
         inAppEventListener: InAppEventListener? = null,
     ) = ModuleMessagingInApp(
-        organizationId = organizationId,
         config = MessagingInAppModuleConfig.Builder().apply {
             inAppEventListener?.let { listener -> setEventListener(listener) }
         }.build(),
