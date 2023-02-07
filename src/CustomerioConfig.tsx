@@ -25,7 +25,7 @@ class CustomerIOEnv {
     apiKey: string = ""
     region: Region = Region.US
     /**
-     * @deprecated since version 2.0.1
+     * @deprecated since version 2.0.2
      * 
      * organizationId is no longer needed and will be removed in future releases.
      * Please remove organizationId from code and enable in-app messaging using {CustomerioConfig.enableInApp}.
