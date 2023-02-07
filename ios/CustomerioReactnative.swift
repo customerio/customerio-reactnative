@@ -40,7 +40,7 @@ class CustomerioReactnative: NSObject {
                 config.trackingApiUrl = trackingApiUrl
             }
             if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
-                initializeInApp()
+                self.initializeInApp()
             }
         }
     }
