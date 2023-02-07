@@ -19,4 +19,14 @@ enum CioLogLevel{
     EU = "EU",
   }
 
-export {CioLogLevel, Region}
+/**
+ * Enum to represent the type of event triggered by in-app event callback.
+ */
+enum InAppEventType {
+  errorWithMessage = "errorWithMessage",
+  messageActionTaken = "messageActionTaken",
+  messageDismissed = "messageDismissed",
+  messageShown = "messageShown",
+}
+
+export { CioLogLevel, Region, InAppEventType };

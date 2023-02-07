@@ -3,14 +3,17 @@
  * Package name : customerio-reactnative
  */
 
- import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
- import { CustomerIO, Region } from './CustomerioTracking';
- import {CioLogLevel} from './CustomerioEnum'
- 
- export {
-   CustomerIO,
-   Region,
-   CustomerioConfig,
-   CustomerIOEnv,
-   CioLogLevel
- };
+import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
+import { CioLogLevel, InAppEventType, Region } from './CustomerioEnum';
+import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import { CustomerIO } from './CustomerioTracking';
+
+export {
+  CustomerIO,
+  CustomerIOInAppMessaging,
+  InAppEventType,
+  Region,
+  CustomerioConfig,
+  CustomerIOEnv,
+  CioLogLevel
+};

@@ -43,7 +43,6 @@ class CustomerioReactnative: NSObject {
                 initializeInApp()
             }
         }
-        tellJS()
     }
     
     /**
@@ -119,15 +118,41 @@ class CustomerioReactnative: NSObject {
      */
     private func initializeInApp() -> Void{
         DispatchQueue.main.async {
-            MessagingInApp.shared.initialize()
+            MessagingInApp.shared.initialize(eventListener: self)
         }
     }
-    
-    // In-app messages
-    func tellJS(){
-        print("If you see this message that means this function have been called")
-        CustomerioInAppMessaging.shared?.sendEvent(withName: "messageShown", body: ["hello buddy"])
-        CustomerioInAppMessaging.shared?.sendEvent(withName: "messageDismissed", body: ["delivery-id": "Del-123456", "message-id": "msg123456"])
-        
+}
+
+extension CustomerioReactnative: InAppEventListener {
+    private func sendEvent(eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil) {
+        CustomerioInAppMessaging.shared?.sendEvent(
+            withName: 'InAppEventListener', 
+            body: [
+                "eventType": eventType,
+                "data": [
+                    "eventType": eventType,
+                    "deliveryId": message.deliveryId,
+                    "messageId": message.messageId,
+                    "actionValue": actionValue,
+                    "actionName": actionName
+                ]
+            ]
+        )
+    }
+
+    func messageShown(message: InAppMessage) {
+        sendEvent(eventType: "messageShown", message: message)
+    }
+
+    func messageDismissed(message: InAppMessage) {
+        sendEvent(eventType: "messageDismissed", message: message)
+    }
+
+    func errorWithMessage(message: InAppMessage) {
+        sendEvent(eventType: "errorWithMessage", message: message)
+    }
+
+    func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
+        sendEvent(eventType: "messageActionTaken", message: message, actionValue: actionValue, actionName: actionName)
     }
 }

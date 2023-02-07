@@ -11,7 +11,7 @@ import io.customer.messaginginapp.type.InAppMessage
 /**
  * Wrapper class that bridges JS Callbacks to native callbacks for in-app messaging.
  */
-class RNCIOInAppEventListener(
+class RNCIOInAppMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), InAppEventListener {
     private var listenerCount = 0
@@ -26,12 +26,23 @@ class RNCIOInAppEventListener(
         listenerCount -= count
     }
 
-    private fun sendEvent(eventType: String, params: Map<String, *>?) {
+    private fun sendEvent(
+        eventType: String,
+        message: InAppMessage,
+        extras: Map<String, Any> = emptyMap(),
+    ) {
         if (listenerCount <= 0) return
 
-        val args = (params ?: emptyMap<String, Any?>())
-            .plus(map = mapOf("eventType" to eventType))
-            .let { Arguments.makeNativeMap(it) }
+        val data = buildMap {
+            putAll(extras)
+            put("deliveryId", message.deliveryId)
+            put("messageId", message.messageId)
+        }
+        val args = Arguments.createMap().apply {
+            putString("eventType", eventType)
+            putMap("data", Arguments.makeNativeMap(data))
+        }
+
         reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("InAppEventListener", args)
@@ -39,37 +50,27 @@ class RNCIOInAppEventListener(
 
     override fun errorWithMessage(message: InAppMessage) = sendEvent(
         eventType = "errorWithMessage",
-        params = message.toMap(),
+        message = message,
     )
 
     override fun messageActionTaken(
         message: InAppMessage,
-        action: String,
-        name: String,
-    ) = sendEvent(
-        eventType = "messageActionTaken",
-        params = message.toMap().plus(
-            mapOf(
-                "action" to action,
-                "name" to name,
-            ),
-        ),
-    )
+        actionValue: String,
+        actionName: String,
+    ) = sendEvent(eventType = "messageActionTaken", message = message, extras = buildMap {
+        "actionValue" to actionValue
+        "actionName" to actionName
+    })
 
     override fun messageDismissed(message: InAppMessage) = sendEvent(
         eventType = "messageDismissed",
-        params = message.toMap(),
+        message = message,
     )
 
     override fun messageShown(message: InAppMessage) = sendEvent(
         eventType = "messageShown",
-        params = message.toMap(),
+        message = message,
     )
 
-    override fun getName(): String = "CustomerIOInAppEventListener"
+    override fun getName(): String = "CustomerioInAppMessaging"
 }
-
-private fun InAppMessage.toMap() = mapOf(
-    "messageId" to messageId,
-    "deliveryId" to deliveryId,
-)

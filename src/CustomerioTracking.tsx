@@ -5,7 +5,7 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
-import { CustomerioInAppEventsManager } from './CustomerioInAppEventManager';
+import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -126,28 +126,10 @@ class CustomerIO {
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
   }
-  
-  // In-App
 
-  // Code by Aman
-  static registerInAppListeners(handler: (eventName: string, data: any) => void,
-  ): void {
-    CustomerioInAppEventsManager.registerInAppEventListeners((name, data) => {
-      handler(name, data)
-    })
+  static inAppMessaging(): CustomerIOInAppMessaging {
+    return new CustomerIOInAppMessaging();
   }
-  // Code by Rehan
-  // static inAppMessaging(): InAppMessaging {
-  //   return new InAppMessaging();
-  // }
 }
-// Code by Rehan
-// class InAppMessaging {
-//   eventEmitter = new NativeEventEmitter(CustomerIOInAppEventListener);
-//   eventName: string = 'InAppEventListener';
 
-//   registerEventsListener(listener: any) {
-//     return this.eventEmitter.addListener('InAppEventListener', listener);
-//   }
-// };
 export { CustomerIO, Region };

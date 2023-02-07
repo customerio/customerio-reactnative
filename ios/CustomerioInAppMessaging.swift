@@ -15,11 +15,6 @@ class CustomerioInAppMessaging: RCTEventEmitter {
      * Overriding  supportedEvents method to return an array of supported event names
      */
     open override func supportedEvents() -> [String]! {
-        return [
-            "messageShown",
-            "messageDismissed",
-            "errorWithMessage",
-            "messageActionTaken"
-        ]
+        return [ "InAppEventListener" ]
     }
 }
