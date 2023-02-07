@@ -126,7 +126,7 @@ class CustomerioReactnative: NSObject {
 extension CustomerioReactnative: InAppEventListener {
     private func sendEvent(eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil) {
         CustomerioInAppMessaging.shared?.sendEvent(
-            withName: 'InAppEventListener', 
+            withName: "InAppEventListener", 
             body: [
                 "eventType": eventType,
                 "data": [
