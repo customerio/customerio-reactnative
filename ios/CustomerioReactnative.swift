@@ -39,9 +39,9 @@ class CustomerioReactnative: NSObject {
             if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
                 config.trackingApiUrl = trackingApiUrl
             }
-            if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
-                self.initializeInApp()
-            }
+        }
+        if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
+            initializeInApp()
         }
     }
     
