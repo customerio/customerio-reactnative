@@ -9,7 +9,7 @@ import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messaginginapp.type.InAppMessage
 
 /**
- * Wrapper class that bridges JS Callbacks to native callbacks for in-app messaging.
+ * ReactNative module to hold in-app messages features in a single place to bridge with native code.
  */
 class RNCIOInAppMessaging(
     private val reactContext: ReactApplicationContext,
@@ -26,6 +26,12 @@ class RNCIOInAppMessaging(
         listenerCount -= count
     }
 
+    /**
+     * Sends event to JS Callback. All events are sent under one name so it easier for customers to
+     * listen on multiple linked events. The [eventType] provided is passed in same [eventType]
+     * attribute. While [message] values and [extras] are merged and passed in single `data`
+     * attribute.
+     */
     private fun sendEvent(
         eventType: String,
         message: InAppMessage,

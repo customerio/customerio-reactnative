@@ -5,5 +5,3 @@
 RCT_EXTERN_METHOD(supportedEvents)
 
 @end
-
-

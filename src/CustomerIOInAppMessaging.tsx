@@ -21,8 +21,12 @@ const InAppMessagingNative = NativeModules.CustomerioInAppMessaging
     }
   );
 
+// Constant value used for emitting all events for in-app from native modules
 const InAppEventListenerEventName = 'InAppEventListener';
 
+/**
+ * Helper class so that registering event listeners is easier for customers.
+ */
 class CustomerIOInAppMessaging {
   eventEmitter: NativeEventEmitter = new NativeEventEmitter(InAppMessagingNative);
 
