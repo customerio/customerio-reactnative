@@ -4,14 +4,15 @@
  */
 
 import { CustomerioConfig, CustomerIOEnv } from './CustomerioConfig';
-import { CioLogLevel, InAppEventType, Region } from './CustomerioEnum';
-import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import { CioLogLevel, Region } from './CustomerioEnum';
+import { CustomerIOInAppMessaging, InAppMessageEventType, InAppMessageEvent } from './CustomerIOInAppMessaging';
 import { CustomerIO } from './CustomerioTracking';
 
 export {
   CustomerIO,
   CustomerIOInAppMessaging,
-  InAppEventType,
+  InAppMessageEventType,
+  InAppMessageEvent,
   Region,
   CustomerioConfig,
   CustomerIOEnv,

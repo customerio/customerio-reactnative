@@ -40,18 +40,15 @@ class RNCIOInAppMessaging(
         if (listenerCount <= 0) return
 
         val data = buildMap {
-            putAll(extras)
-            put("deliveryId", message.deliveryId)
+            put("eventType", eventType)
             put("messageId", message.messageId)
-        }
-        val args = Arguments.createMap().apply {
-            putString("eventType", eventType)
-            putMap("data", Arguments.makeNativeMap(data))
+            put("deliveryId", message.deliveryId)
+            putAll(extras)
         }
 
         reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit("InAppEventListener", args)
+            .emit("InAppEventListener", Arguments.makeNativeMap(data))
     }
 
     override fun errorWithMessage(message: InAppMessage) = sendEvent(

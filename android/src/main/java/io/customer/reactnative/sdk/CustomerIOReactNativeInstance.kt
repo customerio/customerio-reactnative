@@ -23,7 +23,7 @@ object CustomerIOReactNativeInstance {
         environment: Map<String, Any?>,
         configuration: Map<String, Any?>?,
         packageConfig: Map<String, Any?>?,
-        inAppEventListener: InAppEventListener? = null,
+        inAppEventListener: InAppEventListener,
     ): CustomerIO {
         val siteId = environment.getString(Keys.Environment.SITE_ID)
         val apiKey = environment.getString(Keys.Environment.API_KEY)
@@ -99,10 +99,10 @@ object CustomerIOReactNativeInstance {
     }
 
     private fun configureModuleMessagingInApp(
-        inAppEventListener: InAppEventListener? = null,
+        inAppEventListener: InAppEventListener,
     ) = ModuleMessagingInApp(
         config = MessagingInAppModuleConfig.Builder().apply {
-            inAppEventListener?.let { listener -> setEventListener(listener) }
+            setEventListener(inAppEventListener)
         }.build(),
     )
 }
