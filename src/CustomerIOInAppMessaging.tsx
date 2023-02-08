@@ -35,7 +35,7 @@ class CustomerIOInAppMessaging {
       let event = new InAppMessageEvent(
         data.eventType as InAppMessageEventType,
         data.messageId,
-        data.messageId,
+        data.deliveryId,
         data.actionValue,
         data.actionName);
       listener(event)

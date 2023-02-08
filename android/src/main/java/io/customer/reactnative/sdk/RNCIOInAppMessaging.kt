@@ -60,8 +60,8 @@ class RNCIOInAppMessaging(
         actionValue: String,
         actionName: String,
     ) = sendEvent(eventType = "messageActionTaken", message = message, extras = buildMap {
-        "actionValue" to actionValue
-        "actionName" to actionName
+        put("actionValue", actionValue)
+        put("actionName", actionName)
     })
 
     override fun messageDismissed(message: InAppMessage) = sendEvent(
