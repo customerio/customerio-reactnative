@@ -28,9 +28,8 @@ class RNCIOInAppMessaging(
 
     /**
      * Sends event to JS Callback. All events are sent under one name so it easier for customers to
-     * listen on multiple linked events. The [eventType] provided is passed in same [eventType]
-     * attribute. While [message] values and [extras] are merged and passed in single `data`
-     * attribute.
+     * listen on multiple linked events. The [eventType], [message] values and [extras] are merged
+     * and passed in single map as arguments.
      */
     private fun sendEvent(
         eventType: String,
