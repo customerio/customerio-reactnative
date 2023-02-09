@@ -3,7 +3,7 @@ import React
 
 @objc(CustomerioInAppMessaging)
 class CustomerioInAppMessaging: RCTEventEmitter {
-    public static var shared: CustomerioInAppMessaging?
+    public static let shared: CustomerioInAppMessaging = CustomerioInAppMessaging()
 
     @objc override static func requiresMainQueueSetup() -> Bool {
         false /// false because our native module's initialization does not require access to UIKit

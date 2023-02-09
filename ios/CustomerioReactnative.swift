@@ -130,7 +130,7 @@ extension CustomerioReactnative: InAppEventListener {
             "messageId": message.messageId,
             "deliveryId": message.deliveryId
         ]
-        if actionValue != nil {
+        if let actionValue = actionValue {
             body["actionValue"] = actionValue
         }
         if actionName != nil {
