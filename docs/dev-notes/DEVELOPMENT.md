@@ -42,6 +42,6 @@ cioSDKVersionAndroid=local
 
 iOS SDK cannot be tested locally at this time. You must instead refer to a version of the iOS SDK already released to production. 
 
-If you make changes to native code, it sometimes may not be reflected in the app. View the [Ami App docs](https://github.com/customerio/amiapp-reactnative/blob/docs/dev-env/docs/dev-notes/DEVELOPMENT.md#work-on-sdk-locally) for next steps on getting Ami App to install the SDK from your local directory.  
+If you make changes to native code, it sometimes may not be reflected in the app. View the [Ami App docs](https://github.com/customerio/amiapp-reactnative/blob/HEAD/docs/dev-notes/DEVELOPMENT.md#work-on-sdk-locally) for next steps on getting Ami App to install the SDK from your local directory.  
 
 > Please note that currently there is no script or automation that helps you make the changes, so you should revert the changes in `package.json` and `yarn.lock` for local version of `customerio-reactnative` before pushing any changes to git.
