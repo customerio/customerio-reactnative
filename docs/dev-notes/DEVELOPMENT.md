@@ -11,10 +11,10 @@ We use the [Ami App](https://github.com/customerio/amiapp-reactnative) to test t
 
 When you install dependencies via yarn/npm in react native app, you can install it from your local machine directly. You need to follow the following steps to use local version of the SDK
 
-- Go to `package.json` of your react native app
-- Find the SDK dependency i.e. `"customerio-reactnative": "{version}"`
-- Update the SDK version to path of the SDK e.g. `"customerio-reactnative": "../customerio-reactnative"`
-- Run `yarn install` to update dependencies and use local version of SDK instead
+1. Go to `package.json` of your react native app
+1. Find the SDK dependency i.e. `"customerio-reactnative": "{version}"`
+1. Update the SDK version to path of the SDK e.g. `"customerio-reactnative": "../customerio-reactnative"`
+1. Run `yarn install` to update dependencies and use local version of SDK instead
 
 ### Android
 
@@ -37,6 +37,7 @@ cioSDKVersionAndroid=local
 ```
 
 ---
+
 ### iOS
 
 iOS SDK cannot be tested locally at this time. You must instead refer to a version of the iOS SDK already released to production. 

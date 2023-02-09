@@ -5,10 +5,12 @@
   <p align="center">Power automated communication that people like to receive.</p>
 </p>
 
-![min swift version is 5.3](https://img.shields.io/badge/min%20Swift%20version-5.3-orange)
+[![npm version](https://img.shields.io/npm/v/customerio-reactnative.svg)](https://www.npmjs.com/package/customerio-reactnative)
+![npm downloads](https://img.shields.io/npm/dm/customerio-reactnative)
+![min Android SDK version is 21](https://img.shields.io/badge/min%20Android%20SDK-21-green)
 ![min ios version is 13](https://img.shields.io/badge/min%20iOS%20version-13-blue)
+![min swift version is 5.3](https://img.shields.io/badge/min%20Swift%20version-5.3-orange)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) 
-[![codecov](https://codecov.io/gh/customerio/customerio-reactnative/branch/main/graph/badge.svg?token=IZ9RP9XD1O)](https://codecov.io/gh/customerio/customerio-reactnative)
 
 # Customer.io React Native SDK
 
@@ -23,7 +25,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
    Make sure your deployment target is set to at least 13.0. Before you perform this step, you may want to update your podfile to support [APNs and/or FCM push notifications](https://customer.io/docs/sdk/react-native/push/#install-the-push-package) and [rich push](https://customer.io/docs/sdk/react-native/rich-push/#rich-push) respectively.
 
-1. For Android, add the following lines to the project-level `android/build.gradle` file:  
+1. For Android, include [google-services-plugin](https://developers.google.com/android/guides/google-services-plugin) by adding the following lines to the project-level `android/build.gradle` file:  
       ```groovy
       buildscript {
          repositories {
@@ -33,7 +35,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
          dependencies {
             // Add this line:
-            classpath 'com.google.gms:google-services:4.3.13'  // Google Services plugin
+            classpath 'com.google.gms:google-services:<version-here>'  // Google Services plugin
          }
       }
 
@@ -75,14 +77,15 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
    useEffect(() => {
       const data = new CustomerioConfig()
       data.logLevel = CioLogLevel.debug
+      // In-app messages are optional and disabled by default
+      // To enable in-app messages, set enableInApp to true
+      data.enableInApp = true
 
       const env = new CustomerIOEnv()
       env.siteId = Env.siteId
       env.apiKey = Env.apiKey
-      env.organizationId = Env.organizationId
-      //organizationId is used to send in-app messages.
       env.region = Region.US
-      //Region is optional, defaults to Region.US. Use Region.EU for EU-based workspaces.
+      // region is optional, defaults to Region.US. Use Region.EU for EU-based workspaces.
 
       CustomerIO.initialize(env, data) 
    }, [])
@@ -94,7 +97,7 @@ See our complete SDK documentation at [https://customer.io/docs/sdk/react-native
 
 # Contributing
 
-Thanks for taking an interest in our project! We welcome your contributions.
+Thanks for taking an interest in our project! We welcome your contributions. Check out [our development instructions](docs/dev-notes/DEVELOPMENT.md) to get your environment set up and start contributing.
 
 We value an open, welcoming, diverse, inclusive, and healthy community for this project. We expect all  contributors to follow our [code of conduct](CODE_OF_CONDUCT.md). 
 
