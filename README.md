@@ -6,7 +6,7 @@
 </p>
 
 [![npm version](https://img.shields.io/npm/v/customerio-reactnative.svg)](https://www.npmjs.com/package/customerio-reactnative)
-![npm downloads](https://img.shields.io/npm/dm/customerio-reactnative)
+[![npm downloads](https://img.shields.io/npm/dm/customerio-reactnative)](https://www.npmjs.com/package/customerio-reactnative)
 ![min Android SDK version is 21](https://img.shields.io/badge/min%20Android%20SDK-21-green)
 ![min ios version is 13](https://img.shields.io/badge/min%20iOS%20version-13-blue)
 ![min swift version is 5.3](https://img.shields.io/badge/min%20Swift%20version-5.3-orange)
