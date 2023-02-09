@@ -84,8 +84,8 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
       const env = new CustomerIOEnv()
       env.siteId = Env.siteId
       env.apiKey = Env.apiKey
+      // Region is optional, defaults to Region.US. Use Region.EU for EU-based workspaces.
       env.region = Region.US
-      // region is optional, defaults to Region.US. Use Region.EU for EU-based workspaces.
 
       CustomerIO.initialize(env, data) 
    }, [])
