@@ -40,8 +40,8 @@ class CustomerioReactnative: NSObject {
                 config.trackingApiUrl = trackingApiUrl
             }
         }
-        if organizationId != "" {
-            initializeInApp(organizationId: organizationId)
+        if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
+            initializeInApp()
         }
     }
     
@@ -114,11 +114,11 @@ class CustomerioReactnative: NSObject {
     }
     
     /**
-        Intialize in-app using customerio package
+        Initialize in-app using customerio package
      */
-    private func initializeInApp(organizationId: String) -> Void{
+    private func initializeInApp() -> Void{
         DispatchQueue.main.async {
-            MessagingInApp.shared.initialize(organizationId: organizationId)
+            MessagingInApp.shared.initialize()
         }
     }
 }
