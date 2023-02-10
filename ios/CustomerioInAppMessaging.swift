@@ -3,7 +3,8 @@ import React
 
 @objc(CustomerioInAppMessaging)
 class CustomerioInAppMessaging: RCTEventEmitter {
-    public static let shared: CustomerioInAppMessaging = CustomerioInAppMessaging()
+    // React Native modules should be initialized late as they will be created and initialized automatically
+    public static var shared: CustomerioInAppMessaging?
 
     @objc override static func requiresMainQueueSetup() -> Bool {
         false /// false because our native module's initialization does not require access to UIKit

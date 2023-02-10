@@ -133,7 +133,7 @@ extension CustomerioReactnative: InAppEventListener {
         if let actionValue = actionValue {
             body["actionValue"] = actionValue
         }
-        if actionName != nil {
+        if let actionName = actionName {
             body["actionName"] = actionName
         }
         CustomerioInAppMessaging.shared?.sendEvent(
