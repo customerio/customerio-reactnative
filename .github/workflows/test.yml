@@ -17,5 +17,5 @@ jobs:
       - name: Compile
         run: yarn typescript
 
-      - name: Pushlish test
+      - name: Publish test
         run: npm publish --dry-run
