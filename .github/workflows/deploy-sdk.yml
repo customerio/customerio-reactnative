@@ -1,0 +1,193 @@
+name: Deploy SDK
+
+# Only run after a pull request has been merged. This is because
+# bot account runs write operations on the github repo to push a tag.
+on:
+  push:
+    branches: [main] # all branches where deployments currently occur. Make sure this list matches list of branches in  `.releaserc` file.
+
+permissions:
+  contents: write # access to push the git tag
+  issues: write # Bot creates an issue if there is an issue during deployment process
+
+jobs:
+  deploy-git-tag:
+    name: Deploy git tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy git tag via semantic release
+        uses: cycjimmy/semantic-release-action@v3
+        id: semantic-release
+        with:
+          # version numbers below can be in many forms: M, M.m, M.m.p
+          semantic_version: 19
+          extra_plugins: |
+            conventional-changelog-conventionalcommits@4
+            @semantic-release/changelog@6
+            @semantic-release/git@10
+            @semantic-release/github@8
+            @semantic-release/exec@6
+        env:
+          # Needs to push git commits to repo. Needs write access.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify team of git tag being created
+        uses: slackapi/slack-github-action@v1.18.0
+        if: steps.semantic-release.outputs.new_release_published == 'true'
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK git tag created",
+              "username": "ReactNative deployment bot",
+              "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
+              "channel": "#mobile-deployments",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK git tag created successfully! (deployment step 1 of 2)"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Version ${{ steps.semantic-release.outputs.new_release_version }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{steps.semantic-release.outputs.new_release_version}}|create git tag>~\n2. deploy to npm\n\n"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify team of failure
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ failure() }} # only run this if any previous step failed
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployment failure",
+              "username": "ReactNative deployment bot",
+              "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
+              "channel": "#mobile-deployments",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK deployment :warning: failure :warning:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "ReactNative SDK failed deployment during step *create git tag*. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue. <https://github.com/customerio/mobile/blob/main/GIT-WORKFLOW.md|Learn more about the deployment process and how to fix errors>."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  deploy-npm:
+    name: Deploy to npm
+    needs: [deploy-git-tag]
+    if: needs.deploy-git-tag.outputs.new_release_published == 'true' # only run if a git tag was made.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+
+      - name: Deploy to npm
+        run: ./scripts/deploy-code.sh
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }} # true or false boolean if a prerelease github release
+
+      - name: Notify team of successful deployment
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ success() }}
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployed to npm",
+              "username": "ReactNative deployment bot",
+              "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
+              "channel": "#mobile-deployments",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK deployed to npm! (deployment step 2 of 2)"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Version ${{ github.event.release.tag_name }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ github.event.release.tag_name }}|create git tag>~\n~2. deploy to npm~\n\n"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify team of failure
+        uses: slackapi/slack-github-action@v1.18.0
+        if: ${{ failure() }} # only run this if any previous step failed
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK deployment failure",
+              "username": "ReactNative deployment bot",
+              "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
+              "channel": "#mobile-deployments",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK deployment :warning: failure :warning:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "ReactNative SDK failed deployment during step *deploy to npm*. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue. <https://github.com/customerio/mobile/blob/main/GIT-WORKFLOW.md|Learn more about the deployment process and how to fix errors>."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
