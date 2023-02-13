@@ -60,7 +60,7 @@ class CustomerIO {
       }
     }
 
-    return CustomerioReactnative.initialize(env, config, packageConfig);
+    CustomerioReactnative.initialize(env, config, packageConfig);
   }
 
   /**
