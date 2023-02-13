@@ -11,10 +11,6 @@ jobs:
   pr-help:
     name: Semantic PR helper
     runs-on: ubuntu-latest
-    permissions:
-      contents: write # to be able to push code
-      issues: write # to make comments on issues
-      pull-requests: write # to make comments on PR
     steps:
       - name: Semantic PR helper
         uses: levibostian/action-semantic-pr@v3

@@ -14,6 +14,9 @@ jobs:
   deploy-git-tag:
     name: Deploy git tag
     runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.semantic-release.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic-release.outputs.new_release_version }}
     steps:
       - uses: actions/checkout@v3
 
@@ -120,7 +123,7 @@ jobs:
         run: ./scripts/deploy-code.sh
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          IS_PRERELEASE: ${{ github.event.release.prerelease }} # true or false boolean if a prerelease github release
+          IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
       - name: Notify team of successful deployment
         uses: slackapi/slack-github-action@v1.18.0
@@ -148,7 +151,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Version ${{ github.event.release.tag_name }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ github.event.release.tag_name }}|create git tag>~\n~2. deploy to npm~\n\n"
+                    "text": "*Version ${{ needs.deploy-git-tag.outputs.new_release_version }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ needs.deploy-git-tag.outputs.new_release_version }}|create git tag>~\n~2. deploy to npm~\n\n"
                   }
                 }
               ]
