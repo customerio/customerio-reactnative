@@ -7,8 +7,13 @@ import com.facebook.react.uimanager.ViewManager
 
 class CustomerIOReactNativePackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+        val inAppMessagingModule = RNCIOInAppMessaging(reactContext)
         return listOf(
-            CustomerIOReactNativeModule(reactContext),
+            inAppMessagingModule,
+            CustomerIOReactNativeModule(
+                reactContext = reactContext,
+                inAppMessagingModule = inAppMessagingModule,
+            ),
         )
     }
 

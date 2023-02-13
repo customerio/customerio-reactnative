@@ -5,6 +5,7 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
+import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -124,6 +125,10 @@ class CustomerIO {
    */
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
+  }
+
+  static inAppMessaging(): CustomerIOInAppMessaging {
+    return new CustomerIOInAppMessaging();
   }
 }
 

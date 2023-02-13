@@ -118,8 +118,43 @@ class CustomerioReactnative: NSObject {
      */
     private func initializeInApp() -> Void{
         DispatchQueue.main.async {
-            MessagingInApp.shared.initialize()
+            MessagingInApp.shared.initialize(eventListener: self)
         }
     }
 }
 
+extension CustomerioReactnative: InAppEventListener {
+    private func sendEvent(eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil) {
+        var body = [
+            "eventType": eventType,
+            "messageId": message.messageId,
+            "deliveryId": message.deliveryId
+        ]
+        if let actionValue = actionValue {
+            body["actionValue"] = actionValue
+        }
+        if let actionName = actionName {
+            body["actionName"] = actionName
+        }
+        CustomerioInAppMessaging.shared?.sendEvent(
+            withName: "InAppEventListener", 
+            body: body
+        )
+    }
+
+    func messageShown(message: InAppMessage) {
+        sendEvent(eventType: "messageShown", message: message)
+    }
+
+    func messageDismissed(message: InAppMessage) {
+        sendEvent(eventType: "messageDismissed", message: message)
+    }
+
+    func errorWithMessage(message: InAppMessage) {
+        sendEvent(eventType: "errorWithMessage", message: message)
+    }
+
+    func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
+        sendEvent(eventType: "messageActionTaken", message: message, actionValue: actionValue, actionName: actionName)
+    }
+}
