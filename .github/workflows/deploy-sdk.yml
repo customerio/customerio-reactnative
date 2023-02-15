@@ -9,6 +9,7 @@ on:
 permissions:
   contents: write # access to push the git tag
   issues: write # Bot creates an issue if there is an issue during deployment process
+  pull-requests: write # allow bot to make comments on PRs after they get deployed
 
 jobs:
   deploy-git-tag:
