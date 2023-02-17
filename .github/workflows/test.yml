@@ -1,21 +1,21 @@
-name: Test 
+name: Test
 
 on: [push, pull_request]
 
 jobs:
   test-deploy:
-    name: Test able to deploy to npm 
+    name: Test able to deploy to npm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
 
-      - name: Compile 
+      - name: Compile
         run: yarn typescript
-      
-      - name: Pushlish test 
+
+      - name: Publish test
         run: npm publish --dry-run
