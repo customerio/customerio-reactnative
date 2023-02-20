@@ -156,10 +156,10 @@ class CustomerioReactnative: NSObject {
                 status = .denied
             case .notDetermined:
                 status = .notDetermined
-            case .ephemeral:
+            case .ephemeral: // authorized to send or receive notifications for limited time
                 // @available(iOS 14.0, *)
                 status = .ephemeral
-            case .provisional:
+            case .provisional: //authoized to push non-interuptive notifications
                 // @available(iOS 12.0, *)
                 status = .provisional
             default:
