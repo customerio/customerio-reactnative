@@ -23,5 +23,6 @@ RCT_EXTERN_METHOD(screen: (nonnull NSString *) name
 
 RCT_EXTERN_METHOD(registerDeviceToken : (nonnull NSString *) token)
 
+RCT_EXTERN_METHOD(showPromptForPushNotifications)
 
 @end
