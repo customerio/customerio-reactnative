@@ -132,13 +132,22 @@ class CustomerioReactnative: NSObject {
     
     // MARK: - Push Notifications Begin
     @objc(showPromptForPushNotifications:)
-    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>?) -> Void {
+    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>) -> Void {
         
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
-            if status == .notDetermined {
+            if status == .authorized {
                 let current = UNUserNotificationCenter.current()
-                current.requestAuthorization(options: [.alert, .badge, .sound]) { isGranted, error in
+                var notificationOptions : UNAuthorizationOptions = [.alert]
+                if let ios = options["ios"] as? [String: Any], let sound = ios["sound"] as? Bool, let bagdeOption = ios["badge"] as? Bool {
+                    
+                    if sound {
+                        notificationOptions.insert(.sound)                    }
+                    if bagdeOption {
+                        notificationOptions.insert(.badge)
+                    }
+                }
+                current.requestAuthorization(options: notificationOptions) { isGranted, error in
                     print("Status is - \(isGranted)")
                 }
             }
