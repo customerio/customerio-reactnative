@@ -131,8 +131,8 @@ class CustomerioReactnative: NSObject {
     }
     
     // MARK: - Push Notifications Begin
-    @objc(showPromptForPushNotifications:)
-    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>) -> Void {
+    @objc(showPromptForPushNotifications:resolver:rejecter:)
+    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
@@ -142,13 +142,18 @@ class CustomerioReactnative: NSObject {
                 if let ios = options["ios"] as? [String: Any], let sound = ios["sound"] as? Bool, let bagdeOption = ios["badge"] as? Bool {
                     
                     if sound {
-                        notificationOptions.insert(.sound)                    }
+                        notificationOptions.insert(.sound)
+                    }
                     if bagdeOption {
                         notificationOptions.insert(.badge)
                     }
                 }
                 current.requestAuthorization(options: notificationOptions) { isGranted, error in
-                    print("Status is - \(isGranted)")
+                    if let error = error {
+                        reject("[CIO]", "Error getting push permission status", error)
+                        return
+                    }
+                    resolve(isGranted)
                 }
             }
         }
@@ -177,7 +182,6 @@ class CustomerioReactnative: NSObject {
             completionHandler(status)
         })
     }
-    
     
     // MARK: - Push Notifications - End
     /**
