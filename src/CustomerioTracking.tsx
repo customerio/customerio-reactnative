@@ -130,6 +130,10 @@ class CustomerIO {
     }
     CustomerioReactnative.registerDeviceToken(token)
   }
+  
+  static showPromptForPushNotifications() {
+    CustomerioReactnative.showPromptForPushNotifications()
+  }
 }
 
 export { CustomerIO, Region };
