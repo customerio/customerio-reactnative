@@ -2,6 +2,7 @@ import Foundation
 import CioTracking
 import Common
 import CioMessagingInApp
+import UserNotifications
 
 enum PushPermissionStatus {
     case authorized
@@ -134,12 +135,17 @@ class CustomerioReactnative: NSObject {
     func showPromptForPushNotifications() -> Void {
         
         // Show prompt if status is not determined
-        if getPushNotificationPermissionStatus() == .notDetermined {
-            
+        getPushNotificationPermissionStatus { status in
+            if status == .notDetermined {
+                let current = UNUserNotificationCenter.current()
+                current.requestAuthorization(options: [.alert, .badge, .sound]) { isGranted, error in
+                    print("Status is - \(isGranted)")
+                }
+            }
         }
     }
     
-    private func getPushNotificationPermissionStatus() -> PushPermissionStatus {
+    private func getPushNotificationPermissionStatus(completionHandler: @escaping(PushPermissionStatus) -> Void) {
         var status = PushPermissionStatus.unknown
         let current = UNUserNotificationCenter.current()
         current.getNotificationSettings(completionHandler: { permission in
@@ -156,11 +162,11 @@ class CustomerioReactnative: NSObject {
             case .provisional:
                 // @available(iOS 12.0, *)
                 status = .provisional
-            @unknown default:
+            default:
                 status = .unknown
             }
+            completionHandler(status)
         })
-        return status
     }
     
     
