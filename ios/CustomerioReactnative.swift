@@ -128,6 +128,43 @@ class CustomerioReactnative: NSObject {
     func registerDeviceToken(token: String) -> Void {
         CustomerIO.shared.registerDeviceToken(token)
     }
+    
+    // MARK: - Push Notifications Begin
+    @objc(showPromptForPushNotifications)
+    func showPromptForPushNotifications() -> Void {
+        
+        // Show prompt if status is not determined
+        if getPushNotificationPermissionStatus() == .notDetermined {
+            
+        }
+    }
+    
+    private func getPushNotificationPermissionStatus() -> PushPermissionStatus {
+        var status = PushPermissionStatus.unknown
+        let current = UNUserNotificationCenter.current()
+        current.getNotificationSettings(completionHandler: { permission in
+            switch permission.authorizationStatus  {
+            case .authorized:
+                status = .authorized
+            case .denied:
+                status = .denied
+            case .notDetermined:
+                status = .notDetermined
+            case .ephemeral:
+                // @available(iOS 14.0, *)
+                status = .ephemeral
+            case .provisional:
+                // @available(iOS 12.0, *)
+                status = .provisional
+            @unknown default:
+                status = .unknown
+            }
+        })
+        return status
+    }
+    
+    
+    // MARK: - Push Notifications - End
     /**
         Intialize in-app using customerio package
      */
