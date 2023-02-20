@@ -131,7 +131,7 @@ class CustomerIO {
     CustomerioReactnative.registerDeviceToken(token)
   }
 
-  static showPromptForPushNotifications(options?: any) {
+  static async showPromptForPushNotifications(options?: any) : Promise<any>{
     let pushConfigurationOptions  = {
       "ios": {
         "badge" : true,
@@ -141,7 +141,8 @@ class CustomerIO {
     if (typeof options !== 'undefined'){
       pushConfigurationOptions = options
     }
-    CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
+  
+  return CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
   }
 }
 
