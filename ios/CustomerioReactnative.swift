@@ -3,6 +3,14 @@ import CioTracking
 import Common
 import CioMessagingInApp
 
+enum PushPermissionStatus {
+    case authorized
+    case denied
+    case notDetermined
+    case provisional
+    case ephemeral
+    case unknown
+}
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
 
