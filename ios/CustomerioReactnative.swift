@@ -131,8 +131,8 @@ class CustomerioReactnative: NSObject {
     }
     
     // MARK: - Push Notifications Begin
-    @objc(showPromptForPushNotifications)
-    func showPromptForPushNotifications() -> Void {
+    @objc(showPromptForPushNotifications:)
+    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>?) -> Void {
         
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in

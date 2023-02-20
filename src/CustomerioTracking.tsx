@@ -130,9 +130,18 @@ class CustomerIO {
     }
     CustomerioReactnative.registerDeviceToken(token)
   }
-  
-  static showPromptForPushNotifications() {
-    CustomerioReactnative.showPromptForPushNotifications()
+
+  static showPromptForPushNotifications(options?: any) {
+    let pushConfigurationOptions  = {
+      "ios": {
+        "badge" : true,
+        "sound" : true
+      }
+    }
+    if (typeof options !== 'undefined'){
+      pushConfigurationOptions = options
+    }
+    CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
   }
 }
 
