@@ -145,7 +145,7 @@ class CustomerioReactnative: NSObject {
         
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
-            if status == .authorized {
+            if status == .notDetermined {
                 let current = UNUserNotificationCenter.current()
                 var notificationOptions : UNAuthorizationOptions = [.alert]
                 if let ios = options["ios"] as? [String: Any] {
