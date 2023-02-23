@@ -1,3 +1,18 @@
+## [2.1.0](https://github.com/customerio/customerio-reactnative/compare/2.0.1...2.1.0) (2023-02-23)
+
+
+### Features
+
+* deprecated organization id for in-app ([#71](https://github.com/customerio/customerio-reactnative/issues/71)) ([691f324](https://github.com/customerio/customerio-reactnative/commit/691f3240288672d59d915fa6998271591d4fef03))
+* in-app event handler ([#89](https://github.com/customerio/customerio-reactnative/issues/89)) ([07e38f7](https://github.com/customerio/customerio-reactnative/commit/07e38f721acb7a613371c2fc3ac6872c3ea8cb38))
+
+
+### Bug Fixes
+
+* kotlin version in gradle props ([#96](https://github.com/customerio/customerio-reactnative/issues/96)) ([35dceb2](https://github.com/customerio/customerio-reactnative/commit/35dceb293b746845425e977df42e07959df8b60b))
+* remove return from init ([#93](https://github.com/customerio/customerio-reactnative/issues/93)) ([d54174b](https://github.com/customerio/customerio-reactnative/commit/d54174bd48586b35033d18c90290e927f0fee970))
+* update android sdk to range ([#94](https://github.com/customerio/customerio-reactnative/issues/94)) ([5a5a012](https://github.com/customerio/customerio-reactnative/commit/5a5a012d5c18eb25f54dd2211173ac948c75a989))
+
 ### [2.0.1](https://github.com/customerio/customerio-reactnative/compare/2.0.0...2.0.1) (2023-01-30)
 
 
