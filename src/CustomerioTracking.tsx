@@ -130,6 +130,19 @@ class CustomerIO {
   static inAppMessaging(): CustomerIOInAppMessaging {
     return new CustomerIOInAppMessaging();
   }
+
+  /**
+   * Register a device with respect to a profile.
+   * If no profile is identified, no device will be registered.
+   *
+   * @param token device token (iOS/Android)
+   */
+  static registerDeviceToken(token: string) {
+    if (token == null) {
+      return
+    }
+    CustomerioReactnative.registerDeviceToken(token)
+  }
 }
 
 export { CustomerIO, Region };

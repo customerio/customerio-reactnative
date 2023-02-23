@@ -70,7 +70,7 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
 1. Add an import statement to your project for the react native library. We haven't included it below, but you can import `CioLogLevel` to set log outputs to something other than `error`; this may help you debug your application.
    ```javascript 
-   import { CustomerIO, CustomerioConfig, CustomerIOEnv, CioLogLevel, Region } from ‘customerio-reactnative’;
+   import { CustomerIO, CustomerioConfig, CustomerIOEnv, CioLogLevel, Region } from 'customerio-reactnative';
    ```
 1. In `useEffect`, initialize the package with your `CustomerioConfig` options and `CustomerIOEnv` variables. You can find your Site ID and API Key credentials—or create new ones—under *Data & Integrations* > *Integrations* > *Customer.io API*:
    ```javascript
