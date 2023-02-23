@@ -112,7 +112,14 @@ class CustomerioReactnative: NSObject {
         }
         CustomerIO.shared.screen(name: name, data: body)
     }
-    
+    /**
+     To register device token with CustomerIO with respect to a user. If a user is not identified then device
+     will not get registered.
+     */
+    @objc(registerDeviceToken:)
+    func registerDeviceToken(token: String) -> Void {
+        CustomerIO.shared.registerDeviceToken(token)
+    }
     /**
         Initialize in-app using customerio package
      */

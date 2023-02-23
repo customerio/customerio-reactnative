@@ -1,3 +1,97 @@
+### [2.0.1](https://github.com/customerio/customerio-reactnative/compare/2.0.0...2.0.1) (2023-01-30)
+
+
+### Bug Fixes
+
+* add register device token ([f865261](https://github.com/customerio/customerio-reactnative/commit/f86526193267692f68291406a61b75c5c700b2b6))
+
+## [2.0.0](https://github.com/customerio/customerio-reactnative/compare/1.0.0...2.0.0) (2023-01-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* bumped ios version to 2.0.0
+
+### Features
+
+* expo user agent ([#49](https://github.com/customerio/customerio-reactnative/issues/49)) ([377300c](https://github.com/customerio/customerio-reactnative/commit/377300c76d1e8856908c0b231bb8cc2c4b51f97c))
+
+
+### Bug Fixes
+
+* added support for android sdk 3.2.0 ([c0407be](https://github.com/customerio/customerio-reactnative/commit/c0407bed6df4582be8646ed44662d80a5868ad17))
+* bumped ios version to 2.0.0 ([95f74b9](https://github.com/customerio/customerio-reactnative/commit/95f74b9c5e25e7d60e688de11459c83e30b50ae6))
+* for test case failure due to file path ([ce43198](https://github.com/customerio/customerio-reactnative/commit/ce431983f45dcb0503e248a36393fff6fb12db15))
+* ios and android sdk version update ([28e9ad3](https://github.com/customerio/customerio-reactnative/commit/28e9ad37e93da5d29745068ae3a722d3a32c8460))
+* ios sdk latest version ([66c4607](https://github.com/customerio/customerio-reactnative/commit/66c46075160001f30da8097062cd85898dd0c50d))
+* support for expo client ([b641fd8](https://github.com/customerio/customerio-reactnative/commit/b641fd8b94ab023c8a3577dd47ebdf02e431a4d4))
+* updated ios sdk to 1.2.2 ([6605d56](https://github.com/customerio/customerio-reactnative/commit/6605d563fe28fae7464d336c2673bb8620fdba5b))
+* updating to latest iOS SDK version ([a9c90f0](https://github.com/customerio/customerio-reactnative/commit/a9c90f0358e1500103a474ea93e912bd2b7d2804))
+
+## [2.0.0-beta.1](https://github.com/customerio/customerio-reactnative/compare/1.0.0...2.0.0-beta.1) (2022-12-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* bumped ios version to 2.0.0
+
+### Features
+
+* expo user agent ([#49](https://github.com/customerio/customerio-reactnative/issues/49)) ([377300c](https://github.com/customerio/customerio-reactnative/commit/377300c76d1e8856908c0b231bb8cc2c4b51f97c))
+
+
+### Bug Fixes
+
+* added support for android sdk 3.2.0 ([c0407be](https://github.com/customerio/customerio-reactnative/commit/c0407bed6df4582be8646ed44662d80a5868ad17))
+* bumped ios version to 2.0.0 ([95f74b9](https://github.com/customerio/customerio-reactnative/commit/95f74b9c5e25e7d60e688de11459c83e30b50ae6))
+* for test case failure due to file path ([ce43198](https://github.com/customerio/customerio-reactnative/commit/ce431983f45dcb0503e248a36393fff6fb12db15))
+* ios and android sdk version update ([28e9ad3](https://github.com/customerio/customerio-reactnative/commit/28e9ad37e93da5d29745068ae3a722d3a32c8460))
+* ios sdk latest version ([66c4607](https://github.com/customerio/customerio-reactnative/commit/66c46075160001f30da8097062cd85898dd0c50d))
+* support for expo client ([b641fd8](https://github.com/customerio/customerio-reactnative/commit/b641fd8b94ab023c8a3577dd47ebdf02e431a4d4))
+* updated ios sdk to 1.2.2 ([6605d56](https://github.com/customerio/customerio-reactnative/commit/6605d563fe28fae7464d336c2673bb8620fdba5b))
+* updating to latest iOS SDK version ([a9c90f0](https://github.com/customerio/customerio-reactnative/commit/a9c90f0358e1500103a474ea93e912bd2b7d2804))
+
+## [2.0.0-alpha.1](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.3...2.0.0-alpha.1) (2022-12-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* bumped ios version to 2.0.0
+
+### Features
+
+* expo user agent ([#49](https://github.com/customerio/customerio-reactnative/issues/49)) ([377300c](https://github.com/customerio/customerio-reactnative/commit/377300c76d1e8856908c0b231bb8cc2c4b51f97c))
+
+
+### Bug Fixes
+
+* bumped ios version to 2.0.0 ([95f74b9](https://github.com/customerio/customerio-reactnative/commit/95f74b9c5e25e7d60e688de11459c83e30b50ae6))
+
+### [1.0.1-alpha.3](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.2...1.0.1-alpha.3) (2022-12-01)
+
+
+### Bug Fixes
+
+* ios and android sdk version update ([28e9ad3](https://github.com/customerio/customerio-reactnative/commit/28e9ad37e93da5d29745068ae3a722d3a32c8460))
+
+### [1.0.1-alpha.2](https://github.com/customerio/customerio-reactnative/compare/1.0.1-alpha.1...1.0.1-alpha.2) (2022-11-21)
+
+
+### Bug Fixes
+
+* added support for android sdk 3.2.0 ([c0407be](https://github.com/customerio/customerio-reactnative/commit/c0407bed6df4582be8646ed44662d80a5868ad17))
+* for test case failure due to file path ([ce43198](https://github.com/customerio/customerio-reactnative/commit/ce431983f45dcb0503e248a36393fff6fb12db15))
+* ios sdk latest version ([66c4607](https://github.com/customerio/customerio-reactnative/commit/66c46075160001f30da8097062cd85898dd0c50d))
+* updated ios sdk to 1.2.2 ([6605d56](https://github.com/customerio/customerio-reactnative/commit/6605d563fe28fae7464d336c2673bb8620fdba5b))
+* updating to latest iOS SDK version ([a9c90f0](https://github.com/customerio/customerio-reactnative/commit/a9c90f0358e1500103a474ea93e912bd2b7d2804))
+
+### [1.0.1-alpha.1](https://github.com/customerio/customerio-reactnative/compare/1.0.0...1.0.1-alpha.1) (2022-10-31)
+
+
+### Bug Fixes
+
+* support for expo client ([b641fd8](https://github.com/customerio/customerio-reactnative/commit/b641fd8b94ab023c8a3577dd47ebdf02e431a4d4))
+
 ## 1.0.0 (2022-10-24)
 
 
