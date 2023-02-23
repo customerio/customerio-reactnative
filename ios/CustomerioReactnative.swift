@@ -146,27 +146,39 @@ class CustomerioReactnative: NSObject {
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
             if status == .notDetermined {
-                let current = UNUserNotificationCenter.current()
-                var notificationOptions : UNAuthorizationOptions = [.alert]
-                if let ios = options["ios"] as? [String: Any] {
+                self.requestPushAuthorization(options: options) { permissionStatus in
                     
-                    if let sound = ios["sound"] as? Bool, sound {
-                        notificationOptions.insert(.sound)
-                    }
-                    if let bagdeOption = ios["badge"] as? Bool, bagdeOption {
-                        notificationOptions.insert(.badge)
-                    }
-                }
-                current.requestAuthorization(options: notificationOptions) { isGranted, error in
-                    if let error = error {
-                        reject("[CIO]", "Error requesting push notification permission.", error)
+                    guard let status = permissionStatus as? Bool else {
+                        reject("[CIO]", "Error requesting push notification permission.", permissionStatus as? Error)
                         return
                     }
-                    resolve(isGranted)
+                    resolve(status)
                 }
             } else {
                 resolve(status.rawValue)
             }
+        }
+    }
+    
+    private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
+    ) {
+        let current = UNUserNotificationCenter.current()
+        var notificationOptions : UNAuthorizationOptions = [.alert]
+        if let ios = options["ios"] as? [String: Any] {
+            
+            if let soundOption = ios["sound"] as? Bool, soundOption {
+                notificationOptions.insert(.sound)
+            }
+            if let bagdeOption = ios["badge"] as? Bool, bagdeOption {
+                notificationOptions.insert(.badge)
+            }
+        }
+        current.requestAuthorization(options: notificationOptions) { isGranted, error in
+            if let error = error {
+                onComplete(error)
+                return
+            }
+            onComplete(isGranted)
         }
     }
     
