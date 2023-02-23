@@ -11,6 +11,7 @@ enum PushPermissionStatus : String {
     case provisional = "Provisional"
     case ephemeral = "Ephemeral"
     case unknown = "Unknown"
+    case granted = "Granted"
 }
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -55,9 +56,7 @@ class CustomerioReactnative: NSObject {
         
         // Register app for push notifications if not done already
         DispatchQueue.main.async {
-            if(!UIApplication.shared.isRegisteredForRemoteNotifications) {
-                UIApplication.shared.registerForRemoteNotifications()
-            }
+            UIApplication.shared.registerForRemoteNotifications()
         }
     }
     
@@ -152,7 +151,7 @@ class CustomerioReactnative: NSObject {
                         reject("[CIO]", "Error requesting push notification permission.", permissionStatus as? Error)
                         return
                     }
-                    resolve(status)
+                    resolve(status ? PushPermissionStatus.granted.rawValue : PushPermissionStatus.denied.rawValue)
                 }
             } else {
                 resolve(status.rawValue)
