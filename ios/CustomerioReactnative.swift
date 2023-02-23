@@ -164,9 +164,8 @@ class CustomerioReactnative: NSObject {
                     }
                     resolve(isGranted)
                 }
-            } else if status == .authorized {
+            } else {
                 resolve(status.rawValue)
-//                reject("[CIO]", "Push notification permission already granted", nil)
             }
         }
     }
