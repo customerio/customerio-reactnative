@@ -4,13 +4,13 @@ import Common
 import CioMessagingInApp
 import UserNotifications
 
-enum PushPermissionStatus {
-    case authorized
-    case denied
-    case notDetermined
-    case provisional
-    case ephemeral
-    case unknown
+enum PushPermissionStatus : String {
+    case authorized = "Authorized"
+    case denied = "Denied"
+    case notDetermined = "NotDetermined"
+    case provisional = "Provisional"
+    case ephemeral = "Ephemeral"
+    case unknown = "Unknown"
 }
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -51,6 +51,13 @@ class CustomerioReactnative: NSObject {
         }
         if organizationId != "" {
             initializeInApp(organizationId: organizationId)
+        }
+        
+        // Register app for push notifications if not done already
+        DispatchQueue.main.async {
+            if(!UIApplication.shared.isRegisteredForRemoteNotifications) {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
         }
     }
     
@@ -129,14 +136,16 @@ class CustomerioReactnative: NSObject {
     func registerDeviceToken(token: String) -> Void {
         CustomerIO.shared.registerDeviceToken(token)
     }
-    
-    // MARK: - Push Notifications Begin
+
+    /**
+     To show push notification prompt  if current authorization status is not determined
+     */
     @objc(showPromptForPushNotifications:resolver:rejecter:)
     func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
-            if status == .authorized {
+            if status == .notDetermined {
                 let current = UNUserNotificationCenter.current()
                 var notificationOptions : UNAuthorizationOptions = [.alert]
                 if let ios = options["ios"] as? [String: Any], let sound = ios["sound"] as? Bool, let bagdeOption = ios["badge"] as? Bool {
@@ -150,11 +159,14 @@ class CustomerioReactnative: NSObject {
                 }
                 current.requestAuthorization(options: notificationOptions) { isGranted, error in
                     if let error = error {
-                        reject("[CIO]", "Error getting push permission status", error)
+                        reject("[CIO]", "Error requesting push notification permission.", error)
                         return
                     }
                     resolve(isGranted)
                 }
+            } else if status == .authorized {
+                resolve(status.rawValue)
+//                reject("[CIO]", "Push notification permission already granted", nil)
             }
         }
     }
