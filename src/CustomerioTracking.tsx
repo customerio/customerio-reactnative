@@ -131,6 +131,13 @@ class CustomerIO {
     CustomerioReactnative.registerDeviceToken(token)
   }
 
+  /**
+   * Request to show prompt for push notification permissions.
+   * Prompt will only be shown if the current status is - not determined.
+   * In other cases, this function will return current status of permission.
+   * @param options
+   * @returns Success & Failure promises
+   */
   static async showPromptForPushNotifications(options?: any) : Promise<any>{
     let pushConfigurationOptions  = {
       "ios": {
@@ -145,6 +152,11 @@ class CustomerIO {
   return CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
   }
 
+  /**
+   * Get status of push permission for the app
+   * @param handler
+   * @returns Status of push permission as a string
+   */
   static getPushPermissionStatus(handler? : Function) {
     if (typeof handler === "undefined") {
       return
