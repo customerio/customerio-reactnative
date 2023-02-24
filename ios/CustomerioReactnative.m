@@ -26,4 +26,6 @@ RCT_EXTERN_METHOD(registerDeviceToken : (nonnull NSString *) token)
 RCT_EXTERN_METHOD(showPromptForPushNotifications: (NSDictionary *) options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getPushPermissionStatus: (RCTResponseSenderBlock) callback)
 @end
