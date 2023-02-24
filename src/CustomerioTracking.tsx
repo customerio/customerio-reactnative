@@ -144,6 +144,13 @@ class CustomerIO {
   
   return CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
   }
+
+  static getPushPermissionStatus(handler? : Function) {
+    if (typeof handler === "undefined") {
+      return
+    }
+    return CustomerioReactnative.getPushPermissionStatus(handler)
+  }
 }
 
 export { CustomerIO, Region };
