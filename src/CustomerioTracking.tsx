@@ -5,6 +5,7 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
+import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -51,7 +52,15 @@ class CustomerIO {
       packageConfig.version = expoVersion;
     }
 
-    return CustomerioReactnative.initialize(env, config, packageConfig);
+    if (env.organizationId && env.organizationId != '') {
+      console.warn('{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}');
+      if (config.enableInApp == false) {
+        config.enableInApp = true;
+        console.warn('{config.enableInApp} set to {true} because {organizationId} was added');
+      }
+    }
+
+    CustomerioReactnative.initialize(env, config, packageConfig);
   }
 
   /**
@@ -116,6 +125,10 @@ class CustomerIO {
    */
   static screen(name: string, data: Object) {
     CustomerioReactnative.screen(name, data);
+  }
+
+  static inAppMessaging(): CustomerIOInAppMessaging {
+    return new CustomerIOInAppMessaging();
   }
 
   /**

@@ -1,33 +1,47 @@
-name: Deploy SDK npm 
+name: Deploy to npm 
 
-# If deployment tries to push to npm and then push git tags
-# when git tag deployment fails, you cannot push to npm again
-# as it doesn't allow overwriting previously deployed artifacts. Deploy 
-# tag first, then deploy to npm on successful tag deployment. 
+# Deploying to npm must be done manually after the git tag is made. 
+# This is a temporary workaround at this time until this is done: https://github.com/customerio/issues/issues/9287
 on:
   release:
     types: [published]
+  workflow_dispatch: 
+    inputs:
+      tagToDeploy:
+        description: 'Type name of existing git tag (example: 1.0.3) to push to npm'
+        required: true
+        type: string 
+
+env:
+  COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
 
 jobs:
-  deploy:
-    name: Deploy to npm
-    runs-on: ubuntu-latest
+  deploy-cocoapods:
+    name: Deploy SDK to Cocoapods 
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v2
+      - name: Checkout existing tag if manually running CI task  
+        uses: actions/checkout@v2
+        # If input is not given, that probably means this CI task was run automatically by a new 
+        # git tag being pushed. Skip this step and try to deploy pods for new tag. 
+        if: ${{ github.event.inputs.tagToDeploy != '' }}
+        with:
+          ref: ${{ github.event.inputs.tagToDeploy }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
       - run: yarn install --frozen-lockfile
 
-      - name: Deploy to npm 
-        run: ./scripts/deploy-code.sh 
+      - name: Deploy to npm
+        run: ./scripts/deploy-code.sh
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          IS_PRERELEASE: ${{ github.event.release.prerelease }} # true or false boolean if a prerelease github release
+          IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
-      - name: Notify team of successful deployment 
-        uses: slackapi/slack-github-action@v1.18.0        
+      - name: Notify team of successful deployment
+        uses: slackapi/slack-github-action@v1.18.0
         if: ${{ success() }}
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -52,7 +66,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Version ${{ github.event.release.tag_name }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ github.event.release.tag_name }}|create git tag>~\n~2. deploy to npm~\n\n"
+                    "text": "*Version ${{ needs.deploy-git-tag.outputs.new_release_version }}*\n\nReactNative SDK deployment progress:\n ~1. <https://github.com/${{github.repository}}/releases/tag/${{ needs.deploy-git-tag.outputs.new_release_version }}|create git tag>~\n~2. deploy to npm~\n\n"
                   }
                 }
               ]
@@ -60,10 +74,10 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      
-      - name: Notify team of failure 
+
+      - name: Notify team of failure
         uses: slackapi/slack-github-action@v1.18.0
-        if: ${{ failure() }} # only run this if any previous step failed 
+        if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
           payload: |
@@ -95,4 +109,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          
