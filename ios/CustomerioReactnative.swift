@@ -159,6 +159,9 @@ class CustomerioReactnative: NSObject {
         }
     }
 
+    /**
+    This functions gets the current status of push notification permission
+     */
     @objc(getPushPermissionStatus:)
     func getPushPermissionStatus(callback : @escaping(RCTResponseSenderBlock)) -> Void {
         getPushNotificationPermissionStatus { status in
