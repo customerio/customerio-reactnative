@@ -158,6 +158,13 @@ class CustomerioReactnative: NSObject {
             }
         }
     }
+
+    @objc(getPushPermissionStatus:)
+    func getPushPermissionStatus(callback : @escaping(RCTResponseSenderBlock)) -> Void {
+        getPushNotificationPermissionStatus { status in
+            callback([status.rawValue])
+        }
+    }
     
     private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
     ) {
