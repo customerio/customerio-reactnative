@@ -37,7 +37,7 @@ class RNCIOPushMessaging(
      */
     @ReactMethod
     fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
-        // Skip requesting permissions for older version and when permission already granted
+        // Skip requesting permissions for older versions and when permission already granted
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || checkPushPermissionStatus() == PermissionStatus.Granted) {
             promise.resolve(PermissionStatus.Granted.toReactNativeResult)
             return
