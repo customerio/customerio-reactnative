@@ -111,8 +111,8 @@ class CustomerIOReactNativeModule(
     }
 
     @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
-        pushMessagingModule.getPushPermissionStatus(promise)
+    fun getPushPermissionStatus(callback: Callback) {
+        pushMessagingModule.getPushPermissionStatus(callback)
     }
 
     @ReactMethod
