@@ -46,7 +46,7 @@ class RNCIOPushMessaging(
         try {
             notificationRequestPromise = promise
             (currentActivity as PermissionAwareActivity).requestPermissions(
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                arrayOf(POST_NOTIFICATIONS_PERMISSION_NAME),
                 POST_NOTIFICATIONS_PERMISSION_REQUEST,
                 this,
             )
@@ -96,9 +96,15 @@ class RNCIOPushMessaging(
      * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
      */
     private val PermissionStatus.toReactNativeResult: Any
-        get() = name
+        get() = this.name
 
     companion object {
+        /**
+         * Copying value os [Manifest.permission.POST_NOTIFICATIONS] as constant so we don't have to
+         * force newer compile sdk versions
+         */
+        private const val POST_NOTIFICATIONS_PERMISSION_NAME =
+            "android.permission.POST_NOTIFICATIONS"
         private const val POST_NOTIFICATIONS_PERMISSION_REQUEST = 24676
     }
 }
