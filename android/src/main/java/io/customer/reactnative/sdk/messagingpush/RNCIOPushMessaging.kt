@@ -37,8 +37,8 @@ class RNCIOPushMessaging(
      */
     @ReactMethod
     fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
-        // Skip requesting permissions for older versions and when permission already granted
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || checkPushPermissionStatus() == PermissionStatus.Granted) {
+        // Skip requesting permissions when already granted
+        if (checkPushPermissionStatus() == PermissionStatus.Granted) {
             promise.resolve(PermissionStatus.Granted.toReactNativeResult)
             return
         }
@@ -60,9 +60,9 @@ class RNCIOPushMessaging(
      * Checks current permission of push notification permission
      */
     private fun checkPushPermissionStatus(): PermissionStatus =
-        if (ContextCompat.checkSelfPermission(
-                reactContext,
-                Manifest.permission.POST_NOTIFICATIONS,
+        // Skip requesting permissions for older versions where not required
+        if (Build.VERSION.SDK_INT < BUILD_VERSION_CODE_TIRAMISU || ContextCompat.checkSelfPermission(
+                reactContext, POST_NOTIFICATIONS_PERMISSION_NAME,
             ) == PackageManager.PERMISSION_GRANTED
         ) PermissionStatus.Granted
         else PermissionStatus.Denied
@@ -105,6 +105,7 @@ class RNCIOPushMessaging(
          */
         private const val POST_NOTIFICATIONS_PERMISSION_NAME =
             "android.permission.POST_NOTIFICATIONS"
+        private const val BUILD_VERSION_CODE_TIRAMISU = 33
         private const val POST_NOTIFICATIONS_PERMISSION_REQUEST = 24676
     }
 }
