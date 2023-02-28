@@ -85,7 +85,7 @@ class RNCIOPushMessaging(
             } else {
                 resolvePermissionPromise(PermissionStatus.Denied)
             }
-            true // as this permission can be removed now
+            true // as this permission listener can be removed now
         }
         else -> false // desired permission not yet granted, so we will keep the listener
     }
