@@ -9,7 +9,7 @@ import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 
 /**
- * ReactNative module to hold in-app messages features in a single place to bridge with native code.
+ * ReactNative module to hold push messages features in a single place to bridge with native code.
  */
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
@@ -44,8 +44,18 @@ class RNCIOPushMessaging(
         }
 
         try {
+            val activity = currentActivity
+            val permissionAwareActivity = activity as? PermissionAwareActivity
+            if (permissionAwareActivity == null) {
+                promise.reject(
+                    "E_ACTIVITY_DOES_NOT_EXIST",
+                    "Permission cannot be requested because activity doesn't exist. Please make sure to request permission from UI components only"
+                )
+                return
+            }
+
             notificationRequestPromise = promise
-            (currentActivity as PermissionAwareActivity).requestPermissions(
+            permissionAwareActivity.requestPermissions(
                 arrayOf(POST_NOTIFICATIONS_PERMISSION_NAME),
                 POST_NOTIFICATIONS_PERMISSION_REQUEST,
                 this,
