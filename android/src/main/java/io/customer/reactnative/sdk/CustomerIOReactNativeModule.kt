@@ -1,16 +1,15 @@
 package io.customer.reactnative.sdk
 
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.*
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
+    private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
@@ -109,6 +108,16 @@ class CustomerIOReactNativeModule(
         if (isNotInitialized()) return
 
         customerIO.registerDeviceToken(token)
+    }
+
+    @ReactMethod
+    fun getPushPermissionStatus(callback: Callback) {
+        pushMessagingModule.getPushPermissionStatus(callback)
+    }
+
+    @ReactMethod
+    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+        pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
     }
 
     companion object {
