@@ -5,11 +5,8 @@ import CioMessagingInApp
 import UserNotifications
 
 enum PushPermissionStatus : String {
-    case authorized = "Authorized"
     case denied = "Denied"
     case notDetermined = "NotDetermined"
-    case provisional = "Provisional"
-    case ephemeral = "Ephemeral"
     case unknown = "Unknown"
     case granted = "Granted"
 }
@@ -197,17 +194,11 @@ class CustomerioReactnative: NSObject {
         current.getNotificationSettings(completionHandler: { permission in
             switch permission.authorizationStatus  {
             case .authorized:
-                status = .authorized
+                status = .granted
             case .denied:
                 status = .denied
             case .notDetermined:
                 status = .notDetermined
-            case .ephemeral: // authorized to send or receive notifications for limited time
-                // @available(iOS 14.0, *)
-                status = .ephemeral
-            case .provisional: //authoized to push non-interuptive notifications
-                // @available(iOS 12.0, *)
-                status = .provisional
             default:
                 status = .unknown
             }
@@ -240,7 +231,7 @@ extension CustomerioReactnative: InAppEventListener {
             body["actionName"] = actionName
         }
         CustomerioInAppMessaging.shared?.sendEvent(
-            withName: "InAppEventListener", 
+            withName: "InAppEventListener",
             body: body
         )
     }
