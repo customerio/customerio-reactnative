@@ -193,7 +193,7 @@ class CustomerioReactnative: NSObject {
         let current = UNUserNotificationCenter.current()
         current.getNotificationSettings(completionHandler: { permission in
             switch permission.authorizationStatus  {
-            case .authorized:
+            case .authorized, .provisional, .ephemeral:
                 status = .granted
             case .denied:
                 status = .denied
