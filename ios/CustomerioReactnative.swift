@@ -4,12 +4,16 @@ import Common
 import CioMessagingInApp
 import UserNotifications
 
-enum PushPermissionStatus : String {
-    case denied = "Denied"
-    case notDetermined = "NotDetermined"
-    case unknown = "Unknown"
-    case granted = "Granted"
+enum PushPermissionStatus: String {
+    case denied
+    case notDetermined
+    case granted
+
+    var rawValue: String {
+        return self.capitalized
+    }
 }
+
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
 
