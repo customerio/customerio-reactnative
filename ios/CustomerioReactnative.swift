@@ -193,18 +193,16 @@ class CustomerioReactnative: NSObject {
     }
     
     private func getPushNotificationPermissionStatus(completionHandler: @escaping(PushPermissionStatus) -> Void) {
-        var status = PushPermissionStatus.unknown
+        var status = PushPermissionStatus.notDetermined
         let current = UNUserNotificationCenter.current()
         current.getNotificationSettings(completionHandler: { permission in
             switch permission.authorizationStatus  {
-            case .authorized:
+            case .authorized, .provisional, .ephemeral:
                 status = .granted
             case .denied:
                 status = .denied
-            case .notDetermined:
-                status = .notDetermined
             default:
-                status = .unknown
+                status = .notDetermined
             }
             completionHandler(status)
         })
