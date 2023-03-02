@@ -170,11 +170,8 @@ class CustomerIO {
    * @param handler
    * @returns Status of push permission as a string
    */
-  static getPushPermissionStatus(handler? : Function) {
-    if (typeof handler === "undefined") {
-      return
-    }
-    return CustomerioReactnative.getPushPermissionStatus(handler)
+  static getPushPermissionStatus() : Promise<any> {
+    return CustomerioReactnative.getPushPermissionStatus()
   }
 }
 
