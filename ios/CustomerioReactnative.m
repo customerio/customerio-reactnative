@@ -27,7 +27,6 @@ RCT_EXTERN_METHOD(showPromptForPushNotifications: (NSDictionary *) options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getPushPermissionStatus:
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getPushPermissionStatus: (RCTPromiseResolveBlock) resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
 @end

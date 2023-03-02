@@ -157,10 +157,10 @@ class CustomerioReactnative: NSObject {
     }
 
     /**
-    This functions gets the current status of push notification permission
+    This functions gets the current status of push notification permission and returns as a promise
      */
     @objc(getPushPermissionStatus:rejecter:)
-    func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+    func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         getPushNotificationPermissionStatus { status in
             resolve(status.rawValue)
         }
