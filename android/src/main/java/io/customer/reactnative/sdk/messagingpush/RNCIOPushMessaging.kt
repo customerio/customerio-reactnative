@@ -21,8 +21,8 @@ class RNCIOPushMessaging(
     private var notificationRequestPromise: Promise? = null
 
     @ReactMethod
-    fun getPushPermissionStatus(callback: Callback) {
-        callback.invoke(checkPushPermissionStatus().toReactNativeResult)
+    fun getPushPermissionStatus(promise: Promise) {
+        promise.resolve(checkPushPermissionStatus().toReactNativeResult)
     }
 
     /**
