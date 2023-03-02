@@ -167,8 +167,7 @@ class CustomerIO {
 
   /**
    * Get status of push permission for the app
-   * @param handler
-   * @returns Status of push permission as a string
+   * @returns Promise with status of push permission as a string
    */
   static getPushPermissionStatus() : Promise<any> {
     return CustomerioReactnative.getPushPermissionStatus()
