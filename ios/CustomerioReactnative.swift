@@ -2,6 +2,17 @@ import Foundation
 import CioTracking
 import Common
 import CioMessagingInApp
+import UserNotifications
+
+enum PushPermissionStatus: String, CaseIterable {
+    case denied
+    case notDetermined
+    case granted
+
+    var value: String {
+        return rawValue.capitalized
+    }
+}
 
 @objc(CustomerioReactnative)
 class CustomerioReactnative: NSObject {
@@ -42,6 +53,11 @@ class CustomerioReactnative: NSObject {
         }
         if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
             initializeInApp()
+        }
+        
+        // Register app for push notifications if not done already
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
         }
     }
     
@@ -120,6 +136,79 @@ class CustomerioReactnative: NSObject {
     func registerDeviceToken(token: String) -> Void {
         CustomerIO.shared.registerDeviceToken(token)
     }
+
+    /**
+     To show push notification prompt  if current authorization status is not determined
+     */
+    @objc(showPromptForPushNotifications:resolver:rejecter:)
+    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        
+        // Show prompt if status is not determined
+        getPushNotificationPermissionStatus { status in
+            if status == .notDetermined {
+                self.requestPushAuthorization(options: options) { permissionStatus in
+                    
+                    guard let status = permissionStatus as? Bool else {
+                        reject("[CIO]", "Error requesting push notification permission.", permissionStatus as? Error)
+                        return
+                    }
+                    resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
+                }
+            } else {
+                resolve(status.value)
+            }
+        }
+    }
+
+    /**
+    This functions gets the current status of push notification permission and returns as a promise
+     */
+    @objc(getPushPermissionStatus:rejecter:)
+    func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        getPushNotificationPermissionStatus { status in
+            resolve(status.value)
+        }
+    }
+    
+    private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
+    ) {
+        let current = UNUserNotificationCenter.current()
+        var notificationOptions : UNAuthorizationOptions = [.alert]
+        if let ios = options["ios"] as? [String: Any] {
+            
+            if let soundOption = ios["sound"] as? Bool, soundOption {
+                notificationOptions.insert(.sound)
+            }
+            if let bagdeOption = ios["badge"] as? Bool, bagdeOption {
+                notificationOptions.insert(.badge)
+            }
+        }
+        current.requestAuthorization(options: notificationOptions) { isGranted, error in
+            if let error = error {
+                onComplete(error)
+                return
+            }
+            onComplete(isGranted)
+        }
+    }
+    
+    private func getPushNotificationPermissionStatus(completionHandler: @escaping(PushPermissionStatus) -> Void) {
+        var status = PushPermissionStatus.notDetermined
+        let current = UNUserNotificationCenter.current()
+        current.getNotificationSettings(completionHandler: { permission in
+            switch permission.authorizationStatus  {
+            case .authorized, .provisional, .ephemeral:
+                status = .granted
+            case .denied:
+                status = .denied
+            default:
+                status = .notDetermined
+            }
+            completionHandler(status)
+        })
+    }
+    
+    // MARK: - Push Notifications - End
     /**
         Initialize in-app using customerio package
      */
@@ -144,7 +233,7 @@ extension CustomerioReactnative: InAppEventListener {
             body["actionName"] = actionName
         }
         CustomerioInAppMessaging.shared?.sendEvent(
-            withName: "InAppEventListener", 
+            withName: "InAppEventListener",
             body: body
         )
     }

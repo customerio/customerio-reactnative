@@ -18,3 +18,5 @@ export {
   CustomerIOEnv,
   CioLogLevel
 };
+
+export * from "./types";

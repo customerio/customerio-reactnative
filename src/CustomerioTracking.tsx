@@ -6,6 +6,7 @@ import {
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import type { PushPermissionStatus, PushPermissionOptions } from './types';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -142,6 +143,36 @@ class CustomerIO {
       return
     }
     CustomerioReactnative.registerDeviceToken(token)
+  }
+
+  /**
+   * Request to show prompt for push notification permissions.
+   * Prompt will only be shown if the current status is - not determined.
+   * In other cases, this function will return current status of permission.
+   * @param options
+   * @returns Success & Failure promises
+   */
+  static async showPromptForPushNotifications(
+    options?: PushPermissionOptions
+  ): Promise<PushPermissionStatus> {
+    let defaultOptions: PushPermissionOptions = {
+      ios: {
+        badge: true,
+        sound: true,
+      },
+    };
+
+    return CustomerioReactnative.showPromptForPushNotifications(
+      options || defaultOptions
+    );
+  }
+
+  /**
+   * Get status of push permission for the app
+   * @returns Promise with status of push permission as a string
+   */
+  static getPushPermissionStatus() : Promise<PushPermissionStatus> {
+    return CustomerioReactnative.getPushPermissionStatus()
   }
 }
 
