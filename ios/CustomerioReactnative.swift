@@ -4,13 +4,13 @@ import Common
 import CioMessagingInApp
 import UserNotifications
 
-enum PushPermissionStatus: String {
+enum PushPermissionStatus: String, CaseIterable {
     case denied
     case notDetermined
     case granted
 
-    var rawValue: String {
-        return self.capitalized
+    var value: String {
+        return rawValue.capitalized
     }
 }
 
@@ -152,10 +152,10 @@ class CustomerioReactnative: NSObject {
                         reject("[CIO]", "Error requesting push notification permission.", permissionStatus as? Error)
                         return
                     }
-                    resolve(status ? PushPermissionStatus.granted.rawValue : PushPermissionStatus.denied.rawValue)
+                    resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
                 }
             } else {
-                resolve(status.rawValue)
+                resolve(status.value)
             }
         }
     }
@@ -166,7 +166,7 @@ class CustomerioReactnative: NSObject {
     @objc(getPushPermissionStatus:rejecter:)
     func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         getPushNotificationPermissionStatus { status in
-            resolve(status.rawValue)
+            resolve(status.value)
         }
     }
     
