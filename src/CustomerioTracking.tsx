@@ -6,6 +6,7 @@ import {
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import type { PushPermissionStatus, PushPermissionOptions } from './types';
 var pjson = require("customerio-reactnative/package.json");
 
 const LINKING_ERROR =
@@ -151,25 +152,26 @@ class CustomerIO {
    * @param options
    * @returns Success & Failure promises
    */
-  static async showPromptForPushNotifications(options?: any) : Promise<any>{
-    let pushConfigurationOptions  = {
-      "ios": {
-        "badge" : true,
-        "sound" : true
-      }
-    }
-    if (typeof options !== 'undefined'){
-      pushConfigurationOptions = options
-    }
-  
-  return CustomerioReactnative.showPromptForPushNotifications(pushConfigurationOptions)
+  static async showPromptForPushNotifications(
+    options?: PushPermissionOptions
+  ): Promise<PushPermissionStatus> {
+    let defaultOptions: PushPermissionOptions = {
+      ios: {
+        badge: true,
+        sound: true,
+      },
+    };
+
+    return CustomerioReactnative.showPromptForPushNotifications(
+      options || defaultOptions
+    );
   }
 
   /**
    * Get status of push permission for the app
    * @returns Promise with status of push permission as a string
    */
-  static getPushPermissionStatus() : Promise<any> {
+  static getPushPermissionStatus() : Promise<PushPermissionStatus> {
     return CustomerioReactnative.getPushPermissionStatus()
   }
 }
