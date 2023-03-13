@@ -1,3 +1,10 @@
+## [2.2.0](https://github.com/customerio/customerio-reactnative/compare/2.1.0...2.2.0) (2023-03-03)
+
+
+### Features
+
+* push permission prompt ([#101](https://github.com/customerio/customerio-reactnative/issues/101)) ([1abe9b3](https://github.com/customerio/customerio-reactnative/commit/1abe9b33f05d125e4180a77207fad23080774550))
+
 ## [2.1.0](https://github.com/customerio/customerio-reactnative/compare/2.0.1...2.1.0) (2023-02-23)
 
 

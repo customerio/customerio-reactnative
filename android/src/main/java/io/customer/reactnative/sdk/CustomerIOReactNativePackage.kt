@@ -4,14 +4,17 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
+import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 
 class CustomerIOReactNativePackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
+        val pushMessagingModule = RNCIOPushMessaging(reactContext)
         val inAppMessagingModule = RNCIOInAppMessaging(reactContext)
         return listOf(
             inAppMessagingModule,
             CustomerIOReactNativeModule(
                 reactContext = reactContext,
+                pushMessagingModule = pushMessagingModule,
                 inAppMessagingModule = inAppMessagingModule,
             ),
         )
