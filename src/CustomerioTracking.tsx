@@ -7,7 +7,7 @@ import {
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
-var pjson = require("customerio-reactnative/package.json");
+var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -54,10 +54,14 @@ class CustomerIO {
     }
 
     if (env.organizationId && env.organizationId != '') {
-      console.warn('{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}');
+      console.warn(
+        '{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}'
+      );
       if (config.enableInApp == false) {
         config.enableInApp = true;
-        console.warn('{config.enableInApp} set to {true} because {organizationId} was added');
+        console.warn(
+          '{config.enableInApp} set to {true} because {organizationId} was added'
+        );
       }
     }
 
@@ -140,9 +144,9 @@ class CustomerIO {
    */
   static registerDeviceToken(token: string) {
     if (token == null) {
-      return
+      return;
     }
-    CustomerioReactnative.registerDeviceToken(token)
+    CustomerioReactnative.registerDeviceToken(token);
   }
 
   /**
@@ -171,8 +175,8 @@ class CustomerIO {
    * Get status of push permission for the app
    * @returns Promise with status of push permission as a string
    */
-  static getPushPermissionStatus() : Promise<PushPermissionStatus> {
-    return CustomerioReactnative.getPushPermissionStatus()
+  static getPushPermissionStatus(): Promise<PushPermissionStatus> {
+    return CustomerioReactnative.getPushPermissionStatus();
   }
 }
 
