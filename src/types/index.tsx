@@ -1,2 +1,2 @@
-export * from './PushPermissionOptions'
-export * from './PushPermissionStatus'
+export * from './PushPermissionOptions';
+export * from './PushPermissionStatus';

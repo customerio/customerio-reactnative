@@ -1,5 +1,5 @@
 export enum PushPermissionStatus {
-    Granted = "Granted",
-    Denied = "Denied",
-    NotDetermined = "NotDetermined"
+  Granted = 'Granted',
+  Denied = 'Denied',
+  NotDetermined = 'NotDetermined',
 }
