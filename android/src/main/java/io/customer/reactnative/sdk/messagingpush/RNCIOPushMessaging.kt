@@ -4,9 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
+import com.google.firebase.messaging.RemoteMessage
+import io.customer.messagingpush.CustomerIOFirebaseMessagingService
+import io.customer.reactnative.sdk.extension.toMap
 
 /**
  * ReactNative module to hold push messages features in a single place to bridge with native code.
@@ -63,6 +67,21 @@ class RNCIOPushMessaging(
         } catch (ex: Throwable) {
             promise.reject(ex)
             notificationRequestPromise = null
+        }
+    }
+
+    @ReactMethod
+    fun handleMessage(message: ReadableMap?, promise: Promise) {
+        try {
+            val remoteMessageBundle = bundleOf(*message.toMap().toList().toTypedArray())
+            val isNotificationHandled = CustomerIOFirebaseMessagingService.onMessageReceived(
+                context = reactContext,
+                remoteMessage = RemoteMessage(remoteMessageBundle),
+                handleNotificationTrigger = true,
+            )
+            promise.resolve(isNotificationHandled)
+        } catch (ex: Throwable) {
+            promise.reject(ex)
         }
     }
 
