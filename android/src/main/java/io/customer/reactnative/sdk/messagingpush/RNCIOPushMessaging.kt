@@ -70,6 +70,12 @@ class RNCIOPushMessaging(
         }
     }
 
+    /**
+     * Handles push notification received. This can be helpful in processing push notifications
+     * received outside the CIO SDK.
+     *
+     * @param message push payload received from FCM.
+     */
     @ReactMethod
     fun handleMessage(message: ReadableMap?, promise: Promise) {
         try {

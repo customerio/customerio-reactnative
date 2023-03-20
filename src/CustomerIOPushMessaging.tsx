@@ -22,7 +22,11 @@ const PushMessagingNative = NativeModules.CustomerioPushMessaging
 
 class CustomerIOPushMessaging {
   onMessageReceived(message: any): Promise<boolean> {
-    return PushMessagingNative.handleMessage(message);
+    if (Platform.OS === 'ios') {
+      return Promise.resolve(true);
+    } else {
+      return PushMessagingNative.handleMessage(message);
+    }
   }
 }
 
