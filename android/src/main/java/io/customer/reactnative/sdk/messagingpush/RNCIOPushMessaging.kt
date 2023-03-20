@@ -9,6 +9,8 @@ import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
+import io.customer.sdk.CustomerIOShared
+import io.customer.sdk.util.Logger
 
 /**
  * ReactNative module to hold push messages features in a single place to bridge with native code.
@@ -16,6 +18,9 @@ import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), PermissionListener {
+    private val logger: Logger
+        get() = CustomerIOShared.instance().diStaticGraph.logger
+
     /**
      * Temporarily holds reference for notification request as the request is dependent on Android
      * lifecycle and cannot be completed instantly.
@@ -89,7 +94,7 @@ class RNCIOPushMessaging(
             )
             promise.resolve(isNotificationHandled)
         } catch (ex: Throwable) {
-            ex.printStackTrace()
+            logger.error("Unable to handle push notification, reason: ${ex.message}")
             promise.reject(ex)
         }
     }
