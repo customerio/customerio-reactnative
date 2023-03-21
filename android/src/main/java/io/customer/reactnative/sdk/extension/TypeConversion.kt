@@ -10,11 +10,7 @@ internal fun ReadableMap?.toMap(): Map<String, Any> {
 }
 
 internal fun ReadableMap.toMutableStringMap(): MutableMap<String, String?> {
-    val map = mutableMapOf<String, String?>()
-    for ((key, value) in this.entryIterator) {
-        map[key] = value?.toString()
-    }
-    return map
+    return this.toHashMap().mapValues { toString() }.toMutableMap()
 }
 
 internal fun String?.toRegion(fallback: Region = Region.US): Region {
