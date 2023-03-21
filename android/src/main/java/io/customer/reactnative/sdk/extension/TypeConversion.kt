@@ -10,7 +10,7 @@ internal fun ReadableMap?.toMap(): Map<String, Any> {
 }
 
 internal fun ReadableMap.toMutableStringMap(): MutableMap<String, String?> {
-    return this.toHashMap().mapValues { toString() }.toMutableMap()
+    return this.toHashMap().mapValues { (_, value) -> value?.toString() }.toMutableMap()
 }
 
 internal fun String?.toRegion(fallback: Region = Region.US): Region {
