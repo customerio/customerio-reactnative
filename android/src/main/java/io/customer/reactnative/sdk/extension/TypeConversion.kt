@@ -1,6 +1,5 @@
 package io.customer.reactnative.sdk.extension
 
-import androidx.core.os.bundleOf
 import com.facebook.react.bridge.ReadableMap
 import com.google.firebase.messaging.RemoteMessage
 import io.customer.sdk.data.model.Region
@@ -8,6 +7,14 @@ import io.customer.sdk.util.CioLogLevel
 
 internal fun ReadableMap?.toMap(): Map<String, Any> {
     return this?.toHashMap() ?: emptyMap()
+}
+
+internal fun ReadableMap.toMutableStringMap(): MutableMap<String, String?> {
+    val map = mutableMapOf<String, String?>()
+    for ((key, value) in this.entryIterator) {
+        map[key] = value?.toString()
+    }
+    return map
 }
 
 internal fun String?.toRegion(fallback: Region = Region.US): Region {
@@ -25,31 +32,21 @@ internal fun Double?.toCIOLogLevel(fallback: CioLogLevel = CioLogLevel.NONE): Ci
 
 /**
  * Extensions function to build FCM [RemoteMessage] using RN map. This should be independent from
- * the sender and should handle all scenarios to build a valid [RemoteMessage] for our native SDK.
+ * the sender source and should be able to build a valid [RemoteMessage] for our native SDK.
+ *
+ * @param destination receiver of the message. It is mainly required for sending upstream messages,
+ * since we are using RemoteMessage only for broadcasting messages locally, we can use any non-empty
+ * string for it.
  */
-internal fun ReadableMap.toFCMRemoteMessage(): RemoteMessage {
-    val cioParams = mutableListOf<Pair<String, Any>>()
-    val googleParams = mutableListOf<Pair<String, Any>>()
-    for ((key, value) in this.entryIterator) {
-        when (key) {
-            "data" -> {
-                // data params need to be added as flat params to match FCM expectations
-                val dataMap = value as ReadableMap
-                for (dataMapEntry in dataMap.entryIterator) {
-                    cioParams.add(dataMapEntry.key to dataMapEntry.value)
-                }
-            }
-            // params to be added without the prefix
-            "from" -> googleParams.add(key to value)
-            // params to be added with the prefix and snake case to match FCM expectations
-            else -> googleParams.add(key.asGoogleParamKey() to value)
+internal fun ReadableMap.toFCMRemoteMessage(destination: String): RemoteMessage {
+    return with(RemoteMessage.Builder(destination)) {
+        getMap("data")?.toMutableStringMap()?.let { data -> setData(data) }
+        getString("messageId")?.let { id -> setMessageId(id) }
+        getString("messageType")?.let { type -> setMessageType(type) }
+        getString("collapseKey")?.let { key -> setCollapseKey(key) }
+        if (hasKey("ttl")) {
+            ttl = getInt("ttl")
         }
+        build()
     }
-    val bundle = bundleOf(*googleParams.toTypedArray(), *cioParams.toTypedArray())
-    return RemoteMessage(bundle)
 }
-
-/**
- * Adds appropriate prefix and converts to snake case to match FCM expectations.
- */
-private fun String.asGoogleParamKey(): String = "google.${this.camelToSnakeCase()}"

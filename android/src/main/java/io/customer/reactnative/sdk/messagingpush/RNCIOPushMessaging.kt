@@ -8,9 +8,12 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
+import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
+import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
+import java.util.*
 
 /**
  * ReactNative module to hold push messages features in a single place to bridge with native code.
@@ -87,9 +90,13 @@ class RNCIOPushMessaging(
                 return
             }
 
+            // Generate destination string, see docs on receiver method for more details
+            val destination = message.getString("to")?.takeIfNotBlank()
+                ?: CustomerIO.instanceOrNull(reactContext)?.diGraph?.sitePreferenceRepository?.getIdentifier()
+                ?: UUID.randomUUID().toString()
             val isNotificationHandled = CustomerIOFirebaseMessagingService.onMessageReceived(
                 context = reactContext,
-                remoteMessage = message.toFCMRemoteMessage(),
+                remoteMessage = message.toFCMRemoteMessage(destination = destination),
                 handleNotificationTrigger = true,
             )
             promise.resolve(isNotificationHandled)
