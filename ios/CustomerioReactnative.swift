@@ -10,7 +10,7 @@ enum PushPermissionStatus: String, CaseIterable {
     case granted
 
     var value: String {
-        return rawValue.capitalized
+        return rawValue.firstUppercased
     }
 }
 
