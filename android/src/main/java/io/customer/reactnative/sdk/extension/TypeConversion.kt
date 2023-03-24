@@ -9,10 +9,6 @@ internal fun ReadableMap?.toMap(): Map<String, Any> {
     return this?.toHashMap() ?: emptyMap()
 }
 
-internal fun ReadableMap.toMutableStringMap(): MutableMap<String, String?> {
-    return this.toHashMap().mapValues { (_, value) -> value?.toString() }.toMutableMap()
-}
-
 internal fun String?.toRegion(fallback: Region = Region.US): Region {
     return if (this.isNullOrBlank()) fallback
     else listOf(
@@ -36,7 +32,13 @@ internal fun Double?.toCIOLogLevel(fallback: CioLogLevel = CioLogLevel.NONE): Ci
  */
 internal fun ReadableMap.toFCMRemoteMessage(destination: String): RemoteMessage {
     return with(RemoteMessage.Builder(destination)) {
-        getMap("data")?.toMutableStringMap()?.let { data -> setData(data) }
+        getMap("data")?.let { messageData ->
+            val messageDataIterator = messageData.keySetIterator()
+            while (messageDataIterator.hasNextKey()) {
+                val key = messageDataIterator.nextKey()
+                addData(key, messageData.getString(key))
+            }
+        }
         getString("messageId")?.let { id -> setMessageId(id) }
         getString("messageType")?.let { type -> setMessageType(type) }
         getString("collapseKey")?.let { key -> setCollapseKey(key) }
