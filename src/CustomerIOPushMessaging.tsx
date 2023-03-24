@@ -23,6 +23,10 @@ const PushMessagingNative = NativeModules.CustomerioPushMessaging
 class CustomerIOPushMessaging {
   onMessageReceived(message: any): Promise<boolean> {
     if (Platform.OS === 'ios') {
+      // Since push notifications on iOS work fine with multiple notification services,
+      // We don't need to process them on iOS for now.
+      // Resolving promise to true makes it easier for callers to avoid adding
+      // unnecessary platform specific checks.
       return Promise.resolve(true);
     } else {
       return PushMessagingNative.handleMessage(message);
