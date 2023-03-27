@@ -34,7 +34,7 @@ private fun Any.toStringOrNull(): String? = try {
 }
 
 /**
- * Extensions function to build FCM [RemoteMessage] using RN map. This should be independent from
+ * Extension function to build FCM [RemoteMessage] using RN map. This should be independent from
  * the sender source and should be able to build a valid [RemoteMessage] for our native SDK.
  *
  * @param destination receiver of the message. It is mainly required for sending upstream messages,
