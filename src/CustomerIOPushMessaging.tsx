@@ -21,7 +21,17 @@ const PushMessagingNative = NativeModules.CustomerioPushMessaging
     );
 
 class CustomerIOPushMessaging {
-  onMessageReceived(message: any): Promise<boolean> {
+  /**
+   * Handles push notification received to help processing push notifications received outside the CIO SDK.
+   *
+   * @param message push payload received from FCM.
+   * @param handleNotificationTrigger indicating if the local notification should be triggered.
+   * @return promise that resolves to boolean indicating whether this was handled by CustomerIO or not.
+   */
+  onMessageReceived(
+    message: any,
+    handleNotificationTrigger: boolean
+  ): Promise<boolean> {
     if (Platform.OS === 'ios') {
       // Since push notifications on iOS work fine with multiple notification services,
       // We don't need to process them on iOS for now.
@@ -29,7 +39,10 @@ class CustomerIOPushMessaging {
       // unnecessary platform specific checks.
       return Promise.resolve(true);
     } else {
-      return PushMessagingNative.handleMessage(message);
+      return PushMessagingNative.handleMessage(
+        message,
+        handleNotificationTrigger
+      );
     }
   }
 }

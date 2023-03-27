@@ -77,13 +77,14 @@ class RNCIOPushMessaging(
     }
 
     /**
-     * Handles push notification received. This can be helpful in processing push notifications
+     * Handles push notification received. This is helpful in processing push notifications
      * received outside the CIO SDK.
      *
      * @param message push payload received from FCM.
+     * @param handleNotificationTrigger indicating if the local notification should be triggered.
      */
     @ReactMethod
-    fun handleMessage(message: ReadableMap?, promise: Promise) {
+    fun handleMessage(message: ReadableMap?, handleNotificationTrigger: Boolean, promise: Promise) {
         try {
             if (message == null) {
                 promise.reject(IllegalArgumentException("Remote message cannot be null"))
@@ -97,7 +98,7 @@ class RNCIOPushMessaging(
             val isNotificationHandled = CustomerIOFirebaseMessagingService.onMessageReceived(
                 context = reactContext,
                 remoteMessage = message.toFCMRemoteMessage(destination = destination),
-                handleNotificationTrigger = true,
+                handleNotificationTrigger = handleNotificationTrigger,
             )
             promise.resolve(isNotificationHandled)
         } catch (ex: Throwable) {
