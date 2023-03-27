@@ -30,7 +30,7 @@ class CustomerIOPushMessaging {
    */
   onMessageReceived(
     message: any,
-    handleNotificationTrigger: boolean
+    handleNotificationTrigger: boolean = true
   ): Promise<boolean> {
     if (Platform.OS === 'ios') {
       // Since push notifications on iOS work fine with multiple notification services,
