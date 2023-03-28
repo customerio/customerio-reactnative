@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F4FF95D7245B92E800C19C63 /* CustomerioReactnative.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* CustomerioReactnative.swift */; };
+		F70A0C4829CB88AF00743116 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70A0C4729CB88AF00743116 /* StringExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,7 @@
 		B3E7B5891CC2AC0600A0062D /* CustomerioReactnative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomerioReactnative.m; sourceTree = "<group>"; };
 		F4FF95D5245B92E700C19C63 /* CustomerioReactnative-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CustomerioReactnative-Bridging-Header.h"; sourceTree = "<group>"; };
 		F4FF95D6245B92E800C19C63 /* CustomerioReactnative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomerioReactnative.swift; sourceTree = "<group>"; };
+		F70A0C4729CB88AF00743116 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				F70A0C4729CB88AF00743116 /* StringExtensions.swift */,
 				4641179D284117EC00FB9CA9 /* CustomerioUtils.swift */,
 				F4FF95D6245B92E800C19C63 /* CustomerioReactnative.swift */,
 				B3E7B5891CC2AC0600A0062D /* CustomerioReactnative.m */,
@@ -117,6 +120,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F70A0C4829CB88AF00743116 /* StringExtensions.swift in Sources */,
 				F4FF95D7245B92E800C19C63 /* CustomerioReactnative.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
