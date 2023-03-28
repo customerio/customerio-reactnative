@@ -10,7 +10,6 @@ import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
-import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 import java.util.*
@@ -92,9 +91,8 @@ class RNCIOPushMessaging(
             }
 
             // Generate destination string, see docs on receiver method for more details
-            val destination = message.getString("to")?.takeIfNotBlank()
-                ?: CustomerIO.instanceOrNull(reactContext)?.diGraph?.sitePreferenceRepository?.getIdentifier()
-                ?: UUID.randomUUID().toString()
+            val destination =
+                message.getString("to")?.takeIfNotBlank() ?: UUID.randomUUID().toString()
             val isNotificationHandled = CustomerIOFirebaseMessagingService.onMessageReceived(
                 context = reactContext,
                 remoteMessage = message.toFCMRemoteMessage(destination = destination),
