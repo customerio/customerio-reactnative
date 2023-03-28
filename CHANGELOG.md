@@ -1,3 +1,10 @@
+### [2.2.1](https://github.com/customerio/customerio-reactnative/compare/2.2.0...2.2.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* native push permission status match typescript enum value ([#118](https://github.com/customerio/customerio-reactnative/issues/118)) ([38b7349](https://github.com/customerio/customerio-reactnative/commit/38b7349fbf06dfae16e374bdae7e0780dc153c01))
+
 ## [2.2.0](https://github.com/customerio/customerio-reactnative/compare/2.1.0...2.2.0) (2023-03-03)
 
 
