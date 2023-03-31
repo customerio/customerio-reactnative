@@ -39,8 +39,8 @@ class CustomerIOReactNativeModule(
         configuration: ReadableMap? = null,
         packageConfiguration: ReadableMap? = null,
     ) {
-        val isFirstInitialization = isNotInitialized()
-        if (isInstanceValid()) {
+        val isFirstInitialization = !isInstanceValid()
+        if (!isFirstInitialization) {
             logger.info("Customer.io instance already initialized, reinitializing")
         }
 
@@ -62,6 +62,7 @@ class CustomerIOReactNativeModule(
             // will already be attached in this case as they are registered to application object.
             if (isFirstInitialization) {
                 currentActivity?.let { activity ->
+                    logger.info("Requesting delayed activity lifecycle events")
                     val lifecycleCallbacks = customerIO.diGraph.activityLifecycleCallbacks
                     lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
                 }
