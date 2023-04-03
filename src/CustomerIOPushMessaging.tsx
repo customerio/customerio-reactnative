@@ -22,11 +22,15 @@ const PushMessagingNative = NativeModules.CustomerioPushMessaging
 
 class CustomerIOPushMessaging {
   /**
-   * Handles push notification received to help processing push notifications received outside the CIO SDK.
+   * Processes push notification received outside the CIO SDK. The method displays notification on
+   * device and tracks CIO metrics for push notification.
    *
-   * @param message push payload received from FCM.
-   * @param handleNotificationTrigger indicating if the local notification should be triggered.
-   * @return promise that resolves to boolean indicating whether this was handled by CustomerIO or not.
+   * @param message push payload received from FCM. The payload must contain data payload received in push
+   * notification.
+   * @param handleNotificationTrigger indicates whether it should display the notification or not.
+   * true (default): The SDK will display the notification and track associated metrics.
+   * false: The SDK will only process the notification to track metrics but will not display any notification.
+   * @return promise that resolves to boolean indicating if the notification was handled by the SDK or not.
    */
   onMessageReceived(
     message: any,
@@ -44,6 +48,17 @@ class CustomerIOPushMessaging {
         handleNotificationTrigger
       );
     }
+  }
+
+  /**
+   * Handles push notification received when app is background. Since FCM itself displays the notification
+   * when app is background, this method makes it easier to determine whether the notification should be
+   * displayed or not.
+   *
+   * @see [onMessageReceived] for more details
+   */
+  onBackgroundMessageReceived(message: any): Promise<boolean> {
+    return this.onMessageReceived(message, !message.notification);
   }
 }
 
