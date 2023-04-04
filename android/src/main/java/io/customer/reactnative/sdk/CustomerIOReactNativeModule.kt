@@ -39,8 +39,7 @@ class CustomerIOReactNativeModule(
         configuration: ReadableMap? = null,
         packageConfiguration: ReadableMap? = null,
     ) {
-        val isFirstInitialization = !isInstanceValid()
-        if (!isFirstInitialization) {
+        if (isInstanceValid()) {
             logger.info("Customer.io instance already initialized, reinitializing")
         }
 
@@ -57,16 +56,6 @@ class CustomerIOReactNativeModule(
                 inAppEventListener = inAppMessagingModule,
             )
             logger.info("Customer.io instance initialized successfully from app")
-            // Request lifecycle events for first initialization only as relaunching app
-            // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
-            // will already be attached in this case as they are registered to application object.
-            if (isFirstInitialization) {
-                currentActivity?.let { activity ->
-                    logger.info("Requesting delayed activity lifecycle events")
-                    val lifecycleCallbacks = customerIO.diGraph.activityLifecycleCallbacks
-                    lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
-                }
-            }
         } catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
         }
