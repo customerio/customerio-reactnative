@@ -1,3 +1,10 @@
+## [2.3.0](https://github.com/customerio/customerio-reactnative/compare/2.2.1...2.3.0) (2023-04-04)
+
+
+### Features
+
+* process push notifications received outside CIO SDK ([#117](https://github.com/customerio/customerio-reactnative/issues/117)) ([458472d](https://github.com/customerio/customerio-reactnative/commit/458472db12a0e7fa85ed920dc6810bd9697b0902))
+
 ### [2.2.1](https://github.com/customerio/customerio-reactnative/compare/2.2.0...2.2.1) (2023-03-28)
 
 

@@ -7,6 +7,12 @@ import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
+import io.customer.messagingpush.CustomerIOFirebaseMessagingService
+import io.customer.reactnative.sdk.extension.takeIfNotBlank
+import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
+import io.customer.sdk.CustomerIOShared
+import io.customer.sdk.util.Logger
+import java.util.*
 
 /**
  * ReactNative module to hold push messages features in a single place to bridge with native code.
@@ -14,6 +20,9 @@ import com.facebook.react.modules.core.PermissionListener
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), PermissionListener {
+    private val logger: Logger
+        get() = CustomerIOShared.instance().diStaticGraph.logger
+
     /**
      * Temporarily holds reference for notification request as the request is dependent on Android
      * lifecycle and cannot be completed instantly.
@@ -63,6 +72,36 @@ class RNCIOPushMessaging(
         } catch (ex: Throwable) {
             promise.reject(ex)
             notificationRequestPromise = null
+        }
+    }
+
+    /**
+     * Handles push notification received. This is helpful in processing push notifications
+     * received outside the CIO SDK.
+     *
+     * @param message push payload received from FCM.
+     * @param handleNotificationTrigger indicating if the local notification should be triggered.
+     */
+    @ReactMethod
+    fun handleMessage(message: ReadableMap?, handleNotificationTrigger: Boolean, promise: Promise) {
+        try {
+            if (message == null) {
+                promise.reject(IllegalArgumentException("Remote message cannot be null"))
+                return
+            }
+
+            // Generate destination string, see docs on receiver method for more details
+            val destination =
+                message.getString("to")?.takeIfNotBlank() ?: UUID.randomUUID().toString()
+            val isNotificationHandled = CustomerIOFirebaseMessagingService.onMessageReceived(
+                context = reactContext,
+                remoteMessage = message.toFCMRemoteMessage(destination = destination),
+                handleNotificationTrigger = handleNotificationTrigger,
+            )
+            promise.resolve(isNotificationHandled)
+        } catch (ex: Throwable) {
+            logger.error("Unable to handle push notification, reason: ${ex.message}")
+            promise.reject(ex)
         }
     }
 
