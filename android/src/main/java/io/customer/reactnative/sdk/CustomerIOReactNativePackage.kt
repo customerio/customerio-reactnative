@@ -12,6 +12,7 @@ class CustomerIOReactNativePackage : ReactPackage {
         val inAppMessagingModule = RNCIOInAppMessaging(reactContext)
         return listOf(
             inAppMessagingModule,
+            pushMessagingModule,
             CustomerIOReactNativeModule(
                 reactContext = reactContext,
                 pushMessagingModule = pushMessagingModule,

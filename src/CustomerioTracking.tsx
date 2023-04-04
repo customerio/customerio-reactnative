@@ -6,6 +6,7 @@ import {
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
 var pjson = require('customerio-reactnative/package.json');
 
@@ -134,6 +135,10 @@ class CustomerIO {
 
   static inAppMessaging(): CustomerIOInAppMessaging {
     return new CustomerIOInAppMessaging();
+  }
+
+  static pushMessaging(): CustomerIOPushMessaging {
+    return new CustomerIOPushMessaging();
   }
 
   /**
