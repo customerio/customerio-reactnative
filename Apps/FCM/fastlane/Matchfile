@@ -1,0 +1,6 @@
+storage_mode "google_cloud"
+type "development"
+readonly true
+# IMPORTANT: use the same gcloud bucket name for *all* iOS apps we use in the company. 
+# fastlane is smart enough to share certificates while creating separate provisioning profiles for each app. 
+google_cloud_bucket_name "remote-habits-ios-signing"
