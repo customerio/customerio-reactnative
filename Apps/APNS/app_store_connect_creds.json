@@ -1,0 +1,7 @@
+{
+  "key_id": "8MSJAFWDU7",
+  "issuer_id": "69a6de78-1941-47e3-e053-5b8c7c11a4d1",
+  "key": "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgwa/D60WYpvTTR8Cg\n4FtYyprPp5lfpwgMnH1GNQuv+5mgCgYIKoZIzj0DAQehRANCAATh1BsZbNP4s9JD\nKoU8gRJkGkEAN0cX11ohgp7BhXUOVn64dZOlXucLBaIWQSCAtnPf5mFqGfOoeapF\nmTZvxjQV\n-----END PRIVATE KEY-----",
+  "duration": 1200, 
+  "in_house": false
+}
