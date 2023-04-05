@@ -1,0 +1,30 @@
+app_store_connect_creds.json
+ami_app_ci_server-google_cloud_service_account.json
+gc_keys.json
+GoogleService-Info.plist
+node_modules
+.DS_Store
+env.js
+fastlane/report.xml
+
+# iOS
+iOS/build
+
+# Android/IntelliJ
+#
+android/app/build
+android/build/
+.idea
+.gradle
+local.properties
+*.iml
+
+# Google-services.json 
+android/app/google-services.json
+
+# Gradle files
+.gradle/
+build/
+
+# CocoaPods
+/ios/Pods/
