@@ -1,0 +1,330 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+require 'json'
+
+platform :ios do  
+
+  is_enterprise_app = false
+  info_plist_file_path = "ios/SampleApp/Info.plist"
+  google_service_plist_file_path = "ios/SampleApp/GoogleService-Info.plist"
+
+  before_all do |lane, options|
+    if ENV['CI'] 
+      setup_ci 
+
+      # authenticate with apple account so all lanes are able to authenticate correctly
+      # https://docs.fastlane.tools/app-store-connect-api/
+      app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+        key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT_B64"],
+        is_key_content_base64: true,
+        in_house: is_enterprise_app
+      )
+    end
+  end
+
+  # example for main builds: `bundle exec fastlane android deploy_app version:1.0.0"`
+  # example for develoment builds (pull request, push): `bundle exec fastlane deploy_app`  
+  lane :deploy_app do |values| 
+    # download provisioning profile/certs to be able to build and sign app. 
+    # automatically creates new profile if new test devices have been added to account 
+    sync_code_signing(
+      type: "adhoc",
+      force_for_new_devices: true,
+      readonly: false 
+    )
+
+    name_of_app = get_info_plist_value(path: info_plist_file_path, key: "CFBundleDisplayName") # get from xcode project
+    new_app_version = values[:version] # pass in new app version as parameter because we can get it from new semantic version 
+    is_main_build = new_app_version != nil && new_app_version != ""
+    release_notes = ["app: #{name_of_app}"]
+    groups = ['all-builds'] # default - always send to these groups. 
+
+    github = GitHub.new(JSON.parse(ENV["GITHUB_CONTEXT"])) # context is a JSON string 
+    new_build_number = github.commit_hash
+
+    if is_main_build
+      UI.message("Deploying a main build of app. Version: #{new_app_version}")
+
+      groups.append("stable-builds")       
+
+      release_notes.append(
+        "build type: main",
+        "version: #{new_app_version}"
+      )
+    else 
+      UI.message("Deploying a development build of app.")      
+
+      # At first, we made a fancy app version string with branch name and other things but the version string is limited on the valid characters in it. 
+      # therefore, we are using the commit hash as that's enough to identify the build. 
+
+      if github.is_pull_request
+        UI.message("I see this is a pull request. Build metadata will include helpful PR info.")
+
+        new_app_version = "pr.#{github.pr_number}"
+
+        release_notes.append(
+          "build type: pull request",
+          "title: #{github.pr_title} (#{github.pr_number})",
+          "author: #{github.author}",
+          "source branch: #{github.source_branch}",
+          "destination branch: #{github.destination_branch}"
+        )
+      elsif github.is_push
+        UI.message("I see this is a git commit push. Build metadata will include helpful commit info.")
+
+        new_app_version = "push.#{github.commit_hash}"
+
+        release_notes.append(
+          "build type: push",
+          "message: #{github.commit_message}",
+          "author: #{github.author}",
+          "branch: #{github.branch_name}"
+        )
+      else 
+        UI.message("This is not a pull request or push. Going to ignore the event.")        
+        return 
+      end
+    end 
+
+    release_notes.append(      
+      "commit hash: #{github.commit_hash}",
+      "build number: #{new_build_number}"
+    )
+
+    release_notes = release_notes.join("\n")
+    groups = groups.join(", ")
+
+    UI.important("Release notes:\n#{release_notes}")
+    UI.important("New app version: #{new_app_version}")
+    UI.important("Firebase App testing groups: #{groups}")
+
+    set_info_plist_value(path: info_plist_file_path, key: "CFBundleVersion", value: new_build_number) # make sure unique build number to avoid clashing
+    set_info_plist_value(path: info_plist_file_path, key: "CFBundleShortVersionString", value: new_app_version)
+
+    if ENV["XCODE_VERSION"] != nil 
+      xcode_select "/Applications/Xcode_#{ENV["XCODE_VERSION"]}.app"
+    end 
+    
+    build_ios_app
+
+    upload_symbols_to_crashlytics(
+      gsp_path: google_service_plist_file_path
+    )   
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      service_credentials_file: './ami_app_ci_server-google_cloud_service_account.json',
+      groups: groups,
+      release_notes: release_notes
+    )       
+  end
+
+  lane :dev_setup do 
+    match(
+      type: "development",
+      readonly: true,
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"]
+    )
+    match(
+      type: "adhoc",
+      readonly: true,
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"]
+    )
+  end 
+
+  lane :delete_code_signing_development do 
+    match_nuke(
+      type: "development",
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"],
+      api_key_path: ENV["FASTLANE_APP_STORE_CONNECT_FILE"] || './app_store_connect_creds.json',
+      readonly: false 
+    )
+  end 
+
+  lane :delete_code_signing_release do 
+    match_nuke(
+      type: "adhoc",
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"],
+      api_key_path: ENV["FASTLANE_APP_STORE_CONNECT_FILE"] || './app_store_connect_creds.json',
+      readonly: false 
+    )
+  end
+
+  lane :create_code_signing_development do 
+    match(
+      type: "development",
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"],
+      api_key_path: ENV["FASTLANE_APP_STORE_CONNECT_FILE"] || './app_store_connect_creds.json',
+      readonly: false
+    )
+  end 
+
+  lane :create_code_signing_release do 
+    match(
+      type: "adhoc",
+      google_cloud_keys_file: ENV["FASTLANE_GC_KEYS_FILE"],
+      api_key_path: ENV["FASTLANE_APP_STORE_CONNECT_FILE"] || './app_store_connect_creds.json',
+      readonly: false
+    )
+  end 
+end 
+
+# Fastlane reacts differently by when it gets executed in GitHub Actions. 
+class GitHub 
+  # `event` payload for pushes: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
+  # `event` payload for pull requests: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#pull_request
+
+  def initialize(github_context)
+    @github_context = github_context
+  end 
+
+  def is_push 
+    @github_context["event"]["commits"] != nil 
+  end 
+
+  def is_pull_request
+    @github_context["event"]["pull_request"] != nil 
+  end 
+
+  def commit_hash
+    if is_push
+      return @github_context["event"]["head_commit"]["id"][0..8]
+    else 
+      return @github_context["sha"][0..8]
+    end    
+  end
+
+  def pr_title 
+    @github_context["event"]["pull_request"]["title"]
+  end 
+
+  def pr_number
+    @github_context["event"]["pull_request"]["number"]
+  end 
+
+  def source_branch
+    @github_context["head_ref"]
+  end 
+
+  def destination_branch
+    @github_context["base_ref"]
+  end 
+
+  def author 
+    if is_push 
+      return @github_context["event"]["head_commit"]["committer"]["username"]      
+    else 
+      return @github_context["event"]["pull_request"]["user"]["login"]
+    end 
+  end 
+
+  def commit_message 
+    @github_context["event"]["head_commit"]["message"]
+  end 
+
+  def branch_name 
+    @github_context["event"]["ref"].split("/").last # getting the last part of `refs/heads/test-dump` is the branch name
+  end 
+end 
+
+platform :android do
+
+  # example for main builds: `bundle exec fastlane android deploy_app version:1.0.0"`
+  # example for develoment builds (pull request, push): `bundle exec fastlane deploy_app`
+  lane :deploy_app do |values|    
+
+    gradle_file_path = "android/app/build.gradle"
+    project_dir = "android"
+
+    name_of_app = "Ami App"
+    new_app_version = values[:version] # pass in new app version as parameter because we can get it from new semantic version 
+    is_main_build = new_app_version != nil && new_app_version != ""
+    release_notes = ["app: #{name_of_app}"]
+    groups = ['all-builds'] # default - always send to these groups. 
+
+    if is_main_build
+      UI.message("Deploying a main build of app. Version: #{new_app_version}")
+
+      groups.append("stable-builds") 
+
+      release_notes.append(
+        "build type: main",
+        "version: #{new_app_version}"
+      )
+    else 
+      UI.message("Deploying a development build of app.")
+
+      github = GitHub.new(JSON.parse(ENV["GITHUB_CONTEXT"])) # context is a JSON string 
+      # Not aligned with iOS as this has to integer and unique for Android
+      new_build_number = Time.now.to_i
+
+      if github.is_pull_request
+        UI.message("I see this is a pull request. Build metadata will include helpful PR info.")
+
+        new_app_version = "pr.#{github.pr_number}"
+
+        release_notes.append(
+          "build type: pull request",
+          "title: #{github.pr_title} (#{github.pr_number})",
+          "author: #{github.author}",
+          "source branch: #{github.source_branch}",
+          "destination branch: #{github.destination_branch}"
+        )
+      elsif github.is_push
+        UI.message("I see this is a git commit push. Build metadata will include helpful commit info.")
+
+        new_app_version = "push.#{github.commit_hash}"
+
+        release_notes.append(
+          "build type: push",
+          "message: #{github.commit_message}",
+          "author: #{github.author}",
+          "branch: #{github.branch_name}"
+        )
+      end 
+    end 
+
+    release_notes.append(      
+      "commit hash: #{github.commit_hash}",
+      "build number: #{new_build_number}"
+    )
+
+    release_notes = release_notes.join("\n")
+    groups = groups.join(", ")
+
+    UI.important("Release notes:\n#{release_notes}")
+    UI.important("New app version: #{new_app_version}")
+    UI.important("Firebase App testing groups: #{groups}")
+
+    android_set_version_name(version_name: new_app_version, gradle_file: gradle_file_path)
+    android_set_version_code(version_code: new_build_number, gradle_file: gradle_file_path)
+
+    build_android_app(
+      task: 'assemble',
+      build_type: 'Release',
+      project_dir: project_dir
+    )
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_ANDROID_APP_ID"],
+      service_credentials_file: './ami_app_ci_server-google_cloud_service_account.json',
+      groups: groups,
+      release_notes: release_notes
+    )
+  end 
+end

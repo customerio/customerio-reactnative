@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "remote-habits",
+  "private_key_id": "43f2571e88ba758f6f9aa503df53cf65a0e35bac",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDW7MwT/YGCPtFM\nmr15AX/jBcSXPUpritd8LkmYysIddS7RihttDnorcqEn0rVpSKYfJN3zzY274lSk\n5TA0DJiMs2B9LIGCr58uU/fN8kzI0MBx2zKktKf+/rTt5GIsTWIWsOYZ2O8AKTbE\n1cOPlAPhsONv0CfyMZdoFEFqzJS5sFcHAiAyLKEtgIZmlvesW4p/ASae/mpejdrK\nTZIdeQNLZF5PKiNOPgZU3zFr6wyPuhLijJ2hZecqD2GKKMMiN5FUq7uOuI63NMmy\nIa/r5P8uL5I4yjkO9WziBtVWqQEXF/BRGJc5pwez7INbNjcgVZZ0bOxPhDsMAz6M\nM9oXgxrNAgMBAAECggEAG/lCLq/mNV+buk7BrohFbvUHO3AcyZaOqXkU1zA8x7zC\n1T8WhsFFoXYQB7DjL8rm5FLWGK9+bR/uSHAUMBIboOSQAHrUeIAHRe5j6IhK+jBB\nfBA9rTZeT1AzmGsLZBzGUZHAwUh9AxZaLJBuHbf0MWHmmF0NdfaCcGeChDYQfYJ7\nCQbWfgg8GrptTgzWJOOFdlpZcordQqmcv2/MN9xIXb0vGO9Tfv0r8nCzd7Pr0Lbc\nj8bHmTB8qkSbASuHrPnXnmRKv1DZxgQfUI7J6xZkfuOw0STY2VbmHBl5xpnTHdYK\nd0adWUfw+qIFZEm8NY3HIXk70IxMQy4tMku/F3pTOQKBgQD4IQJ+NG3KpNyUBLpW\nDDT01Qb5uQ2GJc6iMHVf+bX8oZru9B4pzjSBL5M/onJM30Ew8pyLwILF2C8Imtb4\nyIkdonJNk/57nVtqSx+z2YF8fepID7AISlXFs0X3UCp83WURsfZEs3Svs1AMZpsP\nGL6QrhHuFtWXFh7zzjaxrFEcywKBgQDdviWVAAEo6sNHLluD3Llzkw3PHWSuwUYr\n5476RKO/PBPWxcF4+wFULZ7W8cQIW9Gec6YjxDGGb8o4eAlv0dzkacdZ0sNn0/wl\ndZcg7hCwzuCE5gGUwvNXnyE1as4tFN6eHe5iIiisE/f/63LdnzWk3ANR9e7H/YBm\n0aX2UosLxwKBgBOLNhEOvB8cASu/e5XPfFRUeyosQz5vt+jafERE/OqbKALuQ3nz\nffs27hgzCWG4q//Y/C+dyC8hKgM5fvk1gmdNJkeqAn9mE485v5OA7EwL9uoaIjlk\n8YCS8E3ciJwxLAbKx6T9pZE5RHLVmh0ES+5FZ7AjKEuwOFvnwDMaaYElAoGAS4Mr\nbThZLMP1yFHDHH6YMQGNHFEYLmLnMKBkklm5obAl2Wfy4O4pn68BfpVKesY59knP\n9DIl43BCX0SRgiDnpmlXWAFsRflszpzi4HXx/SQWVWu2ciCJmfc46eX7XGLVBOeQ\nfJ7BVwhd1isqLMrBC+lYwBqOPFDZ3ynZ6K5nZ5UCgYBXrBHhZUp4KZx4WsRZCShr\nqHY9jauZTNS0ZJS10/QgCDp5OS1sf8XoIL60gpz58UGJgQFWtAXtVnFUtS1Rk+FY\nfwKGuB+axeITER0t6W75cYgLQljk9q5RVUeCghgUxsRmVfzDslSqWkrF2ctEE2rW\ntXcq0C7Rbk7PCDVTsP7Z2g==\n-----END PRIVATE KEY-----\n",
+  "client_email": "fastlane-match@remote-habits.iam.gserviceaccount.com",
+  "client_id": "116309360090220406962",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fastlane-match%40remote-habits.iam.gserviceaccount.com"
+}
