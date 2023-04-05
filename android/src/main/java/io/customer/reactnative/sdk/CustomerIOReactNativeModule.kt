@@ -16,6 +16,14 @@ class CustomerIOReactNativeModule(
         get() = CustomerIOShared.instance().diStaticGraph.logger
     private lateinit var customerIO: CustomerIO
 
+    init {
+        // If SDK is already initialized from CIO service using context, initialize the local
+        // reference with SDK instance
+        kotlin.runCatching {
+            customerIO = CustomerIO.instance()
+        }
+    }
+
     override fun getName(): String {
         return MODULE_NAME
     }
@@ -39,6 +47,10 @@ class CustomerIOReactNativeModule(
         configuration: ReadableMap? = null,
         packageConfiguration: ReadableMap? = null,
     ) {
+        // Checks if SDK was initialized before, which means lifecycle callbacks are already
+        // registered as well
+        val isLifecycleCallbacksRegistered = ::customerIO.isInitialized
+
         if (isInstanceValid()) {
             logger.info("Customer.io instance already initialized, reinitializing")
         }
@@ -56,6 +68,16 @@ class CustomerIOReactNativeModule(
                 inAppEventListener = inAppMessagingModule,
             )
             logger.info("Customer.io instance initialized successfully from app")
+            // Request lifecycle events for first initialization only as relaunching app
+            // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
+            // will already be attached in this case as they are registered to application object.
+            if (!isLifecycleCallbacksRegistered) {
+                currentActivity?.let { activity ->
+                    logger.info("Requesting delayed activity lifecycle events")
+                    val lifecycleCallbacks = customerIO.diGraph.activityLifecycleCallbacks
+                    lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
+                }
+            }
         } catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
         }
