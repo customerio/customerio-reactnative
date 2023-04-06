@@ -77,10 +77,6 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   [FIRApp configure];
   // Set FCM messaging delegate
   [FIRMessaging messaging].delegate = self;
-  // Call this before  calling registerPushNotification:self
-//  [pnHandlerObj initializeCioSdk];
-  // Register for remote push when the app starts
-//  [pnHandlerObj registerPushNotification:self];
   
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -163,7 +159,6 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-  [pnHandlerObj application:application deviceToken:deviceToken];
  [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
@@ -180,17 +175,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-  [pnHandlerObj application:application error:error];
  [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
 }
-// Required for localNotification event
-//- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-//didReceiveNotificationResponse:(UNNotificationResponse *)response
-//         withCompletionHandler:(void (^)(void))completionHandler
-//{
-//  [pnHandlerObj userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
-//
-//}
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
   [pnHandlerObj userNotificationCenter:center response:response completionHandler:completionHandler];
