@@ -82,7 +82,7 @@ const Login = ({navigation}) => {
         <View style={styles.innerContainer}>
         <View style={styles.loginViewContainer}>
             <Text style={styles.headerText}>Ami App</Text>
-            <Text style={styles.headerSubText}>React Native APN</Text>
+            <Text style={styles.headerSubText}>React Native FCM</Text>
         <View style={styles.nameView}>
               <TextInput
                   style={styles.input}
