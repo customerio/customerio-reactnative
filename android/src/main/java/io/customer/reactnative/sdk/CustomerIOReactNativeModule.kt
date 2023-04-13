@@ -17,8 +17,13 @@ class CustomerIOReactNativeModule(
     private lateinit var customerIO: CustomerIO
 
     init {
-        // If SDK is already initialized from CIO service using context, initialize the local
-        // reference with SDK instance
+        // If the SDK was already initialized from CIO service using context, initialize the local
+        // reference with SDK instance so it represents the actual state of SDK.
+        // SDK instance may only be initialized before when a notification was received while the
+        // app was in terminated state. Capturing the same instance helps us identify the initial
+        // state of SDK initialization.
+        // If the SDK was not initialized before, `CustomerIO.instance()` will throw an exception
+        // and local variable will also not be initialized.
         kotlin.runCatching {
             customerIO = CustomerIO.instance()
         }
