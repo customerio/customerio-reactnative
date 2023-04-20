@@ -1,3 +1,10 @@
+### [2.3.1](https://github.com/customerio/customerio-reactnative/compare/2.3.0...2.3.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* typescript definition for optional data attributes ([#51](https://github.com/customerio/customerio-reactnative/issues/51)) ([4cec62a](https://github.com/customerio/customerio-reactnative/commit/4cec62abcf45f14f060d60fb2239c94d50f0a9a9))
+
 ## [2.3.0](https://github.com/customerio/customerio-reactnative/compare/2.2.1...2.3.0) (2023-04-04)
 
 
