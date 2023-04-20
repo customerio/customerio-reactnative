@@ -1,3 +1,10 @@
+### [2.3.2](https://github.com/customerio/customerio-reactnative/compare/2.3.1...2.3.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* push opened metrics tracked on Android 12 ([#119](https://github.com/customerio/customerio-reactnative/issues/119)) ([dfd6fbd](https://github.com/customerio/customerio-reactnative/commit/dfd6fbdc1131b4f0f226480ef0ab8d67b16d4837))
+
 ### [2.3.1](https://github.com/customerio/customerio-reactnative/compare/2.3.0...2.3.1) (2023-04-20)
 
 
