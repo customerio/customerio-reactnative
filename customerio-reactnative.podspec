@@ -16,6 +16,6 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "CustomerIOTracking", '~> 1.2.6'
-  s.dependency "CustomerIOMessagingInApp", '~> 1.2.6'
+  s.dependency "CustomerIOTracking", '~> 2.1.0-beta.2'
+  s.dependency "CustomerIOMessagingInApp", '~> 2.1.0-beta.2'
 end

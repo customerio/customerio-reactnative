@@ -1,6 +1,6 @@
 {
   "name": "customerio-reactnative",
-  "version": "1.0.0",
+  "version": "2.3.0",
   "description": "Official Customer.io SDK using React Native. Track customers and send messages to your iOS/Android apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -29,7 +29,8 @@
     "prepare": "bob build",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
-    "bootstrap": "yarn example && yarn && yarn pods"
+    "bootstrap": "yarn example && yarn && yarn pods",
+    "postinstall": "node src/postInstall.js"
   },
   "keywords": [
     "react-native",

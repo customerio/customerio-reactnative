@@ -5,7 +5,10 @@ import {
   PackageConfig,
 } from './CustomerioConfig';
 import { Region } from './CustomerioEnum';
-var pjson = require("customerio-reactnative/package.json");
+import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
+import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
+import type { PushPermissionStatus, PushPermissionOptions } from './types';
+var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -46,12 +49,24 @@ class CustomerIO {
     const packageConfig = new PackageConfig();
     packageConfig.source = 'ReactNative';
     packageConfig.version = pversion;
-    if (expoVersion != '') {
+    if (expoVersion !== '') {
       packageConfig.source = 'Expo';
       packageConfig.version = expoVersion;
     }
 
-    return CustomerioReactnative.initialize(env, config, packageConfig);
+    if (env.organizationId && env.organizationId !== '') {
+      console.warn(
+        '{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}'
+      );
+      if (config.enableInApp === false) {
+        config.enableInApp = true;
+        console.warn(
+          '{config.enableInApp} set to {true} because {organizationId} was added'
+        );
+      }
+    }
+
+    CustomerioReactnative.initialize(env, config, packageConfig);
   }
 
   /**
@@ -116,6 +131,57 @@ class CustomerIO {
    */
   static screen(name: string, data?: Object) {
     CustomerioReactnative.screen(name, data);
+  }
+
+  static inAppMessaging(): CustomerIOInAppMessaging {
+    return new CustomerIOInAppMessaging();
+  }
+
+  static pushMessaging(): CustomerIOPushMessaging {
+    return new CustomerIOPushMessaging();
+  }
+
+  /**
+   * Register a device with respect to a profile.
+   * If no profile is identified, no device will be registered.
+   *
+   * @param token device token (iOS/Android)
+   */
+  static registerDeviceToken(token: string) {
+    if (token == null) {
+      return;
+    }
+    CustomerioReactnative.registerDeviceToken(token);
+  }
+
+  /**
+   * Request to show prompt for push notification permissions.
+   * Prompt will only be shown if the current status is - not determined.
+   * In other cases, this function will return current status of permission.
+   * @param options
+   * @returns Success & Failure promises
+   */
+  static async showPromptForPushNotifications(
+    options?: PushPermissionOptions
+  ): Promise<PushPermissionStatus> {
+    let defaultOptions: PushPermissionOptions = {
+      ios: {
+        badge: true,
+        sound: true,
+      },
+    };
+
+    return CustomerioReactnative.showPromptForPushNotifications(
+      options || defaultOptions
+    );
+  }
+
+  /**
+   * Get status of push permission for the app
+   * @returns Promise with status of push permission as a string
+   */
+  static getPushPermissionStatus(): Promise<PushPermissionStatus> {
+    return CustomerioReactnative.getPushPermissionStatus();
   }
 }
 

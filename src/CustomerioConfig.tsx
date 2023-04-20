@@ -1,38 +1,41 @@
-import {CioLogLevel, Region} from './CustomerioEnum'
+import { CioLogLevel, Region } from './CustomerioEnum';
 
 /**
  * Configure package using CustomerioConfig
- * 
+ *
  * Usecase:
- * 
+ *
  * const configData = new CustomerioConfig()
  * configData.logLevel = CioLogLevel.debug
  * configData.autoTrackDeviceAttributes = true
- * CustomerIO.config(data)    
+ * CustomerIO.config(data)
  */
 class CustomerioConfig {
-    logLevel : CioLogLevel = CioLogLevel.error
-    autoTrackDeviceAttributes : boolean = true
-    trackingApiUrl : string = ""
-    autoTrackPushEvents : boolean = true
-    backgroundQueueMinNumberOfTasks : number = 10
-    backgroundQueueSecondsDelay : number = 30
+  logLevel: CioLogLevel = CioLogLevel.error;
+  autoTrackDeviceAttributes: boolean = true;
+  enableInApp: boolean = false;
+  trackingApiUrl: string = '';
+  autoTrackPushEvents: boolean = true;
+  backgroundQueueMinNumberOfTasks: number = 10;
+  backgroundQueueSecondsDelay: number = 30;
 }
 
 class CustomerIOEnv {
-    siteId: string = ""
-    apiKey: string = ""
-    region: Region = Region.US
-    organizationId: string = ""
+  siteId: string = '';
+  apiKey: string = '';
+  region: Region = Region.US;
+  /**
+   * @deprecated since version 2.0.2
+   *
+   * organizationId is no longer needed and will be removed in future releases.
+   * Please remove organizationId from code and enable in-app messaging using {CustomerioConfig.enableInApp}.
+   */
+  organizationId: string = '';
 }
 
 class PackageConfig {
-    version: string = ""
-    source: string = ""
+  version: string = '';
+  source: string = '';
 }
 
-export {
-    CustomerioConfig,
-    CustomerIOEnv,
-    PackageConfig
-}
+export { CustomerioConfig, CustomerIOEnv, PackageConfig };
