@@ -49,7 +49,6 @@ repositories {
   mavenCentral()
   google()
   maven { url 'https://maven.gist.build' }
-  maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 
   def found = false
   def defaultDir = null
