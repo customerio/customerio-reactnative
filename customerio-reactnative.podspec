@@ -16,6 +16,9 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
   s.dependency "React-Core"
-  s.dependency "CustomerIOTracking", '~> 2.1.0-beta.2'
-  s.dependency "CustomerIOMessagingInApp", '~> 2.1.0-beta.2'
+
+  # Syntax of native iOS pods allows for automatically upgrading to the latest major version of the iOS SDK. 
+  # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
+  s.dependency "CustomerIO/Tracking", '~> 2'
+  s.dependency "CustomerIO/MessagingInApp", '~> 2'
 end
