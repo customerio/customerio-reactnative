@@ -47,6 +47,13 @@ class CustomerIOInAppMessaging {
       }
     );
   }
+
+  /**
+   * Dismisses any currently displayed in-app message
+   */
+  dismissMessage() {
+    InAppMessagingNative.dismissMessage();
+  }
 }
 
 /**

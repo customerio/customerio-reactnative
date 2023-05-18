@@ -22,4 +22,12 @@ class CustomerioInAppMessaging: RCTEventEmitter {
     open override func supportedEvents() -> [String]! {
         return [ "InAppEventListener" ]
     }
+
+    /**
+     * Dismisses any currently displayed in-app message
+     */
+    @objc(dismissMessage)
+    func dismissMessage() {
+        MessagingInApp.shared.dismissMessage()
+    }
 }
