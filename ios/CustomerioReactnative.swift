@@ -21,6 +21,13 @@ class CustomerioReactnative: NSObject {
         false /// false because our native module's initialization does not require access to UIKit
     }
     
+    
+    @objc(userNotificationCenter:resolver:rejecter:)
+    func userNotificationCenter(didReceive response: UNNotificationResponse, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        
+        print("I got it")
+    }
+    
     /**
      Initialize the package before sending any calls to the package
      */
