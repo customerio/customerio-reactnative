@@ -7,7 +7,7 @@ import {
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
-import type { PushPermissionStatus, PushPermissionOptions } from './types';
+import type { PushPermissionStatus, PushPermissionOptions, NotificationResponse } from './types';
 var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
@@ -174,6 +174,10 @@ class CustomerIO {
     return CustomerioReactnative.showPromptForPushNotifications(
       options || defaultOptions
     );
+  }
+
+  static async userNotificationCenter(response: NotificationResponse) {
+    console.log(response)
   }
 
   /**
