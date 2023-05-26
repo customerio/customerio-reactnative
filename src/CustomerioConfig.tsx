@@ -13,6 +13,7 @@ import { CioLogLevel, Region } from './CustomerioEnum';
 class CustomerioConfig {
   logLevel: CioLogLevel = CioLogLevel.error;
   autoTrackDeviceAttributes: boolean = true;
+  enableInApp: boolean = false;
   trackingApiUrl: string = '';
   autoTrackPushEvents: boolean = true;
   backgroundQueueMinNumberOfTasks: number = 10;
@@ -23,6 +24,12 @@ class CustomerIOEnv {
   siteId: string = '';
   apiKey: string = '';
   region: Region = Region.US;
+  /**
+   * @deprecated since version 2.0.2
+   *
+   * organizationId is no longer needed and will be removed in future releases.
+   * Please remove organizationId from code and enable in-app messaging using {CustomerioConfig.enableInApp}.
+   */
   organizationId: string = '';
 }
 

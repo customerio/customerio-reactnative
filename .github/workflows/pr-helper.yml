@@ -1,0 +1,18 @@
+name: Semantic PR helper
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize, labeled]
+
+permissions:
+  pull-requests: write # Write access needed to create a comment.
+
+jobs:
+  pr-help:
+    name: Semantic PR helper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Semantic PR helper
+        uses: levibostian/action-semantic-pr@v3
+        with:
+          readToken: ${{ secrets.GITHUB_TOKEN }}

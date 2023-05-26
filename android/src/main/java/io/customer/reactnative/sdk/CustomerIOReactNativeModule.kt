@@ -1,20 +1,33 @@
 package io.customer.reactnative.sdk
 
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.*
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
+    private val pushMessagingModule: RNCIOPushMessaging,
+    private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
         get() = CustomerIOShared.instance().diStaticGraph.logger
     private lateinit var customerIO: CustomerIO
+
+    init {
+        // If the SDK was already initialized from CIO service using context, initialize the local
+        // reference with SDK instance so it represents the actual state of SDK.
+        // SDK instance may only be initialized before when a notification was received while the
+        // app was in terminated state. Capturing the same instance helps us identify the initial
+        // state of SDK initialization.
+        // If the SDK was not initialized before, `CustomerIO.instance()` will throw an exception
+        // and local variable will also not be initialized.
+        kotlin.runCatching {
+            customerIO = CustomerIO.instance()
+        }
+    }
 
     override fun getName(): String {
         return MODULE_NAME
@@ -39,6 +52,10 @@ class CustomerIOReactNativeModule(
         configuration: ReadableMap? = null,
         packageConfiguration: ReadableMap? = null,
     ) {
+        // Checks if SDK was initialized before, which means lifecycle callbacks are already
+        // registered as well
+        val isLifecycleCallbacksRegistered = ::customerIO.isInitialized
+
         if (isInstanceValid()) {
             logger.info("Customer.io instance already initialized, reinitializing")
         }
@@ -53,8 +70,19 @@ class CustomerIOReactNativeModule(
                 environment = env,
                 configuration = config,
                 packageConfig = packageConfig,
+                inAppEventListener = inAppMessagingModule,
             )
             logger.info("Customer.io instance initialized successfully from app")
+            // Request lifecycle events for first initialization only as relaunching app
+            // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
+            // will already be attached in this case as they are registered to application object.
+            if (!isLifecycleCallbacksRegistered) {
+                currentActivity?.let { activity ->
+                    logger.info("Requesting delayed activity lifecycle events")
+                    val lifecycleCallbacks = customerIO.diGraph.activityLifecycleCallbacks
+                    lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
+                }
+            }
         } catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
         }
@@ -100,6 +128,23 @@ class CustomerIOReactNativeModule(
         if (isNotInitialized()) return
 
         customerIO.screen(name, attributes.toMap())
+    }
+
+    @ReactMethod
+    fun registerDeviceToken(token: String) {
+        if (isNotInitialized()) return
+
+        customerIO.registerDeviceToken(token)
+    }
+
+    @ReactMethod
+    fun getPushPermissionStatus(promise: Promise) {
+        pushMessagingModule.getPushPermissionStatus(promise)
+    }
+
+    @ReactMethod
+    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+        pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
     }
 
     companion object {

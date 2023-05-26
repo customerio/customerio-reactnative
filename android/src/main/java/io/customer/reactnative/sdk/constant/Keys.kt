@@ -5,10 +5,10 @@ internal object Keys {
         const val SITE_ID = "siteId"
         const val API_KEY = "apiKey"
         const val REGION = "region"
-        const val ORGANIZATION_ID = "organizationId"
     }
 
     object Config {
+        const val ENABLE_IN_APP = "enableInApp"
         const val TRACKING_API_URL = "trackingApiUrl"
         const val AUTO_TRACK_DEVICE_ATTRIBUTES = "autoTrackDeviceAttributes"
         const val LOG_LEVEL = "logLevel"
