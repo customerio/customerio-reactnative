@@ -22,13 +22,13 @@ const LINKING_ERROR =
 const CustomerioReactnative = NativeModules.CustomerioReactnative
   ? NativeModules.CustomerioReactnative
   : new Proxy(
-    {},
-    {
-      get() {
-        throw new Error(LINKING_ERROR);
-      },
-    }
-  );
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
 class CustomerIO {
   /**
