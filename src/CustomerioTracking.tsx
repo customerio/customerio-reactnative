@@ -78,7 +78,7 @@ class CustomerIO {
    * @param identifier unique identifier for a profile
    * @param body (Optional) data to identify a profile
    */
-  static identify(identifier: string, body: Object) {
+  static identify(identifier: string, body?: Object) {
     CustomerioReactnative.identify(identifier, body);
   }
 
@@ -99,7 +99,7 @@ class CustomerIO {
    * @param name event name to be tracked
    * @param data (Optional) data to be sent with event
    */
-  static track(name: string, data: Object) {
+  static track(name: string, data?: Object) {
     CustomerioReactnative.track(name, data);
   }
 
@@ -129,7 +129,7 @@ class CustomerIO {
    * @param name name of the screen user visited
    * @param data (Optional) any additional data to be sent
    */
-  static screen(name: string, data: Object) {
+  static screen(name: string, data?: Object) {
     CustomerioReactnative.screen(name, data);
   }
 

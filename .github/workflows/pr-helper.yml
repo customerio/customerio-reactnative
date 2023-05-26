@@ -16,6 +16,3 @@ jobs:
         uses: levibostian/action-semantic-pr@v3
         with:
           readToken: ${{ secrets.GITHUB_TOKEN }}
-          # Sets rules on the types of commits allowed on a specific branch.
-          # Example: {"beta": "fix,docs"} gives a warning on the pull request if a pull request is made into the beta branch with a type thats not fix.
-          branchTypeWarning: '{"beta": "fix", "main": "fix"}'

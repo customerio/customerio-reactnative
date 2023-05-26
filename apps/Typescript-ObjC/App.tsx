@@ -26,7 +26,12 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import { CustomerIO, CustomerIOEnv, CustomerioConfig, CioLogLevel } from 'customerio-reactnative';
+import {
+  CustomerIO,
+  CustomerIOEnv,
+  CustomerioConfig,
+  CioLogLevel,
+} from 'customerio-reactnative';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -59,17 +64,16 @@ function Section({children, title}: SectionProps): JSX.Element {
 }
 
 function App(): JSX.Element {
-
   useEffect(() => {
-    const env = new CustomerIOEnv()
-    env.siteId = "YourSiteId"
-    env.apiKey = "YourAPIKey"    
+    const env = new CustomerIOEnv();
+    env.siteId = 'YourSiteId';
+    env.apiKey = 'YourAPIKey';
 
-    const config = new CustomerioConfig()
-    config.logLevel = CioLogLevel.debug
- 
-    CustomerIO.initialize(env, config)
- }, []) 
+    const config = new CustomerioConfig();
+    config.logLevel = CioLogLevel.debug;
+
+    CustomerIO.initialize(env, config);
+  }, []);
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -94,9 +98,9 @@ function App(): JSX.Element {
           <Button
             title="Press me"
             onPress={() => {
-              CustomerIO.identify("typescript@customer.io", {})
-              CustomerIO.track("track event", {})
-              CustomerIO.screen("screen tracked", {})
+              CustomerIO.identify('typescript@customer.io', {});
+              CustomerIO.track('track event', {});
+              CustomerIO.screen('screen tracked', {});
             }}
           />
           <Section title="Step One">

@@ -1,3 +1,24 @@
+### [2.3.3](https://github.com/customerio/customerio-reactnative/compare/2.3.2...2.3.3) (2023-05-03)
+
+
+### Bug Fixes
+
+* autoupdate to latest major version of iOS SDK ([#124](https://github.com/customerio/customerio-reactnative/issues/124)) ([7904c50](https://github.com/customerio/customerio-reactnative/commit/7904c5079df06776e603b9741bd8831170724041))
+
+### [2.3.2](https://github.com/customerio/customerio-reactnative/compare/2.3.1...2.3.2) (2023-04-20)
+
+
+### Bug Fixes
+
+* push opened metrics tracked on Android 12 ([#119](https://github.com/customerio/customerio-reactnative/issues/119)) ([dfd6fbd](https://github.com/customerio/customerio-reactnative/commit/dfd6fbdc1131b4f0f226480ef0ab8d67b16d4837))
+
+### [2.3.1](https://github.com/customerio/customerio-reactnative/compare/2.3.0...2.3.1) (2023-04-20)
+
+
+### Bug Fixes
+
+* typescript definition for optional data attributes ([#51](https://github.com/customerio/customerio-reactnative/issues/51)) ([4cec62a](https://github.com/customerio/customerio-reactnative/commit/4cec62abcf45f14f060d60fb2239c94d50f0a9a9))
+
 ## [2.3.0](https://github.com/customerio/customerio-reactnative/compare/2.2.1...2.3.0) (2023-04-04)
 
 
