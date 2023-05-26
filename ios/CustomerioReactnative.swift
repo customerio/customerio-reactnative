@@ -3,6 +3,7 @@ import CioTracking
 import Common
 import CioMessagingInApp
 import UserNotifications
+import CioMessagingPush
 
 enum PushPermissionStatus: String, CaseIterable {
     case denied
@@ -19,13 +20,6 @@ class CustomerioReactnative: NSObject {
 
     @objc static func requiresMainQueueSetup() -> Bool {
         false /// false because our native module's initialization does not require access to UIKit
-    }
-    
-    
-    @objc(userNotificationCenter:resolver:rejecter:)
-    func userNotificationCenter(didReceive response: UNNotificationResponse, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
-        
-        print("I got it")
     }
     
     /**
@@ -113,6 +107,15 @@ class CustomerioReactnative: NSObject {
     @objc(setDeviceAttributes:)
     func setDeviceAttributes(data: Dictionary<String, AnyHashable>) -> Void{
         CustomerIO.shared.deviceAttributes = data
+    }
+    
+    @objc(userNotificationCenter:)
+    func userNotificationCenter(didReceive response: UNNotificationResponse) -> Void {
+        
+        print("I got it")
+        print(response)
+        let center = UNUserNotificationCenter.current()
+        let _ = MessagingPush.shared.userNotificationCenter(center, didReceive: response)
     }
     
     /**

@@ -177,7 +177,7 @@ class CustomerIO {
   }
 
   static async userNotificationCenter(response: NotificationResponse) {
-    console.log(response)
+    console.log("CAUGHT", response.notification.request.trigger.payload.CIO.push.link)
   }
 
   /**
