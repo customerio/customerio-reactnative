@@ -1,0 +1,17 @@
+# Configuration for lefthook tool to manage git hooks 
+# https://github.com/evilmartians/lefthook
+
+# Commands to run before committing code. 
+pre-commit:
+  commands:    
+    lint:
+      glob: "*.tsx"
+      # Format code and then `git add` modified files from formatter. 
+      run: npm run format && git add {staged_files}    
+
+# Commands to run before pushing code 
+pre-push:
+  commands:
+    lint: 
+      # Run linter giving you errors to fix. 
+      run: npm run lint 

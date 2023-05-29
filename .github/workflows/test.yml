@@ -19,3 +19,26 @@ jobs:
 
       - name: Publish test
         run: npm publish --dry-run
+
+  assert-lint:
+    name: Assert lint check passes and no lint warnings exist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint:report
+
+      - name: Annotate Code Linting Results
+        uses: ataylorme/eslint-annotate-action@v2
+        with:
+          check-name: 'eslint results'
+          only-pr-files: false 
+          fail-on-warning: true 
+          fail-on-error: true 
+          markdown-report-on-step-summary: true 
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          report-json: "eslint_report.json"
