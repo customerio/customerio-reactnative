@@ -112,10 +112,20 @@ class CustomerioReactnative: NSObject {
     @objc(userNotificationCenter:)
     func userNotificationCenter(didReceive response: UNNotificationResponse) -> Void {
         
+        // `response` is received as NSDictionary i.e typecasted to UNNotificationResponse
         print("I got it")
         print(response)
-        let center = UNUserNotificationCenter.current()
-        let _ = MessagingPush.shared.userNotificationCenter(center, didReceive: response)
+        
+        // Remove this conditional casting, it won't do any good.
+        if let notificationResponse = response as? UNNotificationResponse {
+
+            // Though this conditional casting always succeeds, I added it to ensure that the typecasting happens but no luck!
+            // I think it is because we can not create a UNNotificationResponse objects ourselves, instead shared user notification
+            // center creates them and delivers it to userNotificationCenter(_ : didReceive: withCompletionHandler:)
+            // Source - https://developer.apple.com/documentation/usernotifications/unnotificationresponse
+            let center = UNUserNotificationCenter.current()
+            let _ = MessagingPush.shared.userNotificationCenter(center, didReceive: notificationResponse)
+        }
     }
     
     /**

@@ -32,7 +32,3 @@ RCT_EXTERN_METHOD(getPushPermissionStatus: (RCTPromiseResolveBlock) resolver
 
 RCT_EXTERN_METHOD(userNotificationCenter : (nonnull NSDictionary *) didReceive])
 @end
-
-//@interface RCTConvert (UNNotificationResponse)
-//+ (NSDictionary *)RCTFormatUNNotificationResponse:(UNNotificationResponse *)response;
-//@end

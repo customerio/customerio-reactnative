@@ -178,6 +178,8 @@ class CustomerIO {
 
   static async userNotificationCenter(response: NotificationResponse) {
     console.log("CAUGHT", response.notification.request.trigger.payload.CIO.push.link)
+
+    return CustomerioReactnative.userNotificationCenter(response)
   }
 
   /**
