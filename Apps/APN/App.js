@@ -48,7 +48,7 @@ const [trackingUrl, setTrackingUrl] = useState(null)
     },
   };
   const linking = {
-    prefixes: ['amiapp://'],
+    prefixes: ['apn-rn-sample://'],
     config
   };
 
