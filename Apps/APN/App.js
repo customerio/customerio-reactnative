@@ -70,6 +70,7 @@ const [trackingUrl, setTrackingUrl] = useState(null)
     const debugModeValue = await keyStorageObj.getDebugModeConfig()
     const trackUrl = await keyStorageObj.getTrackingUrl()
 
+    // Setting values here to show default values on Settings screens
     if (screenTrackValue === null) {
       await keyStorageObj.saveScreenTrack(true)
     }
