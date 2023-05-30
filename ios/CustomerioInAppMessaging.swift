@@ -1,5 +1,6 @@
 import Foundation
 import React
+import CioMessagingInApp
 
 @objc(CustomerioInAppMessaging)
 class CustomerioInAppMessaging: RCTEventEmitter {
