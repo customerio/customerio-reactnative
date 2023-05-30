@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "customerio-reactnative": "^2.3.0",
+    "customerio-reactnative": "file:../../",
     "react": "18.2.0",
     "react-native": "0.71.7"
   },

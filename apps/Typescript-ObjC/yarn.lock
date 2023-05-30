@@ -2684,10 +2684,8 @@ csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
   integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
-customerio-reactnative@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/customerio-reactnative/-/customerio-reactnative-2.3.0.tgz#cca5fe4c18293e301a79e4184532d9bb3a833d60"
-  integrity sha512-B/0x+aMwGBDLj/7VmswWYyFIdjEWUHtqF9JI4/UJXD7Fx7/2eawplY45SCkLvnvVj76zSvdvQs6oF9No2NZUXw==
+"customerio-reactnative@file:../..":
+  version "2.3.3"
 
 dayjs@^1.8.15:
   version "1.11.7"

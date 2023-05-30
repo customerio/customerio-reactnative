@@ -1,0 +1,1 @@
+import "../../../fastlane-ios/Fastfile" # imports shared Fastfile from "apps/fastlane/Fastfile"

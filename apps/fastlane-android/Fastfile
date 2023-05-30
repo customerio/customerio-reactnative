@@ -1,0 +1,7 @@
+# This file should not need any logic inside of it. Instead, have all of the logic be inside of the iOS and Android SDK's Fastfile that we can re-use in this file and all other SDK wrapper projects. 
+import_from_git(
+  url: "https://github.com/customerio/customerio-android.git",
+  branch: "levi/reactnative-ci-build-sample-apps", # The branch to checkout on the repository.
+  path: "samples/fastlane/Fastfile" # The path of the Fastfile in the repository.
+)
+
