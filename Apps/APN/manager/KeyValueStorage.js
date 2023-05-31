@@ -1,167 +1,104 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Constants from './../util/StorageConstants'
 
 class CioKeyValueStorage {
 
-  // Tracking URL
-  async saveTrackingUrl(value) {
+  async saveToStorage(key, value) {
     try {
-      await AsyncStorage.setItem('tracking_url', value)
+      await AsyncStorage.setItem(key, value)
     } catch (e) {
       console.log(e)
     }
+  }
+
+  async getFromStorage(key) {
+    try {
+      const value = await AsyncStorage.getItem(key)
+      return value
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
+  // Tracking URL
+  async saveTrackingUrl(value) {
+    this.saveToStorage(Constants.TRACKING_URL_KEY, value)
   }
 
   async getTrackingUrl(){
-    try {
-      const value = await AsyncStorage.getItem('tracking_url')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.TRACKING_URL_KEY)
   }
 
-  // BG-Q
+  // BGQ-DELAY
   async saveBGQSecondsDelay(value) {
-    try {
-      await AsyncStorage.setItem('bgQSecondsDelay', value)
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.BGQ_SECONDS_DELAY, value)
   }
 
   async getBGQSecondsDelay(){
-    try {
-      const value = await AsyncStorage.getItem('bgQSecondsDelay')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.BGQ_SECONDS_DELAY)
   }
 
+  // BGQ-MinTasks
   async saveBGQMinTasksInQueue(value) {
-    try {
-      await AsyncStorage.setItem('bgQMinTasksInQueue', value)
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.BGQ_MIN_TASKS_IN_QUEUE, value)
   }
 
   async getBGQMinTasksInQueue(){
-    try {
-      const value = await AsyncStorage.getItem('bgQMinTasksInQueue')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.BGQ_MIN_TASKS_IN_QUEUE)
   }
 
   // Login Status
   async saveLoginStatus(value) {
-    try {
-      await AsyncStorage.setItem('loginStatus', JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.LOGIN_STATUS, JSON.stringify(value))
   }
 
   async getLoginStatus(value) {
-    try {
-      const value = await AsyncStorage.getItem('loginStatus')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.LOGIN_STATUS)
   }
 
   // Login details
   async saveLoginDetail(value) {
-    try {
-      await AsyncStorage.setItem('loginDetail', JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.LOGIN_DETAIL, JSON.stringify(value))
   }
 
   async getLoginDetail(value) {
-    try {
-      const value = await AsyncStorage.getItem('loginDetail')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.LOGIN_DETAIL)
   } 
 
   // Track Screen
   async saveScreenTrack(value) {
-    try {
-      await AsyncStorage.setItem('screen_track', JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.SCREEN_TRACK_STATUS, JSON.stringify(value))
   }
 
   async getScreenTrack(){
-    try {
-      const value = await AsyncStorage.getItem('screen_track')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.SCREEN_TRACK_STATUS)
   }
 
   // Track device attributes
   async saveDeviceAttributesTrack(value) {
-    try {
-      await AsyncStorage.setItem('device_attributes_track', JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.TRACK_DEVICE_ATTRIBUTES_STATUS, JSON.stringify(value))
   }
 
   async getDeviceAttributesTrack(){
-    try {
-      const value = await AsyncStorage.getItem('device_attributes_track')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.TRACK_DEVICE_ATTRIBUTES_STATUS)
   }
 
 // Debug mode
 async saveDebugModeConfig(value) {
-  try {
-    await AsyncStorage.setItem('debug_mode', JSON.stringify(value))
-  } catch (e) {
-    console.log(e)
-  }
+  this.saveToStorage(Constants.DEBUG_MODE_STATUS, JSON.stringify(value))
 }
 
 async getDebugModeConfig(){
-  try {
-    const value = await AsyncStorage.getItem('debug_mode')
-    return value
-  } catch(e) {
-    console.log(e)
-  }
+  return this.getFromStorage(Constants.DEBUG_MODE_STATUS)
 }
 
   // Push notifications
   async saveIsPushEnabledConfig(value) {
-    try {
-      await AsyncStorage.setItem('push_enabled', JSON.stringify(value))
-    } catch (e) {
-      console.log(e)
-    }
+    this.saveToStorage(Constants.PUSH_ENABLED_STATUS, JSON.stringify(value))
   }
   
   async getIsPushEnabledConfig(){
-    try {
-      const value = await AsyncStorage.getItem('push_enabled')
-      return value
-    } catch(e) {
-      console.log(e)
-    }
+    return this.getFromStorage(Constants.PUSH_ENABLED_STATUS)
   }
 }
 
