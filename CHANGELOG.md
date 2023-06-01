@@ -1,3 +1,10 @@
+## [2.4.0](https://github.com/customerio/customerio-reactnative/compare/2.3.3...2.4.0) (2023-06-01)
+
+
+### Features
+
+* dismiss in-app message ([#138](https://github.com/customerio/customerio-reactnative/issues/138)) ([55d4c62](https://github.com/customerio/customerio-reactnative/commit/55d4c6245b57a7090e0c0157996d2f43874b5297))
+
 ### [2.3.3](https://github.com/customerio/customerio-reactnative/compare/2.3.2...2.3.3) (2023-05-03)
 
 
