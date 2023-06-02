@@ -26,7 +26,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>amiapp</string>
+			<string>apn-rn-sample</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>amiapp</string>
