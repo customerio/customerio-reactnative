@@ -8,7 +8,7 @@ import ThemedButton from './common/Button';
 import CioKeyValueStorage from '../manager/KeyValueStorage';
 import { CustomerIO } from 'customerio-reactnative';
 import { set } from 'react-native-reanimated';
-
+import DefaultConstants from '../util/DefaultConstants';
 
 const SettingsScreen = ({navigation}) => {
 const [deviceToken, setDeviceToken] = useState('')
@@ -18,8 +18,8 @@ const [pushStatus, setPushStatus] = useState('')
 const [isPushEnabled, setIsPushEnabled] = useState(false)
 const [isTrackDeviceAttributesEnabled, setIsTrackDeviceAttributesEnabled] = useState(true)
 const [isTrackScreensEnabled, setIsTrackScreensEnabled] = useState(false)
-const [bgQDelay, setBgQDelay] = useState("30")
-const [bgQMinNumTasks, setBgQMinNumTasks] = useState("10")
+const [bgQDelay, setBgQDelay] = useState(`${DefaultConstants.BGQ_SECONDS_DELAY}`)
+const [bgQMinNumTasks, setBgQMinNumTasks] = useState(`${DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE}`)
 
 useLayoutEffect(() => {
     navigation.setOptions({

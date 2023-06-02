@@ -11,6 +11,7 @@ import Env from "./env";
 import CioManager from './manager/CioManager';
 import CioKeyValueStorage from './manager/KeyValueStorage';
 import Deeplinks from './components/Deeplink';
+import DefaultConstants from './util/DefaultConstants';
 
 const Stack = createNativeStackNavigator();
 
@@ -72,25 +73,25 @@ const [trackingUrl, setTrackingUrl] = useState(null)
 
     // Setting values here to show default values on Settings screens
     if (screenTrackValue === null) {
-      await keyStorageObj.saveScreenTrack(true)
+      await keyStorageObj.saveScreenTrack(DefaultConstants.SCREEN_TRACK_STATUS)
     }
     if (bgDelayValue === null) {
-      await keyStorageObj.saveBGQSecondsDelay('30')
+      await keyStorageObj.saveBGQSecondsDelay(`${DefaultConstants.BGQ_SECONDS_DELAY}`)
     }
     if (bgTasksValue === null) {
-      await keyStorageObj.saveBGQMinTasksInQueue('10')
+      await keyStorageObj.saveBGQMinTasksInQueue(`${DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE}`)
     }
     if (deviceAttrValue === null) {
-      await keyStorageObj.saveDeviceAttributesTrack(true)
+      await keyStorageObj.saveDeviceAttributesTrack(`${DefaultConstants.TRACK_DEVICE_ATTRIBUTES_STATUS}`)
     }
     if (debugModeValue === null) {
-      await keyStorageObj.saveDebugModeConfig(true)
+      await keyStorageObj.saveDebugModeConfig(`${DefaultConstants.DEBUG_MODE_STATUS}`)
     }
     setIsDeviceAttrTrackEnabled(deviceAttrValue === null ? true : JSON.parse(deviceAttrValue))
     setIsScreenTrackEnabled(screenTrackValue === null ? true : JSON.parse(screenTrackValue))
     setIsDebugModeEnabled(debugModeValue === null ? true : JSON.parse(debugModeValue))
-    setBgDelayValue(bgDelayValue === null ? 30 : parseInt(bgDelayValue))
-    setBgTasksValue(bgTasksValue === null ? 10 : parseInt(bgTasksValue))
+    setBgDelayValue(bgDelayValue === null ? DefaultConstants.BGQ_SECONDS_DELAY : parseInt(bgDelayValue))
+    setBgTasksValue(bgTasksValue === null ? DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE : parseInt(bgTasksValue))
     setTrackingUrl(trackUrl)
   }
 
