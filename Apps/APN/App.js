@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ActivityIndicator, Linking, StyleSheet } from 'react-native';
 import Login from './components/Login';
 import {
@@ -79,6 +79,7 @@ export default function App() {
     isDebugModeEnabled,
     bgDelayValue,
     bgTasksValue,
+    initialiseCioPackage,
   ]);
 
   const fetchConfigsOrSetDefault = async () => {
@@ -136,7 +137,7 @@ export default function App() {
     setTrackingUrl(trackUrl);
   };
 
-  const initialiseCioPackage = () => {
+  const initialiseCioPackage = useCallback(() => {
     const configuration = new CustomerioConfig();
     configuration.logLevel =
       isDebugModeEnabled === null ? CioLogLevel.debug : isDebugModeEnabled;
@@ -154,7 +155,13 @@ export default function App() {
 
     const cioManager = new CioManager();
     cioManager.initializeCio(env, configuration);
-  };
+  }, [
+    isDebugModeEnabled,
+    isDeviceAttrTrackEnabled,
+    bgTasksValue,
+    bgDelayValue,
+    trackingUrl,
+  ]);
 
   useEffect(() => {
     const getUrlAsync = async () => {
