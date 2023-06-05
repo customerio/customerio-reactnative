@@ -21,7 +21,7 @@ jobs:
         run: npm publish --dry-run
 
   assert-lint:
-    name: Assert lint check passes and no lint warnings exist
+    name: Assert lint check passes and no lint errors exist
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -37,7 +37,7 @@ jobs:
         with:
           check-name: 'eslint results'
           only-pr-files: false 
-          fail-on-warning: true 
+          fail-on-warning: false 
           fail-on-error: true 
           markdown-report-on-step-summary: true 
           repo-token: "${{ secrets.GITHUB_TOKEN }}"

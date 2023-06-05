@@ -1,7 +1,6 @@
 const Env = {
-  siteId: "YourSiteId",
-  apiKey: "YourApiKey",
-}
-
+  siteId: 'YourSiteId',
+  apiKey: 'YourApiKey',
+};
 
 export default Env;

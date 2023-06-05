@@ -3,7 +3,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 module.exports = getDefaultConfig(__dirname);
 
-const path = require("path");
+const path = require('path');
 // const watchFolders = [
 //   //Relative path to packages directory because I'm in yarn workpspaces
 //   path.resolve(__dirname + "/../.."),
