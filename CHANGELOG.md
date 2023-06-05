@@ -1,3 +1,10 @@
+### [2.4.1](https://github.com/customerio/customerio-reactnative/compare/2.4.0...2.4.1) (2023-06-05)
+
+
+### Bug Fixes
+
+* installation breaks due to lefthook in postinstall ([#144](https://github.com/customerio/customerio-reactnative/issues/144)) ([e451443](https://github.com/customerio/customerio-reactnative/commit/e451443c655c7c7c2882778cc4bf05020107196a))
+
 ## [2.4.0](https://github.com/customerio/customerio-reactnative/compare/2.3.3...2.4.0) (2023-06-01)
 
 
