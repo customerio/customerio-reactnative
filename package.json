@@ -31,7 +31,7 @@
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods",
-    "postinstall": "node src/postInstall.js && npx lefthook install",
+    "postinstall": "node src/postInstall.js",
     "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
   "keywords": [
@@ -69,7 +69,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "lefthook": "*"
   },
   "jest": {
     "preset": "react-native",
