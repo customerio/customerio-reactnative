@@ -2,6 +2,8 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
+cio_native_version = "= 2.6.1"
+
 Pod::Spec.new do |s|
   s.name         = "customerio-reactnative"
   s.version      = package["version"]
@@ -19,6 +21,14 @@ Pod::Spec.new do |s|
 
   # Syntax of native iOS pods allows for automatically upgrading to the latest major version of the iOS SDK. 
   # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
-  s.dependency "CustomerIO/Tracking", '~> 2'
-  s.dependency "CustomerIO/MessagingInApp", '~> 2'
+  s.dependency "CustomerIO/Tracking", cio_native_version
+  s.dependency "CustomerIO/MessagingInApp", cio_native_version
+
+  s.subspec 'richpush-apn' do |ss|
+    ss.dependency "CustomerIO/MessagingPushAPN", cio_native_version
+  end
+
+  s.subspec 'richpush-fcm' do |ss|
+    ss.dependency "CustomerIO/MessagingPushFCM", cio_native_version
+  end
 end
