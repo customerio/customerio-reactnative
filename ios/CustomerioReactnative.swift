@@ -1,6 +1,6 @@
 import Foundation
 import CioTracking
-import Common
+import CioInternalCommon
 import CioMessagingInApp
 import UserNotifications
 
