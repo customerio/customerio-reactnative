@@ -1,3 +1,10 @@
+### [2.4.2](https://github.com/customerio/customerio-reactnative/compare/2.4.1...2.4.2) (2023-06-06)
+
+
+### Bug Fixes
+
+* update import from common to CioInternalCommon ([#147](https://github.com/customerio/customerio-reactnative/issues/147)) ([f0382a4](https://github.com/customerio/customerio-reactnative/commit/f0382a4823986be78680ce2dab468b2ea47d66fd))
+
 ### [2.4.1](https://github.com/customerio/customerio-reactnative/compare/2.4.0...2.4.1) (2023-06-05)
 
 
