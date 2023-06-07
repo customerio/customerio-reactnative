@@ -22,7 +22,7 @@ local.properties
 build/
 
 # CocoaPods
-/ios/Pods/
+Pods/
 
 # iOS sub-folder
 test-report.*
