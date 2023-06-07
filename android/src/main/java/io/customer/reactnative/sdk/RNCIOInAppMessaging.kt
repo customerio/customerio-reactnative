@@ -5,8 +5,11 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import io.customer.messaginginapp.ModuleMessagingInApp
+import io.customer.messaginginapp.di.inAppMessaging
 import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messaginginapp.type.InAppMessage
+import io.customer.sdk.CustomerIO
 
 /**
  * ReactNative module to hold in-app messages features in a single place to bridge with native code.
@@ -16,6 +19,9 @@ class RNCIOInAppMessaging(
 ) : ReactContextBaseJavaModule(reactContext), InAppEventListener {
     private var listenerCount = 0
 
+    private val inAppMessagingModule: ModuleMessagingInApp
+        get() = CustomerIO.instance().inAppMessaging()
+
     @ReactMethod
     fun addListener(eventName: String) {
         listenerCount++
@@ -24,6 +30,14 @@ class RNCIOInAppMessaging(
     @ReactMethod
     fun removeListeners(count: Int) {
         listenerCount -= count
+    }
+
+    /**
+     * Dismisses any currently displayed in-app message
+     */
+    @ReactMethod
+    fun dismissMessage() {
+        inAppMessagingModule.dismissMessage()
     }
 
     /**

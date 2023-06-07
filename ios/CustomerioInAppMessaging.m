@@ -4,4 +4,6 @@
 
 RCT_EXTERN_METHOD(supportedEvents)
 
+RCT_EXTERN_METHOD(dismissMessage)
+
 @end

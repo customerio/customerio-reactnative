@@ -1,3 +1,24 @@
+### [2.4.2](https://github.com/customerio/customerio-reactnative/compare/2.4.1...2.4.2) (2023-06-06)
+
+
+### Bug Fixes
+
+* update import from common to CioInternalCommon ([#147](https://github.com/customerio/customerio-reactnative/issues/147)) ([f0382a4](https://github.com/customerio/customerio-reactnative/commit/f0382a4823986be78680ce2dab468b2ea47d66fd))
+
+### [2.4.1](https://github.com/customerio/customerio-reactnative/compare/2.4.0...2.4.1) (2023-06-05)
+
+
+### Bug Fixes
+
+* installation breaks due to lefthook in postinstall ([#144](https://github.com/customerio/customerio-reactnative/issues/144)) ([e451443](https://github.com/customerio/customerio-reactnative/commit/e451443c655c7c7c2882778cc4bf05020107196a))
+
+## [2.4.0](https://github.com/customerio/customerio-reactnative/compare/2.3.3...2.4.0) (2023-06-01)
+
+
+### Features
+
+* dismiss in-app message ([#138](https://github.com/customerio/customerio-reactnative/issues/138)) ([55d4c62](https://github.com/customerio/customerio-reactnative/commit/55d4c6245b57a7090e0c0157996d2f43874b5297))
+
 ### [2.3.3](https://github.com/customerio/customerio-reactnative/compare/2.3.2...2.3.3) (2023-05-03)
 
 

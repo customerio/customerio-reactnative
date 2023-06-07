@@ -50,7 +50,7 @@ buck-out/
 *.jsbundle
 
 # CocoaPods
-/ios/Pods/
+Apps/APN/ios/Pods/
 
 package-lock.json
 lib/module/index.js
