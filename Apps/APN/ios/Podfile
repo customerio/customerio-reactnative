@@ -10,8 +10,6 @@ target 'SampleApp' do
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-  pod 'CustomerIO/MessagingPushAPN', '~> 2'
-
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.
@@ -29,5 +27,5 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  pod 'CustomerIO/MessagingPushAPN', '~> 2'
+  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
 end

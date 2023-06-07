@@ -1,21 +1,28 @@
 PODS:
   - boost (1.76.0)
-  - customerio-reactnative (2.2.0):
-    - CustomerIOMessagingInApp (~> 2.1.0-beta.2)
-    - CustomerIOTracking (~> 2.1.0-beta.2)
+  - customerio-reactnative (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.6.1)
+    - CustomerIO/MessagingPushAPN (= 2.6.1)
+    - CustomerIO/Tracking (= 2.6.1)
     - React-Core
-  - CustomerIO/MessagingPushAPN (2.1.2):
-    - CustomerIOMessagingPushAPN (= 2.1.2)
-  - CustomerIOCommon (2.1.2)
-  - CustomerIOMessagingInApp (2.1.2):
-    - CustomerIOTracking (= 2.1.2)
-    - Gist (~> 3.0.4)
-  - CustomerIOMessagingPush (2.1.2):
-    - CustomerIOTracking (= 2.1.2)
-  - CustomerIOMessagingPushAPN (2.1.2):
-    - CustomerIOMessagingPush (= 2.1.2)
-  - CustomerIOTracking (2.1.2):
-    - CustomerIOCommon (= 2.1.2)
+  - customerio-reactnative-richpush/apn (2.4.2):
+    - CustomerIO/MessagingPushAPN (= 2.6.1)
+  - CustomerIO/MessagingInApp (2.6.1):
+    - CustomerIOMessagingInApp (= 2.6.1)
+  - CustomerIO/MessagingPushAPN (2.6.1):
+    - CustomerIOMessagingPushAPN (= 2.6.1)
+  - CustomerIO/Tracking (2.6.1):
+    - CustomerIOTracking (= 2.6.1)
+  - CustomerIOCommon (2.6.1)
+  - CustomerIOMessagingInApp (2.6.1):
+    - CustomerIOTracking (= 2.6.1)
+    - Gist (= 3.2.2)
+  - CustomerIOMessagingPush (2.6.1):
+    - CustomerIOTracking (= 2.6.1)
+  - CustomerIOMessagingPushAPN (2.6.1):
+    - CustomerIOMessagingPush (= 2.6.1)
+  - CustomerIOTracking (2.6.1):
+    - CustomerIOCommon (= 2.6.1)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.69.1)
   - FBReactNativeSpec (0.69.1):
@@ -26,7 +33,7 @@ PODS:
     - React-jsi (= 0.69.1)
     - ReactCommon/turbomodule/core (= 0.69.1)
   - fmt (6.2.1)
-  - Gist (3.0.4)
+  - Gist (3.2.2)
   - glog (0.3.5)
   - hermes-engine (0.69.1)
   - libevent (2.1.12)
@@ -373,7 +380,7 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
-  - CustomerIO/MessagingPushAPN (= 2.1.2)
+  - customerio-reactnative-richpush/apn (from `../node_modules/customerio-reactnative`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -434,6 +441,8 @@ EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   customerio-reactnative:
+    :path: "../node_modules/customerio-reactnative"
+  customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
@@ -518,18 +527,19 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  CustomerIO: 94c4b930162d61c8126c8b265551d6a96b18a037
-  customerio-reactnative: d53c03cf1ef3d1828309671d052822262d86a475
-  CustomerIOCommon: 923dd0108e4e72cc94552e880d340bef88abfbfc
-  CustomerIOMessagingInApp: 4a02801021774f469941c6ec4cbc46dbcd567e98
-  CustomerIOMessagingPush: cb925936db7988f4fff69664896b5f405412f470
-  CustomerIOMessagingPushAPN: d29dea6a66a757b2510352727ed79b83b26e4aac
-  CustomerIOTracking: 2b1c78afc13c82c39ad6d2e430c7ac36ed45642d
+  CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
+  customerio-reactnative: 16119f28621f6cf1bb5dd594373f112ac8b8ac6c
+  customerio-reactnative-richpush: 0a90c609f5cd3e657765be8c22caad3993108e2d
+  CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
+  CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
+  CustomerIOMessagingPush: f8e7b7133836c0d8d05a38c18c90870cfab6845a
+  CustomerIOMessagingPushAPN: 3966f1a7618976e393e07521ba5542d6a1a7a8a4
+  CustomerIOTracking: 48ea93a09ebadb42fd09fd3294a1172efc355ffd
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 068141206af867f72854753423d0117c4bf53419
   FBReactNativeSpec: 546a637adc797fa436dd51d1c63c580f820de31c
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  Gist: 1d680df00ff6dbcc4fac9844b90454f30778dcbc
+  Gist: 20cc9afb7728fd584d31fb86528f19ebc087d190
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   hermes-engine: ece2bfa9bdb7f77f393cb2b41edf638eb086ec1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -569,6 +579,6 @@ SPEC CHECKSUMS:
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
 
-PODFILE CHECKSUM: 215f8d5e2a31263f5f9b986c53569c6e33a70a68
+PODFILE CHECKSUM: 5cb2dede97c2902f320d6272818e590acb069c54
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
