@@ -1,6 +1,8 @@
 import Foundation
-import CioMessagingPushAPN
+import CioMessagingPushFCM
 import UserNotifications
+import FirebaseMessaging
+import CioTracking
 
 // This class manages all function calls to CustomerIO SDK.
 @objc
@@ -8,25 +10,33 @@ public class MyAppPushNotificationsHandler : NSObject {
 
   public override init() {}
 
-  @objc(application:deviceToken:)
-  public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-  }
+  // Skip this function if you don't want to request push permissions on launch.
+     // Use `customerio-reactnative` version `>= 2.2.0` to display the native push permission prompt.
+     // See `Prompt users to opt-into push notifications` for more information.
+     @objc(registerPushNotification:)
+     public func registerPushNotification(withNotificationDelegate notificationDelegate: UNUserNotificationCenterDelegate) {
 
-  @objc(application:error:)
-  public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
-  }
+       let center  = UNUserNotificationCenter.current()
+       center.delegate = notificationDelegate
+       center.requestAuthorization(options: [.sound, .alert, .badge]) { (granted, error) in
+         if error == nil{
+           DispatchQueue.main.async {
+             UIApplication.shared.registerForRemoteNotifications()
+           }
+         }
+       }
+     }
 
-  @objc(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
-  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-    let handled = MessagingPush.shared.userNotificationCenter(center, didReceive: response,
-  withCompletionHandler: completionHandler)
+     // Register device on receiving a device token (FCM)
+     @objc(didReceiveRegistrationToken:fcmToken:)
+     public func didReceiveRegistrationToken(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+       MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
+     }
 
-    // If the Customer.io SDK does not handle the push, it's up to you to handle it and call the
-    // completion handler. If the SDK did handle it, it called the completion handler for you.
-    if !handled {
-      completionHandler()
-    }
-  }
+     // To capture push metrics
+     @objc(userNotificationCenter:response:completionHandler:)
+     public func userNotificationCenter(center:UNUserNotificationCenter, didReceive response: UNNotificationResponse, completionHandler: @escaping () -> Void){
+       let _ = MessagingPush.shared.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+     }
+
 }

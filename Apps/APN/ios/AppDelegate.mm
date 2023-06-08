@@ -17,6 +17,8 @@
 #import <React/RCTSurfacePresenterBridgeAdapter.h>
 #import <ReactCommon/RCTTurboModuleManager.h>
 
+#import <FirebaseCore.h>
+
 #import <react/config/ReactNativeConfig.h>
 
 static NSString *const kRNConcurrentRoot = @"concurrentRoot";
@@ -77,6 +79,17 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  // Configure Firebase
+   [FIRApp configure];
+   // Set FCM messaging delegate
+   [FIRMessaging messaging].delegate = self;
+   // Call this before  calling registerPushNotification:self
+//   [pnHandlerObj initializeCioSdk];
+   // Register for remote push when the app starts
+  // [pnHandlerObj registerPushNotification:self];
+
+  
   return YES;
 }
 
@@ -150,10 +163,20 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 #endif
 
+- (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
+[pnHandlerObj didReceiveRegistrationToken:messaging fcmToken: fcmToken];
+}
+
+//To show a notification when the app is in foreground
+ -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
+ {
+     completionHandler( UNNotificationPresentationOptionAlert + UNNotificationPresentationOptionSound);
+ }
+
+
 // Required to register device token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-  [pnHandlerObj application:application deviceToken:deviceToken];
  [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 //  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
@@ -168,7 +191,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-  [pnHandlerObj application:application error:error];
  [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
   
 //  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
@@ -178,15 +200,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler
 {
-  [pnHandlerObj userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
-
+  [pnHandlerObj userNotificationCenter:center response:response completionHandler:completionHandler];
   [RNCPushNotificationIOS didReceiveNotificationResponse:response];
-}
-
-//Called when a notification is delivered to a foreground app.
--(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
-{
-  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
 }
 
 // Deep linking

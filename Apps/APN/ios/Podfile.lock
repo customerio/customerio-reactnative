@@ -6,8 +6,10 @@ PODS:
     - CustomerIO/MessagingInApp (= 2.6.1)
     - CustomerIO/Tracking (= 2.6.1)
     - React-Core
-  - customerio-reactnative-richpush/apn (2.4.2):
-    - CustomerIO/MessagingPushAPN (= 2.6.1)
+  - customerio-reactnative-richpush/fcm (2.4.2):
+    - CustomerIO/MessagingPushFCM (= 2.6.1)
+    - Firebase
+    - FirebaseMessaging
   - customerio-reactnative/apn (2.4.2):
     - CustomerIO/MessagingInApp (= 2.6.1)
     - CustomerIO/MessagingPushAPN (= 2.6.1)
@@ -17,6 +19,8 @@ PODS:
     - CustomerIO/MessagingInApp (= 2.6.1)
     - CustomerIO/MessagingPushFCM (= 2.6.1)
     - CustomerIO/Tracking (= 2.6.1)
+    - Firebase
+    - FirebaseMessaging
     - React-Core
   - CustomerIO/MessagingInApp (2.6.1):
     - CustomerIOMessagingInApp (= 2.6.1)
@@ -47,11 +51,105 @@ PODS:
     - React-Core (= 0.69.1)
     - React-jsi (= 0.69.1)
     - ReactCommon/turbomodule/core (= 0.69.1)
+  - Firebase (10.10.0):
+    - Firebase/Core (= 10.10.0)
+  - Firebase/Core (10.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (~> 10.10.0)
+  - Firebase/CoreOnly (10.10.0):
+    - FirebaseCore (= 10.10.0)
+  - FirebaseAnalytics (10.10.0):
+    - FirebaseAnalytics/AdIdSupport (= 10.10.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (10.10.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleAppMeasurement (= 10.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseCore (10.10.0):
+    - FirebaseCoreInternal (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/Logger (~> 7.8)
+  - FirebaseCoreInternal (10.10.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseInstallations (10.10.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - PromisesObjC (~> 2.1)
+  - FirebaseMessaging (10.10.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/Reachability (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
   - fmt (6.2.1)
   - Gist (3.2.2)
   - glog (0.3.5)
+  - GoogleAppMeasurement (10.10.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (10.10.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.10.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleDataTransport (9.2.3):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/AppDelegateSwizzler (7.11.1):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (7.11.1):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.11.1):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.11.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (7.11.1):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.11.1)"
+  - GoogleUtilities/Reachability (7.11.1):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (7.11.1):
+    - GoogleUtilities/Logger
   - hermes-engine (0.69.1)
   - libevent (2.1.12)
+  - nanopb (2.30909.0):
+    - nanopb/decode (= 2.30909.0)
+    - nanopb/encode (= 2.30909.0)
+  - nanopb/decode (2.30909.0)
+  - nanopb/encode (2.30909.0)
+  - PromisesObjC (2.2.0)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -395,8 +493,8 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
-  - customerio-reactnative-richpush/apn (from `../node_modules/customerio-reactnative`)
-  - customerio-reactnative/apn (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative-richpush/fcm (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative/fcm (from `../node_modules/customerio-reactnative`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -450,9 +548,20 @@ SPEC REPOS:
     - CustomerIOMessagingPushAPN
     - CustomerIOMessagingPushFCM
     - CustomerIOTracking
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseCoreInternal
+    - FirebaseInstallations
+    - FirebaseMessaging
     - fmt
     - Gist
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleUtilities
     - libevent
+    - nanopb
+    - PromisesObjC
 
 EXTERNAL SOURCES:
   boost:
@@ -545,8 +654,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
-  customerio-reactnative: 77e37098cd861171df4c8e4aece23c05e8aef379
-  customerio-reactnative-richpush: 0a90c609f5cd3e657765be8c22caad3993108e2d
+  customerio-reactnative: f7ea89604aba704d138a2399451b52fd077aa92b
+  customerio-reactnative-richpush: 7cc186d029523f4cddee9a2cac03649e9c7eb405
   CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
   CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
   CustomerIOMessagingPush: f8e7b7133836c0d8d05a38c18c90870cfab6845a
@@ -556,11 +665,22 @@ SPEC CHECKSUMS:
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 068141206af867f72854753423d0117c4bf53419
   FBReactNativeSpec: 546a637adc797fa436dd51d1c63c580f820de31c
+  Firebase: facd334e557a979bd03a0b58d90fd56b52b8aba0
+  FirebaseAnalytics: 7bc7de519111dae802f5bc0c9c083918f8b8870d
+  FirebaseCore: d027ff503d37edb78db98429b11f580a24a7df2a
+  FirebaseCoreInternal: 971029061d326000d65bfdc21f5502c75c8b0893
+  FirebaseInstallations: 52153982b057d3afcb4e1fbb3eb0b6d00611e681
+  FirebaseMessaging: 8a3b9a8b98ce72a42d22e69865cf662e38d2d6f5
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   Gist: 20cc9afb7728fd584d31fb86528f19ebc087d190
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
+  GoogleAppMeasurement: bbbfd4bcb2b40ae9b772c3b0823a58c1e3d618f9
+  GoogleDataTransport: f0308f5905a745f94fb91fea9c6cbaf3831cb1bd
+  GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   hermes-engine: ece2bfa9bdb7f77f393cb2b41edf638eb086ec1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: ae07282b2ec9c90d7eb98251603bc3f82403d239
   RCTTypeSafety: a04dc1339af2e1da759ccd093bf11c310dce1ef6
@@ -597,6 +717,6 @@ SPEC CHECKSUMS:
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
 
-PODFILE CHECKSUM: 750e7498cf15b335e62a4a5819cc1f256c2a1714
+PODFILE CHECKSUM: 2e00fe1bbbd1b8719b8941378503a6650735ffca
 
 COCOAPODS: 1.12.1

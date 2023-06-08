@@ -7,10 +7,15 @@ install! 'cocoapods', :deterministic_uuids => false
 target 'SampleApp' do
   config = use_native_modules!
 
+#  use_modular_headers!
+
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
+  # Fix error at compile-time https://stackoverflow.com/questions/71125474/import-of-module-glog-glog-log-severity-appears-within-namespace-google
+#  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => false
+
+  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -29,5 +34,5 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
 end
