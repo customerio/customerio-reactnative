@@ -22,7 +22,11 @@ Pod::Spec.new do |s|
   s.dependency "CustomerIO/Tracking", package["cioNativeiOSSdkVersion"]
   s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
 
-  # Including APN push since there is no 3rd party dependencies required for it to work. 
-  # If customer uses FCM, they will use javascript functions included in SDK along with a 3rd party RN FCM SDK. 
-  s.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
+  s.subspec 'apn' do |ss|
+    ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
+  end
+
+  s.subspec 'fcm' do |ss|
+    ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+  end
 end
