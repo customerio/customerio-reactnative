@@ -1,3 +1,9 @@
+export interface CioNotificationResponse {
+  deliveryId: string;
+  event: 'opened' | 'delivered';
+  deviceToken: string;
+}
+
 export interface NotificationResponse {
     notification: Notification;
     actionIdentifier: string;

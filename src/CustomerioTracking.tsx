@@ -7,7 +7,7 @@ import {
 import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
-import type { PushPermissionStatus, PushPermissionOptions, NotificationResponse } from './types';
+import type { PushPermissionStatus, PushPermissionOptions, CioNotificationResponse } from './types';
 var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
@@ -176,8 +176,8 @@ class CustomerIO {
     );
   }
 
-  static async userNotificationCenter(response: NotificationResponse) {
-    // console.lßog("CAUGHT", response.notification.request.trigger.payload.CIO.push.link)
+  static async userNotificationCenter(response: CioNotificationResponse) {
+    console.log("CAUGHT", response)
 
     return CustomerioReactnative.userNotificationCenter(response)
   }
