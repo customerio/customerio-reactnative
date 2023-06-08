@@ -1,16 +1,29 @@
 PODS:
   - boost (1.76.0)
   - customerio-reactnative (2.4.2):
+    - customerio-reactnative/apn (= 2.4.2)
+    - customerio-reactnative/fcm (= 2.4.2)
     - CustomerIO/MessagingInApp (= 2.6.1)
-    - CustomerIO/MessagingPushAPN (= 2.6.1)
     - CustomerIO/Tracking (= 2.6.1)
     - React-Core
   - customerio-reactnative-richpush/apn (2.4.2):
     - CustomerIO/MessagingPushAPN (= 2.6.1)
+  - customerio-reactnative/apn (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.6.1)
+    - CustomerIO/MessagingPushAPN (= 2.6.1)
+    - CustomerIO/Tracking (= 2.6.1)
+    - React-Core
+  - customerio-reactnative/fcm (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.6.1)
+    - CustomerIO/MessagingPushFCM (= 2.6.1)
+    - CustomerIO/Tracking (= 2.6.1)
+    - React-Core
   - CustomerIO/MessagingInApp (2.6.1):
     - CustomerIOMessagingInApp (= 2.6.1)
   - CustomerIO/MessagingPushAPN (2.6.1):
     - CustomerIOMessagingPushAPN (= 2.6.1)
+  - CustomerIO/MessagingPushFCM (2.6.1):
+    - CustomerIOMessagingPushFCM (= 2.6.1)
   - CustomerIO/Tracking (2.6.1):
     - CustomerIOTracking (= 2.6.1)
   - CustomerIOCommon (2.6.1)
@@ -20,6 +33,8 @@ PODS:
   - CustomerIOMessagingPush (2.6.1):
     - CustomerIOTracking (= 2.6.1)
   - CustomerIOMessagingPushAPN (2.6.1):
+    - CustomerIOMessagingPush (= 2.6.1)
+  - CustomerIOMessagingPushFCM (2.6.1):
     - CustomerIOMessagingPush (= 2.6.1)
   - CustomerIOTracking (2.6.1):
     - CustomerIOCommon (= 2.6.1)
@@ -263,11 +278,11 @@ PODS:
   - React-jsinspector (0.69.1)
   - React-logger (0.69.1):
     - glog
-  - react-native-safe-area-context (4.3.1):
+  - react-native-safe-area-context (4.5.3):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React
+    - React-Core
     - ReactCommon/turbomodule/core
   - React-perflogger (0.69.1)
   - React-RCTActionSheet (0.69.1):
@@ -335,11 +350,11 @@ PODS:
     - React-jsi (= 0.69.1)
     - React-logger (= 0.69.1)
     - React-perflogger (= 0.69.1)
-  - RNCAsyncStorage (1.17.11):
+  - RNCAsyncStorage (1.18.2):
     - React-Core
   - RNCClipboard (1.11.2):
     - React-Core
-  - RNCPushNotificationIOS (1.10.1):
+  - RNCPushNotificationIOS (1.11.0):
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
@@ -381,6 +396,7 @@ DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative-richpush/apn (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative/apn (from `../node_modules/customerio-reactnative`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -432,6 +448,7 @@ SPEC REPOS:
     - CustomerIOMessagingInApp
     - CustomerIOMessagingPush
     - CustomerIOMessagingPushAPN
+    - CustomerIOMessagingPushFCM
     - CustomerIOTracking
     - fmt
     - Gist
@@ -528,12 +545,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
-  customerio-reactnative: 16119f28621f6cf1bb5dd594373f112ac8b8ac6c
+  customerio-reactnative: 77e37098cd861171df4c8e4aece23c05e8aef379
   customerio-reactnative-richpush: 0a90c609f5cd3e657765be8c22caad3993108e2d
   CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
   CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
   CustomerIOMessagingPush: f8e7b7133836c0d8d05a38c18c90870cfab6845a
   CustomerIOMessagingPushAPN: 3966f1a7618976e393e07521ba5542d6a1a7a8a4
+  CustomerIOMessagingPushFCM: f719a7d1426b2f4c6fa3b29b4180399e813eafac
   CustomerIOTracking: 48ea93a09ebadb42fd09fd3294a1172efc355ffd
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 068141206af867f72854753423d0117c4bf53419
@@ -558,7 +576,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 758e70947c232828a66b5ddc42d02b4d010fa26e
   React-jsinspector: 55605caf04e02f9b0e05842b786f1c12dde08f4b
   React-logger: ca970551cb7eea2fd814d0d5f6fc1a471eb53b76
-  react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
+  react-native-safe-area-context: b8979f5eda6ed5903d4dbc885be3846ea3daa753
   React-perflogger: c9161ff0f1c769993cd11d2751e4331ff4ceb7cd
   React-RCTActionSheet: 2d885b0bea76a5254ef852939273edd8de116180
   React-RCTAnimation: 353fa4fc3c19060068832dd32e555182ec07be45
@@ -571,14 +589,14 @@ SPEC CHECKSUMS:
   React-RCTVibration: e8b7dd6635cc95689b5db643b5a3848f1e05b30b
   React-runtimeexecutor: 27f468c5576eaf05ffb7a907528e44c75a3fcbae
   ReactCommon: e30ec17dfb1d4c4f3419eac254350d6abca6d5a2
-  RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
+  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
-  RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
+  RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: e2414d403cc8da634e44103c1ec7a13e87bd6333
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
 
-PODFILE CHECKSUM: 5cb2dede97c2902f320d6272818e590acb069c54
+PODFILE CHECKSUM: 750e7498cf15b335e62a4a5819cc1f256c2a1714
 
 COCOAPODS: 1.12.1
