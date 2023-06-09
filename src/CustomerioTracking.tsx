@@ -176,6 +176,19 @@ class CustomerIO {
     );
   }
 
+  static async trackNotificationResponseReceived(payload: Object) {
+    if (payload == null) {
+      return
+    } 
+    CustomerioReactnative.trackNotificationResponseReceived(payload)
+  }
+
+  static async trackNotificationReceived(payload: Object) {
+    if (payload == null) {
+      return
+    } 
+    CustomerioReactnative.trackNotificationReceived(payload)
+  }
   /**
    * Get status of push permission for the app
    * @returns Promise with status of push permission as a string
