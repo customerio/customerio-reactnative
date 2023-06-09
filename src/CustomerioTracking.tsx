@@ -176,6 +176,11 @@ class CustomerIO {
     );
   }
 
+  /**
+   * Track push notifications metrics using this method.
+   * Call this method when a user interacts and taps open the push notification.
+   * @param payload Customer.io payload as received from the push notification
+   */
   static async trackNotificationResponseReceived(payload: Object) {
     if (payload == null) {
       return
@@ -183,12 +188,18 @@ class CustomerIO {
     CustomerioReactnative.trackNotificationResponseReceived(payload)
   }
 
+  /**
+   * Track push notifications metrics using this method.
+   * Call this method when a push notification is received.
+   * @param payload Customer.io payload as received from the push notification
+   */
   static async trackNotificationReceived(payload: Object) {
     if (payload == null) {
       return
     } 
     CustomerioReactnative.trackNotificationReceived(payload)
   }
+  
   /**
    * Get status of push permission for the app
    * @returns Promise with status of push permission as a string

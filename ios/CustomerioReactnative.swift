@@ -208,7 +208,7 @@ class CustomerioReactnative: NSObject {
         })
     }
     
-    // Track push metrics
+    // Tracks `opened` push metrics when a push notification is interacted with.
     @objc(trackNotificationResponseReceived:)
     func trackNotificationResponseReceived(response: NSDictionary) {
         
@@ -218,6 +218,7 @@ class CustomerioReactnative: NSObject {
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: .opened, deviceToken: deviceToken)
     }
     
+    // Tracks `opened` push metrics when a push notification is received.
     @objc(trackNotificationReceived:)
     func trackNotificationReceived(response: NSDictionary) {
         
