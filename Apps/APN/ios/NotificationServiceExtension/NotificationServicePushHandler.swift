@@ -1,7 +1,7 @@
 import Foundation
 import UserNotifications
 import CioTracking
-import CioMessagingPushAPN
+import CioMessagingPushFCM
 
 @objc
 public class NotificationServicePushHandler : NSObject {

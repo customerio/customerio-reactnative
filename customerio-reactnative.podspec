@@ -28,8 +28,6 @@ Pod::Spec.new do |s|
 
   s.subspec 'fcm' do |ss|
     ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
-    ss.dependency "GoogleUtilities"
-    ss.dependency "Firebase"
     ss.dependency "FirebaseMessaging"
   end
 end

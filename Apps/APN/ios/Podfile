@@ -4,18 +4,17 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
+# Required to install the FCM iOS SDK into the app. 
+# https://stackoverflow.com/a/73711519
+use_frameworks! :linkage => :static
+
 target 'SampleApp' do
   config = use_native_modules!
-
-#  use_modular_headers!
 
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-  # Fix error at compile-time https://stackoverflow.com/questions/71125474/import-of-module-glog-glog-log-severity-appears-within-namespace-google
-#  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => false
-
-  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative', :modular_headers => true
+  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
 
   use_react_native!(
     :path => config[:reactNativePath],
