@@ -3,6 +3,7 @@ import CioTracking
 import CioInternalCommon
 import CioMessagingInApp
 import UserNotifications
+import CioMessagingPush
 
 enum PushPermissionStatus: String, CaseIterable {
     case denied
@@ -210,22 +211,22 @@ class CustomerioReactnative: NSObject {
     
     // Tracks `opened` push metrics when a push notification is interacted with.
     @objc(trackNotificationResponseReceived:)
-    func trackNotificationResponseReceived(response: NSDictionary) {
-        
-        guard let deliveryId = response["CIO-Delivery-ID"] as? String, let deviceToken = response["CIO-Delivery-Token"] as? String else
-        {return}
-        
-        MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: .opened, deviceToken: deviceToken)
+    func trackNotificationResponseReceived(payload: NSDictionary) {
+        trackPushMetrics(payload: payload, event: .opened)
     }
     
-    // Tracks `opened` push metrics when a push notification is received.
+    // Tracks `delivered` push metrics when a push notification is received.
     @objc(trackNotificationReceived:)
-    func trackNotificationReceived(response: NSDictionary) {
+    func trackNotificationReceived(payload: NSDictionary) {
         
-        guard let deliveryId = response["CIO-Delivery-ID"] as? String, let deviceToken = response["CIO-Delivery-Token"] as? String else
+        trackPushMetrics(payload: payload, event: .delivered)
+    }
+    
+    private func trackPushMetrics(payload: NSDictionary, event : Metric) {
+        guard let deliveryId = payload["CIO-Delivery-ID"] as? String, let deviceToken = payload["CIO-Delivery-Token"] as? String else
         {return}
         
-        MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: .delivered, deviceToken: deviceToken)
+        MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
     
     // MARK: - Push Notifications - End
