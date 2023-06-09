@@ -208,6 +208,25 @@ class CustomerioReactnative: NSObject {
         })
     }
     
+    // Track push metrics
+    @objc(trackNotificationResponseReceived:)
+    func trackNotificationResponseReceived(response: NSDictionary) {
+        
+        guard let deliveryId = response["CIO-Delivery-ID"] as? String, let deviceToken = response["CIO-Delivery-Token"] as? String else
+        {return}
+        
+        MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: .opened, deviceToken: deviceToken)
+    }
+    
+    @objc(trackNotificationReceived:)
+    func trackNotificationReceived(response: NSDictionary) {
+        
+        guard let deliveryId = response["CIO-Delivery-ID"] as? String, let deviceToken = response["CIO-Delivery-Token"] as? String else
+        {return}
+        
+        MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: .delivered, deviceToken: deviceToken)
+    }
+    
     // MARK: - Push Notifications - End
     /**
         Initialize in-app using customerio package
