@@ -2,6 +2,7 @@ require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
+# Used by customers to install native iOS dependencies inside their host iOS app. 
 Pod::Spec.new do |s|
   s.name         = "customerio-reactnative"
   s.version      = package["version"]
@@ -22,6 +23,7 @@ Pod::Spec.new do |s|
   s.dependency "CustomerIO/Tracking", package["cioNativeiOSSdkVersion"]
   s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
 
+  # Note: Subspecs inherit all dependencies specified the parent spec (this file). 
   s.subspec 'apn' do |ss|
     ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
   end
