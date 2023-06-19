@@ -181,7 +181,7 @@ class CustomerIO {
    * Call this method when a user interacts and taps open the push notification.
    * @param payload Customer.io payload as received from the push notification
    */
-  static async trackNotificationResponseReceived(payload: Object) {
+  static trackNotificationResponseReceived(payload: Object) {
     if (payload == null) {
       return
     } 
@@ -193,7 +193,7 @@ class CustomerIO {
    * Call this method when a push notification is received.
    * @param payload Customer.io payload as received from the push notification
    */
-  static async trackNotificationReceived(payload: Object) {
+  static trackNotificationReceived(payload: Object) {
     if (payload == null) {
       return
     } 
