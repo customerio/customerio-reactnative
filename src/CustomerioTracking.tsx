@@ -185,7 +185,7 @@ class CustomerIO {
     // Tracking push notification metrics on Android is handled automatically
     // through the Google Services API, so there is no need to make a specific call for it.
     // This method is specific to iOS and works as expected on Android without any additional intervention.
-    if (payload == null || Platform.OS === 'android') {
+    if (payload == null || this.isAndroid()) {
       return
     } 
     CustomerioReactnative.trackNotificationResponseReceived(payload)
@@ -200,10 +200,14 @@ class CustomerIO {
     // Tracking push notification metrics on Android is handled automatically
     // through the Google Services API, so there is no need to make a specific call for it.
     // This method is specific to iOS and works as expected on Android without any additional intervention.
-    if (payload == null || Platform.OS === 'android') {
+    if (payload == null || this.isAndroid()) {
       return
     } 
     CustomerioReactnative.trackNotificationReceived(payload)
+  }
+
+  static isAndroid() : boolean {
+    return Platform.OS == "android"
   }
   
   /**
