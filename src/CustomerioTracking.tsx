@@ -177,40 +177,6 @@ class CustomerIO {
   }
 
   /**
-   * Track push notifications metrics using this method.
-   * Call this method when a user interacts and taps open the push notification.
-   * @param payload Customer.io payload as received from the push notification
-   */
-  static trackNotificationResponseReceived(payload: Object) {
-    // Tracking push notification metrics on Android is handled automatically
-    // through the Google Services API, so there is no need to make a specific call for it.
-    // This method is specific to iOS and works as expected on Android without any additional intervention.
-    if (payload == null || this.isAndroid()) {
-      return
-    } 
-    CustomerioReactnative.trackNotificationResponseReceived(payload)
-  }
-
-  /**
-   * Track push notifications metrics using this method.
-   * Call this method when a push notification is received.
-   * @param payload Customer.io payload as received from the push notification
-   */
-  static trackNotificationReceived(payload: Object) {
-    // Tracking push notification metrics on Android is handled automatically
-    // through the Google Services API, so there is no need to make a specific call for it.
-    // This method is specific to iOS and works as expected on Android without any additional intervention.
-    if (payload == null || this.isAndroid()) {
-      return
-    } 
-    CustomerioReactnative.trackNotificationReceived(payload)
-  }
-
-  static isAndroid() : boolean {
-    return Platform.OS == "android"
-  }
-  
-  /**
    * Get status of push permission for the app
    * @returns Promise with status of push permission as a string
    */

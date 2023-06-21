@@ -60,6 +60,41 @@ class CustomerIOPushMessaging {
   onBackgroundMessageReceived(message: any): Promise<boolean> {
     return this.onMessageReceived(message, !message.notification);
   }
+
+  /**
+   * Track push notifications metrics using this method.
+   * Call this method when a user interacts and taps open the push notification.
+   * @param payload Customer.io payload as received from the push notification
+   */
+  static trackNotificationResponseReceived(payload: Object) {
+    // Tracking push notification metrics on Android is handled automatically
+    // through the Google Services API, so there is no need to make a specific call for it.
+    // This method is specific to iOS and works as expected on Android without any additional intervention.
+    if (payload == null || this.isAndroid()) {
+      return
+    } 
+    PushMessagingNative.trackNotificationResponseReceived(payload)
+  }
+
+  /**
+   * Track push notifications metrics using this method.
+   * Call this method when a push notification is received.
+   * @param payload Customer.io payload as received from the push notification
+   */
+  static trackNotificationReceived(payload: Object) {
+    // Tracking push notification metrics on Android is handled automatically
+    // through the Google Services API, so there is no need to make a specific call for it.
+    // This method is specific to iOS and works as expected on Android without any additional intervention.
+    console.log("Printing status - ", this.isAndroid())
+    if (payload == null || this.isAndroid()) {
+      return
+    } 
+    PushMessagingNative.trackNotificationReceived(payload)
+  }
+  
+  static isAndroid() : boolean {
+    return Platform.OS == "android"
+  }
 }
 
 export { CustomerIOPushMessaging };
