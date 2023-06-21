@@ -19,7 +19,7 @@ import java.util.*
  */
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(rCustomerioPushMessagingeactContext), PermissionListener {
+) : ReactContextBaseJavaModule(reactContext), PermissionListener {
     private val logger: Logger
         get() = CustomerIOShared.instance().diStaticGraph.logger
 
