@@ -28,31 +28,31 @@ class CustomerioReactnative: NSObject {
     @objc(initialize:configData:packageConfig:)
     func initialize(env: Dictionary<String, AnyHashable>, configData: Dictionary<String, AnyHashable>, packageConfig: Dictionary<String, AnyHashable>) -> Void {
         
-        guard let siteId = env["siteId"] as? String, let apiKey = env["apiKey"] as? String, let region = env["region"] as? String, let organizationId = env["organizationId"] as? String else {
+        guard let siteId = env[CustomerioConstants.siteId] as? String, let apiKey = env[CustomerioConstants.apiKey] as? String, let region = env[CustomerioConstants.region] as? String else {
             return
         }
         
-        guard let pversion = packageConfig["version"] as? String, let source = packageConfig["source"] as? String else {
+        guard let pversion = packageConfig[CustomerioConstants.version] as? String, let source = packageConfig[CustomerioConstants.source] as? String else {
             return
         }
         
         var sdkSource = SdkWrapperConfig.Source.reactNative
-        if source.lowercased() == "expo" {
+        if source.lowercased() == CustomerioConstants.expo {
             sdkSource = SdkWrapperConfig.Source.expo
         }
         
         CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
             config._sdkWrapperConfig = SdkWrapperConfig(source: sdkSource, version: pversion )
-            config.autoTrackDeviceAttributes = configData["autoTrackDeviceAttributes"] as! Bool
-            config.logLevel = CioLogLevel.getLogValue(for: configData["logLevel"] as! Int)
-            config.autoTrackPushEvents = configData["autoTrackPushEvents"] as! Bool
-            config.backgroundQueueMinNumberOfTasks = configData["backgroundQueueMinNumberOfTasks"] as! Int
-            config.backgroundQueueSecondsDelay = configData["backgroundQueueSecondsDelay"] as! Seconds
-            if let trackingApiUrl = configData["trackingApiUrl"] as? String, !trackingApiUrl.isEmpty {
+            config.autoTrackDeviceAttributes = configData[CustomerioConstants.autoTrackDeviceAttributes] as! Bool
+            config.logLevel = CioLogLevel.getLogValue(for: configData[CustomerioConstants.logLevel] as! Int)
+            config.autoTrackPushEvents = configData[CustomerioConstants.autoTrackPushEvents] as! Bool
+            config.backgroundQueueMinNumberOfTasks = configData[CustomerioConstants.bgQMinTasks] as! Int
+            config.backgroundQueueSecondsDelay = configData[CustomerioConstants.bgQSecondsDelay] as! Seconds
+            if let trackingApiUrl = configData[CustomerioConstants.trackingApiUrl] as? String, !trackingApiUrl.isEmpty {
                 config.trackingApiUrl = trackingApiUrl
             }
         }
-        if let isEnableInApp = configData["enableInApp"] as? Bool, isEnableInApp {
+        if let isEnableInApp = configData[CustomerioConstants.enableInApp] as? Bool, isEnableInApp {
             initializeInApp()
         }
         
@@ -150,7 +150,7 @@ class CustomerioReactnative: NSObject {
                 self.requestPushAuthorization(options: options) { permissionStatus in
                     
                     guard let status = permissionStatus as? Bool else {
-                        reject("[CIO]", "Error requesting push notification permission.", permissionStatus as? Error)
+                        reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
                         return
                     }
                     resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
@@ -175,12 +175,12 @@ class CustomerioReactnative: NSObject {
     ) {
         let current = UNUserNotificationCenter.current()
         var notificationOptions : UNAuthorizationOptions = [.alert]
-        if let ios = options["ios"] as? [String: Any] {
+        if let ios = options[CustomerioConstants.platformiOS] as? [String: Any] {
             
-            if let soundOption = ios["sound"] as? Bool, soundOption {
+            if let soundOption = ios[CustomerioConstants.sound] as? Bool, soundOption {
                 notificationOptions.insert(.sound)
             }
-            if let bagdeOption = ios["badge"] as? Bool, bagdeOption {
+            if let bagdeOption = ios[CustomerioConstants.badge] as? Bool, bagdeOption {
                 notificationOptions.insert(.badge)
             }
         }
@@ -223,35 +223,35 @@ class CustomerioReactnative: NSObject {
 extension CustomerioReactnative: InAppEventListener {
     private func sendEvent(eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil) {
         var body = [
-            "eventType": eventType,
-            "messageId": message.messageId,
-            "deliveryId": message.deliveryId
+            CustomerioConstants.eventType: eventType,
+            CustomerioConstants.messageId: message.messageId,
+            CustomerioConstants.deliveryId: message.deliveryId
         ]
         if let actionValue = actionValue {
-            body["actionValue"] = actionValue
+            body[CustomerioConstants.actionValue] = actionValue
         }
         if let actionName = actionName {
-            body["actionName"] = actionName
+            body[CustomerioConstants.actionName] = actionName
         }
         CustomerioInAppMessaging.shared?.sendEvent(
-            withName: "InAppEventListener",
+            withName: CustomerioConstants.inAppEventListener,
             body: body
         )
     }
 
     func messageShown(message: InAppMessage) {
-        sendEvent(eventType: "messageShown", message: message)
+        sendEvent(eventType: CustomerioConstants.messageShown, message: message)
     }
 
     func messageDismissed(message: InAppMessage) {
-        sendEvent(eventType: "messageDismissed", message: message)
+        sendEvent(eventType: CustomerioConstants.messageDismissed, message: message)
     }
 
     func errorWithMessage(message: InAppMessage) {
-        sendEvent(eventType: "errorWithMessage", message: message)
+        sendEvent(eventType: CustomerioConstants.errorWithMessage, message: message)
     }
 
     func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
-        sendEvent(eventType: "messageActionTaken", message: message, actionValue: actionValue, actionName: actionName)
+        sendEvent(eventType: CustomerioConstants.messageActionTaken, message: message, actionValue: actionValue, actionName: actionName)
     }
 }

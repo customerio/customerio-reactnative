@@ -24,7 +24,7 @@ class CustomerioPushMessaging: NSObject {
     }
     
     private func trackPushMetrics(payload: NSDictionary, event : Metric) {
-        guard let deliveryId = payload["CIO-Delivery-ID"] as? String, let deviceToken = payload["CIO-Delivery-Token"] as? String else
+        guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String, let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String else
         {return}
         
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
