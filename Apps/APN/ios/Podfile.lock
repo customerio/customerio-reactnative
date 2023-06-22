@@ -1,43 +1,37 @@
 PODS:
   - boost (1.76.0)
   - customerio-reactnative (2.4.2):
-    - customerio-reactnative/apn (= 2.4.2)
-    - customerio-reactnative/fcm (= 2.4.2)
-    - CustomerIO/MessagingInApp (= 2.6.1)
-    - CustomerIO/Tracking (= 2.6.1)
+    - customerio-reactnative/nopush (= 2.4.2)
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
     - React-Core
   - customerio-reactnative-richpush/apn (2.4.2):
-    - CustomerIO/MessagingPushAPN (= 2.6.1)
+    - CustomerIO/MessagingPushAPN (= 2.7.0)
   - customerio-reactnative/apn (2.4.2):
-    - CustomerIO/MessagingInApp (= 2.6.1)
-    - CustomerIO/MessagingPushAPN (= 2.6.1)
-    - CustomerIO/Tracking (= 2.6.1)
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/MessagingPushAPN (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
     - React-Core
-  - customerio-reactnative/fcm (2.4.2):
-    - CustomerIO/MessagingInApp (= 2.6.1)
-    - CustomerIO/MessagingPushFCM (= 2.6.1)
-    - CustomerIO/Tracking (= 2.6.1)
+  - customerio-reactnative/nopush (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
     - React-Core
-  - CustomerIO/MessagingInApp (2.6.1):
-    - CustomerIOMessagingInApp (= 2.6.1)
-  - CustomerIO/MessagingPushAPN (2.6.1):
-    - CustomerIOMessagingPushAPN (= 2.6.1)
-  - CustomerIO/MessagingPushFCM (2.6.1):
-    - CustomerIOMessagingPushFCM (= 2.6.1)
-  - CustomerIO/Tracking (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
-  - CustomerIOCommon (2.6.1)
-  - CustomerIOMessagingInApp (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
+  - CustomerIO/MessagingInApp (2.7.0):
+    - CustomerIOMessagingInApp (= 2.7.0)
+  - CustomerIO/MessagingPushAPN (2.7.0):
+    - CustomerIOMessagingPushAPN (= 2.7.0)
+  - CustomerIO/Tracking (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
+  - CustomerIOCommon (2.7.0)
+  - CustomerIOMessagingInApp (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
     - Gist (= 3.2.2)
-  - CustomerIOMessagingPush (2.6.1):
-    - CustomerIOTracking (= 2.6.1)
-  - CustomerIOMessagingPushAPN (2.6.1):
-    - CustomerIOMessagingPush (= 2.6.1)
-  - CustomerIOMessagingPushFCM (2.6.1):
-    - CustomerIOMessagingPush (= 2.6.1)
-  - CustomerIOTracking (2.6.1):
-    - CustomerIOCommon (= 2.6.1)
+  - CustomerIOMessagingPush (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
+  - CustomerIOMessagingPushAPN (2.7.0):
+    - CustomerIOMessagingPush (= 2.7.0)
+  - CustomerIOTracking (2.7.0):
+    - CustomerIOCommon (= 2.7.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.69.1)
   - FBReactNativeSpec (0.69.1):
@@ -448,7 +442,6 @@ SPEC REPOS:
     - CustomerIOMessagingInApp
     - CustomerIOMessagingPush
     - CustomerIOMessagingPushAPN
-    - CustomerIOMessagingPushFCM
     - CustomerIOTracking
     - fmt
     - Gist
@@ -544,15 +537,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  CustomerIO: de7c1a1e4728d764914d0f3b43fff6bef25d0a66
-  customerio-reactnative: 77e37098cd861171df4c8e4aece23c05e8aef379
-  customerio-reactnative-richpush: 0a90c609f5cd3e657765be8c22caad3993108e2d
-  CustomerIOCommon: 5807e52a781e7246cf31dccc462d74a07910ee26
-  CustomerIOMessagingInApp: ea0042e30403f79dbb7f15bfb279f0e99bcc9388
-  CustomerIOMessagingPush: f8e7b7133836c0d8d05a38c18c90870cfab6845a
-  CustomerIOMessagingPushAPN: 3966f1a7618976e393e07521ba5542d6a1a7a8a4
-  CustomerIOMessagingPushFCM: f719a7d1426b2f4c6fa3b29b4180399e813eafac
-  CustomerIOTracking: 48ea93a09ebadb42fd09fd3294a1172efc355ffd
+  CustomerIO: 7995e081704683584e5c4df2af613b1272f9af05
+  customerio-reactnative: 8bb09580af94bf3d6d1b6ff9ffc3e7243711afa0
+  customerio-reactnative-richpush: 8242f81a34d80ce5a97dbe2f8fc9301794f36434
+  CustomerIOCommon: c116f7b05bf7a9f048a546a98de498ab2a4e4c7c
+  CustomerIOMessagingInApp: 250f646704fb42471fdf90e22fb042b805fffeb5
+  CustomerIOMessagingPush: e37e6a891aefb180a65c74a6162dcae7874acf21
+  CustomerIOMessagingPushAPN: 3f5f4f67753a1caad210d83397969e6bdf55b9e3
+  CustomerIOTracking: e7d9d03d2db8100785f0c49dbd5da55530dd0ca2
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 068141206af867f72854753423d0117c4bf53419
   FBReactNativeSpec: 546a637adc797fa436dd51d1c63c580f820de31c

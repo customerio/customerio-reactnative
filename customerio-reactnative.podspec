@@ -23,6 +23,14 @@ Pod::Spec.new do |s|
   s.dependency "CustomerIO/Tracking", package["cioNativeiOSSdkVersion"]
   s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
 
+  # If we do not specify a default_subspec, then *all* dependencies inside of *all* the subspecs will be downloaded by cocoapods. 
+  # We want customers to opt into push dependencies especially because the FCM subpsec downloads Firebase dependencies. APN customers should not install Firebase dependencies at all. 
+  s.default_subspec = "nopush"
+
+  s.subspec 'nopush' do |ss|
+    # no dependencies. This is the default subspec designed to not install any push dependencies.
+  end 
+
   # Note: Subspecs inherit all dependencies specified the parent spec (this file). 
   s.subspec 'apn' do |ss|
     ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
