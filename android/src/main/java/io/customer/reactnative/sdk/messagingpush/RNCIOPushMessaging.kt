@@ -1,6 +1,8 @@
 package io.customer.reactnative.sdk.messagingpush
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
@@ -8,8 +10,11 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
+import io.customer.messagingpush.di.pushMessaging
+import io.customer.messagingpush.di.pushTrackingUtil
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
+import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 import java.util.*
@@ -19,7 +24,7 @@ import java.util.*
  */
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(reactContext), PermissionListener {
+) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
     private val logger: Logger
         get() = CustomerIOShared.instance().diStaticGraph.logger
 
@@ -28,6 +33,10 @@ class RNCIOPushMessaging(
      * lifecycle and cannot be completed instantly.
      */
     private var notificationRequestPromise: Promise? = null
+
+    init {
+        reactContext.addActivityEventListener(this)
+    }
 
     @ReactMethod
     fun getPushPermissionStatus(promise: Promise) {
@@ -136,7 +145,32 @@ class RNCIOPushMessaging(
             }
             true // as this permission listener can be removed now
         }
+
         else -> false // desired permission not yet granted, so we will keep the listener
+    }
+
+    override fun onActivityResult(
+        activity: Activity?,
+        requestCode: Int,
+        resultCode: Int,
+        intent: Intent?,
+    ) {
+        // Nothing required here
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        val intentArguments = intent?.extras ?: return
+        kotlin.runCatching {
+            val sdkInstance = CustomerIO.instance()
+            val pushMessagingModuleConfig = sdkInstance.pushMessaging().moduleConfig
+
+            if (pushMessagingModuleConfig.autoTrackPushEvents) {
+                sdkInstance.diGraph.pushTrackingUtil
+                    .parseLaunchedActivityForTracking(intentArguments)
+            }
+        }.onFailure { ex ->
+            logger.error("Unable to parse push notification intent, reason: ${ex.message}")
+        }
     }
 
     override fun getName(): String = "CustomerioPushMessaging"
