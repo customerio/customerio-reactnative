@@ -158,6 +158,15 @@ class RNCIOPushMessaging(
         // Nothing required here
     }
 
+    /**
+     * If the app is in background and simple push is received, then FCM notification doesn't
+     * start new intent apparently because of `singleTask` launchMode being used by React Native
+     * apps. Due to this, onCreate activity callback is not triggered and the push notification
+     * is not tracked.
+     *
+     * But onNewIntent is called when the app is launched from background and the intent is
+     * received, which helps us tracking the simple push notifications opened metrics.
+     */
     override fun onNewIntent(intent: Intent?) {
         val intentArguments = intent?.extras ?: return
         kotlin.runCatching {
