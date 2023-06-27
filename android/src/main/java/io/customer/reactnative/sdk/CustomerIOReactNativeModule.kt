@@ -118,6 +118,11 @@ class CustomerIOReactNativeModule(
     }
 
     @ReactMethod
+    fun deleteDeviceToken() {
+        customerIO()?.deleteDeviceToken()
+    }
+
+    @ReactMethod
     fun getPushPermissionStatus(promise: Promise) {
         pushMessagingModule.getPushPermissionStatus(promise)
     }
