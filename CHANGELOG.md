@@ -1,3 +1,10 @@
+## [2.5.0](https://github.com/customerio/customerio-reactnative/compare/2.4.2...2.5.0) (2023-06-28)
+
+
+### Features
+
+* delete device token from profile ([#158](https://github.com/customerio/customerio-reactnative/issues/158)) ([0ff0eac](https://github.com/customerio/customerio-reactnative/commit/0ff0eac9e4ef44f9342cadc3b5669da3ec94e7e1))
+
 ### [2.4.2](https://github.com/customerio/customerio-reactnative/compare/2.4.1...2.4.2) (2023-06-06)
 
 
