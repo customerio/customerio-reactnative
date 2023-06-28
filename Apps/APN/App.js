@@ -20,6 +20,7 @@ import CioManager from './manager/CioManager';
 import CioKeyValueStorage from './manager/KeyValueStorage';
 import Deeplinks from './components/Deeplink';
 import DefaultConstants from './util/DefaultConstants';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,31 @@ export default function App() {
   const [bgDelayValue, setBgDelayValue] = useState(null);
   const [bgTasksValue, setBgTasksValue] = useState(null);
   const [trackingUrl, setTrackingUrl] = useState(null);
+
+  // useEffect(() => {
+  //   const type = 'notification';
+  //   PushNotificationIOS.addEventListener(type, onRemoteNotification);
+  //   return () => {
+  //     PushNotificationIOS.removeEventListener(type);
+  //   };
+  // });
+
+  // const onRemoteNotification = (notification) => {
+  //   const isClicked = notification.getData().userInteraction === 1;
+
+  //   if (isClicked) {
+  //     console.log('User clicked on notification');
+      
+  //     // Navigate user to another screen
+  //   } else {
+  //     console.log('User did not click on notification');
+      
+  //     // Do something else with push notification
+  //   }
+  //   // Use the appropriate result based on what you needed to do for this notification
+  //   const result = PushNotificationIOS.FetchResult.NoData;
+  //   notification.finish(result);
+  // };
 
   useEffect(() => {
     (async () => {
@@ -56,7 +82,7 @@ export default function App() {
     },
   };
   const linking = {
-    prefixes: ['apn-rn-sample://'],
+    prefixes: ['amiapp-rn://'],
     config,
   };
 

@@ -41,8 +41,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   NSMutableDictionary *modifiedLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
         NSDictionary *pushContent = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-        if (pushContent[@"react-deep-link"]) {
-            NSString *initialURL = pushContent[@"react-deep-link"];
+      if (pushContent[@"CIO"] && pushContent[@"CIO"][@"push"] && pushContent[@"CIO"][@"push"][@"link"]) {
+            NSString *initialURL = pushContent[@"CIO"][@"push"][@"link"];
             if (!launchOptions[UIApplicationLaunchOptionsURLKey]) {
                 modifiedLaunchOptions[UIApplicationLaunchOptionsURLKey] = [NSURL URLWithString:initialURL];
             }
@@ -67,6 +67,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   } else {
     rootView.backgroundColor = [UIColor whiteColor];
   }
+  
+//  [pnHandlerObj initializeCioSdk];
 
   [application registerForRemoteNotifications];
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -155,7 +157,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 {
   [pnHandlerObj application:application deviceToken:deviceToken];
  [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+//  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 // Required for the notification event. You must call the completion handler after handling the remote notification.
@@ -171,7 +173,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
   [pnHandlerObj application:application error:error];
  [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
   
-  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
+//  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
 // Required for localNotification event
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -196,4 +198,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
  {
    return [RCTLinkingManager application:application openURL:url options:options];
  }
+
+//- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+// restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+//{
+// return [RCTLinkingManager application:application
+//                  continueUserActivity:userActivity
+//                    restorationHandler:restorationHandler];
+//}
+
 @end

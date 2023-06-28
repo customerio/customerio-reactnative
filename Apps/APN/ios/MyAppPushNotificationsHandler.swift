@@ -1,5 +1,6 @@
 import Foundation
 import CioMessagingPushAPN
+import CioTracking
 import UserNotifications
 
 // This class manages all function calls to CustomerIO SDK.
@@ -7,6 +8,11 @@ import UserNotifications
 public class MyAppPushNotificationsHandler : NSObject {
 
   public override init() {}
+  
+  @objc(initializeCioSdk)
+  public func initializeCioSdk() {
+    CustomerIO.initialize(siteId: "YOUR SITE ID HERE", apiKey: "YOUR API KEY HERE", region: .US, configure: nil)
+  }
 
   @objc(application:deviceToken:)
   public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
