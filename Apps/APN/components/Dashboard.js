@@ -86,10 +86,7 @@ const Dashboard = ({ navigation }) => {
   const registerDeviceToken = () => {
     if (deviceToken !== null) {
       CustomerIO.registerDeviceToken(deviceToken);
-      //alert('Device token registered successfully');
-
-      CustomerIO.deleteDeviceToken();
-      alert('Registered, and then deleted token');
+      alert('Device token registered successfully');
       return;
     }
     alert('Could not register device. Device token unavailable.');
