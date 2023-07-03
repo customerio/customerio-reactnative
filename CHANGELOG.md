@@ -1,3 +1,14 @@
+## [3.0.0](https://github.com/customerio/customerio-reactnative/compare/2.5.1...3.0.0) (2023-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* auto-update native SDK and easier rich push install (#149)
+
+### Bug Fixes
+
+* auto-update native SDK and easier rich push install ([#149](https://github.com/customerio/customerio-reactnative/issues/149)) ([7e56d1e](https://github.com/customerio/customerio-reactnative/commit/7e56d1e95752fe267b286e9e52b1d11cf0c2fd12))
+
 ### [2.5.1](https://github.com/customerio/customerio-reactnative/compare/2.5.0...2.5.1) (2023-07-03)
 
 
