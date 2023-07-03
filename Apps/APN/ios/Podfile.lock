@@ -1,21 +1,37 @@
 PODS:
   - boost (1.76.0)
-  - customerio-reactnative (2.2.0):
-    - CustomerIOMessagingInApp (~> 2.1.0-beta.2)
-    - CustomerIOTracking (~> 2.1.0-beta.2)
+  - customerio-reactnative (2.4.2):
+    - customerio-reactnative/nopush (= 2.4.2)
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
     - React-Core
-  - CustomerIO/MessagingPushAPN (2.1.2):
-    - CustomerIOMessagingPushAPN (= 2.1.2)
-  - CustomerIOCommon (2.1.2)
-  - CustomerIOMessagingInApp (2.1.2):
-    - CustomerIOTracking (= 2.1.2)
-    - Gist (~> 3.0.4)
-  - CustomerIOMessagingPush (2.1.2):
-    - CustomerIOTracking (= 2.1.2)
-  - CustomerIOMessagingPushAPN (2.1.2):
-    - CustomerIOMessagingPush (= 2.1.2)
-  - CustomerIOTracking (2.1.2):
-    - CustomerIOCommon (= 2.1.2)
+  - customerio-reactnative-richpush/apn (2.4.2):
+    - CustomerIO/MessagingPushAPN (= 2.7.0)
+  - customerio-reactnative/apn (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/MessagingPushAPN (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
+    - React-Core
+  - customerio-reactnative/nopush (2.4.2):
+    - CustomerIO/MessagingInApp (= 2.7.0)
+    - CustomerIO/Tracking (= 2.7.0)
+    - React-Core
+  - CustomerIO/MessagingInApp (2.7.0):
+    - CustomerIOMessagingInApp (= 2.7.0)
+  - CustomerIO/MessagingPushAPN (2.7.0):
+    - CustomerIOMessagingPushAPN (= 2.7.0)
+  - CustomerIO/Tracking (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
+  - CustomerIOCommon (2.7.0)
+  - CustomerIOMessagingInApp (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
+    - Gist (= 3.2.2)
+  - CustomerIOMessagingPush (2.7.0):
+    - CustomerIOTracking (= 2.7.0)
+  - CustomerIOMessagingPushAPN (2.7.0):
+    - CustomerIOMessagingPush (= 2.7.0)
+  - CustomerIOTracking (2.7.0):
+    - CustomerIOCommon (= 2.7.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.69.1)
   - FBReactNativeSpec (0.69.1):
@@ -26,7 +42,7 @@ PODS:
     - React-jsi (= 0.69.1)
     - ReactCommon/turbomodule/core (= 0.69.1)
   - fmt (6.2.1)
-  - Gist (3.0.4)
+  - Gist (3.2.2)
   - glog (0.3.5)
   - hermes-engine (0.69.1)
   - libevent (2.1.12)
@@ -256,11 +272,11 @@ PODS:
   - React-jsinspector (0.69.1)
   - React-logger (0.69.1):
     - glog
-  - react-native-safe-area-context (4.3.1):
+  - react-native-safe-area-context (4.5.3):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
-    - React
+    - React-Core
     - ReactCommon/turbomodule/core
   - React-perflogger (0.69.1)
   - React-RCTActionSheet (0.69.1):
@@ -328,11 +344,11 @@ PODS:
     - React-jsi (= 0.69.1)
     - React-logger (= 0.69.1)
     - React-perflogger (= 0.69.1)
-  - RNCAsyncStorage (1.17.11):
+  - RNCAsyncStorage (1.18.2):
     - React-Core
   - RNCClipboard (1.11.2):
     - React-Core
-  - RNCPushNotificationIOS (1.10.1):
+  - RNCPushNotificationIOS (1.11.0):
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
@@ -373,7 +389,8 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
-  - CustomerIO/MessagingPushAPN (= 2.1.2)
+  - customerio-reactnative-richpush/apn (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative/apn (from `../node_modules/customerio-reactnative`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -434,6 +451,8 @@ EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   customerio-reactnative:
+    :path: "../node_modules/customerio-reactnative"
+  customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
@@ -518,18 +537,19 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  CustomerIO: 94c4b930162d61c8126c8b265551d6a96b18a037
-  customerio-reactnative: d53c03cf1ef3d1828309671d052822262d86a475
-  CustomerIOCommon: 923dd0108e4e72cc94552e880d340bef88abfbfc
-  CustomerIOMessagingInApp: 4a02801021774f469941c6ec4cbc46dbcd567e98
-  CustomerIOMessagingPush: cb925936db7988f4fff69664896b5f405412f470
-  CustomerIOMessagingPushAPN: d29dea6a66a757b2510352727ed79b83b26e4aac
-  CustomerIOTracking: 2b1c78afc13c82c39ad6d2e430c7ac36ed45642d
+  CustomerIO: 7995e081704683584e5c4df2af613b1272f9af05
+  customerio-reactnative: 8bb09580af94bf3d6d1b6ff9ffc3e7243711afa0
+  customerio-reactnative-richpush: 8242f81a34d80ce5a97dbe2f8fc9301794f36434
+  CustomerIOCommon: c116f7b05bf7a9f048a546a98de498ab2a4e4c7c
+  CustomerIOMessagingInApp: 250f646704fb42471fdf90e22fb042b805fffeb5
+  CustomerIOMessagingPush: e37e6a891aefb180a65c74a6162dcae7874acf21
+  CustomerIOMessagingPushAPN: 3f5f4f67753a1caad210d83397969e6bdf55b9e3
+  CustomerIOTracking: e7d9d03d2db8100785f0c49dbd5da55530dd0ca2
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 068141206af867f72854753423d0117c4bf53419
   FBReactNativeSpec: 546a637adc797fa436dd51d1c63c580f820de31c
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  Gist: 1d680df00ff6dbcc4fac9844b90454f30778dcbc
+  Gist: 20cc9afb7728fd584d31fb86528f19ebc087d190
   glog: 3d02b25ca00c2d456734d0bcff864cbc62f6ae1a
   hermes-engine: ece2bfa9bdb7f77f393cb2b41edf638eb086ec1a
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
@@ -548,7 +568,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 758e70947c232828a66b5ddc42d02b4d010fa26e
   React-jsinspector: 55605caf04e02f9b0e05842b786f1c12dde08f4b
   React-logger: ca970551cb7eea2fd814d0d5f6fc1a471eb53b76
-  react-native-safe-area-context: 6c12e3859b6f27b25de4fee8201cfb858432d8de
+  react-native-safe-area-context: b8979f5eda6ed5903d4dbc885be3846ea3daa753
   React-perflogger: c9161ff0f1c769993cd11d2751e4331ff4ceb7cd
   React-RCTActionSheet: 2d885b0bea76a5254ef852939273edd8de116180
   React-RCTAnimation: 353fa4fc3c19060068832dd32e555182ec07be45
@@ -561,14 +581,14 @@ SPEC CHECKSUMS:
   React-RCTVibration: e8b7dd6635cc95689b5db643b5a3848f1e05b30b
   React-runtimeexecutor: 27f468c5576eaf05ffb7a907528e44c75a3fcbae
   ReactCommon: e30ec17dfb1d4c4f3419eac254350d6abca6d5a2
-  RNCAsyncStorage: 8616bd5a58af409453ea4e1b246521bb76578d60
+  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
-  RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
+  RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: e2414d403cc8da634e44103c1ec7a13e87bd6333
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
 
-PODFILE CHECKSUM: 215f8d5e2a31263f5f9b986c53569c6e33a70a68
+PODFILE CHECKSUM: 750e7498cf15b335e62a4a5819cc1f256c2a1714
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1
