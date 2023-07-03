@@ -154,6 +154,10 @@ class CustomerIO {
     CustomerioReactnative.registerDeviceToken(token);
   }
 
+  static deleteDeviceToken() {
+    CustomerioReactnative.deleteDeviceToken();
+  }
+
   /**
    * Request to show prompt for push notification permissions.
    * Prompt will only be shown if the current status is - not determined.

@@ -137,6 +137,11 @@ class CustomerioReactnative: NSObject {
         CustomerIO.shared.registerDeviceToken(token)
     }
 
+    @objc(deleteDeviceToken)
+    func deleteDeviceToken() {
+        CustomerIO.shared.deleteDeviceToken()
+    }
+
     /**
      To show push notification prompt  if current authorization status is not determined
      */
