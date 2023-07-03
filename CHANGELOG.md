@@ -1,3 +1,10 @@
+### [2.5.1](https://github.com/customerio/customerio-reactnative/compare/2.5.0...2.5.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* android opened metrics when app in background ([#156](https://github.com/customerio/customerio-reactnative/issues/156)) ([fb14cce](https://github.com/customerio/customerio-reactnative/commit/fb14ccee755fefa004a4a55e7083d8d237f0a3b8))
+
 ## [2.5.0](https://github.com/customerio/customerio-reactnative/compare/2.4.2...2.5.0) (2023-06-28)
 
 
