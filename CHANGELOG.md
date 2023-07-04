@@ -1,3 +1,28 @@
+## [3.0.0](https://github.com/customerio/customerio-reactnative/compare/2.5.1...3.0.0) (2023-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* auto-update native SDK and easier rich push install (#149)
+
+### Bug Fixes
+
+* auto-update native SDK and easier rich push install ([#149](https://github.com/customerio/customerio-reactnative/issues/149)) ([7e56d1e](https://github.com/customerio/customerio-reactnative/commit/7e56d1e95752fe267b286e9e52b1d11cf0c2fd12))
+
+### [2.5.1](https://github.com/customerio/customerio-reactnative/compare/2.5.0...2.5.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* android opened metrics when app in background ([#156](https://github.com/customerio/customerio-reactnative/issues/156)) ([fb14cce](https://github.com/customerio/customerio-reactnative/commit/fb14ccee755fefa004a4a55e7083d8d237f0a3b8))
+
+## [2.5.0](https://github.com/customerio/customerio-reactnative/compare/2.4.2...2.5.0) (2023-06-28)
+
+
+### Features
+
+* delete device token from profile ([#158](https://github.com/customerio/customerio-reactnative/issues/158)) ([0ff0eac](https://github.com/customerio/customerio-reactnative/commit/0ff0eac9e4ef44f9342cadc3b5669da3ec94e7e1))
+
 ### [2.4.2](https://github.com/customerio/customerio-reactnative/compare/2.4.1...2.4.2) (2023-06-06)
 
 
