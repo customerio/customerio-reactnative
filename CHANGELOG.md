@@ -1,3 +1,10 @@
+## [3.1.0](https://github.com/customerio/customerio-reactnative/compare/3.0.0...3.1.0) (2023-07-05)
+
+
+### Features
+
+* tracking push metrics from js ([#152](https://github.com/customerio/customerio-reactnative/issues/152)) ([6f51703](https://github.com/customerio/customerio-reactnative/commit/6f5170375498142f557870fdbb11104e91a74b83))
+
 ## [3.0.0](https://github.com/customerio/customerio-reactnative/compare/2.5.1...3.0.0) (2023-07-03)
 
 
