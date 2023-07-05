@@ -31,4 +31,9 @@ RCT_EXTERN_METHOD(showPromptForPushNotifications: (NSDictionary *) options
 
 RCT_EXTERN_METHOD(getPushPermissionStatus: (RCTPromiseResolveBlock) resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
+
+RCT_EXTERN_METHOD(trackNotificationResponseReceived : (nonnull NSDictionary *) payload])
+
+RCT_EXTERN_METHOD(trackNotificationReceived : (nonnull NSDictionary *) payload])
+
 @end

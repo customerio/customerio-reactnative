@@ -21,7 +21,7 @@ class CustomerioInAppMessaging: RCTEventEmitter {
      * We are combining in-app events against single name so only one event is added.
      */
     open override func supportedEvents() -> [String]! {
-        return [ "InAppEventListener" ]
+        return [CustomerioConstants.inAppEventListener]
     }
 
     /**
