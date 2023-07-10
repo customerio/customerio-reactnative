@@ -1,3 +1,10 @@
+### [3.1.1](https://github.com/customerio/customerio-reactnative/compare/3.1.0...3.1.1) (2023-07-10)
+
+
+### Bug Fixes
+
+* iOS bad memory access crash ([#164](https://github.com/customerio/customerio-reactnative/issues/164)) ([55b72a7](https://github.com/customerio/customerio-reactnative/commit/55b72a7d128b97eed4577a73132e7c8d32423cd5))
+
 ## [3.1.0](https://github.com/customerio/customerio-reactnative/compare/3.0.0...3.1.0) (2023-07-05)
 
 
