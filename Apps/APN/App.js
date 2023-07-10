@@ -1,24 +1,25 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ActivityIndicator, Linking, StyleSheet } from 'react-native';
-import Login from './components/Login';
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
-  CustomerIO,
-  CustomerioConfig,
   CioLogLevel,
+  CustomerIO,
   CustomerIOEnv,
+  CustomerioConfig,
 } from 'customerio-reactnative';
-import Dashboard from './components/Dashboard';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Linking, StyleSheet } from 'react-native';
 import CustomDataScreen from './components/CustomDataScreen';
+import Dashboard from './components/Dashboard';
+import Deeplinks from './components/Deeplink';
+import Login from './components/Login';
 import SettingsScreen from './components/SettingsScreen';
 import Env from './env';
 import CioManager from './manager/CioManager';
 import CioKeyValueStorage from './manager/KeyValueStorage';
-import Deeplinks from './components/Deeplink';
+import { ThemeContext, getDefaultTheme } from './theme';
 import DefaultConstants from './util/DefaultConstants';
 
 const Stack = createNativeStackNavigator();
@@ -184,72 +185,74 @@ export default function App() {
     return (
       // MARK:- AUTO SCREEN TRACKING
       // Start
-      <NavigationContainer
-        ref={navigationRef}
-        linking={linking}
-        onReady={() => {
-          routeNameRef.current = navigationRef.getCurrentRoute().name;
-        }}
-        onStateChange={async () => {
-          if (isScreenTrackEnabled) {
-            const previousRouteName = routeNameRef.current;
-            const currentRouteName = navigationRef.getCurrentRoute().name;
+      <ThemeContext.Provider value={getDefaultTheme()}>
+        <NavigationContainer
+          ref={navigationRef}
+          linking={linking}
+          onReady={() => {
+            routeNameRef.current = navigationRef.getCurrentRoute().name;
+          }}
+          onStateChange={async () => {
+            if (isScreenTrackEnabled) {
+              const previousRouteName = routeNameRef.current;
+              const currentRouteName = navigationRef.getCurrentRoute().name;
 
-            if (previousRouteName !== currentRouteName) {
-              CustomerIO.screen(currentRouteName);
+              if (previousRouteName !== currentRouteName) {
+                CustomerIO.screen(currentRouteName);
+              }
+              routeNameRef.current = currentRouteName;
             }
-            routeNameRef.current = currentRouteName;
-          }
-        }}
-        // End
-      >
-        <Stack.Navigator initialRouteName={firstScreen}>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-              gestureDirection: 'vertical',
-            }}
-          />
-          <Stack.Screen
-            name="Dashboard"
-            component={Dashboard}
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="CustomDataScreen"
-            component={CustomDataScreen}
-            options={{
-              title: '',
-              headerStyle: {
-                backgroundColor: '#ffffff',
-              },
-            }}
-          />
-          <Stack.Screen
-            name="Deeplinks"
-            component={Deeplinks}
-            options={{
-              title: '',
-            }}
-          />
-          <Stack.Screen
-            name="SettingsScreen"
-            component={SettingsScreen}
-            options={{
-              title: '',
-              headerStyle: {
-                // backgroundColor: '#ffffff'
-              },
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+          }}
+          // End
+        >
+          <Stack.Navigator initialRouteName={firstScreen}>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+                gestureDirection: 'vertical',
+              }}
+            />
+            <Stack.Screen
+              name="Dashboard"
+              component={Dashboard}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen
+              name="CustomDataScreen"
+              component={CustomDataScreen}
+              options={{
+                title: '',
+                headerStyle: {
+                  backgroundColor: '#ffffff',
+                },
+              }}
+            />
+            <Stack.Screen
+              name="Deeplinks"
+              component={Deeplinks}
+              options={{
+                title: '',
+              }}
+            />
+            <Stack.Screen
+              name="SettingsScreen"
+              component={SettingsScreen}
+              options={{
+                title: '',
+                headerStyle: {
+                  // backgroundColor: '#ffffff'
+                },
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ThemeContext.Provider>
     );
   }
 }
