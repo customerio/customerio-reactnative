@@ -54,3 +54,4 @@ Apps/APN/ios/Pods/
 
 package-lock.json
 lib/module/index.js
+.vscode/settings.json
