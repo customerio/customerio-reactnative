@@ -28,6 +28,12 @@ class CioManager {
   initializeCio(env, config) {
     CustomerIO.initialize(env, config);
   }
+
+  buildInfo() {
+    return Promise.resolve(
+      'Customer.io React Native SDK (0.0.1) Sample App 1 (1)'
+    );
+  }
 }
 
 export default CioManager;
