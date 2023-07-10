@@ -151,12 +151,12 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 #endif
 
 // Required to register device token.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-  [pnHandlerObj application:application deviceToken:deviceToken];
- [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-}
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+//{
+//  [pnHandlerObj application:application deviceToken:deviceToken];
+// [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+//  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+//}
 
 // Required for the notification event. You must call the completion handler after handling the remote notification.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
@@ -166,13 +166,13 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 }
 
 // Required for the registrationError event.
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
-  [pnHandlerObj application:application error:error];
- [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
-  
-  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
-}
+//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+//{
+//  [pnHandlerObj application:application error:error];
+// [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
+//  
+//  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
+//}
 // Required for localNotification event
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response

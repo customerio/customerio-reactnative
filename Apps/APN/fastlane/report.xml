@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: import_from_git" time="2.580239">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: sync_code_signing" time="13.757203">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: sync_code_signing" time="19.417904">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

@@ -1,0 +1,4 @@
+app_identifier([
+  "io.customer.ami", 
+  "io.customer.ami.richpush",  
+])
