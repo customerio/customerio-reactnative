@@ -21,7 +21,7 @@ const theme = {
       width: '80%',
       maxWidth: 320,
       backgroundColor: '#3C437D',
-      paddingVertical: 10,
+      paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 4,
     },
@@ -44,10 +44,11 @@ const theme = {
     text: {
       color: '#000000',
       fontFamily: 'Roboto',
-      textAlign: 'center',
     },
     translucentButton: {
-      paddingVertical: 10,
+      width: '80%',
+      maxWidth: 320,
+      paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 4,
     },
