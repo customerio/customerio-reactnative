@@ -14,10 +14,7 @@ target 'SampleApp' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
-  flags = get_default_flags()
-
-  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
-  install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash')
+  flags = get_default_flags()  
   
   use_react_native!(
     :path => config[:reactNativePath],
@@ -33,6 +30,9 @@ target 'SampleApp' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
+  install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash')
 end
 
 target 'NotificationServiceExtension' do

@@ -17,9 +17,9 @@
 		46D41EE02A0944BF0008DBA4 /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 46D41ED82A0944BF0008DBA4 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		46D41EE52A0944D60008DBA4 /* NotificationServicePushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D41EE42A0944D60008DBA4 /* NotificationServicePushHandler.swift */; };
 		46F118D6296C3764007E1D09 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 46FB06302965B4EC00001290 /* main.m */; };
-		85CCA391B134B0261A6066F9 /* Pods_NotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27BE669D05A2AAAAB0BD5CAE /* Pods_NotificationServiceExtension.framework */; };
+		64E8B9360CA0D13BB868493B /* Pods_SampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80AA47E80EC0A33BD5362698 /* Pods_SampleApp.framework */; };
+		8C2C573B508D7764C732374A /* Pods_NotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 40017B60DA47BBBC096ED026 /* Pods_NotificationServiceExtension.framework */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		F942ED44D1020A79EFECC5A0 /* Pods_SampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5779AF8E85A110A37D669EC8 /* Pods_SampleApp.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,7 +51,7 @@
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = SampleApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleApp/Info.plist; sourceTree = "<group>"; };
-		27BE669D05A2AAAAB0BD5CAE /* Pods_NotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		40017B60DA47BBBC096ED026 /* Pods_NotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4606A0C0296C7D6500B98CC8 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		4632B4D3283E5D2200AF05BC /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4632B4D5283E5D2700AF05BC /* libCustomerIOTracking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOTracking.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,9 +83,9 @@
 		46D41EE42A0944D60008DBA4 /* NotificationServicePushHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServicePushHandler.swift; sourceTree = "<group>"; };
 		46FB06302965B4EC00001290 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		573E80042AAC5A9AAE4540D4 /* Pods-NotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		5779AF8E85A110A37D669EC8 /* Pods_SampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F5D8D25C4C55AFCC90581F4 /* Pods-Notification Service.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notification Service.release.xcconfig"; path = "Target Support Files/Pods-Notification Service/Pods-Notification Service.release.xcconfig"; sourceTree = "<group>"; };
 		7027D8F2719E14592AE8C5B1 /* Pods-SampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleApp.debug.xcconfig"; path = "Target Support Files/Pods-SampleApp/Pods-SampleApp.debug.xcconfig"; sourceTree = "<group>"; };
+		80AA47E80EC0A33BD5362698 /* Pods_SampleApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SampleApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8DBA40A64D8C8FFF7B19B979 /* Pods-SampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleApp.release.xcconfig"; path = "Target Support Files/Pods-SampleApp/Pods-SampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		9B38E507D4B6B34BF5926EB2 /* Pods-Notification Service.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Notification Service.debug.xcconfig"; path = "Target Support Files/Pods-Notification Service/Pods-Notification Service.debug.xcconfig"; sourceTree = "<group>"; };
 		A591060ADD68CA232C10D473 /* libPods-Notification Service.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Notification Service.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,7 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F942ED44D1020A79EFECC5A0 /* Pods_SampleApp.framework in Frameworks */,
+				64E8B9360CA0D13BB868493B /* Pods_SampleApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,7 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85CCA391B134B0261A6066F9 /* Pods_NotificationServiceExtension.framework in Frameworks */,
+				8C2C573B508D7764C732374A /* Pods_NotificationServiceExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,8 +159,8 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				A591060ADD68CA232C10D473 /* libPods-Notification Service.a */,
-				27BE669D05A2AAAAB0BD5CAE /* Pods_NotificationServiceExtension.framework */,
-				5779AF8E85A110A37D669EC8 /* Pods_SampleApp.framework */,
+				40017B60DA47BBBC096ED026 /* Pods_NotificationServiceExtension.framework */,
+				80AA47E80EC0A33BD5362698 /* Pods_SampleApp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
