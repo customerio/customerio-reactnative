@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SDKConfigurations from '../sdk/SDKConfigurations';
 import { StorageConstants } from '../util/Constants';
+import User from '../src/data/models/user';
 
 export default class StoreManager {
   saveToStorage(key, value) {
@@ -26,4 +27,11 @@ export default class StoreManager {
   };
   saveSDKConfigurations = async (config) =>
     this.saveToStorage(StorageConstants.SDK_CONFIG, config);
+
+  loadUser = async () => {
+    let user = await this.loadFromStorage(StorageConstants.USER_STATE);
+    return user ? new User(user.email, user) : null;
+  };
+  saveUser = async (user) =>
+    this.saveToStorage(StorageConstants.USER_STATE, user);
 }
