@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SDK_CONFIG, USER_STATE } from '../constants/StorageConstants';
-import SDKConfigurations from '../sdk/SDKConfigurations';
-import User from '../src/data/models/user';
+import SDKConfigurations from '../data/sdk/SDKConfigurations';
+import User from '../data/models/user';
 
 export default class StorageService {
   saveToStorage(key, value) {
