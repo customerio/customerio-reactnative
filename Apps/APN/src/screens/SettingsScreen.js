@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import { useThemeContext } from '../../theme';
-import SDKConfigurations from '../data/sdk/SDKConfigurations';
+import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import StorageService from '../services/StorageService';
 
 const SettingsScreen = ({ navigation }) => {
@@ -87,7 +87,7 @@ const SettingsScreen = ({ navigation }) => {
     },
   });
 
-  const defaultConfig = SDKConfigurations.createDefault();
+  const defaultConfig = CustomerIoSDKConfig.createDefault();
   const storageService = new StorageService();
 
   const [deviceToken, setDeviceToken] = useState('');
@@ -107,24 +107,18 @@ const SettingsScreen = ({ navigation }) => {
   }, []);
 
   const loadConfigurationsFromStorage = async () => {
-    const config = await storageService.loadSDKConfigurations();
+    const config = CustomerIoSDKConfig.applyDefaultForUndefined(
+      await storageService.loadSDKConfigurations()
+    );
 
-    setTrackUrl(config?.trackingUrl ?? defaultConfig.trackingUrl);
-    setSiteId(config?.siteId ?? defaultConfig.siteId);
-    setApiKey(config?.apiKey ?? defaultConfig.apiKey);
-    setBQSecondsDelay(
-      (config?.bqSecondsDelay ?? defaultConfig.bqSecondsDelay).toString()
-    );
-    setBQMinNumberOfTasks(
-      (
-        config?.bqMinNumberOfTasks ?? defaultConfig.bqMinNumberOfTasks
-      ).toString()
-    );
-    setTrackScreensEnabled(config?.trackScreens ?? defaultConfig.trackScreens);
-    setTrackDeviceAttributesEnabled(
-      config?.trackDeviceAttributes ?? defaultConfig.trackDeviceAttributes
-    );
-    setDebugModeEnabled(config?.debugMode ?? defaultConfig.debugMode);
+    setTrackUrl(config.trackingUrl);
+    setSiteId(config.siteId);
+    setApiKey(config.apiKey);
+    setBQSecondsDelay(config.bqSecondsDelay.toString());
+    setBQMinNumberOfTasks(config.bqMinNumberOfTasks.toString());
+    setTrackScreensEnabled(config.trackScreens);
+    setTrackDeviceAttributesEnabled(config.trackDeviceAttributes);
+    setDebugModeEnabled(config.debugMode);
   };
 
   PushNotification.configure({
@@ -208,7 +202,7 @@ const SettingsScreen = ({ navigation }) => {
       return;
     }
 
-    const config = new SDKConfigurations();
+    const config = new CustomerIoSDKConfig();
     config.siteId = siteId;
     config.apiKey = apiKey;
     config.trackingUrl = trackUrl;

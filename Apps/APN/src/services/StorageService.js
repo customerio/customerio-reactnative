@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SDK_CONFIG, USER_STATE } from '../constants/StorageConstants';
-import SDKConfigurations from '../data/sdk/SDKConfigurations';
+import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import User from '../data/models/user';
 
 export default class StorageService {
@@ -23,7 +23,7 @@ export default class StorageService {
 
   loadSDKConfigurations = async () => {
     let config = await this.loadFromStorage(SDK_CONFIG);
-    return config ? new SDKConfigurations(config) : null;
+    return config ? new CustomerIoSDKConfig(config) : null;
   };
   saveSDKConfigurations = async (config) =>
     this.saveToStorage(SDK_CONFIG, config);
