@@ -71,9 +71,9 @@ class CustomerIOPushMessaging {
     // through the Google Services API, so there is no need to make a specific call for it.
     // This method is specific to iOS and works as expected on Android without any additional intervention.
     if (payload == null || this.isAndroid()) {
-      return
-    } 
-    PushMessagingNative.trackNotificationResponseReceived(payload)
+      return;
+    }
+    PushMessagingNative.trackNotificationResponseReceived(payload);
   }
 
   /**
@@ -86,13 +86,13 @@ class CustomerIOPushMessaging {
     // through the Google Services API, so there is no need to make a specific call for it.
     // This method is specific to iOS and works as expected on Android without any additional intervention.
     if (payload == null || this.isAndroid()) {
-      return
-    } 
-    PushMessagingNative.trackNotificationReceived(payload)
+      return;
+    }
+    PushMessagingNative.trackNotificationReceived(payload);
   }
-  
-  isAndroid() : boolean {
-    return Platform.OS == "android"
+
+  isAndroid(): boolean {
+    return Platform.OS == 'android';
   }
 }
 

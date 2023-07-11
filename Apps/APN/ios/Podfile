@@ -1,8 +1,14 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
+# Import Ruby functions from native SDK to more easily allow installing non-production SDK builds.
+require 'open-uri'
+IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
+load "/tmp/override_cio_sdk.rb"
+
 platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
+use_frameworks! :linkage => :static 
 
 target 'SampleApp' do
   config = use_native_modules!
@@ -10,8 +16,9 @@ target 'SampleApp' do
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
-
+#  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
+  install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash')
+  
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.
@@ -29,5 +36,6 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+#  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+  install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash', is_app_extension: true)
 end
