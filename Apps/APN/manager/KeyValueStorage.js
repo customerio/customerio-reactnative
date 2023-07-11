@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StorageConstants } from '../util/Constants';
 import Constants from './../util/StorageConstants';
 
 class CioKeyValueStorage {
   async saveToStorage(key, value) {
     try {
-      await AsyncStorage.setItem(key, value);
+      await AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       console.log(e);
     }
@@ -13,38 +14,43 @@ class CioKeyValueStorage {
   async getFromStorage(key) {
     try {
       const value = await AsyncStorage.getItem(key);
-      return value;
+      return value ? JSON.parse(value) : null;
     } catch (e) {
       console.log(e);
     }
   }
 
-  // Tracking URL
-  async saveTrackingUrl(value) {
-    this.saveToStorage(Constants.TRACKING_URL_KEY, value);
-  }
+  getSiteId = () => this.getFromStorage(StorageConstants.SITE_ID);
+  saveSiteId = (value) => this.saveToStorage(StorageConstants.SITE_ID, value);
 
-  async getTrackingUrl() {
-    return this.getFromStorage(Constants.TRACKING_URL_KEY);
-  }
+  getApiKey = () => this.getFromStorage(StorageConstants.API_KEY);
+  saveApiKey = (value) => this.saveToStorage(StorageConstants.API_KEY, value);
 
-  // BGQ-DELAY
-  async saveBGQSecondsDelay(value) {
-    this.saveToStorage(Constants.BGQ_SECONDS_DELAY, value);
-  }
+  getTrackingUrl = () => this.getFromStorage(StorageConstants.TRACKING_URL);
+  saveTrackingUrl = (value) =>
+    this.saveToStorage(StorageConstants.TRACKING_URL, value);
 
-  async getBGQSecondsDelay() {
-    return this.getFromStorage(Constants.BGQ_SECONDS_DELAY);
-  }
+  getBQSecondsDelay = () =>
+    this.getFromStorage(StorageConstants.BQ_SECONDS_DELAY);
+  saveBQSecondsDelay = (value) =>
+    this.saveToStorage(StorageConstants.BQ_SECONDS_DELAY, value);
 
-  // BGQ-MinTasks
-  async saveBGQMinTasksInQueue(value) {
-    this.saveToStorage(Constants.BGQ_MIN_TASKS_IN_QUEUE, value);
-  }
+  getBQMinTasks = () => this.getFromStorage(StorageConstants.BQ_MIN_TASKS);
+  saveBQMinTasks = (value) =>
+    this.saveToStorage(StorageConstants.BQ_MIN_TASKS, value);
 
-  async getBGQMinTasksInQueue() {
-    return this.getFromStorage(Constants.BGQ_MIN_TASKS_IN_QUEUE);
-  }
+  getTrackScreens = () => this.getFromStorage(StorageConstants.TRACK_SCREENS);
+  saveTrackScreens = (value) =>
+    this.saveToStorage(StorageConstants.TRACK_SCREENS, value);
+
+  getTrackDeviceAttributes = () =>
+    this.getFromStorage(StorageConstants.TRACK_DEVICE_ATTRIBUTES);
+  saveTrackDeviceAttributes = (value) =>
+    this.saveToStorage(StorageConstants.TRACK_DEVICE_ATTRIBUTES, value);
+
+  getDebugMode = () => this.getFromStorage(StorageConstants.DEBUG_MODE);
+  saveDebugMode = (value) =>
+    this.saveToStorage(StorageConstants.DEBUG_MODE, value);
 
   // Login Status
   async saveLoginStatus(value) {
@@ -62,45 +68,6 @@ class CioKeyValueStorage {
 
   async getLoginDetail(value) {
     return this.getFromStorage(Constants.LOGIN_DETAIL);
-  }
-
-  // Track Screen
-  async saveScreenTrack(value) {
-    this.saveToStorage(Constants.SCREEN_TRACK_STATUS, JSON.stringify(value));
-  }
-
-  async getScreenTrack() {
-    return this.getFromStorage(Constants.SCREEN_TRACK_STATUS);
-  }
-
-  // Track device attributes
-  async saveDeviceAttributesTrack(value) {
-    this.saveToStorage(
-      Constants.TRACK_DEVICE_ATTRIBUTES_STATUS,
-      JSON.stringify(value)
-    );
-  }
-
-  async getDeviceAttributesTrack() {
-    return this.getFromStorage(Constants.TRACK_DEVICE_ATTRIBUTES_STATUS);
-  }
-
-  // Debug mode
-  async saveDebugModeConfig(value) {
-    this.saveToStorage(Constants.DEBUG_MODE_STATUS, JSON.stringify(value));
-  }
-
-  async getDebugModeConfig() {
-    return this.getFromStorage(Constants.DEBUG_MODE_STATUS);
-  }
-
-  // Push notifications
-  async saveIsPushEnabledConfig(value) {
-    this.saveToStorage(Constants.PUSH_ENABLED_STATUS, JSON.stringify(value));
-  }
-
-  async getIsPushEnabledConfig() {
-    return this.getFromStorage(Constants.PUSH_ENABLED_STATUS);
   }
 }
 
