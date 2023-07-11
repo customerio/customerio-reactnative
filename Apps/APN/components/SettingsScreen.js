@@ -1,148 +1,137 @@
-import React, { useLayoutEffect, useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  StyleSheet,
-  Text,
   Alert,
-  Image,
+  ScrollView,
+  StyleSheet,
   Switch,
-  Linking,
-  AppState,
+  Text,
+  TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import Env from '../env';
 import PushNotification from 'react-native-push-notification';
-import ThemedButton from './common/Button';
-import CioKeyValueStorage from '../manager/KeyValueStorage';
-import { CustomerIO } from 'customerio-reactnative';
-import { set } from 'react-native-reanimated';
-import DefaultConstants from '../util/DefaultConstants';
+import Env from '../env';
+import StorageManager from '../manager/StorageManager';
+import SDKConfigurations from '../sdk/SDKConfigurations';
+import { useThemeContext } from '../theme';
+import { SDKConstants } from '../util/Constants';
 
 const SettingsScreen = ({ navigation }) => {
+  const theme = useThemeContext();
+
+  const styles = StyleSheet.create({
+    container: theme.styles.container,
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingTop: 8,
+      paddingBottom: 16,
+    },
+    section: {
+      marginBottom: 24,
+    },
+    sectionLabel: {
+      ...theme.styles.text,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 12,
+    },
+    inputRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    inputLabel: {
+      ...theme.styles.text,
+      marginRight: 16,
+    },
+    input: {
+      ...theme.styles.input,
+      flex: 1,
+    },
+    switchRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    switchLabel: {
+      ...theme.styles.text,
+      flex: 1,
+      marginRight: 8,
+      textAlign: 'left',
+    },
+    switch: {},
+    buttonContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 24,
+    },
+    saveButton: {
+      ...theme.styles.filledButton,
+      width: 320,
+    },
+    saveButtonText: {
+      ...theme.styles.filledButtonText,
+      textTransform: 'uppercase',
+    },
+    restoreDefaultsButton: {
+      ...theme.styles.translucentButton,
+      marginTop: 16,
+      width: 320,
+    },
+    restoreDefaultsButtonText: theme.styles.translucentButtonText,
+    note: {
+      ...theme.styles.text,
+      marginTop: 8,
+      fontSize: 12,
+      color: 'gray',
+      textAlign: 'center',
+    },
+  });
+
+  const sdkConfigurationsDefault = SDKConfigurations.createDefault();
+  const storageManager = new StorageManager();
+
   const [deviceToken, setDeviceToken] = useState('');
   const [trackUrl, setTrackUrl] = useState('');
-  const [isDebugModeEnabled, setIsDebugModeEnabled] = useState(true);
-  const [pushStatus, setPushStatus] = useState('');
-  const [isPushEnabled, setIsPushEnabled] = useState(false);
-  const [isTrackDeviceAttributesEnabled, setIsTrackDeviceAttributesEnabled] =
-    useState(true);
-  const [isTrackScreensEnabled, setIsTrackScreensEnabled] = useState(false);
-  const [bgQDelay, setBgQDelay] = useState(
-    `${DefaultConstants.BGQ_SECONDS_DELAY}`
-  );
-  const [bgQMinNumTasks, setBgQMinNumTasks] = useState(
-    `${DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE}`
-  );
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShadowVisible: false,
-    });
-  }, [navigation]);
-
-  const appState = useRef(AppState.currentState);
-
-  // This useEffect registeres an event listener to notify the states of the app
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextAppState) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        getPushStatus();
-      }
-      appState.current = nextAppState;
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
+  const [siteId, setSiteId] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [bqSecondsDelay, setBQSecondsDelay] = useState('');
+  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState('');
+  const [isTrackScreensEnabled, setTrackScreensEnabled] = useState(false);
+  const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
+    useState(false);
+  const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
 
   useEffect(() => {
-    getConfigurationsFromStorage();
-    getPushStatus();
+    loadConfigurationsFromStorage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getConfigurationsFromStorage = async () => {
-    const keyStorageObj = new CioKeyValueStorage();
+  const loadConfigurationsFromStorage = async () => {
+    const config = await storageManager.loadSDKConfigurations();
 
-    // Tracking url
-    const trackingUrl = await keyStorageObj.getTrackingUrl();
-    setTrackUrl(trackingUrl);
-
-    // Screen track
-    const screenTrackStatus = await keyStorageObj.getScreenTrack();
-    setIsTrackScreensEnabled(JSON.parse(screenTrackStatus));
-
-    // Track device attribute
-    const deviceTrackStatus = await keyStorageObj.getDeviceAttributesTrack();
-    setIsTrackDeviceAttributesEnabled(JSON.parse(deviceTrackStatus));
-
-    // Debug mode
-    const debugModeStatus = await keyStorageObj.getDebugModeConfig();
-    setIsDebugModeEnabled(JSON.parse(debugModeStatus));
-
-    // BGQ Seconds delay
-    const bgDelayValue = await keyStorageObj.getBGQSecondsDelay();
-    setBgQDelay(bgDelayValue);
-
-    // BGQ min tasks
-    const minTasksValue = await keyStorageObj.getBGQMinTasksInQueue();
-    setBgQMinNumTasks(minTasksValue);
-  };
-
-  const getPushStatus = () => {
-    CustomerIO.getPushPermissionStatus().then((status) => {
-      setPushStatus(status);
-      if (status == 'Granted') {
-        setIsPushEnabled(true);
-        return;
-      }
-      setIsPushEnabled(false);
-    });
-  };
-
-  const toggleSwitch = async (type) => {
-    switch (type) {
-      case 'Push':
-        // Case 1: Open settings to update push permissions
-        if (isPushEnabled === true || pushStatus == 'Denied') {
-          Linking.openSettings();
-          return;
-        }
-        // Case 2: Show prompt if permissions have not been determined yet
-        if (pushStatus == 'Notdetermined') {
-          var options = { ios: { sound: true, badge: true } };
-          CustomerIO.showPromptForPushNotifications(options)
-            .then((status) => {
-              alert('Push permission ' + status);
-              console.log('Push permission ' + status);
-            })
-            .catch((error) => {
-              alert('Could not show prompt.');
-            });
-        }
-        break;
-      case 'Debug':
-        setIsDebugModeEnabled((previousState) => !previousState);
-        break;
-      case 'DeviceAttr':
-        setIsTrackDeviceAttributesEnabled((previousState) => !previousState);
-        break;
-      case 'Screens':
-        setIsTrackScreensEnabled((previousState) => !previousState);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const copyToClipboard = () => {
-    Clipboard.setString(deviceToken);
-    alert('Copied device token to clipboard.');
+    setTrackUrl(config.trackingUrl ?? sdkConfigurationsDefault.trackingUrl);
+    setSiteId(config.siteId ?? sdkConfigurationsDefault.siteId);
+    setApiKey(config.apiKey ?? sdkConfigurationsDefault.apiKey);
+    setBQSecondsDelay(
+      (
+        config.bqSecondsDelay ?? sdkConfigurationsDefault.bqSecondsDelay
+      ).toString()
+    );
+    setBQMinNumberOfTasks(
+      (
+        config.bqMinNumberOfTasks ?? sdkConfigurationsDefault.bqMinNumberOfTasks
+      ).toString()
+    );
+    setTrackScreensEnabled(
+      config.trackScreens ?? sdkConfigurationsDefault.trackScreens
+    );
+    setTrackDeviceAttributesEnabled(
+      config.trackDeviceAttributes ??
+      sdkConfigurationsDefault.trackDeviceAttributes
+    );
+    setDebugModeEnabled(config.debugMode ?? sdkConfigurationsDefault.debugMode);
   };
 
   PushNotification.configure({
@@ -151,279 +140,217 @@ const SettingsScreen = ({ navigation }) => {
     },
   });
 
-  const saveSettings = async () => {
-    const keyStorageObj = new CioKeyValueStorage();
-    if (trackUrl != null) {
-      await keyStorageObj.saveTrackingUrl(trackUrl.trim());
-    }
-
-    await keyStorageObj.saveBGQSecondsDelay(bgQDelay);
-    await keyStorageObj.saveBGQMinTasksInQueue(bgQMinNumTasks);
-    await keyStorageObj.saveIsPushEnabledConfig(isPushEnabled);
-    await keyStorageObj.saveScreenTrack(!isTrackScreensEnabled);
-    await keyStorageObj.saveDebugModeConfig(!isDebugModeEnabled);
-    await keyStorageObj.saveDeviceAttributesTrack(
-      !isTrackDeviceAttributesEnabled
-    );
-
-    Alert.alert('Info', 'Settings have been updated successfully.', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+  const handleRestoreDefaultsPress = async () => {
+    return saveConfigurations(sdkConfigurationsDefault);
   };
 
-  const alertUserBeforeSaving = () => {
-    Alert.alert('Info', 'Saving settings will require an app restart.', [
-      { text: 'OK', onPress: () => saveSettings() },
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Saving cancelled by the user'),
-        style: 'cancel',
-      },
-    ]);
+  const isTrackingURLValid = (url) => {
+    const trimmedUrl = url?.trim();
+
+    // Empty text is not considered valid.
+    if (!trimmedUrl || trimmedUrl.length === 0) {
+      return false;
+    }
+
+    const urlPattern = /^(https?):\/\/[^\s/$.?#].[^\s]*\/$/;
+    return urlPattern.test(trimmedUrl);
+  };
+
+  const isFormValid = () => {
+    let message;
+    let blankFieldMessageBuilder = (fieldName) => {
+      return `${fieldName} cannot be blank`;
+    };
+    let outOfBoundsValueMessageBuilder = (fieldName, minValue) => {
+      return `${fieldName} must be greater than or equal to ${minValue}`;
+    };
+
+    if (!isTrackingURLValid(trackUrl)) {
+      message = 'Please enter formatted url e.g. https://tracking.cio/';
+    } else if (!siteId) {
+      message = blankFieldMessageBuilder('Site Id');
+    } else if (!apiKey) {
+      message = blankFieldMessageBuilder('API Key');
+    } else if (!bqSecondsDelay) {
+      message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
+    } else if (isNaN(bqSecondsDelay) || bqSecondsDelay < 1) {
+      message = outOfBoundsValueMessageBuilder(
+        'backgroundQueueSecondsDelay',
+        1
+      );
+    } else if (!bqMinNumberOfTasks) {
+      message = blankFieldMessageBuilder('backgroundQueueMinNumberOfTasks');
+    } else if (isNaN(bqMinNumberOfTasks) || bqMinNumberOfTasks < 1) {
+      message = outOfBoundsValueMessageBuilder(
+        'backgroundQueueMinNumberOfTasks',
+        1
+      );
+    }
+
+    if (message) {
+      Alert.alert(
+        'Error',
+        message,
+        [
+          {
+            text: 'OK',
+            // eslint-disable-next-line prettier/prettier
+            onPress: () => { },
+          },
+        ],
+        {
+          cancelable: true,
+        }
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleSavePress = () => {
+    if (!isFormValid()) {
+      return;
+    }
+
+    const config = new SDKConfigurations();
+    config.siteId = siteId;
+    config.apiKey = apiKey;
+    config.trackingUrl = trackUrl;
+    config.bqSecondsDelay = bqSecondsDelay;
+    config.bqMinNumberOfTasks = bqMinNumberOfTasks;
+    config.trackScreens = isTrackScreensEnabled;
+    config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
+    config.debugMode = isDebugModeEnabled;
+    return saveConfigurations(config);
+  };
+
+  const saveConfigurations = async (config) => {
+    return storageManager
+      .saveSDKConfigurations(config)
+      .then(() => navigation.goBack());
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.innerContainer}>
-        <View style={styles.headerView}>
-          <Text style={styles.textHeaderLabel}>Settings</Text>
-        </View>
-        <View style={[styles.rowView, { marginTop: 10 }]}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Device Token</Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.section}>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>Device Token</Text>
             <TextInput
               style={styles.input}
               value={deviceToken}
-              placeholder="device token"
+              placeholder="Fetching..."
               editable={false}
             />
-            <TouchableOpacity
-              style={styles.copyToClipboardButton}
-              onPress={() => copyToClipboard()}
-            >
-              <Image
-                style={styles.copyToClipboardImage}
-                source={require('../assets/images/paper.png')}
-              />
-            </TouchableOpacity>
           </View>
-        </View>
-        {/* CIO Track URL */}
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>CIO Track URL</Text>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>CIO Track URL</Text>
             <TextInput
               style={styles.input}
-              onChangeText={(e) => setTrackUrl(e)}
+              onChangeText={(text) => setTrackUrl(text)}
               value={trackUrl}
-              placeholder="track.customer.io"
-              editable={true}
+              placeholder={SDKConstants.TRACK_URL}
             />
-            <View style={styles.copyToClipboardButton} />
           </View>
         </View>
-
-        {/* Gist Environment
-              <View style={styles.rowView}>
-                <View style={styles.stackColumnView}>
-                  <Text style={styles.textLabel}>Gist Environment</Text>
-                  <TextInput
-                    style={styles.input}
-                    // value={deviceToken}
-                    placeholder="Gist"
-                    editable={false}
-                />
-                <View style={styles.copyToClipboardButton}></View>
-                </View>
-            </View> */}
-
-        {/* Section #2 */}
-        <View style={[styles.rowView, { marginTop: 30 }]}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Site Id</Text>
+        <View style={styles.section}>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>Site Id</Text>
             <TextInput
               style={styles.input}
-              value={Env.siteId}
-              placeholder="siteId"
-              editable={false}
+              onChangeText={(text) => setSiteId(text)}
+              value={siteId}
+              placeholder={Env.siteId}
             />
-            <View style={styles.copyToClipboardButton} />
           </View>
-        </View>
-        {/* API Key */}
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>API Key</Text>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>API Key</Text>
             <TextInput
               style={styles.input}
-              value={Env.apiKey}
-              placeholder="Api key"
-              editable={false}
+              onChangeText={(text) => setApiKey(text)}
+              value={apiKey}
+              placeholder={Env.apiKey}
             />
-            <View style={styles.copyToClipboardButton} />
           </View>
         </View>
-        {/* Section #3 */}
-        <View style={[styles.rowView, { marginTop: 30 }]}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>backgroundQueueSecondsDelay</Text>
+        <View style={styles.section}>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>backgroundQueueSecondsDelay</Text>
             <TextInput
               style={styles.input}
-              value={bgQDelay}
-              editable={true}
-              onChangeText={(e) => setBgQDelay(e)}
+              value={bqSecondsDelay ?? ''}
+              placeholder={SDKConstants.BQ_SECONDS_DELAY.toString()}
+              onChangeText={(text) => {
+                let value = parseFloat(text);
+                return setBQSecondsDelay(isNaN(value) ? undefined : value);
+              }}
             />
-            <View style={styles.copyToClipboardButton} />
           </View>
-        </View>
-        {/* Org Id */}
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>
+          <View style={styles.inputRow}>
+            <Text style={styles.inputLabel}>
               backgroundQueueMinNumberOfTasks
             </Text>
             <TextInput
               style={styles.input}
-              value={bgQMinNumTasks}
-              onChangeText={(e) => setBgQMinNumTasks(e)}
-            />
-            <View style={styles.copyToClipboardButton} />
-          </View>
-        </View>
-
-        {/* Features Header */}
-        <View style={[styles.headerView, { paddingTop: 50 }]}>
-          <Text style={styles.textHeaderLabel}>Features</Text>
-        </View>
-        <View style={[styles.rowView, { marginTop: 10 }]}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Enable Push Notifications</Text>
-            <Switch
-              trackColor={styles.trackColor}
-              thumbColor={isPushEnabled ? '#ffffff' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => toggleSwitch('Push')}
-              value={isPushEnabled}
+              value={bqMinNumberOfTasks ?? ''}
+              placeholder={SDKConstants.BQ_MIN_NUMBER_OF_TASKS.toString()}
+              onChangeText={(text) => {
+                let value = parseInt(text, 10);
+                return setBQMinNumberOfTasks(isNaN(value) ? undefined : value);
+              }}
             />
           </View>
         </View>
-        {/* CIO Track Screen */}
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Track Screens</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Features</Text>
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>Track Screens</Text>
             <Switch
-              trackColor={styles.trackColor}
-              thumbColor={isTrackScreensEnabled ? '#ffffff' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => toggleSwitch('Screens')}
+              style={styles.switch}
+              onValueChange={() =>
+                setTrackScreensEnabled(!isTrackScreensEnabled)
+              }
               value={isTrackScreensEnabled}
             />
           </View>
-        </View>
-
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Track Device Attributes</Text>
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>Track Device Attributes</Text>
             <Switch
-              trackColor={styles.trackColor}
-              thumbColor={
-                isTrackDeviceAttributesEnabled ? '#ffffff' : '#f4f3f4'
+              style={styles.switch}
+              onValueChange={() =>
+                setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
               }
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => toggleSwitch('DeviceAttr')}
               value={isTrackDeviceAttributesEnabled}
             />
           </View>
-        </View>
-        <View style={styles.rowView}>
-          <View style={styles.stackColumnView}>
-            <Text style={styles.textLabel}>Debug mode</Text>
+          <View style={styles.switchRow}>
+            <Text style={styles.switchLabel}>Debug Mode</Text>
             <Switch
-              trackColor={styles.trackColor}
-              thumbColor={isDebugModeEnabled ? '#ffffff' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => toggleSwitch('Debug')}
+              style={styles.switch}
+              onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
               value={isDebugModeEnabled}
             />
           </View>
         </View>
-      </View>
-      <View>
-        <ThemedButton onPress={() => alertUserBeforeSaving()} title="SAVE" />
-        <Text style={styles.settingsInfoText}>
-          Editing settings will require an app restart.
-        </Text>
-      </View>
-    </ScrollView>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handleSavePress} style={styles.saveButton}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleRestoreDefaultsPress}
+            style={styles.restoreDefaultsButton}
+          >
+            <Text style={styles.restoreDefaultsButtonText}>
+              Restore Defaults
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.note}>
+            Note: You must restart the app to apply these settings
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  sectionView: {
-    flexDirection: 'row',
-    marginTop: 30,
-  },
-  trackColor: {
-    false: '#32BD54',
-    true: '#32BD54',
-  },
-  copyToClipboardButton: {
-    alignContent: 'flex-end',
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    height: 30,
-    width: 25,
-  },
-  copyToClipboardImage: {
-    width: 20,
-    height: 20,
-  },
-  rowView: {
-    flexDirection: 'row',
-    paddingTop: 10,
-  },
-  stackColumnView: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-    alignSelf: 'stretch',
-    width: '100%',
-  },
-  textLabel: {
-    fontSize: 14,
-    alignContent: 'flex-end',
-    justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    color: '#404040',
-  },
-  headerView: {
-    justifyContent: 'space-around',
-  },
-  textHeaderLabel: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  innerContainer: {
-    flex: 1,
-    backgroundColor: 'white',
-    padding: 20,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    padding: 5,
-    marginLeft: 10,
-    backgroundColor: 'white',
-    borderColor: '#fff',
-    borderBottomColor: '#e6e6e6',
-    borderRadius: 10,
-  },
-  settingsInfoText: {
-    alignSelf: 'center',
-  },
-});
+
 export default SettingsScreen;

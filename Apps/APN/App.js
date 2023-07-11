@@ -21,10 +21,14 @@ import CioManager from './manager/CioManager';
 import CioKeyValueStorage from './manager/KeyValueStorage';
 import { ThemeContext, getDefaultTheme } from './theme';
 import DefaultConstants from './util/DefaultConstants';
+import StorageManager from './manager/StorageManager';
+import SDKConfigurations from './sdk/SDKConfigurations';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const storageManager = new StorageManager();
+
   const [firstScreen, setFirstScreen] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [isScreenTrackEnabled, setIsScreenTrackEnabled] = useState(null);
@@ -84,58 +88,16 @@ export default function App() {
   ]);
 
   const fetchConfigsOrSetDefault = async () => {
-    const keyStorageObj = new CioKeyValueStorage();
-    const bgDelayValue = await keyStorageObj.getBGQSecondsDelay();
-    const bgTasksValue = await keyStorageObj.getBGQMinTasksInQueue();
-    const screenTrackValue = await keyStorageObj.getScreenTrack();
-    const deviceAttrValue = await keyStorageObj.getDeviceAttributesTrack();
-    const debugModeValue = await keyStorageObj.getDebugModeConfig();
-    const trackUrl = await keyStorageObj.getTrackingUrl();
+    const sdkConfig =
+      (await storageManager.loadSDKConfigurations()) ??
+      SDKConfigurations.createDefault();
 
-    // Setting values here to show default values on Settings screens
-    if (screenTrackValue === null) {
-      await keyStorageObj.saveScreenTrack(DefaultConstants.SCREEN_TRACK_STATUS);
-    }
-    if (bgDelayValue === null) {
-      await keyStorageObj.saveBGQSecondsDelay(
-        `${DefaultConstants.BGQ_SECONDS_DELAY}`
-      );
-    }
-    if (bgTasksValue === null) {
-      await keyStorageObj.saveBGQMinTasksInQueue(
-        `${DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE}`
-      );
-    }
-    if (deviceAttrValue === null) {
-      await keyStorageObj.saveDeviceAttributesTrack(
-        `${DefaultConstants.TRACK_DEVICE_ATTRIBUTES_STATUS}`
-      );
-    }
-    if (debugModeValue === null) {
-      await keyStorageObj.saveDebugModeConfig(
-        `${DefaultConstants.DEBUG_MODE_STATUS}`
-      );
-    }
-    setIsDeviceAttrTrackEnabled(
-      deviceAttrValue === null ? true : JSON.parse(deviceAttrValue)
-    );
-    setIsScreenTrackEnabled(
-      screenTrackValue === null ? true : JSON.parse(screenTrackValue)
-    );
-    setIsDebugModeEnabled(
-      debugModeValue === null ? true : JSON.parse(debugModeValue)
-    );
-    setBgDelayValue(
-      bgDelayValue === null
-        ? DefaultConstants.BGQ_SECONDS_DELAY
-        : parseInt(bgDelayValue)
-    );
-    setBgTasksValue(
-      bgTasksValue === null
-        ? DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE
-        : parseInt(bgTasksValue)
-    );
-    setTrackingUrl(trackUrl);
+    setIsDeviceAttrTrackEnabled(sdkConfig.trackDeviceAttributes);
+    setIsScreenTrackEnabled(sdkConfig.trackScreens);
+    setIsDebugModeEnabled(sdkConfig.debugMode);
+    setBgDelayValue(sdkConfig.bqSecondsDelay);
+    setBgTasksValue(sdkConfig.bqMinNumberOfTasks);
+    setTrackingUrl(sdkConfig.trackingUrl);
   };
 
   const initialiseCioPackage = useCallback(() => {
