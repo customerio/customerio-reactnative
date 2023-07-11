@@ -32,7 +32,10 @@ const Login = ({ navigation }) => {
       marginTop: 48,
       alignSelf: 'center',
     },
-    space: {
+    spaceTop: {
+      flex: 0.6,
+    },
+    spaceBottom: {
       flex: 1,
     },
     form: {
@@ -43,7 +46,10 @@ const Login = ({ navigation }) => {
       ...theme.styles.filledButton,
       marginTop: 32,
     },
-    loginButtonText: theme.styles.filledButtonText,
+    loginButtonText: {
+      ...theme.styles.filledButtonText,
+      textTransform: 'uppercase',
+    },
     randomLoginButton: {
       ...theme.styles.translucentButton,
       marginTop: 16,
@@ -146,7 +152,7 @@ const Login = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>React Native APN Ami App</Text>
 
-        <View style={styles.space} />
+        <View style={styles.spaceTop} />
 
         <View style={styles.form}>
           <TextInput
@@ -177,7 +183,7 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.space} />
+        <View style={styles.spaceBottom} />
 
         <Text style={styles.footerText}>{buildInfo}</Text>
       </ScrollView>
