@@ -10,11 +10,11 @@ import {
   View,
 } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import Env from '../env';
-import StorageManager from '../manager/StorageManager';
-import SDKConfigurations from '../sdk/SDKConfigurations';
-import { useThemeContext } from '../theme';
-import { SDKConstants } from '../util/Constants';
+import Env from '../../env';
+import { useThemeContext } from '../../theme';
+import { SDKConstants } from '../../util/Constants';
+import SDKConfigurations from '../data/sdk/SDKConfigurations';
+import StorageService from '../services/StorageService';
 
 const SettingsScreen = ({ navigation }) => {
   const theme = useThemeContext();
@@ -90,7 +90,7 @@ const SettingsScreen = ({ navigation }) => {
   });
 
   const sdkConfigurationsDefault = SDKConfigurations.createDefault();
-  const storageManager = new StorageManager();
+  const storageService = new StorageService();
 
   const [deviceToken, setDeviceToken] = useState('');
   const [trackUrl, setTrackUrl] = useState('');
@@ -109,7 +109,7 @@ const SettingsScreen = ({ navigation }) => {
   }, []);
 
   const loadConfigurationsFromStorage = async () => {
-    const config = await storageManager.loadSDKConfigurations();
+    const config = await storageService.loadSDKConfigurations();
 
     setTrackUrl(config?.trackingUrl ?? sdkConfigurationsDefault.trackingUrl);
     setSiteId(config?.siteId ?? sdkConfigurationsDefault.siteId);
@@ -231,7 +231,7 @@ const SettingsScreen = ({ navigation }) => {
   };
 
   const saveConfigurations = async (config) => {
-    return storageManager
+    return storageService
       .saveSDKConfigurations(config)
       .then(() => navigation.goBack());
   };
