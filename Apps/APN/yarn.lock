@@ -2809,10 +2809,8 @@ css-in-js-utils@^2.0.0:
     hyphenate-style-name "^1.0.2"
     isobject "^3.0.1"
 
-customerio-reactnative@^3.1.1:
+customerio-reactnative@../..:
   version "3.1.1"
-  resolved "https://registry.yarnpkg.com/customerio-reactnative/-/customerio-reactnative-3.1.1.tgz#8fa83d555a9238f3ec7d0935729ebca6d750565f"
-  integrity sha512-zb1mZvuNolD94YMR/d+HF/DMt8Z7IpgAJVvyTXuEax+QasEMqSnOUwluRpl5cAbZQHm3tce2NrSa73SErbs94Q==
 
 dayjs@^1.8.15:
   version "1.11.8"

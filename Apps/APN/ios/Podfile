@@ -16,7 +16,7 @@ target 'SampleApp' do
   # Flags change depending on the env values.
   flags = get_default_flags()
 
-#  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
+  pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
   install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash')
   
   use_react_native!(
@@ -36,6 +36,6 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-#  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
   install_non_production_ios_sdk_git_branch('shahroz/fix-in-app-main-thread-crash', is_app_extension: true)
 end
