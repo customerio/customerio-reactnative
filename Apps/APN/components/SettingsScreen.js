@@ -96,8 +96,8 @@ const SettingsScreen = ({ navigation }) => {
   const [trackUrl, setTrackUrl] = useState('');
   const [siteId, setSiteId] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [bqSecondsDelay, setBQSecondsDelay] = useState('');
-  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState('');
+  const [bqSecondsDelay, setBQSecondsDelay] = useState(undefined);
+  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState(undefined);
   const [isTrackScreensEnabled, setTrackScreensEnabled] = useState(false);
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
@@ -111,27 +111,30 @@ const SettingsScreen = ({ navigation }) => {
   const loadConfigurationsFromStorage = async () => {
     const config = await storageManager.loadSDKConfigurations();
 
-    setTrackUrl(config.trackingUrl ?? sdkConfigurationsDefault.trackingUrl);
-    setSiteId(config.siteId ?? sdkConfigurationsDefault.siteId);
-    setApiKey(config.apiKey ?? sdkConfigurationsDefault.apiKey);
+    setTrackUrl(config?.trackingUrl ?? sdkConfigurationsDefault.trackingUrl);
+    setSiteId(config?.siteId ?? sdkConfigurationsDefault.siteId);
+    setApiKey(config?.apiKey ?? sdkConfigurationsDefault.apiKey);
     setBQSecondsDelay(
       (
-        config.bqSecondsDelay ?? sdkConfigurationsDefault.bqSecondsDelay
+        config?.bqSecondsDelay ?? sdkConfigurationsDefault.bqSecondsDelay
       ).toString()
     );
     setBQMinNumberOfTasks(
       (
-        config.bqMinNumberOfTasks ?? sdkConfigurationsDefault.bqMinNumberOfTasks
+        config?.bqMinNumberOfTasks ??
+        sdkConfigurationsDefault.bqMinNumberOfTasks
       ).toString()
     );
     setTrackScreensEnabled(
-      config.trackScreens ?? sdkConfigurationsDefault.trackScreens
+      config?.trackScreens ?? sdkConfigurationsDefault.trackScreens
     );
     setTrackDeviceAttributesEnabled(
-      config.trackDeviceAttributes ??
-      sdkConfigurationsDefault.trackDeviceAttributes
+      config?.trackDeviceAttributes ??
+        sdkConfigurationsDefault.trackDeviceAttributes
     );
-    setDebugModeEnabled(config.debugMode ?? sdkConfigurationsDefault.debugMode);
+    setDebugModeEnabled(
+      config?.debugMode ?? sdkConfigurationsDefault.debugMode
+    );
   };
 
   PushNotification.configure({
@@ -144,16 +147,19 @@ const SettingsScreen = ({ navigation }) => {
     return saveConfigurations(sdkConfigurationsDefault);
   };
 
-  const isTrackingURLValid = (url) => {
-    const trimmedUrl = url?.trim();
+  const isTrackingURLValid = (value) => {
+    const url = value.trim();
 
     // Empty text is not considered valid.
-    if (!trimmedUrl || trimmedUrl.length === 0) {
+    if (url.length === 0) {
       return false;
     }
 
-    const urlPattern = /^(https?):\/\/[^\s/$.?#].[^\s]*\/$/;
-    return urlPattern.test(trimmedUrl);
+    // Regex pattern to match URLs with http/https schemes and non-empty hosts.
+    const urlPattern = /^(http|https):\/\/[^/\s]+\/$/;
+
+    // Test if the URL matches the pattern.
+    return urlPattern.test(url);
   };
 
   const isFormValid = () => {

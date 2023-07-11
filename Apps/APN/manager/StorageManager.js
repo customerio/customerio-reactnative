@@ -20,10 +20,10 @@ export default class StoreManager {
     }
   }
 
-  loadSDKConfigurations = async () =>
-    new SDKConfigurations(
-      await this.loadFromStorage(StorageConstants.SDK_CONFIG)
-    );
+  loadSDKConfigurations = async () => {
+    let config = await this.loadFromStorage(StorageConstants.SDK_CONFIG);
+    return config ? new SDKConfigurations(config) : null;
+  };
   saveSDKConfigurations = async (config) =>
     this.saveToStorage(StorageConstants.SDK_CONFIG, config);
 }
