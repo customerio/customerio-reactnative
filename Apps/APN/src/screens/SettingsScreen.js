@@ -10,9 +10,7 @@ import {
   View,
 } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import Env from '../../env';
 import { useThemeContext } from '../../theme';
-import { SDKConstants } from '../../util/Constants';
 import SDKConfigurations from '../data/sdk/SDKConfigurations';
 import StorageService from '../services/StorageService';
 
@@ -89,7 +87,7 @@ const SettingsScreen = ({ navigation }) => {
     },
   });
 
-  const sdkConfigurationsDefault = SDKConfigurations.createDefault();
+  const defaultConfig = SDKConfigurations.createDefault();
   const storageService = new StorageService();
 
   const [deviceToken, setDeviceToken] = useState('');
@@ -111,30 +109,22 @@ const SettingsScreen = ({ navigation }) => {
   const loadConfigurationsFromStorage = async () => {
     const config = await storageService.loadSDKConfigurations();
 
-    setTrackUrl(config?.trackingUrl ?? sdkConfigurationsDefault.trackingUrl);
-    setSiteId(config?.siteId ?? sdkConfigurationsDefault.siteId);
-    setApiKey(config?.apiKey ?? sdkConfigurationsDefault.apiKey);
+    setTrackUrl(config?.trackingUrl ?? defaultConfig.trackingUrl);
+    setSiteId(config?.siteId ?? defaultConfig.siteId);
+    setApiKey(config?.apiKey ?? defaultConfig.apiKey);
     setBQSecondsDelay(
-      (
-        config?.bqSecondsDelay ?? sdkConfigurationsDefault.bqSecondsDelay
-      ).toString()
+      (config?.bqSecondsDelay ?? defaultConfig.bqSecondsDelay).toString()
     );
     setBQMinNumberOfTasks(
       (
-        config?.bqMinNumberOfTasks ??
-        sdkConfigurationsDefault.bqMinNumberOfTasks
+        config?.bqMinNumberOfTasks ?? defaultConfig.bqMinNumberOfTasks
       ).toString()
     );
-    setTrackScreensEnabled(
-      config?.trackScreens ?? sdkConfigurationsDefault.trackScreens
-    );
+    setTrackScreensEnabled(config?.trackScreens ?? defaultConfig.trackScreens);
     setTrackDeviceAttributesEnabled(
-      config?.trackDeviceAttributes ??
-        sdkConfigurationsDefault.trackDeviceAttributes
+      config?.trackDeviceAttributes ?? defaultConfig.trackDeviceAttributes
     );
-    setDebugModeEnabled(
-      config?.debugMode ?? sdkConfigurationsDefault.debugMode
-    );
+    setDebugModeEnabled(config?.debugMode ?? defaultConfig.debugMode);
   };
 
   PushNotification.configure({
@@ -144,7 +134,7 @@ const SettingsScreen = ({ navigation }) => {
   });
 
   const handleRestoreDefaultsPress = async () => {
-    return saveConfigurations(sdkConfigurationsDefault);
+    return saveConfigurations(defaultConfig);
   };
 
   const isTrackingURLValid = (value) => {
@@ -255,7 +245,7 @@ const SettingsScreen = ({ navigation }) => {
               style={styles.input}
               onChangeText={(text) => setTrackUrl(text)}
               value={trackUrl}
-              placeholder={SDKConstants.TRACK_URL}
+              placeholder={defaultConfig.trackingUrl}
             />
           </View>
         </View>
@@ -266,7 +256,7 @@ const SettingsScreen = ({ navigation }) => {
               style={styles.input}
               onChangeText={(text) => setSiteId(text)}
               value={siteId}
-              placeholder={Env.siteId}
+              placeholder={defaultConfig.siteId}
             />
           </View>
           <View style={styles.inputRow}>
@@ -275,7 +265,7 @@ const SettingsScreen = ({ navigation }) => {
               style={styles.input}
               onChangeText={(text) => setApiKey(text)}
               value={apiKey}
-              placeholder={Env.apiKey}
+              placeholder={defaultConfig.apiKey}
             />
           </View>
         </View>
@@ -285,7 +275,7 @@ const SettingsScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               value={bqSecondsDelay ?? ''}
-              placeholder={SDKConstants.BQ_SECONDS_DELAY.toString()}
+              placeholder={defaultConfig.bqSecondsDelay.toString()}
               onChangeText={(text) => {
                 let value = parseFloat(text);
                 return setBQSecondsDelay(isNaN(value) ? undefined : value);
@@ -299,7 +289,7 @@ const SettingsScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               value={bqMinNumberOfTasks ?? ''}
-              placeholder={SDKConstants.BQ_MIN_NUMBER_OF_TASKS.toString()}
+              placeholder={defaultConfig.bqMinNumberOfTasks.toString()}
               onChangeText={(text) => {
                 let value = parseInt(text, 10);
                 return setBQMinNumberOfTasks(isNaN(value) ? undefined : value);
