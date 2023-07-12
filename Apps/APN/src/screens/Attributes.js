@@ -14,7 +14,9 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 
-const Attributes = ({ screen }) => {
+const Attributes = ({ route }) => {
+  const { screen } = route.params;
+
   const [attributeName, setAttributeName] = useState('');
   const [attributeValue, setAttributeValue] = useState('');
 

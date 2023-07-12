@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
     await storageService.saveUser(user);
     // Identify user to Customer.io
     CustomerIOService.identifyUser(user);
-    ScreenUtils.navigateToScreen(navigation, Screen.DASHBOARD);
+    ScreenUtils.navigateToScreen(navigation, Screen.DASHBOARD, { user: user });
   };
 
   return (

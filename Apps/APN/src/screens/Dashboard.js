@@ -10,7 +10,9 @@ import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
 import ScreenUtils from '../utils/ScreenUtils';
 
-const Dashboard = ({ navigation, user }) => {
+const Dashboard = ({ navigation, route }) => {
+  const { user } = route.params;
+
   const handleSettingsPress = () => {
     ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
   };

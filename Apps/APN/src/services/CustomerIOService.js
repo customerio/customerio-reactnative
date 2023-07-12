@@ -39,7 +39,9 @@ class CustomerIOService {
 
   static sendEvent(eventName, propertyName, propertyValue) {
     const data = {};
-    data[propertyName] = propertyValue;
+    if (propertyName) {
+      data[propertyName] = propertyValue;
+    }
     CustomerIO.track(eventName, data);
   }
 

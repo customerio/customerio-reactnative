@@ -61,13 +61,17 @@ const AppNavigator = (navigatorProps) => {
   const renderScreenComponents = () => {
     return screens.map((screen) => {
       const component = getComponentForScreen(screen);
-      const { key, name, options, componentPropsBuilder } =
-        ScreenUtils.createNavigationStackProps(screen);
+      const { key, name, options, initialParams } =
+        ScreenUtils.createNavigationStackProps(screen, navigatorProps);
 
       return (
-        <Stack.Screen key={key} name={name} options={options}>
-          {(props) => component(componentPropsBuilder(navigatorProps, props))}
-        </Stack.Screen>
+        <Stack.Screen
+          key={key}
+          name={name}
+          options={options}
+          component={component}
+          initialParams={initialParams}
+        />
       );
     });
   };

@@ -2,8 +2,8 @@ import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
 
 class ScreenUtils {
-  static navigateToScreen(navigation, screen) {
-    navigation.navigate(screen.name);
+  static navigateToScreen(navigation, screen, params = {}) {
+    navigation.navigate(screen.name, params);
   }
 
   static getLocation(screen) {
@@ -14,7 +14,7 @@ class ScreenUtils {
     }
   }
 
-  static createNavigationStackProps(screen) {
+  static createNavigationStackProps(screen, navigatorProps) {
     let stackPropsDefault = {
       key: screen.name,
       name: screen.name,
@@ -25,9 +25,6 @@ class ScreenUtils {
           backgroundColor: Colors.TOP_BAR_BACKGROUND_COLOR,
         },
         title: '',
-      },
-      componentPropsBuilder: (navigatorProps, stackProps) => {
-        return { ...navigatorProps, ...stackProps };
       },
     };
 
@@ -46,6 +43,9 @@ class ScreenUtils {
       case Screen.DASHBOARD:
         props = {
           ...stackPropsDefault,
+          initialParams: {
+            user: navigatorProps.user,
+          },
           options: {
             ...stackPropsDefault.options,
             headerShown: false,
@@ -67,14 +67,8 @@ class ScreenUtils {
       case Screen.PROFILE_ATTRIBUTES:
         props = {
           ...stackPropsDefault,
-          componentPropsBuilder: (navigatorProps, stackProps) => {
-            return {
-              ...stackPropsDefault.componentPropsBuilder(
-                navigatorProps,
-                stackProps
-              ),
-              screen,
-            };
+          initialParams: {
+            screen: screen,
           },
         };
         break;
