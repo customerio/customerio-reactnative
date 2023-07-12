@@ -1,3 +1,10 @@
+### [3.1.2](https://github.com/customerio/customerio-reactnative/compare/3.1.1...3.1.2) (2023-07-12)
+
+
+### Bug Fixes
+
+* gist migration and crash fix ([#165](https://github.com/customerio/customerio-reactnative/issues/165)) ([01a3074](https://github.com/customerio/customerio-reactnative/commit/01a3074b2e7f1897b55d4e28b825e849e7e1e693))
+
 ### [3.1.1](https://github.com/customerio/customerio-reactnative/compare/3.1.0...3.1.1) (2023-07-10)
 
 
