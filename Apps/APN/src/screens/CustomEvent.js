@@ -22,17 +22,17 @@ const CustomEvent = () => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Event Name</Text>
-          <TextInput style={styles.input} placeholder="Enter value" />
+          <TextInput style={styles.input} placeholder="" />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Property Name</Text>
-          <TextInput style={styles.input} placeholder="Enter value" />
+          <TextInput style={styles.input} placeholder="" />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Property Value</Text>
-          <TextInput style={styles.input} placeholder="Enter value" />
+          <TextInput style={styles.input} placeholder="" />
         </View>
 
         <TouchableOpacity style={styles.sendButton} onPress={handleSendPressed}>
@@ -55,12 +55,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    alignSelf: 'left',
+    alignSelf: 'flex-start',
     color: Colors.TEXT_COLOR_PRIMARY,
     fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 20,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
-    marginBottom: 16,
+    marginBottom: 32,
   },
   inputContainer: {
     alignItems: 'center',
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
-    textTransform: 'uppercase',
   },
 });
 

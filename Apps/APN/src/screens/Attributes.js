@@ -77,12 +77,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    alignSelf: 'left',
+    alignSelf: 'flex-start',
     color: Colors.TEXT_COLOR_PRIMARY,
     fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 20,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
-    marginBottom: 16,
+    marginBottom: 32,
   },
   inputContainer: {
     alignItems: 'center',
@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
-    textTransform: 'uppercase',
   },
 });
 
