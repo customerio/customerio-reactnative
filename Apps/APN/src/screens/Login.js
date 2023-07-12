@@ -60,12 +60,7 @@ const Login = ({ navigation }) => {
     // Save user to storage
     await storageService.saveUser(user);
     // Identify user to Customer.io
-    const customerIOService = new CustomerIOService();
-    customerIOService.identifyUser(user.email, {
-      first_name: user.name,
-      email: user.email,
-      is_guest: user.isGuest,
-    });
+    CustomerIOService.identifyUser(user);
     ScreenUtils.navigateToScreen(navigation, Screen.DASHBOARD);
   };
 

@@ -1,8 +1,3 @@
-import {
-  CioLogLevel,
-  CustomerIOEnv,
-  CustomerioConfig,
-} from 'customerio-reactnative';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import Screen from './src/data/enums/Screen';
@@ -35,25 +30,8 @@ export default function App() {
       const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(
         await storageService.loadSDKConfigurations()
       );
-
-      const env = new CustomerIOEnv();
-      env.siteId = sdkConfig.siteId;
-      env.apiKey = sdkConfig.apiKey;
-
-      const config = new CustomerioConfig();
-      if (sdkConfig.debugMode) {
-        config.logLevel = CioLogLevel.debug;
-      }
-      if (sdkConfig.trackingApiUrl) {
-        config.trackingApiUrl = sdkConfig.trackingApiUrl;
-      }
-      config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-      config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-      config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
+      await CustomerIOService.initializeSDK(sdkConfig);
       setScreenTrackingEnabled(sdkConfig.trackScreens);
-
-      const customerIOService = new CustomerIOService();
-      customerIOService.initializeSDK(env, config);
     };
 
     validateUserState();

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -11,8 +12,12 @@ import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
+import CustomerIOService from '../services/CustomerIOService';
 
 const Attributes = ({ screen }) => {
+  const [attributeName, setAttributeName] = useState('');
+  const [attributeValue, setAttributeValue] = useState('');
+
   let title, sendButtonText;
   switch (screen) {
     case Screen.DEVICE_ATTRIBUTES:
@@ -29,12 +34,50 @@ const Attributes = ({ screen }) => {
       throw new Error(`Invalid screen prop: ${screen}.`);
   }
 
-  const handleSendPressed = () => {
+  const isFormValid = () => {
+    let message;
+    let emptyFieldMessageBuilder = (fieldName) => {
+      return `${fieldName} cannot be empty`;
+    };
+
+    if (!attributeName) {
+      message = emptyFieldMessageBuilder('Attribute Name');
+    } else if (!attributeValue) {
+      message = emptyFieldMessageBuilder('Attribute Value');
+    }
+
+    if (message) {
+      Alert.alert(
+        'Error',
+        message,
+        [
+          {
+            text: 'OK',
+            // eslint-disable-next-line prettier/prettier
+            onPress: () => { },
+          },
+        ],
+        {
+          cancelable: true,
+        }
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleSendPress = () => {
+    if (!isFormValid()) {
+      return;
+    }
+
     switch (screen) {
       case Screen.DEVICE_ATTRIBUTES:
+        CustomerIOService.setDeviceAttribute(attributeName, attributeValue);
         break;
 
       case Screen.PROFILE_ATTRIBUTES:
+        CustomerIOService.setProfileAttribute(attributeName, attributeValue);
         break;
 
       default:
@@ -49,15 +92,25 @@ const Attributes = ({ screen }) => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Attribute Name</Text>
-          <TextInput style={styles.input} placeholder="" />
+          <TextInput
+            style={styles.input}
+            placeholder=""
+            onChangeText={(text) => setAttributeName(text)}
+            value={attributeName}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Attribute Value</Text>
-          <TextInput style={styles.input} placeholder="" />
+          <TextInput
+            style={styles.input}
+            placeholder=""
+            onChangeText={(text) => setAttributeValue(text)}
+            value={attributeValue}
+          />
         </View>
 
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendPressed}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
           <Text style={styles.sendButtonText}>{sendButtonText}</Text>
         </TouchableOpacity>
       </View>

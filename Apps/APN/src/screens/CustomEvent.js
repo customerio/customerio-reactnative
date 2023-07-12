@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -10,9 +11,49 @@ import { ScrollView } from 'react-native-gesture-handler';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
+import CustomerIOService from '../services/CustomerIOService';
 
 const CustomEvent = () => {
-  const handleSendPressed = () => {
+  const [eventName, setEventName] = useState('');
+  const [propertyName, setPropertyName] = useState('');
+  const [propertyValue, setPropertyValue] = useState('');
+
+  const isFormValid = () => {
+    let message;
+    let emptyFieldMessageBuilder = (fieldName) => {
+      return `${fieldName} cannot be empty`;
+    };
+
+    if (!eventName) {
+      message = emptyFieldMessageBuilder('Event Name');
+    }
+
+    if (message) {
+      Alert.alert(
+        'Error',
+        message,
+        [
+          {
+            text: 'OK',
+            // eslint-disable-next-line prettier/prettier
+            onPress: () => { },
+          },
+        ],
+        {
+          cancelable: true,
+        }
+      );
+      return false;
+    }
+    return true;
+  };
+
+  const handleSendPress = () => {
+    if (!isFormValid()) {
+      return;
+    }
+
+    CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
   };
 
   return (
@@ -22,20 +63,35 @@ const CustomEvent = () => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Event Name</Text>
-          <TextInput style={styles.input} placeholder="" />
+          <TextInput
+            style={styles.input}
+            placeholder=""
+            onChangeText={(text) => setEventName(text)}
+            value={eventName}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Property Name</Text>
-          <TextInput style={styles.input} placeholder="" />
+          <TextInput
+            style={styles.input}
+            placeholder=""
+            onChangeText={(text) => setPropertyName(text)}
+            value={propertyName}
+          />
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Property Value</Text>
-          <TextInput style={styles.input} placeholder="" />
+          <TextInput
+            style={styles.input}
+            placeholder=""
+            onChangeText={(text) => setPropertyValue(text)}
+            value={propertyValue}
+          />
         </View>
 
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendPressed}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
           <Text style={styles.sendButtonText}>Send Event Button</Text>
         </TouchableOpacity>
       </View>

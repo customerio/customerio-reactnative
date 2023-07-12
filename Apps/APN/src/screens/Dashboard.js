@@ -11,8 +11,6 @@ import StorageService from '../services/StorageService';
 import ScreenUtils from '../utils/ScreenUtils';
 
 const Dashboard = ({ navigation, user }) => {
-  const customerIOService = new CustomerIOService();
-
   const handleSettingsPress = () => {
     ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
   };
@@ -28,7 +26,7 @@ const Dashboard = ({ navigation, user }) => {
       case ActionItem.SIGN_OUT:
         const storageService = new StorageService();
         await storageService.clearUser();
-        await customerIOService.clearUserIdentity();
+        CustomerIOService.clearUserIdentify();
         ScreenUtils.navigateToScreen(navigation, Screen.LOGIN);
         break;
 
