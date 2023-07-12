@@ -8,14 +8,14 @@ import {
   View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import BuildInfoText from '../src/components/BuildInfoText';
-import * as Colors from '../src/constants/Colors';
-import * as Fonts from '../src/constants/Fonts';
-import * as Sizes from '../src/constants/Sizes';
-import User from '../src/data/models/user';
-import CustomerIOService from '../src/services/CustomerIOService';
-import StorageService from '../src/services/StorageService';
-import Screen from '../src/data/enums/Screen';
+import BuildInfoText from '../components/BuildInfoText';
+import * as Colors from '../constants/Colors';
+import * as Fonts from '../constants/Fonts';
+import * as Sizes from '../constants/Sizes';
+import User from '../data/models/user';
+import CustomerIOService from '../services/CustomerIOService';
+import StorageService from '../services/StorageService';
+import Screen from '../data/enums/Screen';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -76,7 +76,7 @@ const Login = ({ navigation }) => {
           onPress={handleSettingsPress}
         >
           <Image
-            source={require('../assets/images/black-settings-button.png')}
+            source={require('../../assets/images/black-settings-button.png')}
             style={styles.settingsIcon}
           />
         </TouchableOpacity>

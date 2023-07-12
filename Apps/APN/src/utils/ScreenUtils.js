@@ -1,9 +1,9 @@
-import Login from '../../components/Login';
 import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
 import Attributes from '../screens/Attributes';
 import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
+import Login from '../screens/Login';
 import Settings from '../screens/Settings';
 
 class ScreenUtils {
