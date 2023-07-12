@@ -1,6 +1,8 @@
 import Login from '../../components/Login';
 import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
+import Attributes from '../screens/Attributes';
+import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Settings from '../screens/Settings';
 
@@ -25,60 +27,91 @@ class ScreenUtils {
         return Settings;
 
       case Screen.CUSTOM_EVENTS:
-        return Settings;
+        return CustomEvent;
 
       case Screen.DEVICE_ATTRIBUTES:
-        return Settings;
+        return Attributes;
 
       case Screen.PROFILE_ATTRIBUTES:
-        return Settings;
+        return Attributes;
 
       default:
         throw new Error(`Unknown screen: ${screen}`);
     }
   }
 
-  static createStack(screen) {
-    let stack = {
+  static createNavigationStackProps(screen) {
+    let stackPropsDefault = {
+      key: screen.name,
       name: screen.name,
       options: {
         gestureEnabled: true,
+        headerShadowVisible: false,
         headerStyle: {
           backgroundColor: Colors.TOP_BAR_BACKGROUND_COLOR,
         },
         title: '',
       },
       component: ScreenUtils.getComponent(screen),
+      componentPropsBuilder: (navigatorProps, stackProps) => {
+        return { ...navigatorProps, ...stackProps };
+      },
     };
+
+    let props;
     switch (screen) {
       case Screen.LOGIN:
-        stack.options = {
-          ...stack.options,
-          headerShown: false,
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            headerShown: false,
+          },
         };
         break;
 
       case Screen.DASHBOARD:
-        stack.options = {
-          ...stack.options,
-          headerShown: false,
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            headerShown: false,
+          },
         };
         break;
 
       case Screen.SETTINGS:
-        stack.options = {
-          ...stack.options,
-          title: 'Settings',
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            title: 'Settings',
+          },
+        };
+        break;
+
+      case Screen.DEVICE_ATTRIBUTES:
+      case Screen.PROFILE_ATTRIBUTES:
+        props = {
+          ...stackPropsDefault,
+          componentPropsBuilder: (navigatorProps, stackProps) => {
+            return {
+              ...stackPropsDefault.componentPropsBuilder(
+                navigatorProps,
+                stackProps
+              ),
+              screen,
+            };
+          },
         };
         break;
 
       case Screen.CUSTOM_EVENTS:
-      case Screen.DEVICE_ATTRIBUTES:
-      case Screen.PROFILE_ATTRIBUTES:
       default:
+        props = stackPropsDefault;
         break;
     }
-    return stack;
+    return props;
   }
 
   static isAuthenticatedViewOnly(screen) {

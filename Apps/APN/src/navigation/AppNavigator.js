@@ -32,11 +32,12 @@ const AppNavigator = (navigatorProps) => {
 
   const renderScreenComponents = () => {
     return screens.map((screen) => {
-      const { options, component } = ScreenUtils.createStack(screen);
+      const { key, name, options, component, componentPropsBuilder } =
+        ScreenUtils.createNavigationStackProps(screen);
 
       return (
-        <Stack.Screen key={screen.name} name={screen.name} options={options}>
-          {(props) => component({ ...navigatorProps, ...props })}
+        <Stack.Screen key={key} name={name} options={options}>
+          {(props) => component(componentPropsBuilder(navigatorProps, props))}
         </Stack.Screen>
       );
     });
