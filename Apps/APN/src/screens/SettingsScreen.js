@@ -10,83 +10,13 @@ import {
   View,
 } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import { useThemeContext } from '../../theme';
+import * as Colors from '../constants/Colors';
+import * as Fonts from '../constants/Fonts';
+import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import StorageService from '../services/StorageService';
 
 const SettingsScreen = ({ navigation }) => {
-  const theme = useThemeContext();
-
-  const styles = StyleSheet.create({
-    container: theme.styles.container,
-    content: {
-      flexGrow: 1,
-      paddingHorizontal: 16,
-      paddingTop: 8,
-      paddingBottom: 16,
-    },
-    section: {
-      marginBottom: 24,
-    },
-    sectionLabel: {
-      ...theme.styles.text,
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 12,
-    },
-    inputRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    inputLabel: {
-      ...theme.styles.text,
-      marginRight: 16,
-    },
-    input: {
-      ...theme.styles.input,
-      flex: 1,
-    },
-    switchRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 16,
-    },
-    switchLabel: {
-      ...theme.styles.text,
-      flex: 1,
-      marginRight: 8,
-      textAlign: 'left',
-    },
-    switch: {},
-    buttonContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 24,
-    },
-    saveButton: {
-      ...theme.styles.filledButton,
-      width: 320,
-    },
-    saveButtonText: {
-      ...theme.styles.filledButtonText,
-      textTransform: 'uppercase',
-    },
-    restoreDefaultsButton: {
-      ...theme.styles.translucentButton,
-      marginTop: 16,
-      width: 320,
-    },
-    restoreDefaultsButtonText: theme.styles.translucentButtonText,
-    note: {
-      ...theme.styles.text,
-      marginTop: 8,
-      fontSize: 12,
-      color: 'gray',
-      textAlign: 'center',
-    },
-  });
-
   const defaultConfig = CustomerIoSDKConfig.createDefault();
   const storageService = new StorageService();
 
@@ -342,5 +272,108 @@ const SettingsScreen = ({ navigation }) => {
     </View>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.CONTAINER_BACKGROUND_COLOR,
+    flex: 1,
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionLabel: {
+    color: Colors.TEXT_COLOR_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 16,
+    fontWeight: Fonts.FONT_WEIGHT_BOLD,
+    marginBottom: 12,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  inputLabel: {
+    color: Colors.TEXT_COLOR_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 14,
+    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
+    marginRight: 16,
+  },
+  input: {
+    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
+    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
+    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
+    flex: 1,
+    height: Sizes.INPUT_FIELD_HEIGHT,
+    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
+    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  switchLabel: {
+    color: Colors.TEXT_COLOR_PRIMARY,
+    flex: 1,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 14,
+    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
+    marginRight: 8,
+    textAlign: 'left',
+  },
+  switch: {},
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  saveButton: {
+    backgroundColor: Colors.PRIMARY_COLOR,
+    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
+    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
+    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
+    maxWidth: Sizes.BUTTON_MAX_WIDTH,
+    width: Sizes.BUTTON_MAX_WIDTH,
+  },
+  saveButtonText: {
+    color: Colors.TEXT_COLOR_ON_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
+    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  restoreDefaultsButton: {
+    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
+    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
+    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
+    marginTop: 16,
+    maxWidth: Sizes.BUTTON_MAX_WIDTH,
+    width: Sizes.BUTTON_MAX_WIDTH,
+  },
+  restoreDefaultsButtonText: {
+    color: Colors.SECONDARY_COLOR,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
+    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    textAlign: 'center',
+  },
+  note: {
+    color: Colors.TEXT_COLOR_TERTIARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 12,
+    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+});
 
 export default SettingsScreen;

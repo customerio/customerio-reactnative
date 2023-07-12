@@ -9,7 +9,6 @@ import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
 import AppNavigator from './src/navigation/AppNavigator';
 import CustomerIOService from './src/services/CustomerIOService';
 import StorageService from './src/services/StorageService';
-import { ThemeContext, getDefaultTheme } from './theme';
 
 export default function App() {
   const storageService = new StorageService();
@@ -65,11 +64,9 @@ export default function App() {
   }
 
   return (
-    <ThemeContext.Provider value={getDefaultTheme()}>
-      <AppNavigator
-        firstScreen={firstScreen}
-        isScreenTrackingEnabled={isScreenTrackingEnabled}
-      />
-    </ThemeContext.Provider>
+    <AppNavigator
+      firstScreen={firstScreen}
+      isScreenTrackingEnabled={isScreenTrackingEnabled}
+    />
   );
 }

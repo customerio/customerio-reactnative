@@ -9,56 +9,14 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../src/components/BuildInfoText';
+import * as Colors from '../src/constants/Colors';
+import * as Fonts from '../src/constants/Fonts';
+import * as Sizes from '../src/constants/Sizes';
 import User from '../src/data/models/user';
 import CustomerIOService from '../src/services/CustomerIOService';
 import StorageService from '../src/services/StorageService';
-import { useThemeContext } from '../theme';
 
 const Login = ({ navigation }) => {
-  const theme = useThemeContext();
-
-  const styles = StyleSheet.create({
-    container: theme.styles.container,
-    topBar: theme.styles.topBar,
-    settingsButton: {
-      padding: 16,
-    },
-    settingsIcon: {
-      width: 24,
-      height: 24,
-    },
-    title: {
-      ...theme.styles.text,
-      fontSize: 24,
-      fontWeight: '400',
-      marginTop: 48,
-      alignSelf: 'center',
-    },
-    spaceTop: {
-      flex: 0.6,
-    },
-    spaceBottom: {
-      flex: 1,
-    },
-    form: {
-      alignItems: 'center',
-    },
-    input: theme.styles.input,
-    loginButton: {
-      ...theme.styles.filledButton,
-      marginTop: 32,
-    },
-    loginButtonText: {
-      ...theme.styles.filledButtonText,
-      textTransform: 'uppercase',
-    },
-    randomLoginButton: {
-      ...theme.styles.translucentButton,
-      marginTop: 16,
-    },
-    randomLoginButtonText: theme.styles.translucentButtonText,
-  });
-
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -164,5 +122,83 @@ const Login = ({ navigation }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.CONTAINER_BACKGROUND_COLOR,
+    flex: 1,
+  },
+  topBar: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: Sizes.TOP_BAR_HEIGHT,
+    justifyContent: 'flex-end',
+    paddingHorizontal: Sizes.TOP_BAR_PADDING_HORIZONTAL,
+  },
+  settingsButton: {
+    padding: Sizes.IMAGE_BUTTON_PADDING,
+  },
+  settingsIcon: {
+    width: Sizes.IMAGE_BUTTON_ICON_SIZE,
+    height: Sizes.IMAGE_BUTTON_ICON_SIZE,
+  },
+  title: {
+    alignSelf: 'center',
+    color: Colors.TEXT_COLOR_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 24,
+    fontWeight: Colors.FONT_WEIGHT_REGULAR,
+    marginTop: 48,
+  },
+  spaceTop: {
+    flex: 0.6,
+  },
+  spaceBottom: {
+    flex: 1,
+  },
+  form: {
+    alignItems: 'center',
+  },
+  input: {
+    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
+    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
+    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
+    height: Sizes.INPUT_FIELD_HEIGHT,
+    marginVertical: 10,
+    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
+    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
+    width: '80%',
+  },
+  loginButton: {
+    backgroundColor: Colors.PRIMARY_COLOR,
+    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
+    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
+    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
+    marginTop: 32,
+    maxWidth: Sizes.BUTTON_MAX_WIDTH,
+    width: '80%',
+  },
+  loginButtonText: {
+    color: Colors.TEXT_COLOR_ON_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    textAlign: 'center',
+    textTransform: 'uppercase',
+  },
+  randomLoginButton: {
+    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
+    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
+    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
+    marginTop: 16,
+    maxWidth: Sizes.BUTTON_MAX_WIDTH,
+    width: '80%',
+  },
+  randomLoginButtonText: {
+    color: Colors.SECONDARY_COLOR,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    textAlign: 'center',
+  },
+});
 
 export default Login;

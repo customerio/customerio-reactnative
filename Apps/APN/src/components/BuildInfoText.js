@@ -1,27 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
-import { useThemeContext } from '../../theme';
+import * as Colors from '../constants/Colors';
+import * as Fonts from '../constants/Fonts';
 
 const BuildInfoText = () => {
-  const theme = useThemeContext();
-
-  const styles = StyleSheet.create({
-    buildInfoContainer: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 16,
-      marginBottom: 32,
-    },
-    buildInfoText: {
-      ...theme.styles.text,
-      fontSize: 12,
-      fontWeight: '400',
-      alignSelf: 'center',
-      textAlign: 'center',
-    },
-  });
-
   const [buildInfo, setBuildInfo] = useState('');
 
   useEffect(() => {
@@ -40,5 +23,22 @@ const BuildInfoText = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  buildInfoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 32,
+    paddingHorizontal: 16,
+  },
+  buildInfoText: {
+    alignSelf: 'center',
+    color: Colors.TEXT_COLOR_PRIMARY,
+    fontFamily: Fonts.FONT_FAMILY_REGULAR,
+    fontSize: 12,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+});
 
 export default BuildInfoText;
