@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -8,8 +8,10 @@ import {
   View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import CioManager from '../manager/CioManager';
-import CioKeyValueStorage from '../manager/KeyValueStorage';
+import BuildInfoText from '../src/components/BuildInfoText';
+import User from '../src/data/models/user';
+import CustomerIOService from '../src/services/CustomerIOService';
+import StorageService from '../src/services/StorageService';
 import { useThemeContext } from '../theme';
 
 const Login = ({ navigation }) => {
@@ -55,31 +57,10 @@ const Login = ({ navigation }) => {
       marginTop: 16,
     },
     randomLoginButtonText: theme.styles.translucentButtonText,
-    footerText: {
-      fontSize: 12,
-      fontWeight: '400',
-      marginBottom: 50,
-      alignSelf: 'center',
-    },
   });
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [buildInfo, setBuildInfo] = useState('Fetching build info...');
-  const cioManager = new CioManager();
-
-  useEffect(() => {
-    const getBuildInfo = async () => {
-      try {
-        const version = await cioManager.buildInfo();
-        setBuildInfo(version);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    getBuildInfo();
-  });
 
   const handleSettingsPress = () => {
     navigation.navigate('SettingsScreen');
@@ -91,11 +72,7 @@ const Login = ({ navigation }) => {
       alert('Please enter valid email');
       return;
     }
-    performLogin({
-      name: name,
-      email: email,
-      isGuest: false,
-    });
+    performLogin(new User(email, { name: name, isGuest: false }));
   };
 
   const validateEmail = (text) => {
@@ -113,25 +90,22 @@ const Login = ({ navigation }) => {
       () => whitelist[Math.floor(Math.random() * whitelist.length)]
     );
     const username = random.join('');
-    performLogin({
-      name: '',
-      email: `${username}@customer.io`,
-      isGuest: true,
-    });
+    performLogin(
+      new User(`${username}@customer.io`, { name: '', isGuest: true })
+    );
   };
 
-  const performLogin = (user) => {
-    const data = {
+  const performLogin = async (user) => {
+    const storageService = new StorageService();
+    // Save user to storage
+    await storageService.saveUser(user);
+    // Identify user to Customer.io
+    const customerIOService = new CustomerIOService();
+    customerIOService.identifyUser(user.email, {
       first_name: user.name,
       email: user.email,
       is_guest: user.isGuest,
-    };
-    cioManager.identifyUser(email.trim(), data);
-
-    // Save login status
-    const keyStorageObj = new CioKeyValueStorage();
-    keyStorageObj.saveLoginStatus(true);
-    keyStorageObj.saveLoginDetail({ name: name.trim(), id: email.trim() });
+    });
     navigation.navigate('Dashboard');
   };
 
@@ -185,7 +159,7 @@ const Login = ({ navigation }) => {
 
         <View style={styles.spaceBottom} />
 
-        <Text style={styles.footerText}>{buildInfo}</Text>
+        <BuildInfoText style={styles.footerText} />
       </ScrollView>
     </View>
   );
