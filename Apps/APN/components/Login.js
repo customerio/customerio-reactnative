@@ -15,13 +15,14 @@ import * as Sizes from '../src/constants/Sizes';
 import User from '../src/data/models/user';
 import CustomerIOService from '../src/services/CustomerIOService';
 import StorageService from '../src/services/StorageService';
+import Screen from '../src/data/enums/Screen';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
   const handleSettingsPress = () => {
-    navigation.navigate('SettingsScreen');
+    navigation.navigate(Screen.SETTINGS.name);
   };
 
   const handleLoginPress = () => {
@@ -64,7 +65,7 @@ const Login = ({ navigation }) => {
       email: user.email,
       is_guest: user.isGuest,
     });
-    navigation.navigate('Dashboard');
+    navigation.navigate(Screen.DASHBOARD.name);
   };
 
   return (

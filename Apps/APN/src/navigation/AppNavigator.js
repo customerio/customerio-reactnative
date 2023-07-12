@@ -5,25 +5,41 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CustomerIO } from 'customerio-reactnative';
 import React, { useRef } from 'react';
-import CustomDataScreen from '../../components/CustomDataScreen';
-import Dashboard from '../../components/Dashboard';
-import Deeplinks from '../../components/Deeplink';
-import Login from '../../components/Login';
-import Settings from '../screens/Settings';
+import Screen from '../data/enums/Screen';
+import ScreenUtils from '../utils/ScreenUtils';
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = ({ firstScreen, isScreenTrackingEnabled }) => {
+const AppNavigator = (navigatorProps) => {
+  const { initialRouteName, screenTrackingEnabled } = navigatorProps;
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
-  const config = {
-    screens: {
-      Deeplinks: 'deeplink',
-    },
-  };
+
+  const screens = Object.values(Screen);
+  const deepLinkingSupportedScreens = screens.filter(
+    (item) => item.supportDeepLinking === true
+  );
+  const linkingScreensConfig = {};
+  for (const screen of deepLinkingSupportedScreens) {
+    linkingScreensConfig[ScreenUtils.getComponent(screen)] = screen.name;
+  }
   const linking = {
     prefixes: ['apn-rn-sample://'],
-    config,
+    config: {
+      screens: linkingScreensConfig,
+    },
+  };
+
+  const renderScreenComponents = () => {
+    return screens.map((screen) => {
+      const { options, component } = ScreenUtils.createStack(screen);
+
+      return (
+        <Stack.Screen key={screen.name} name={screen.name} options={options}>
+          {(props) => component({ ...navigatorProps, ...props })}
+        </Stack.Screen>
+      );
+    });
   };
 
   return (
@@ -34,7 +50,7 @@ const AppNavigator = ({ firstScreen, isScreenTrackingEnabled }) => {
         routeNameRef.current = navigationRef.getCurrentRoute().name;
       }}
       onStateChange={async () => {
-        if (isScreenTrackingEnabled) {
+        if (screenTrackingEnabled) {
           const previousRouteName = routeNameRef.current;
           const currentRouteName = navigationRef.getCurrentRoute().name;
 
@@ -45,51 +61,8 @@ const AppNavigator = ({ firstScreen, isScreenTrackingEnabled }) => {
         }
       }}
     >
-      <Stack.Navigator initialRouteName={firstScreen}>
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-            gestureDirection: 'vertical',
-          }}
-        />
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-          }}
-        />
-        <Stack.Screen
-          name="CustomDataScreen"
-          component={CustomDataScreen}
-          options={{
-            title: '',
-            headerStyle: {
-              backgroundColor: '#ffffff',
-            },
-          }}
-        />
-        <Stack.Screen
-          name="Deeplinks"
-          component={Deeplinks}
-          options={{
-            title: '',
-          }}
-        />
-        <Stack.Screen
-          name="SettingsScreen"
-          component={Settings}
-          options={{
-            title: '',
-            headerStyle: {
-              // backgroundColor: '#ffffff'
-            },
-          }}
-        />
+      <Stack.Navigator initialRouteName={initialRouteName}>
+        {renderScreenComponents()}
       </Stack.Navigator>
     </NavigationContainer>
   );
