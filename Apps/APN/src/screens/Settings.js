@@ -16,7 +16,7 @@ import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import StorageService from '../services/StorageService';
 
-const SettingsScreen = ({ navigation }) => {
+const Settings = ({ navigation }) => {
   const defaultConfig = CustomerIoSDKConfig.createDefault();
   const storageService = new StorageService();
 
@@ -376,4 +376,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen;
+export default Settings;

@@ -9,7 +9,7 @@ import CustomDataScreen from '../../components/CustomDataScreen';
 import Dashboard from '../../components/Dashboard';
 import Deeplinks from '../../components/Deeplink';
 import Login from '../../components/Login';
-import SettingsScreen from '../screens/SettingsScreen';
+import Settings from '../screens/Settings';
 
 const Stack = createNativeStackNavigator();
 
@@ -82,7 +82,7 @@ const AppNavigator = ({ firstScreen, isScreenTrackingEnabled }) => {
         />
         <Stack.Screen
           name="SettingsScreen"
-          component={SettingsScreen}
+          component={Settings}
           options={{
             title: '',
             headerStyle: {
