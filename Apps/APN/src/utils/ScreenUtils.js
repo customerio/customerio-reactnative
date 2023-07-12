@@ -1,10 +1,5 @@
 import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
-import Attributes from '../screens/Attributes';
-import CustomEvent from '../screens/CustomEvent';
-import Dashboard from '../screens/Dashboard';
-import Login from '../screens/Login';
-import Settings from '../screens/Settings';
 
 class ScreenUtils {
   static navigateToScreen(navigation, screen) {
@@ -16,31 +11,6 @@ class ScreenUtils {
       return screen.path;
     } else {
       return `${Screen.DASHBOARD.path}${screen.path}`;
-    }
-  }
-
-  static getComponent(screen) {
-    switch (screen) {
-      case Screen.LOGIN:
-        return Login;
-
-      case Screen.DASHBOARD:
-        return Dashboard;
-
-      case Screen.SETTINGS:
-        return Settings;
-
-      case Screen.CUSTOM_EVENTS:
-        return CustomEvent;
-
-      case Screen.DEVICE_ATTRIBUTES:
-        return Attributes;
-
-      case Screen.PROFILE_ATTRIBUTES:
-        return Attributes;
-
-      default:
-        throw new Error(`Unknown screen: ${screen}`);
     }
   }
 
@@ -56,7 +26,6 @@ class ScreenUtils {
         },
         title: '',
       },
-      component: ScreenUtils.getComponent(screen),
       componentPropsBuilder: (navigatorProps, stackProps) => {
         return { ...navigatorProps, ...stackProps };
       },

@@ -6,6 +6,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CustomerIO } from 'customerio-reactnative';
 import React, { useRef } from 'react';
 import Screen from '../data/enums/Screen';
+import Attributes from '../screens/Attributes';
+import CustomEvent from '../screens/CustomEvent';
+import Dashboard from '../screens/Dashboard';
+import Login from '../screens/Login';
+import Settings from '../screens/Settings';
 import ScreenUtils from '../utils/ScreenUtils';
 
 const Stack = createNativeStackNavigator();
@@ -15,13 +20,36 @@ const AppNavigator = (navigatorProps) => {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
 
+  const getComponentForScreen = (screen) => {
+    switch (screen) {
+      case Screen.LOGIN:
+        return Login;
+
+      case Screen.DASHBOARD:
+        return Dashboard;
+
+      case Screen.SETTINGS:
+        return Settings;
+
+      case Screen.CUSTOM_EVENTS:
+        return CustomEvent;
+
+      case Screen.DEVICE_ATTRIBUTES:
+      case Screen.PROFILE_ATTRIBUTES:
+        return Attributes;
+
+      default:
+        throw new Error(`Unknown screen: ${screen}`);
+    }
+  };
+
   const screens = Object.values(Screen);
   const deepLinkingSupportedScreens = screens.filter(
     (item) => item.supportDeepLinking === true
   );
   const linkingScreensConfig = {};
   for (const screen of deepLinkingSupportedScreens) {
-    linkingScreensConfig[ScreenUtils.getComponent(screen)] = screen.name;
+    linkingScreensConfig[getComponentForScreen(screen)] = screen.name;
   }
   const linking = {
     prefixes: ['apn-rn-sample://'],
@@ -32,7 +60,8 @@ const AppNavigator = (navigatorProps) => {
 
   const renderScreenComponents = () => {
     return screens.map((screen) => {
-      const { key, name, options, component, componentPropsBuilder } =
+      const component = getComponentForScreen(screen);
+      const { key, name, options, componentPropsBuilder } =
         ScreenUtils.createNavigationStackProps(screen);
 
       return (
