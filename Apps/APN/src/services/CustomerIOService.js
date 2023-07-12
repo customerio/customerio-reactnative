@@ -56,6 +56,14 @@ class CustomerIOService {
     data[name] = value;
     CustomerIO.setProfileAttributes(data);
   }
+
+  static getPushPermissionStatus() {
+    return CustomerIO.getPushPermissionStatus();
+  }
+
+  static showPromptForPushNotifications(options) {
+    return CustomerIO.showPromptForPushNotifications(options);
+  }
 }
 
 export default CustomerIOService;

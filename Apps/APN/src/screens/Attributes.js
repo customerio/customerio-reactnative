@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -13,6 +12,7 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
+import AlertUtils from '../utils/AlertUtils';
 
 const Attributes = ({ route }) => {
   const { screen } = route.params;
@@ -49,20 +49,10 @@ const Attributes = ({ route }) => {
     }
 
     if (message) {
-      Alert.alert(
-        'Error',
-        message,
-        [
-          {
-            text: 'OK',
-            // eslint-disable-next-line prettier/prettier
-            onPress: () => { },
-          },
-        ],
-        {
-          cancelable: true,
-        }
-      );
+      AlertUtils.showAlert({
+        title: 'Error',
+        message: message,
+      });
       return false;
     }
     return true;

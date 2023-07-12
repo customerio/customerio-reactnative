@@ -1,5 +1,13 @@
+import { PushPermissionStatus } from 'customerio-reactnative';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
 import * as Colors from '../constants/Colors';
@@ -8,10 +16,75 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
+import AlertUtils from '../utils/AlertUtils';
 import ScreenUtils from '../utils/ScreenUtils';
+
+const pushPermissionAlertTitle = 'Push Permission';
 
 const Dashboard = ({ navigation, route }) => {
   const { user } = route.params;
+
+  const handlePushPermissionCheck = () => {
+    CustomerIOService.getPushPermissionStatus().then((status) => {
+      switch (status) {
+        case PushPermissionStatus.Granted:
+          AlertUtils.showAlert({
+            title: pushPermissionAlertTitle,
+            message: 'Push notifications are enabled on this device',
+          });
+          break;
+
+        case PushPermissionStatus.Denied:
+        case PushPermissionStatus.NotDetermined:
+          requestPushPermission();
+          break;
+      }
+    });
+  };
+
+  const requestPushPermission = () => {
+    let options = { ios: { sound: true, badge: true } };
+
+    CustomerIOService.showPromptForPushNotifications(options)
+      .then((status) => {
+        switch (status) {
+          case PushPermissionStatus.Granted:
+            AlertUtils.showAlert({
+              title: pushPermissionAlertTitle,
+              message: 'Push notifications are now enabled on this device',
+            });
+            break;
+
+          case PushPermissionStatus.Denied:
+          case PushPermissionStatus.NotDetermined:
+            AlertUtils.showAlert({
+              title: pushPermissionAlertTitle,
+              message:
+                'Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device.',
+              buttons: [
+                {
+                  text: 'OK',
+                  // eslint-disable-next-line prettier/prettier
+                  onPress: () => { },
+                },
+                {
+                  text: 'Open Settings',
+                  onPress: () => {
+                    Linking.openSettings();
+                  },
+                },
+              ],
+            });
+            break;
+        }
+      })
+      .catch((error) => {
+        AlertUtils.showAlert({
+          title: pushPermissionAlertTitle,
+          message: 'Unable to request permission. Please try again later.',
+        });
+      });
+  };
 
   const handleSettingsPress = () => {
     ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
@@ -23,6 +96,7 @@ const Dashboard = ({ navigation, route }) => {
         break;
 
       case ActionItem.SHOW_PUSH_PROMPT:
+        handlePushPermissionCheck();
         break;
 
       case ActionItem.SIGN_OUT:

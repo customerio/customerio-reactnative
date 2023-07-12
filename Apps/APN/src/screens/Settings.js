@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Switch,
@@ -15,6 +14,7 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import StorageService from '../services/StorageService';
+import AlertUtils from '../utils/AlertUtils';
 
 const Settings = ({ navigation }) => {
   const defaultConfig = CustomerIoSDKConfig.createDefault();
@@ -108,20 +108,10 @@ const Settings = ({ navigation }) => {
     }
 
     if (message) {
-      Alert.alert(
-        'Error',
-        message,
-        [
-          {
-            text: 'OK',
-            // eslint-disable-next-line prettier/prettier
-            onPress: () => { },
-          },
-        ],
-        {
-          cancelable: true,
-        }
-      );
+      AlertUtils.showAlert({
+        title: 'Error',
+        message: message,
+      });
       return false;
     }
     return true;

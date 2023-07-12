@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -12,6 +11,7 @@ import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIOService from '../services/CustomerIOService';
+import AlertUtils from '../utils/AlertUtils';
 
 const CustomEvent = () => {
   const [eventName, setEventName] = useState('');
@@ -29,20 +29,10 @@ const CustomEvent = () => {
     }
 
     if (message) {
-      Alert.alert(
-        'Error',
-        message,
-        [
-          {
-            text: 'OK',
-            // eslint-disable-next-line prettier/prettier
-            onPress: () => { },
-          },
-        ],
-        {
-          cancelable: true,
-        }
-      );
+      AlertUtils.showAlert({
+        title: 'Error',
+        message: message,
+      });
       return false;
     }
     return true;
