@@ -7,6 +7,10 @@ import Login from '../screens/Login';
 import Settings from '../screens/Settings';
 
 class ScreenUtils {
+  static navigateToScreen(navigation, screen) {
+    navigation.navigate(screen.name);
+  }
+
   static getLocation(screen) {
     if (screen === Screen.DASHBOARD || screen === Screen.LOGIN) {
       return screen.path;

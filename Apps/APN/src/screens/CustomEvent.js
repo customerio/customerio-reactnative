@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginRight: 16,
+    minWidth: 100,
   },
   input: {
     borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,

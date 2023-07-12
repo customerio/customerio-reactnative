@@ -8,12 +8,13 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
+import ScreenUtils from '../utils/ScreenUtils';
 
 const Dashboard = ({ navigation, user }) => {
   const customerIOService = new CustomerIOService();
 
   const handleSettingsPress = () => {
-    navigation.navigate(Screen.SETTINGS.name);
+    ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleButtonClick = async (action) => {
@@ -28,13 +29,13 @@ const Dashboard = ({ navigation, user }) => {
         const storageService = new StorageService();
         await storageService.clearUser();
         await customerIOService.clearUserIdentity();
-        navigation.navigate(Screen.LOGIN.name);
+        ScreenUtils.navigateToScreen(navigation, Screen.LOGIN);
         break;
 
       case ActionItem.CUSTOM_EVENT:
       case ActionItem.DEVICE_ATTRIBUTES:
       case ActionItem.PROFILE_ATTRIBUTES:
-        navigation.navigate(action.targetScreen.name);
+        ScreenUtils.navigateToScreen(navigation, action.targetScreen);
         break;
     }
   };

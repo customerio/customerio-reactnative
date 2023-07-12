@@ -12,17 +12,18 @@ import BuildInfoText from '../components/BuildInfoText';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
+import Screen from '../data/enums/Screen';
 import User from '../data/models/user';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
-import Screen from '../data/enums/Screen';
+import ScreenUtils from '../utils/ScreenUtils';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
   const handleSettingsPress = () => {
-    navigation.navigate(Screen.SETTINGS.name);
+    ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleLoginPress = () => {
@@ -65,7 +66,7 @@ const Login = ({ navigation }) => {
       email: user.email,
       is_guest: user.isGuest,
     });
-    navigation.navigate(Screen.DASHBOARD.name);
+    ScreenUtils.navigateToScreen(navigation, Screen.DASHBOARD);
   };
 
   return (
