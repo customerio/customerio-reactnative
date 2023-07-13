@@ -39,7 +39,7 @@ export default function App() {
   const updateUserState = async (user) => {
     setUserState({
       user: user,
-      handleUserStateChanged: handleUserStateChanged,
+      onUserStateChanged: handleUserStateChanged,
     });
   };
 

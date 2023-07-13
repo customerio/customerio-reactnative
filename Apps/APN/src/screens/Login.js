@@ -14,8 +14,8 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import User from '../data/models/user';
-import { navigateToScreen } from '../utils/navigation';
 import { useUserStateContext } from '../state/userState';
+import { navigateToScreen } from '../utils/navigation';
 
 const Login = ({ navigation }) => {
   const { onUserStateChanged } = useUserStateContext();

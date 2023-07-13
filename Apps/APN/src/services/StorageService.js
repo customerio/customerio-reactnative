@@ -61,5 +61,5 @@ export default class StorageService {
   loadUser = async () =>
     this.createUser(await this.loadFromStorage(USER_STATE));
   saveUser = async (user) => this.saveJsonToStorage(USER_STATE, user);
-  clearUser = async () => this.saveToStorage(USER_STATE, null);
+  clearUser = async () => this.saveJsonToStorage(USER_STATE, null);
 }

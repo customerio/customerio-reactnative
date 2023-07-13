@@ -15,10 +15,10 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
+import { useUserStateContext } from '../state/userState';
 import { generateRandomNumber } from '../utils/helpers';
 import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
-import { useUserStateContext } from '../state/userState';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
