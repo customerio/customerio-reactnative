@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 import Snackbar from 'react-native-snackbar';
 
-class PromptUtils {
+class Prompts {
   static showAlert(
     { title, message, buttons, options } = {
       title: null,
@@ -34,4 +34,4 @@ class PromptUtils {
   }
 }
 
-export default PromptUtils;
+export default Prompts;

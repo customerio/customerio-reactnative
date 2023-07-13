@@ -16,7 +16,7 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
-import PromptUtils from '../utils/PromptUtils';
+import Prompts from '../utils/prompts';
 import ScreenUtils from '../utils/ScreenUtils';
 import { generateRandomNumber } from '../utils/helpers';
 
@@ -56,14 +56,14 @@ const Dashboard = ({ navigation, route }) => {
     }
 
     CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
-    PromptUtils.showSnackbar({ text: 'Event sent successfully' });
+    Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
 
   const handlePushPermissionCheck = () => {
     CustomerIOService.getPushPermissionStatus().then((status) => {
       switch (status) {
         case PushPermissionStatus.Granted:
-          PromptUtils.showAlert({
+          Prompts.showAlert({
             title: pushPermissionAlertTitle,
             message: 'Push notifications are enabled on this device',
           });
@@ -84,7 +84,7 @@ const Dashboard = ({ navigation, route }) => {
       .then((status) => {
         switch (status) {
           case PushPermissionStatus.Granted:
-            PromptUtils.showAlert({
+            Prompts.showAlert({
               title: pushPermissionAlertTitle,
               message: 'Push notifications are now enabled on this device',
             });
@@ -92,7 +92,7 @@ const Dashboard = ({ navigation, route }) => {
 
           case PushPermissionStatus.Denied:
           case PushPermissionStatus.NotDetermined:
-            PromptUtils.showAlert({
+            Prompts.showAlert({
               title: pushPermissionAlertTitle,
               message:
                 'Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device.',
@@ -114,7 +114,7 @@ const Dashboard = ({ navigation, route }) => {
         }
       })
       .catch((error) => {
-        PromptUtils.showAlert({
+        Prompts.showAlert({
           title: pushPermissionAlertTitle,
           message: 'Unable to request permission. Please try again later.',
         });
