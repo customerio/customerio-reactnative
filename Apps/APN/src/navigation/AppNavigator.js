@@ -5,13 +5,13 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CustomerIO } from 'customerio-reactnative';
 import React, { useRef } from 'react';
+import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
 import Attributes from '../screens/Attributes';
 import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
-import ScreenUtils from '../utils/ScreenUtils';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +43,73 @@ const AppNavigator = (navigatorProps) => {
     }
   };
 
+  const createNavigationStackProps = (screen) => {
+    let stackPropsDefault = {
+      key: screen.name,
+      name: screen.name,
+      options: {
+        gestureEnabled: true,
+        headerShadowVisible: false,
+        headerStyle: {
+          backgroundColor: Colors.TOP_BAR_BACKGROUND_COLOR,
+        },
+        title: '',
+      },
+    };
+
+    let props;
+    switch (screen) {
+      case Screen.LOGIN:
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            headerShown: false,
+          },
+        };
+        break;
+
+      case Screen.DASHBOARD:
+        props = {
+          ...stackPropsDefault,
+          initialParams: {
+            user: navigatorProps.user,
+          },
+          options: {
+            ...stackPropsDefault.options,
+            headerShown: false,
+          },
+        };
+        break;
+
+      case Screen.SETTINGS:
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            title: 'Settings',
+          },
+        };
+        break;
+
+      case Screen.DEVICE_ATTRIBUTES:
+      case Screen.PROFILE_ATTRIBUTES:
+        props = {
+          ...stackPropsDefault,
+          initialParams: {
+            screen: screen,
+          },
+        };
+        break;
+
+      case Screen.CUSTOM_EVENTS:
+      default:
+        props = stackPropsDefault;
+        break;
+    }
+    return props;
+  };
+
   const screens = Object.values(Screen);
   const deepLinkingSupportedScreens = screens.filter((item) => item.path);
   const linkingScreensConfig = {};
@@ -60,7 +127,7 @@ const AppNavigator = (navigatorProps) => {
     return screens.map((screen) => {
       const component = getComponentForScreen(screen);
       const { key, name, options, initialParams } =
-        ScreenUtils.createNavigationStackProps(screen, navigatorProps);
+        createNavigationStackProps(screen);
 
       return (
         <Stack.Screen

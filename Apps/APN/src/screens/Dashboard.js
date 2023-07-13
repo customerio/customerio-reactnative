@@ -16,9 +16,9 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
-import Prompts from '../utils/prompts';
-import ScreenUtils from '../utils/ScreenUtils';
 import { generateRandomNumber } from '../utils/helpers';
+import { navigateToScreen } from '../utils/navigation';
+import Prompts from '../utils/prompts';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
@@ -122,7 +122,7 @@ const Dashboard = ({ navigation, route }) => {
   };
 
   const handleSettingsPress = () => {
-    ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
+    navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleButtonClick = async (action) => {
@@ -139,13 +139,13 @@ const Dashboard = ({ navigation, route }) => {
         const storageService = new StorageService();
         await storageService.clearUser();
         CustomerIOService.clearUserIdentify();
-        ScreenUtils.navigateToScreen(navigation, Screen.LOGIN);
+        navigateToScreen(navigation, Screen.LOGIN);
         break;
 
       case ActionItem.CUSTOM_EVENT:
       case ActionItem.DEVICE_ATTRIBUTES:
       case ActionItem.PROFILE_ATTRIBUTES:
-        ScreenUtils.navigateToScreen(navigation, action.targetScreen);
+        navigateToScreen(navigation, action.targetScreen);
         break;
     }
   };

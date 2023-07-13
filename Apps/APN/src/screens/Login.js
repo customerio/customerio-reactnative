@@ -16,14 +16,14 @@ import Screen from '../data/enums/Screen';
 import User from '../data/models/user';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
-import ScreenUtils from '../utils/ScreenUtils';
+import { navigateToScreen } from '../utils/navigation';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
   const handleSettingsPress = () => {
-    ScreenUtils.navigateToScreen(navigation, Screen.SETTINGS);
+    navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleLoginPress = () => {
@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
     await storageService.saveUser(user);
     // Identify user to Customer.io
     CustomerIOService.identifyUser(user);
-    ScreenUtils.navigateToScreen(navigation, Screen.DASHBOARD, { user: user });
+    navigateToScreen(navigation, Screen.DASHBOARD, { user: user });
   };
 
   return (
