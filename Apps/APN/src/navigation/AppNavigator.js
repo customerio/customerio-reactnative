@@ -44,9 +44,7 @@ const AppNavigator = (navigatorProps) => {
   };
 
   const screens = Object.values(Screen);
-  const deepLinkingSupportedScreens = screens.filter(
-    (item) => item.supportDeepLinking === true
-  );
+  const deepLinkingSupportedScreens = screens.filter((item) => item.path);
   const linkingScreensConfig = {};
   for (const screen of deepLinkingSupportedScreens) {
     linkingScreensConfig[getComponentForScreen(screen)] = screen.name;
