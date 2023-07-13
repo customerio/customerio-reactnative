@@ -12,6 +12,7 @@ import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
+import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import {
   isAuthenticatedViewOnly,
@@ -21,9 +22,9 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = (navigatorProps) => {
+const AppNavigator = () => {
+  const { config: sdkConfig } = useCustomerIoSdkContext();
   const { user } = useUserStateContext();
-  const { initialRouteName, screenTrackingEnabled } = navigatorProps;
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
 
@@ -114,12 +115,15 @@ const AppNavigator = (navigatorProps) => {
     return props;
   };
 
+  let initialRouteScreen;
   let screens;
   if (user) {
+    initialRouteScreen = Screen.DASHBOARD;
     screens = Object.values(Screen).filter(
       (item) => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item)
     );
   } else {
+    initialRouteScreen = Screen.LOGIN;
     screens = Object.values(Screen).filter(
       (item) => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item)
     );
@@ -162,7 +166,7 @@ const AppNavigator = (navigatorProps) => {
         routeNameRef.current = navigationRef.getCurrentRoute().name;
       }}
       onStateChange={async () => {
-        if (screenTrackingEnabled) {
+        if (sdkConfig.trackScreens) {
           const previousRouteName = routeNameRef.current;
           const currentRouteName = navigationRef.getCurrentRoute().name;
 
@@ -173,7 +177,7 @@ const AppNavigator = (navigatorProps) => {
         }
       }}
     >
-      <Stack.Navigator initialRouteName={initialRouteName}>
+      <Stack.Navigator initialRouteName={initialRouteScreen.name}>
         {renderScreenComponents()}
       </Stack.Navigator>
     </NavigationContainer>

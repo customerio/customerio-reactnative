@@ -6,7 +6,7 @@ import {
 } from 'customerio-reactnative';
 
 class CustomerIOService {
-  static async initializeSDK(sdkConfig) {
+  static initializeSDK(sdkConfig) {
     const env = new CustomerIOEnv();
     env.siteId = sdkConfig.siteId;
     env.apiKey = sdkConfig.apiKey;

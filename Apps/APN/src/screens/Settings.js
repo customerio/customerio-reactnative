@@ -13,12 +13,13 @@ import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
-import StorageService from '../services/StorageService';
+import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import Prompts from '../utils/prompts';
 
 const Settings = ({ navigation }) => {
+  const { config: initialConfig, onSdkConfigStateChanged } =
+    useCustomerIoSdkContext();
   const defaultConfig = CustomerIoSDKConfig.createDefault();
-  const storageService = new StorageService();
 
   const [deviceToken, setDeviceToken] = useState('');
   const [trackUrl, setTrackUrl] = useState('');
@@ -32,24 +33,15 @@ const Settings = ({ navigation }) => {
   const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
 
   useEffect(() => {
-    loadConfigurationsFromStorage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const loadConfigurationsFromStorage = async () => {
-    const config = CustomerIoSDKConfig.applyDefaultForUndefined(
-      await storageService.loadSDKConfigurations()
-    );
-
-    setTrackUrl(config.trackingUrl);
-    setSiteId(config.siteId);
-    setApiKey(config.apiKey);
-    setBQSecondsDelay(config.bqSecondsDelay.toString());
-    setBQMinNumberOfTasks(config.bqMinNumberOfTasks.toString());
-    setTrackScreensEnabled(config.trackScreens);
-    setTrackDeviceAttributesEnabled(config.trackDeviceAttributes);
-    setDebugModeEnabled(config.debugMode);
-  };
+    setTrackUrl(initialConfig.trackingUrl);
+    setSiteId(initialConfig.siteId);
+    setApiKey(initialConfig.apiKey);
+    setBQSecondsDelay(initialConfig.bqSecondsDelay.toString());
+    setBQMinNumberOfTasks(initialConfig.bqMinNumberOfTasks.toString());
+    setTrackScreensEnabled(initialConfig.trackScreens);
+    setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
+    setDebugModeEnabled(initialConfig.debugMode);
+  }, [initialConfig]);
 
   PushNotification.configure({
     onRegister: function (token) {
@@ -58,7 +50,7 @@ const Settings = ({ navigation }) => {
   });
 
   const handleRestoreDefaultsPress = async () => {
-    return saveConfigurations(defaultConfig);
+    saveConfigurations(defaultConfig);
   };
 
   const isTrackingURLValid = (value) => {
@@ -131,13 +123,12 @@ const Settings = ({ navigation }) => {
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
-    return saveConfigurations(config);
+    saveConfigurations(config);
   };
 
   const saveConfigurations = async (config) => {
-    return storageService
-      .saveSDKConfigurations(config)
-      .then(() => navigation.goBack());
+    await onSdkConfigStateChanged(config);
+    navigation.goBack();
   };
 
   return (
