@@ -13,29 +13,25 @@ export default function App() {
   const [user, setUser] = useState(undefined);
 
   useEffect(() => {
-    const storageService = new StorageService();
-
-    const validateUserState = async () => {
-      const value = await storageService.loadUser();
+    const prepare = async () => {
+      const storageService = new StorageService();
+      const storage = await storageService.loadAll();
+      setUser(storage.user);
       setLoading(false);
-      setUser(value);
-      if (value) {
+      if (storage.user) {
         setInitialRouteName(Screen.DASHBOARD.name);
-        return;
+      } else {
+        setInitialRouteName(Screen.LOGIN.name);
       }
-      setInitialRouteName(Screen.LOGIN.name);
-    };
 
-    const initializeCustomerIoSDK = async () => {
       const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(
-        await storageService.loadSDKConfigurations()
+        storage.sdkConfig
       );
       await CustomerIOService.initializeSDK(sdkConfig);
       setScreenTrackingEnabled(sdkConfig.trackScreens);
     };
 
-    validateUserState();
-    initializeCustomerIoSDK();
+    prepare();
   }, []);
 
   if (loading) {

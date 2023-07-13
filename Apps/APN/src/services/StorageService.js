@@ -6,10 +6,10 @@ import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 export default class StorageService {
   async loadFromStorage(key) {
     try {
-      const value = await AsyncStorage.getItem(key);
-      return value ? JSON.parse(value) : null;
+      return await AsyncStorage.getItem(key);
     } catch (e) {
       console.log(e);
+      return null;
     }
   }
 
@@ -18,28 +18,48 @@ export default class StorageService {
       return AsyncStorage.removeItem(key);
     } catch (e) {
       console.log(e);
+      return null;
     }
   }
 
-  saveToStorage(key, value) {
+  saveJsonToStorage(key, value) {
     try {
       return AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       console.log(e);
+      return null;
     }
   }
 
-  loadSDKConfigurations = async () => {
-    let config = await this.loadFromStorage(SDK_CONFIG);
-    return config ? new CustomerIoSDKConfig(config) : null;
-  };
-  saveSDKConfigurations = async (config) =>
-    this.saveToStorage(SDK_CONFIG, config);
+  loadAll = async () => {
+    try {
+      let values = await AsyncStorage.multiGet([USER_STATE, SDK_CONFIG]);
 
-  loadUser = async () => {
-    let user = await this.loadFromStorage(USER_STATE);
-    return user ? new User(user.email, user) : null;
+      let user = this.createUser(values[USER_STATE]);
+      let sdkConfig = this.createSDKConfigurations(values[SDK_CONFIG]);
+
+      return { user: user, sdkConfig: sdkConfig };
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   };
-  saveUser = async (user) => this.saveToStorage(USER_STATE, user);
+
+  createSDKConfigurations = (value) => {
+    let json = value ? JSON.parse(value) : null;
+    return json ? new CustomerIoSDKConfig(json) : null;
+  };
+  loadSDKConfigurations = async () =>
+    this.createSDKConfigurations(await this.loadFromStorage(SDK_CONFIG));
+  saveSDKConfigurations = async (config) =>
+    this.saveJsonToStorage(SDK_CONFIG, config);
+
+  createUser = (value) => {
+    let json = value ? JSON.parse(value) : null;
+    return json ? new User(json.email, json) : null;
+  };
+  loadUser = async () =>
+    this.createUser(await this.loadFromStorage(USER_STATE));
+  saveUser = async (user) => this.saveJsonToStorage(USER_STATE, user);
   clearUser = async () => this.saveToStorage(USER_STATE, null);
 }
