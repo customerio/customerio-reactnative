@@ -18,6 +18,7 @@ class CustomerIOService {
     if (sdkConfig.trackingApiUrl) {
       config.trackingApiUrl = sdkConfig.trackingApiUrl;
     }
+    config.enableInApp = true;
     config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
     config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
     config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
