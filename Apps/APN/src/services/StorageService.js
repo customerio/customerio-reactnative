@@ -49,8 +49,6 @@ export default class StorageService {
     let json = value ? JSON.parse(value) : null;
     return json ? new CustomerIoSDKConfig(json) : null;
   };
-  loadSDKConfigurations = async () =>
-    this.createSDKConfigurations(await this.loadFromStorage(SDK_CONFIG));
   saveSDKConfigurations = async (config) =>
     this.saveJsonToStorage(SDK_CONFIG, config);
 
@@ -58,8 +56,6 @@ export default class StorageService {
     let json = value ? JSON.parse(value) : null;
     return json ? new User(json.email, json) : null;
   };
-  loadUser = async () =>
-    this.createUser(await this.loadFromStorage(USER_STATE));
   saveUser = async (user) => this.saveJsonToStorage(USER_STATE, user);
   clearUser = async () => this.saveJsonToStorage(USER_STATE, null);
 }
