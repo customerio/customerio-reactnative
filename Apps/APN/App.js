@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import Screen from './src/data/enums/Screen';
 import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
@@ -33,35 +33,40 @@ export default function App() {
     };
 
     prepare();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [updateUserState]);
 
-  const updateUserState = async (user) => {
-    setUserState({
-      user: user,
-      onUserStateChanged: handleUserStateChanged,
-    });
-  };
+  const updateUserState = useCallback(
+    (user) => {
+      setUserState({
+        user: user,
+        onUserStateChanged: handleUserStateChanged,
+      });
+    },
+    [handleUserStateChanged]
+  );
 
-  const handleUserStateChanged = async (user) => {
-    setLoading(true);
-    const storageService = new StorageService();
-    if (user) {
-      // Save user to storage
-      await storageService.saveUser(user);
-      // Identify user to Customer.io
-      CustomerIOService.identifyUser(user);
-      setInitialRouteName(Screen.DASHBOARD.name);
-    } else {
-      // Clear user identify from Customer.io
-      CustomerIOService.clearUserIdentify();
-      // Clear user from storage
-      await storageService.clearUser();
-      setInitialRouteName(Screen.LOGIN.name);
-    }
-    setLoading(false);
-    updateUserState(user);
-  };
+  const handleUserStateChanged = useCallback(
+    async (user) => {
+      setLoading(true);
+      const storageService = new StorageService();
+      if (user) {
+        // Save user to storage
+        await storageService.saveUser(user);
+        // Identify user to Customer.io
+        CustomerIOService.identifyUser(user);
+        setInitialRouteName(Screen.DASHBOARD.name);
+      } else {
+        // Clear user identify from Customer.io
+        CustomerIOService.clearUserIdentify();
+        // Clear user from storage
+        await storageService.clearUser();
+        setInitialRouteName(Screen.LOGIN.name);
+      }
+      setLoading(false);
+      updateUserState(user);
+    },
+    [updateUserState]
+  );
 
   if (loading) {
     return <ActivityIndicator />;
