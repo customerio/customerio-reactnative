@@ -15,15 +15,15 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
-import StorageService from '../services/StorageService';
 import { generateRandomNumber } from '../utils/helpers';
 import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { useUserStateContext } from '../state/userState';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
-const Dashboard = ({ navigation, route }) => {
-  const { user } = route.params;
+const Dashboard = ({ navigation }) => {
+  const { onUserStateChanged, user } = useUserStateContext();
 
   const sendRandomEvent = () => {
     let randomNumber = generateRandomNumber({ max: 3 });
@@ -136,10 +136,7 @@ const Dashboard = ({ navigation, route }) => {
         break;
 
       case ActionItem.SIGN_OUT:
-        const storageService = new StorageService();
-        await storageService.clearUser();
-        CustomerIOService.clearUserIdentify();
-        navigateToScreen(navigation, Screen.LOGIN);
+        onUserStateChanged(null);
         break;
 
       case ActionItem.CUSTOM_EVENT:

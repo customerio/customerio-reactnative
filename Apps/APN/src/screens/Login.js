@@ -14,11 +14,12 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import User from '../data/models/user';
-import CustomerIOService from '../services/CustomerIOService';
-import StorageService from '../services/StorageService';
 import { navigateToScreen } from '../utils/navigation';
+import { useUserStateContext } from '../state/userState';
 
 const Login = ({ navigation }) => {
+  const { onUserStateChanged } = useUserStateContext();
+
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
@@ -56,12 +57,7 @@ const Login = ({ navigation }) => {
   };
 
   const performLogin = async (user) => {
-    const storageService = new StorageService();
-    // Save user to storage
-    await storageService.saveUser(user);
-    // Identify user to Customer.io
-    CustomerIOService.identifyUser(user);
-    navigateToScreen(navigation, Screen.DASHBOARD, { user: user });
+    onUserStateChanged(user);
   };
 
   return (

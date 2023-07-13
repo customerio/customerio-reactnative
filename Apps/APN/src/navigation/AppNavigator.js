@@ -72,9 +72,6 @@ const AppNavigator = (navigatorProps) => {
       case Screen.DASHBOARD:
         props = {
           ...stackPropsDefault,
-          initialParams: {
-            user: navigatorProps.user,
-          },
           options: {
             ...stackPropsDefault.options,
             headerShown: false,
