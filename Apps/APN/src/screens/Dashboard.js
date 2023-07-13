@@ -18,11 +18,46 @@ import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
 import PromptUtils from '../utils/PromptUtils';
 import ScreenUtils from '../utils/ScreenUtils';
+import { generateRandomNumber } from '../utils/helpers';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
 const Dashboard = ({ navigation, route }) => {
   const { user } = route.params;
+
+  const sendRandomEvent = () => {
+    let randomNumber = generateRandomNumber({ max: 3 });
+    let eventName;
+    let propertyName;
+    let propertyValue;
+
+    switch (randomNumber) {
+      case 3:
+        const appointmentTime = new Date();
+        appointmentTime.setDate(appointmentTime.getDate() + 7);
+
+        eventName = 'appointmentScheduled';
+        propertyName = 'appointmentTime';
+        propertyValue = appointmentTime.getTime() / 1000;
+        break;
+
+      case 2:
+        eventName = 'movie_watched';
+        propertyName = 'movie_name';
+        propertyValue = 'The Incredibles';
+        break;
+
+      case 1:
+      default:
+        eventName = 'Order Purchased';
+        propertyName = null;
+        propertyValue = null;
+        break;
+    }
+
+    CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
+    PromptUtils.showSnackbar({ text: 'Event sent successfully' });
+  };
 
   const handlePushPermissionCheck = () => {
     CustomerIOService.getPushPermissionStatus().then((status) => {
@@ -93,6 +128,7 @@ const Dashboard = ({ navigation, route }) => {
   const handleButtonClick = async (action) => {
     switch (action) {
       case ActionItem.RANDOM_EVENT:
+        sendRandomEvent();
         break;
 
       case ActionItem.SHOW_PUSH_PROMPT:
