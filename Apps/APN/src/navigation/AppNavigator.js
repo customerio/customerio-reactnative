@@ -12,10 +12,17 @@ import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
+import { useUserStateContext } from '../state/userState';
+import {
+  isAuthenticatedViewOnly,
+  isPublicViewAllowed,
+  isUnauthenticatedViewOnly,
+} from '../utils/navigation';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = (navigatorProps) => {
+  const { user } = useUserStateContext();
   const { initialRouteName, screenTrackingEnabled } = navigatorProps;
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
@@ -107,7 +114,16 @@ const AppNavigator = (navigatorProps) => {
     return props;
   };
 
-  const screens = Object.values(Screen);
+  let screens;
+  if (user) {
+    screens = Object.values(Screen).filter(
+      (item) => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item)
+    );
+  } else {
+    screens = Object.values(Screen).filter(
+      (item) => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item)
+    );
+  }
   const deepLinkingSupportedScreens = screens.filter((item) => item.path);
   const linkingScreensConfig = {};
   for (const screen of deepLinkingSupportedScreens) {

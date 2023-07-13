@@ -35,8 +35,8 @@ export default class StorageService {
     try {
       let values = await AsyncStorage.multiGet([USER_STATE, SDK_CONFIG]);
 
-      let user = this.createUser(values[USER_STATE]);
-      let sdkConfig = this.createSDKConfigurations(values[SDK_CONFIG]);
+      let user = this.createUser(values[0][1]);
+      let sdkConfig = this.createSDKConfigurations(values[1][1]);
 
       return { user: user, sdkConfig: sdkConfig };
     } catch (e) {
