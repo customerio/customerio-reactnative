@@ -83,7 +83,7 @@ const CustomEvent = () => {
         </View>
 
         <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
-          <Text style={styles.sendButtonText}>Send Event Button</Text>
+          <Text style={styles.sendButtonText}>Send Event</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

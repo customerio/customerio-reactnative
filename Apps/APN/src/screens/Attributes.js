@@ -66,10 +66,12 @@ const Attributes = ({ route }) => {
     switch (screen) {
       case Screen.DEVICE_ATTRIBUTES:
         CustomerIOService.setDeviceAttribute(attributeName, attributeValue);
+        Prompts.showSnackbar({ text: 'Device attribute sent successfully!' });
         break;
 
       case Screen.PROFILE_ATTRIBUTES:
         CustomerIOService.setProfileAttribute(attributeName, attributeValue);
+        Prompts.showSnackbar({ text: 'Profile attribute sent successfully!' });
         break;
 
       default:
