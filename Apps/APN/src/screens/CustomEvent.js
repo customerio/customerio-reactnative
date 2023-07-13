@@ -11,7 +11,7 @@ import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIOService from '../services/CustomerIOService';
-import AlertUtils from '../utils/AlertUtils';
+import PromptUtils from '../utils/PromptUtils';
 
 const CustomEvent = () => {
   const [eventName, setEventName] = useState('');
@@ -29,7 +29,7 @@ const CustomEvent = () => {
     }
 
     if (message) {
-      AlertUtils.showAlert({
+      PromptUtils.showAlert({
         title: 'Error',
         message: message,
       });
@@ -44,6 +44,7 @@ const CustomEvent = () => {
     }
 
     CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
+    PromptUtils.showSnackbar({ text: 'Event sent successfully' });
   };
 
   return (

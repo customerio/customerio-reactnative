@@ -14,7 +14,7 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import StorageService from '../services/StorageService';
-import AlertUtils from '../utils/AlertUtils';
+import PromptUtils from '../utils/PromptUtils';
 
 const Settings = ({ navigation }) => {
   const defaultConfig = CustomerIoSDKConfig.createDefault();
@@ -108,7 +108,7 @@ const Settings = ({ navigation }) => {
     }
 
     if (message) {
-      AlertUtils.showAlert({
+      PromptUtils.showAlert({
         title: 'Error',
         message: message,
       });

@@ -16,7 +16,7 @@ import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import StorageService from '../services/StorageService';
-import AlertUtils from '../utils/AlertUtils';
+import PromptUtils from '../utils/PromptUtils';
 import ScreenUtils from '../utils/ScreenUtils';
 
 const pushPermissionAlertTitle = 'Push Permission';
@@ -28,7 +28,7 @@ const Dashboard = ({ navigation, route }) => {
     CustomerIOService.getPushPermissionStatus().then((status) => {
       switch (status) {
         case PushPermissionStatus.Granted:
-          AlertUtils.showAlert({
+          PromptUtils.showAlert({
             title: pushPermissionAlertTitle,
             message: 'Push notifications are enabled on this device',
           });
@@ -49,7 +49,7 @@ const Dashboard = ({ navigation, route }) => {
       .then((status) => {
         switch (status) {
           case PushPermissionStatus.Granted:
-            AlertUtils.showAlert({
+            PromptUtils.showAlert({
               title: pushPermissionAlertTitle,
               message: 'Push notifications are now enabled on this device',
             });
@@ -57,7 +57,7 @@ const Dashboard = ({ navigation, route }) => {
 
           case PushPermissionStatus.Denied:
           case PushPermissionStatus.NotDetermined:
-            AlertUtils.showAlert({
+            PromptUtils.showAlert({
               title: pushPermissionAlertTitle,
               message:
                 'Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device.',
@@ -79,7 +79,7 @@ const Dashboard = ({ navigation, route }) => {
         }
       })
       .catch((error) => {
-        AlertUtils.showAlert({
+        PromptUtils.showAlert({
           title: pushPermissionAlertTitle,
           message: 'Unable to request permission. Please try again later.',
         });

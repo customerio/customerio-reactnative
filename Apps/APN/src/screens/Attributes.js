@@ -12,7 +12,7 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
-import AlertUtils from '../utils/AlertUtils';
+import PromptUtils from '../utils/PromptUtils';
 
 const Attributes = ({ route }) => {
   const { screen } = route.params;
@@ -49,7 +49,7 @@ const Attributes = ({ route }) => {
     }
 
     if (message) {
-      AlertUtils.showAlert({
+      PromptUtils.showAlert({
         title: 'Error',
         message: message,
       });
