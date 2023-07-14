@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import {
   BackHandler,
+  Clipboard,
+  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -16,7 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import PushNotification from 'react-native-push-notification';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
@@ -90,12 +91,6 @@ const Settings = ({ navigation, route }) => {
     setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
     setDebugModeEnabled(initialConfig.debugMode);
   }, [initialApiKey, initialConfig, initialSiteId]);
-
-  PushNotification.configure({
-    onRegister: function (token) {
-      setDeviceToken(token.token);
-    },
-  });
 
   const handleRestoreDefaultsPress = async () => {
     saveConfigurations(defaultConfig);
@@ -179,6 +174,11 @@ const Settings = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+  const copyToDeviceClipboard = async () => {
+    Clipboard.setString(deviceToken);
+    Prompts.showSnackbar({ text: 'Device token copied to clipboard' });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -188,9 +188,18 @@ const Settings = ({ navigation, route }) => {
             <TextInput
               style={styles.input}
               value={deviceToken}
-              placeholder="Fetching..."
+              placeholder=""
               editable={false}
             />
+            <TouchableOpacity
+              style={styles.inputLeadingIcon}
+              onPress={() => copyToDeviceClipboard()}
+            >
+              <Image
+                style={styles.inputLeadingIcon}
+                source={require('../../assets/images/paper.png')}
+              />
+            </TouchableOpacity>
           </View>
           <View style={styles.inputRow}>
             <Text style={styles.inputLabel}>CIO Track URL</Text>
@@ -346,6 +355,16 @@ const styles = StyleSheet.create({
     height: Sizes.INPUT_FIELD_HEIGHT,
     maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
     paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
+  },
+  inputLeadingIconContainer: {
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-end',
+  },
+  inputLeadingIcon: {
+    alignSelf: 'center',
+    height: Sizes.IMAGE_BUTTON_ICON_SIZE,
+    width: Sizes.IMAGE_BUTTON_ICON_SIZE,
   },
   switchRow: {
     flexDirection: 'row',
