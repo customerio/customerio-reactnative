@@ -61,7 +61,7 @@ const Settings = ({ navigation, route }) => {
         headerLeft: (props) => (
           <HeaderBackButton
             {...props}
-            labelVisible={false}
+            style={styles.backButton}
             onPress={() => handleOnBackPress()}
           />
         ),
@@ -302,6 +302,10 @@ const Settings = ({ navigation, route }) => {
   );
 };
 const styles = StyleSheet.create({
+  backButton: {
+    marginLeft: Sizes.BACK_BUTTON_MARGIN_LEFT,
+    marginRight: Sizes.BACK_BUTTON_MARGIN_RIGHT,
+  },
   container: {
     backgroundColor: Colors.CONTAINER_BACKGROUND_COLOR,
     flex: 1,
