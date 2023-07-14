@@ -2,6 +2,7 @@
   package="io.customer.ami">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
       android:name=".MainApplication"
@@ -26,6 +27,34 @@
               <category android:name="android.intent.category.DEFAULT" />
               <category android:name="android.intent.category.BROWSABLE" />
               <data android:scheme="amiapp" android:host="showtrial" />
+          </intent-filter>
+          <intent-filter android:label="@string/filter_view_app_link">
+              <action android:name="android.intent.action.VIEW" />
+
+              <category android:name="android.intent.category.DEFAULT" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <!-- Accepts URIs beginning with "amiapp-reactnative-apns://*" -->
+              <data android:scheme="amiapp-reactnative-apns" />
+          </intent-filter>
+          <intent-filter
+              android:autoVerify="true"
+              android:label="@string/filter_view_universal_link">
+              <action android:name="android.intent.action.VIEW" />
+
+              <category android:name="android.intent.category.DEFAULT" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <!-- Accepts URIs beginning with "http://*" -->
+              <data android:scheme="http" />
+              <!-- Accepts URIs beginning with "https://*" -->
+              <data android:scheme="https" />
+              <!-- Accepts URIs beginning with "*://www.amiapp-reactnative-apns.com" -->
+              <data android:host="www.amiapp-reactnative-apns.com" />
+              <!-- Accepts URIs with path "*://*/settings/*" -->
+              <data android:pathPrefix="/settings" />
+              <!-- Accepts URIs with path "*://*/login/*" -->
+              <data android:pathPrefix="/login" />
+              <!-- Accepts URIs with path "*://*/dashboard/*" -->
+              <data android:pathPrefix="/dashboard" />
           </intent-filter>
       </activity>
     </application>

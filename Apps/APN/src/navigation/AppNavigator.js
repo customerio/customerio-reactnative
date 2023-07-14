@@ -131,10 +131,15 @@ const AppNavigator = () => {
   const deepLinkingSupportedScreens = screens.filter((item) => item.path);
   const linkingScreensConfig = {};
   for (const screen of deepLinkingSupportedScreens) {
-    linkingScreensConfig[getComponentForScreen(screen)] = screen.name;
+    linkingScreensConfig[getComponentForScreen(screen)] = screen.path;
   }
+
   const linking = {
-    prefixes: ['apn-rn-sample://'],
+    prefixes: [
+      'amiapp-reactnative-apns://',
+      'http://www.amiapp-reactnative-apns.com',
+      'https://www.amiapp-reactnative-apns.com',
+    ],
     config: {
       screens: linkingScreensConfig,
     },
