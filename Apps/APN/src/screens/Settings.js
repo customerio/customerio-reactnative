@@ -330,7 +330,6 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 16,
     fontWeight: Fonts.FONT_WEIGHT_BOLD,
     marginBottom: 12,
@@ -342,7 +341,6 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 14,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginRight: 16,
@@ -374,7 +372,6 @@ const styles = StyleSheet.create({
   switchLabel: {
     color: Colors.TEXT_COLOR_PRIMARY,
     flex: 1,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 14,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginRight: 8,
@@ -397,7 +394,6 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
@@ -413,14 +409,12 @@ const styles = StyleSheet.create({
   },
   restoreDefaultsButtonText: {
     color: Colors.SECONDARY_COLOR,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
   },
   note: {
     color: Colors.TEXT_COLOR_TERTIARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 12,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginTop: 8,

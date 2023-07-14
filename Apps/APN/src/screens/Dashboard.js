@@ -251,7 +251,6 @@ const styles = StyleSheet.create({
   email: {
     alignSelf: 'center',
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 20,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
     marginBottom: 16,
@@ -260,7 +259,6 @@ const styles = StyleSheet.create({
   title: {
     alignSelf: 'center',
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 20,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
     marginBottom: 16,
@@ -276,7 +274,6 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
   },

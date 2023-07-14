@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
   title: {
     alignSelf: 'center',
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 24,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
     marginTop: 48,
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
     textTransform: 'uppercase',
@@ -188,7 +186,6 @@ const styles = StyleSheet.create({
   },
   randomLoginButtonText: {
     color: Colors.SECONDARY_COLOR,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
   },

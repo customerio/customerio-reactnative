@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   buildInfoText: {
     alignSelf: 'center',
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 12,
     fontWeight: '400',
     textAlign: 'center',

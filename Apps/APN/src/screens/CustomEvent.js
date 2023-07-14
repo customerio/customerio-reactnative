@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
   title: {
     alignSelf: 'flex-start',
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 20,
     fontWeight: Colors.FONT_WEIGHT_REGULAR,
     marginBottom: 32,
@@ -116,7 +115,6 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     color: Colors.TEXT_COLOR_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: 14,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginRight: 16,
@@ -142,7 +140,6 @@ const styles = StyleSheet.create({
   },
   sendButtonText: {
     color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontFamily: Fonts.FONT_FAMILY_REGULAR,
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
     fontWeight: Fonts.FONT_FAMILY_BOLD,
     textAlign: 'center',
