@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { HeaderBackButton } from '@react-navigation/elements';
+import { useFocusEffect } from '@react-navigation/native';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {
+  BackHandler,
   ScrollView,
   StyleSheet,
   Switch,
@@ -14,11 +22,17 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
+import { useUserStateContext } from '../state/userState';
+import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
 
-const Settings = ({ navigation }) => {
+const Settings = ({ navigation, route }) => {
+  const { params } = route;
+  const initialSiteId = params.site_id;
+  const initialApiKey = params.api_key;
   const { config: initialConfig, onSdkConfigStateChanged } =
     useCustomerIoSdkContext();
+  const { user } = useUserStateContext();
   const defaultConfig = CustomerIoSDKConfig.createDefault();
 
   const [deviceToken, setDeviceToken] = useState('');
@@ -32,16 +46,50 @@ const Settings = ({ navigation }) => {
     useState(false);
   const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
 
+  const handleOnBackPress = useCallback(() => {
+    if (!navigation.canGoBack()) {
+      resetRoute(navigation, user);
+      return true;
+    }
+
+    return false;
+  }, [navigation, user]);
+
+  useLayoutEffect(() => {
+    if (!navigation.canGoBack()) {
+      navigation.setOptions({
+        headerLeft: (props) => (
+          <HeaderBackButton
+            {...props}
+            labelVisible={false}
+            onPress={() => handleOnBackPress()}
+          />
+        ),
+      });
+    }
+  }, [handleOnBackPress, navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        handleOnBackPress
+      );
+
+      return () => subscription.remove();
+    }, [handleOnBackPress])
+  );
+
   useEffect(() => {
     setTrackUrl(initialConfig.trackingUrl);
-    setSiteId(initialConfig.siteId);
-    setApiKey(initialConfig.apiKey);
+    setSiteId(initialSiteId ?? initialConfig.siteId);
+    setApiKey(initialApiKey ?? initialConfig.apiKey);
     setBQSecondsDelay(initialConfig.bqSecondsDelay.toString());
     setBQMinNumberOfTasks(initialConfig.bqMinNumberOfTasks.toString());
     setTrackScreensEnabled(initialConfig.trackScreens);
     setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
     setDebugModeEnabled(initialConfig.debugMode);
-  }, [initialConfig]);
+  }, [initialApiKey, initialConfig, initialSiteId]);
 
   PushNotification.configure({
     onRegister: function (token) {
