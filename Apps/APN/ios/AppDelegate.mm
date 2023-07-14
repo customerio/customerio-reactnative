@@ -153,9 +153,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 // Required to register device token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
+  // Register device to receive push notifications with device token
   [pnHandlerObj application:application deviceToken:deviceToken];
- [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 // Required for the notification event. You must call the completion handler after handling the remote notification.
@@ -169,10 +168,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
   [pnHandlerObj application:application error:error];
- [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
-  
-  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
+
 // Required for localNotification event
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
