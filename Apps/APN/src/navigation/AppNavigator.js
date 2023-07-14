@@ -116,22 +116,27 @@ const AppNavigator = () => {
   };
 
   let initialRouteScreen;
+  let linkingScreensConfig;
   let screens;
+
   if (user) {
     initialRouteScreen = Screen.DASHBOARD;
     screens = Object.values(Screen).filter(
       (item) => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item)
     );
+    linkingScreensConfig = {
+      Dashboard: Screen.DASHBOARD.path,
+      Settings: Screen.SETTINGS.path,
+    };
   } else {
     initialRouteScreen = Screen.LOGIN;
     screens = Object.values(Screen).filter(
       (item) => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item)
     );
-  }
-  const deepLinkingSupportedScreens = screens.filter((item) => item.path);
-  const linkingScreensConfig = {};
-  for (const screen of deepLinkingSupportedScreens) {
-    linkingScreensConfig[getComponentForScreen(screen)] = screen.path;
+    linkingScreensConfig = {
+      Login: Screen.LOGIN.path,
+      Settings: Screen.SETTINGS.path,
+    };
   }
 
   const linking = {
