@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
+import { FilledButton, TextButton } from '../components/Button';
 import * as Colors from '../constants/Colors';
-import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import User from '../data/models/user';
@@ -92,20 +92,17 @@ const Login = ({ navigation }) => {
             onChangeText={(text) => setEmail(text)}
             value={email}
           />
-          <TouchableOpacity
+          <FilledButton
             style={styles.loginButton}
             onPress={handleLoginPress}
-          >
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+            text="Login"
+            textStyle={styles.loginButtonText}
+          />
+          <TextButton
             style={styles.randomLoginButton}
             onPress={handleRandomLoginPress}
-          >
-            <Text style={styles.randomLoginButtonText}>
-              Generate Random Login
-            </Text>
-          </TouchableOpacity>
+            text="Generate Random Login"
+          />
         </View>
 
         <View style={styles.spaceBottom} />
@@ -162,32 +159,13 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   loginButton: {
-    backgroundColor: Colors.PRIMARY_COLOR,
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
     marginTop: 32,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
-    width: '80%',
   },
   loginButtonText: {
-    color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
     textTransform: 'uppercase',
   },
   randomLoginButton: {
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
     marginTop: 16,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
-    width: '80%',
-  },
-  randomLoginButtonText: {
-    color: Colors.SECONDARY_COLOR,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
   },
 });
 

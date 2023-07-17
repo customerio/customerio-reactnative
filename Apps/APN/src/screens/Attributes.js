@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { FilledButton } from '../components/Button';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
@@ -104,9 +99,11 @@ const Attributes = ({ route }) => {
           />
         </View>
 
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
-          <Text style={styles.sendButtonText}>{sendButtonText}</Text>
-        </TouchableOpacity>
+        <FilledButton
+          style={styles.sendButton}
+          onPress={handleSendPress}
+          text={sendButtonText}
+        />
       </View>
     </ScrollView>
   );
@@ -151,19 +148,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
   },
   sendButton: {
-    backgroundColor: Colors.PRIMARY_COLOR,
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
     marginTop: 24,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
-    width: Sizes.BUTTON_MAX_WIDTH,
-  },
-  sendButtonText: {
-    color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
   },
 });
 

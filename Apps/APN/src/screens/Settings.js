@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { FilledButton, TextButton } from '../components/Button';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
@@ -291,17 +292,17 @@ const Settings = ({ navigation, route }) => {
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleSavePress} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleRestoreDefaultsPress}
+          <FilledButton
+            style={styles.saveButton}
+            onPress={handleSavePress}
+            text="Save"
+            textStyle={styles.saveButtonText}
+          />
+          <TextButton
             style={styles.restoreDefaultsButton}
-          >
-            <Text style={styles.restoreDefaultsButtonText}>
-              Restore Defaults
-            </Text>
-          </TouchableOpacity>
+            onPress={handleRestoreDefaultsPress}
+            text="Restore Defaults"
+          />
           <Text style={styles.note}>
             Note: You must restart the app to apply these settings
           </Text>
@@ -382,36 +383,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 8,
   },
   saveButton: {
-    backgroundColor: Colors.PRIMARY_COLOR,
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
-    width: Sizes.BUTTON_MAX_WIDTH,
+    marginTop: 8,
   },
   saveButtonText: {
-    color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
     textTransform: 'uppercase',
   },
   restoreDefaultsButton: {
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
     marginTop: 16,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
     width: Sizes.BUTTON_MAX_WIDTH,
-  },
-  restoreDefaultsButtonText: {
-    color: Colors.SECONDARY_COLOR,
-    fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
   },
   note: {
     color: Colors.TEXT_COLOR_TERTIARY,

@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
+import { FilledButton } from '../components/Button';
 import * as Colors from '../constants/Colors';
-import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
@@ -168,13 +168,12 @@ const Dashboard = ({ navigation }) => {
           <Text style={styles.email}>{user.email}</Text>
           <Text style={styles.title}>What would you like to test?</Text>
           {Object.values(ActionItem).map((action) => (
-            <TouchableOpacity
+            <FilledButton
               key={action.text}
               style={styles.actionButton}
               onPress={() => handleButtonClick(action)}
-            >
-              <Text style={styles.actionButtonText}>{action.text}</Text>
-            </TouchableOpacity>
+              text={action.text}
+            />
           ))}
         </View>
 
@@ -264,18 +263,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   actionButton: {
-    backgroundColor: Colors.PRIMARY_COLOR,
-    borderRadius: Sizes.BUTTON_BORDER_RADIUS,
-    paddingHorizontal: Sizes.BUTTON_PADDING_HORIZONTAL,
-    paddingVertical: Sizes.BUTTON_PADDING_VERTICAL,
     marginTop: 16,
-    maxWidth: Sizes.BUTTON_MAX_WIDTH,
-    width: '80%',
-  },
-  actionButtonText: {
-    color: Colors.TEXT_COLOR_ON_PRIMARY,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
-    textAlign: 'center',
   },
   footer: {
     fontSize: 14,
