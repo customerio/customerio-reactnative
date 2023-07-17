@@ -28,7 +28,7 @@ const Login = ({ navigation }) => {
       alert('Please enter valid email');
       return;
     }
-    performLogin(new User(email, { name: name, isGuest: false }));
+    performLogin(new User(email, { name: name }));
   };
 
   const validateEmail = (text) => {
@@ -46,9 +46,7 @@ const Login = ({ navigation }) => {
       () => whitelist[Math.floor(Math.random() * whitelist.length)]
     );
     const username = random.join('');
-    performLogin(
-      new User(`${username}@customer.io`, { name: '', isGuest: true })
-    );
+    performLogin(new User(`${username}@customer.io`, { name: '' }));
   };
 
   const performLogin = async (user) => {

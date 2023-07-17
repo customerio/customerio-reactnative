@@ -25,7 +25,7 @@ export default class CustomerIoSDKConfig {
     return new CustomerIoSDKConfig({
       siteId: Env.siteId,
       apiKey: Env.apiKey,
-      trackingUrl: 'https://tracking.cio/',
+      trackingUrl: 'https://track-sdk.customer.io/',
       bqSecondsDelay: 30.0,
       bqMinNumberOfTasks: 10,
       trackScreens: true,

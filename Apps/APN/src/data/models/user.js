@@ -1,7 +1,6 @@
 export default class User {
-  constructor(email, { name, isGuest } = { name: '', isGuest: false }) {
+  constructor(email, { name } = { name: '' }) {
     this.email = email;
     this.name = name;
-    this.isGuest = isGuest;
   }
 }

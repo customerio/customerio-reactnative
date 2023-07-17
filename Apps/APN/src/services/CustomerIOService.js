@@ -30,7 +30,6 @@ class CustomerIOService {
     CustomerIO.identify(user.email, {
       first_name: user.name,
       email: user.email,
-      is_guest: user.isGuest,
     });
   }
 

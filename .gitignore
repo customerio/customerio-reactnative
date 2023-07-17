@@ -35,7 +35,7 @@ local.properties
 
 # VS Code
 #
-.vscode/settings.json
+.vscode/
 
 # node.js
 #

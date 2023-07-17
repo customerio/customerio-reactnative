@@ -194,7 +194,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
    return [RCTLinkingManager application:application openURL:url options:options];
  }
 
-// Universal linking
+// Universal Link deep link handling
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
