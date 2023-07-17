@@ -103,11 +103,22 @@ const Settings = ({ navigation, route }) => {
       return false;
     }
 
-    // Regex pattern to match URLs with http/https schemes and non-empty hosts.
-    const urlPattern = /^(http|https):\/\/[^/\s]+\/$/;
+    // Regex pattern to match URLs with http/https schemes, non-empty hosts, and end with a forward slash.
+    const urlRegex = /^(https?:\/\/)?([\w\d.-]+)(:\d+)?(\/.*)?$/;
+    const matches = url.match(urlRegex);
+    if (!matches) {
+      return false;
+    }
 
-    // Test if the URL matches the pattern.
-    return urlPattern.test(url);
+    const scheme = matches[1] || '';
+    const host = matches[2] || '';
+    const path = matches[4] || '';
+
+    return (
+      (scheme === 'http://' || scheme === 'https://') &&
+      host.length > 0 &&
+      path.endsWith('/')
+    );
   };
 
   const isFormValid = () => {
