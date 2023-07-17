@@ -37,6 +37,10 @@ class CustomerIOService {
     CustomerIO.clearIdentify();
   }
 
+  static trackScreen(screenName) {
+    CustomerIO.screen(screenName);
+  }
+
   static sendEvent(eventName, propertyName, propertyValue) {
     const data = {};
     if (propertyName) {

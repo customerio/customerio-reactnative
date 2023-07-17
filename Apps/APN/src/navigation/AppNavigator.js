@@ -3,7 +3,6 @@ import {
   useNavigationContainerRef,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CustomerIO } from 'customerio-reactnative';
 import React, { useRef } from 'react';
 import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
@@ -12,6 +11,7 @@ import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
+import CustomerIOService from '../services/CustomerIOService';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import {
@@ -181,7 +181,7 @@ const AppNavigator = () => {
           const currentRouteName = navigationRef.getCurrentRoute().name;
 
           if (previousRouteName !== currentRouteName) {
-            CustomerIO.screen(currentRouteName);
+            CustomerIOService.trackScreen(currentRouteName);
           }
           routeNameRef.current = currentRouteName;
         }
