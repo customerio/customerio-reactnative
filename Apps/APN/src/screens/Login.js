@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Image,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -10,6 +9,7 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
 import { FilledButton, TextButton } from '../components/Button';
+import { Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
@@ -107,7 +107,7 @@ const Login = ({ navigation }) => {
 
         <View style={styles.spaceBottom} />
 
-        <BuildInfoText style={styles.footerText} />
+        <BuildInfoText />
       </ScrollView>
     </View>
   );
@@ -133,10 +133,7 @@ const styles = StyleSheet.create({
     height: Sizes.IMAGE_BUTTON_ICON_SIZE,
   },
   title: {
-    alignSelf: 'center',
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 24,
-    fontWeight: Colors.FONT_WEIGHT_REGULAR,
+    fontSize: 22,
     marginTop: 48,
   },
   spaceTop: {

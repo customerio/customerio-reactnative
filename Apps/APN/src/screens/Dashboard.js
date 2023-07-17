@@ -4,13 +4,13 @@ import {
   Image,
   Linking,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
 import { FilledButton } from '../components/Button';
+import { Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
@@ -179,7 +179,7 @@ const Dashboard = ({ navigation }) => {
 
         <View style={styles.spaceBottom} />
 
-        <BuildInfoText style={styles.footerText} />
+        <BuildInfoText />
       </ScrollView>
     </View>
   );
@@ -248,26 +248,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   email: {
-    alignSelf: 'center',
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 20,
-    fontWeight: Colors.FONT_WEIGHT_REGULAR,
+    fontSize: 16,
     marginBottom: 16,
     marginTop: 16,
   },
   title: {
-    alignSelf: 'center',
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 20,
-    fontWeight: Colors.FONT_WEIGHT_REGULAR,
+    fontSize: 18,
     marginBottom: 16,
   },
   actionButton: {
     marginTop: 16,
-  },
-  footer: {
-    fontSize: 14,
-    textAlign: 'center',
   },
 });
 

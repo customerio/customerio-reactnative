@@ -13,12 +13,12 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { FilledButton, TextButton } from '../components/Button';
+import { Caption, Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
@@ -303,9 +303,9 @@ const Settings = ({ navigation, route }) => {
             onPress={handleRestoreDefaultsPress}
             text="Restore Defaults"
           />
-          <Text style={styles.note}>
+          <Caption style={styles.note}>
             Note: You must restart the app to apply these settings
-          </Text>
+          </Caption>
         </View>
       </ScrollView>
     </View>
@@ -330,10 +330,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionLabel: {
-    color: Colors.TEXT_COLOR_PRIMARY,
+    alignSelf: 'flex-start',
     fontSize: 16,
     fontWeight: Fonts.FONT_WEIGHT_BOLD,
-    marginBottom: 12,
+    marginBottom: 16,
   },
   inputRow: {
     flexDirection: 'row',
@@ -395,11 +395,7 @@ const styles = StyleSheet.create({
     width: Sizes.BUTTON_MAX_WIDTH,
   },
   note: {
-    color: Colors.TEXT_COLOR_TERTIARY,
-    fontSize: 12,
-    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginTop: 8,
-    textAlign: 'center',
   },
 });
 

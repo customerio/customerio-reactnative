@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
-import * as Colors from '../constants/Colors';
-import * as Fonts from '../constants/Fonts';
+import { Caption } from './Text';
 
 const BuildInfoText = () => {
   const [buildInfo, setBuildInfo] = useState('');
@@ -19,7 +18,7 @@ const BuildInfoText = () => {
 
   return (
     <View style={styles.buildInfoContainer}>
-      <Text style={styles.buildInfoText}>{buildInfo}</Text>
+      <Caption>{buildInfo}</Caption>
     </View>
   );
 };
@@ -30,13 +29,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 32,
     paddingHorizontal: 16,
-  },
-  buildInfoText: {
-    alignSelf: 'center',
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 12,
-    fontWeight: '400',
-    textAlign: 'center',
   },
 });
 

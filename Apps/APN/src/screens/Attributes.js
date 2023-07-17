@@ -122,9 +122,7 @@ const styles = StyleSheet.create({
   },
   title: {
     alignSelf: 'flex-start',
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 20,
-    fontWeight: Colors.FONT_WEIGHT_REGULAR,
+    fontSize: 22,
     marginBottom: 32,
   },
   inputContainer: {
