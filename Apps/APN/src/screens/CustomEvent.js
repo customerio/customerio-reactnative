@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FilledButton } from '../components/Button';
+import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
-import * as Fonts from '../constants/Fonts';
-import * as Sizes from '../constants/Sizes';
 import CustomerIOService from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
 
@@ -47,35 +46,29 @@ const CustomEvent = () => {
       <View style={styles.content}>
         <Text style={styles.title}>Send Custom Event</Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Event Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            onChangeText={(text) => setEventName(text)}
-            value={eventName}
-          />
-        </View>
+        <TextField
+          style={styles.textInputContainer}
+          label="Event Name"
+          placeholder=""
+          onChangeText={(text) => setEventName(text)}
+          value={eventName}
+        />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Property Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            onChangeText={(text) => setPropertyName(text)}
-            value={propertyName}
-          />
-        </View>
+        <TextField
+          style={styles.textInputContainer}
+          label="Property Name"
+          placeholder=""
+          onChangeText={(text) => setPropertyName(text)}
+          value={propertyName}
+        />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Property Value</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            onChangeText={(text) => setPropertyValue(text)}
-            value={propertyValue}
-          />
-        </View>
+        <TextField
+          style={styles.textInputContainer}
+          label="Property Value"
+          placeholder=""
+          onChangeText={(text) => setPropertyValue(text)}
+          value={propertyValue}
+        />
 
         <FilledButton
           style={styles.sendButton}
@@ -103,26 +96,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginBottom: 32,
   },
-  inputContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+  textInputContainer: {
     marginBottom: 8,
-  },
-  inputLabel: {
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 14,
-    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
-    marginRight: 16,
-    minWidth: 100,
-  },
-  input: {
-    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
-    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
-    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
-    flex: 1,
-    height: Sizes.INPUT_FIELD_HEIGHT,
-    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
-    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
   },
   sendButton: {
     marginTop: 24,

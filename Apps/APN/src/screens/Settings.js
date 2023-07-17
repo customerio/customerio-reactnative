@@ -9,16 +9,14 @@ import React, {
 import {
   BackHandler,
   Clipboard,
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { FilledButton, TextButton } from '../components/Button';
 import { Caption, Text } from '../components/Text';
+import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
@@ -184,81 +182,60 @@ const Settings = ({ navigation, route }) => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.section}>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Device Token</Text>
-            <TextInput
-              style={styles.input}
-              value={deviceToken}
-              placeholder=""
-              editable={false}
-            />
-            <TouchableOpacity
-              style={styles.inputLeadingIcon}
-              onPress={() => copyToDeviceClipboard()}
-            >
-              <Image
-                style={styles.inputLeadingIcon}
-                source={require('../../assets/images/paper.png')}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>CIO Track URL</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => setTrackUrl(text)}
-              value={trackUrl}
-              placeholder={defaultConfig.trackingUrl}
-            />
-          </View>
+          <TextField
+            style={styles.textInputContainer}
+            label="Device Token"
+            placeholder=""
+            value={deviceToken}
+            editable={false}
+            leadingIconImageSource={require('../../assets/images/paper.png')}
+            onLeadingIconPress={() => copyToDeviceClipboard()}
+          />
+          <TextField
+            style={styles.textInputContainer}
+            label="CIO Track URL"
+            placeholder={defaultConfig.trackingUrl}
+            value={trackUrl}
+            onChangeText={(text) => setTrackUrl(text)}
+          />
         </View>
         <View style={styles.section}>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Site Id</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => setSiteId(text)}
-              value={siteId}
-              placeholder={defaultConfig.siteId}
-            />
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>API Key</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => setApiKey(text)}
-              value={apiKey}
-              placeholder={defaultConfig.apiKey}
-            />
-          </View>
+          <TextField
+            style={styles.textInputContainer}
+            label="Site Id"
+            placeholder={defaultConfig.siteId}
+            value={siteId}
+            onChangeText={(text) => setSiteId(text)}
+          />
+          <TextField
+            style={styles.textInputContainer}
+            label="API Key"
+            placeholder={defaultConfig.apiKey}
+            value={apiKey}
+            onChangeText={(text) => setApiKey(text)}
+          />
         </View>
         <View style={styles.section}>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>backgroundQueueSecondsDelay</Text>
-            <TextInput
-              style={styles.input}
-              value={bqSecondsDelay ?? ''}
-              placeholder={defaultConfig.bqSecondsDelay.toString()}
-              onChangeText={(text) => {
-                let value = parseFloat(text);
-                return setBQSecondsDelay(isNaN(value) ? undefined : value);
-              }}
-            />
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>
-              backgroundQueueMinNumberOfTasks
-            </Text>
-            <TextInput
-              style={styles.input}
-              value={bqMinNumberOfTasks ?? ''}
-              placeholder={defaultConfig.bqMinNumberOfTasks.toString()}
-              onChangeText={(text) => {
-                let value = parseInt(text, 10);
-                return setBQMinNumberOfTasks(isNaN(value) ? undefined : value);
-              }}
-            />
-          </View>
+          <TextField
+            style={styles.textInputContainer}
+            label="backgroundQueueSecondsDelay"
+            placeholder={defaultConfig.bqSecondsDelay.toString()}
+            value={bqSecondsDelay ?? ''}
+            onChangeText={(text) => {
+              let value = parseFloat(text);
+              return setBQSecondsDelay(isNaN(value) ? undefined : value);
+            }}
+          />
+          <TextField
+            style={styles.textInputContainer}
+            label="backgroundQueueMinNumberOfTasks"
+            placeholder={defaultConfig.bqMinNumberOfTasks.toString()}
+            value={bqMinNumberOfTasks ?? ''}
+            onChangeText={(text) => {
+              let value = parseInt(text, 10);
+              return setBQMinNumberOfTasks(isNaN(value) ? undefined : value);
+            }}
+          />
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Features</Text>
@@ -335,35 +312,8 @@ const styles = StyleSheet.create({
     fontWeight: Fonts.FONT_WEIGHT_BOLD,
     marginBottom: 16,
   },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  textInputContainer: {
     marginTop: 8,
-  },
-  inputLabel: {
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 14,
-    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
-    marginRight: 16,
-  },
-  input: {
-    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
-    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
-    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
-    flex: 1,
-    height: Sizes.INPUT_FIELD_HEIGHT,
-    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
-    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
-  },
-  inputLeadingIconContainer: {
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-end',
-  },
-  inputLeadingIcon: {
-    alignSelf: 'center',
-    height: Sizes.IMAGE_BUTTON_ICON_SIZE,
-    width: Sizes.IMAGE_BUTTON_ICON_SIZE,
   },
   switchRow: {
     flexDirection: 'row',

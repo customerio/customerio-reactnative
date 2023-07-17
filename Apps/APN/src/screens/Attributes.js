@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FilledButton } from '../components/Button';
+import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
-import * as Fonts from '../constants/Fonts';
-import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
 import CustomerIOService from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
@@ -79,25 +78,21 @@ const Attributes = ({ route }) => {
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Attribute Name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            onChangeText={(text) => setAttributeName(text)}
-            value={attributeName}
-          />
-        </View>
+        <TextField
+          style={styles.textInputContainer}
+          label="Attribute Name"
+          placeholder=""
+          onChangeText={(text) => setAttributeName(text)}
+          value={attributeName}
+        />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Attribute Value</Text>
-          <TextInput
-            style={styles.input}
-            placeholder=""
-            onChangeText={(text) => setAttributeValue(text)}
-            value={attributeValue}
-          />
-        </View>
+        <TextField
+          style={styles.textInputContainer}
+          label="Attribute Value"
+          placeholder=""
+          onChangeText={(text) => setAttributeValue(text)}
+          value={attributeValue}
+        />
 
         <FilledButton
           style={styles.sendButton}
@@ -125,25 +120,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginBottom: 32,
   },
-  inputContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
+  textInputContainer: {
     marginBottom: 8,
-  },
-  inputLabel: {
-    color: Colors.TEXT_COLOR_PRIMARY,
-    fontSize: 14,
-    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
-    marginRight: 16,
-  },
-  input: {
-    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
-    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
-    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
-    flex: 1,
-    height: Sizes.INPUT_FIELD_HEIGHT,
-    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
-    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
   },
   sendButton: {
     marginTop: 24,

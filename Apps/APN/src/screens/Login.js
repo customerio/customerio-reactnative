@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Image,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
 import { FilledButton, TextButton } from '../components/Button';
 import { Text } from '../components/Text';
+import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
@@ -80,14 +75,14 @@ const Login = ({ navigation }) => {
         <View style={styles.spaceTop} />
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
+          <TextField
+            style={styles.textInputContainer}
             placeholder="First Name"
             onChangeText={(text) => setName(text)}
             value={name}
           />
-          <TextInput
-            style={styles.input}
+          <TextField
+            style={styles.textInputContainer}
             placeholder="Email"
             onChangeText={(text) => setEmail(text)}
             value={email}
@@ -145,14 +140,8 @@ const styles = StyleSheet.create({
   form: {
     alignItems: 'center',
   },
-  input: {
-    borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
-    borderColor: Colors.INPUT_FIELD_BORDER_COLOR,
-    borderRadius: Sizes.INPUT_FIELD_BORDER_RADIUS,
-    height: Sizes.INPUT_FIELD_HEIGHT,
+  textInputContainer: {
     marginVertical: 10,
-    maxWidth: Sizes.INPUT_FIELD_MAX_WIDTH,
-    paddingHorizontal: Sizes.INPUT_FIELD_PADDING_HORIZONTAL,
     width: '80%',
   },
   loginButton: {
