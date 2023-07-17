@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FilledButton } from '../components/Button';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import CustomerIOService from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
+import { Text } from '../components/Text';
 
 const CustomEvent = () => {
   const [eventName, setEventName] = useState('');
