@@ -121,6 +121,16 @@ const Settings = ({ navigation, route }) => {
     );
   };
 
+  const toIntOrNull = (value) => {
+    let number = parseInt(value, 10);
+    return isNaN(number) ? null : number;
+  };
+
+  const toFloatOrNull = (value) => {
+    let number = parseFloat(value);
+    return isNaN(number) ? null : number;
+  };
+
   const isFormValid = () => {
     let message;
     let blankFieldMessageBuilder = (fieldName) => {
@@ -130,6 +140,9 @@ const Settings = ({ navigation, route }) => {
       return `${fieldName} must be greater than or equal to ${minValue}`;
     };
 
+    const bqSecondsDelayValue = toFloatOrNull(bqSecondsDelay);
+    const bqMinNumberOfTasksValue = toIntOrNull(bqMinNumberOfTasks);
+
     if (!isTrackingURLValid(trackUrl)) {
       message = 'Please enter formatted url e.g. https://tracking.cio/';
     } else if (!siteId) {
@@ -138,14 +151,17 @@ const Settings = ({ navigation, route }) => {
       message = blankFieldMessageBuilder('API Key');
     } else if (!bqSecondsDelay) {
       message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
-    } else if (isNaN(bqSecondsDelay) || bqSecondsDelay < 1) {
+    } else if (bqSecondsDelayValue === null || bqSecondsDelayValue < 1) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueSecondsDelay',
         1
       );
     } else if (!bqMinNumberOfTasks) {
       message = blankFieldMessageBuilder('backgroundQueueMinNumberOfTasks');
-    } else if (isNaN(bqMinNumberOfTasks) || bqMinNumberOfTasks < 1) {
+    } else if (
+      bqMinNumberOfTasksValue === null ||
+      bqMinNumberOfTasksValue < 1
+    ) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueMinNumberOfTasks',
         1
@@ -171,8 +187,8 @@ const Settings = ({ navigation, route }) => {
     config.siteId = siteId;
     config.apiKey = apiKey;
     config.trackingUrl = trackUrl;
-    config.bqSecondsDelay = bqSecondsDelay;
-    config.bqMinNumberOfTasks = bqMinNumberOfTasks;
+    config.bqSecondsDelay = toFloatOrNull(bqSecondsDelay);
+    config.bqMinNumberOfTasks = toIntOrNull(bqMinNumberOfTasks);
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
@@ -196,7 +212,6 @@ const Settings = ({ navigation, route }) => {
           <TextField
             style={styles.textInputContainer}
             label="Device Token"
-            placeholder=""
             value={deviceToken}
             editable={false}
             leadingIconImageSource={require('../../assets/images/paper.png')}
@@ -205,7 +220,6 @@ const Settings = ({ navigation, route }) => {
           <TextField
             style={styles.textInputContainer}
             label="CIO Track URL"
-            placeholder={defaultConfig.trackingUrl}
             value={trackUrl}
             onChangeText={(text) => setTrackUrl(text)}
           />
@@ -214,14 +228,12 @@ const Settings = ({ navigation, route }) => {
           <TextField
             style={styles.textInputContainer}
             label="Site Id"
-            placeholder={defaultConfig.siteId}
             value={siteId}
             onChangeText={(text) => setSiteId(text)}
           />
           <TextField
             style={styles.textInputContainer}
             label="API Key"
-            placeholder={defaultConfig.apiKey}
             value={apiKey}
             onChangeText={(text) => setApiKey(text)}
           />
@@ -230,21 +242,19 @@ const Settings = ({ navigation, route }) => {
           <TextField
             style={styles.textInputContainer}
             label="backgroundQueueSecondsDelay"
-            placeholder={defaultConfig.bqSecondsDelay.toString()}
             value={bqSecondsDelay ?? ''}
             onChangeText={(text) => {
-              let value = parseFloat(text);
-              return setBQSecondsDelay(isNaN(value) ? undefined : value);
+              let value = toFloatOrNull(text);
+              return setBQSecondsDelay(value === null ? undefined : text);
             }}
           />
           <TextField
             style={styles.textInputContainer}
             label="backgroundQueueMinNumberOfTasks"
-            placeholder={defaultConfig.bqMinNumberOfTasks.toString()}
             value={bqMinNumberOfTasks ?? ''}
             onChangeText={(text) => {
-              let value = parseInt(text, 10);
-              return setBQMinNumberOfTasks(isNaN(value) ? undefined : value);
+              let value = toIntOrNull(text, 10);
+              return setBQMinNumberOfTasks(value === null ? undefined : text);
             }}
           />
         </View>
