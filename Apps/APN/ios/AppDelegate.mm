@@ -41,8 +41,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   NSMutableDictionary *modifiedLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
         NSDictionary *pushContent = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-        if (pushContent[@"react-deep-link"]) {
-            NSString *initialURL = pushContent[@"react-deep-link"];
+        if (pushContent[@"CIO"] && pushContent[@"CIO"][@"push"] && pushContent[@"CIO"][@"push"][@"link"]) {
+          NSString *initialURL = pushContent[@"CIO"][@"push"][@"link"];
             if (!launchOptions[UIApplicationLaunchOptionsURLKey]) {
                 modifiedLaunchOptions[UIApplicationLaunchOptionsURLKey] = [NSURL URLWithString:initialURL];
             }
