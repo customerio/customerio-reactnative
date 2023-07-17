@@ -11,10 +11,10 @@ import {
   Clipboard,
   ScrollView,
   StyleSheet,
-  Switch,
   View,
 } from 'react-native';
 import { FilledButton, TextButton } from '../components/Button';
+import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
@@ -239,34 +239,26 @@ const Settings = ({ navigation, route }) => {
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Features</Text>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Track Screens</Text>
-            <Switch
-              style={styles.switch}
-              onValueChange={() =>
-                setTrackScreensEnabled(!isTrackScreensEnabled)
-              }
-              value={isTrackScreensEnabled}
-            />
-          </View>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Track Device Attributes</Text>
-            <Switch
-              style={styles.switch}
-              onValueChange={() =>
-                setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
-              }
-              value={isTrackDeviceAttributesEnabled}
-            />
-          </View>
-          <View style={styles.switchRow}>
-            <Text style={styles.switchLabel}>Debug Mode</Text>
-            <Switch
-              style={styles.switch}
-              onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
-              value={isDebugModeEnabled}
-            />
-          </View>
+          <SwitchField
+            style={styles.switchRow}
+            label="Track Screens"
+            onValueChange={() => setTrackScreensEnabled(!isTrackScreensEnabled)}
+            value={isTrackScreensEnabled}
+          />
+          <SwitchField
+            style={styles.switchRow}
+            label="Track Device Attributes"
+            onValueChange={() =>
+              setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
+            }
+            value={isTrackDeviceAttributesEnabled}
+          />
+          <SwitchField
+            style={styles.switchRow}
+            label="Debug Mode"
+            onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
+            value={isDebugModeEnabled}
+          />
         </View>
         <View style={styles.buttonContainer}>
           <FilledButton
@@ -316,19 +308,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginBottom: 16,
   },
-  switchLabel: {
-    color: Colors.TEXT_COLOR_PRIMARY,
-    flex: 1,
-    fontSize: 14,
-    fontWeight: Fonts.FONT_WEIGHT_REGULAR,
-    marginRight: 8,
-    textAlign: 'left',
-  },
-  switch: {},
   buttonContainer: {
     flex: 1,
     justifyContent: 'center',

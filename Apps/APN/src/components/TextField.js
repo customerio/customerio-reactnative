@@ -64,13 +64,14 @@ export const TextField = ({
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   label: {
     fontSize: 14,
     fontWeight: Fonts.FONT_WEIGHT_REGULAR,
     marginRight: 16,
+    textAlign: 'left',
   },
   textInput: {
     borderBottomWidth: Sizes.INPUT_FIELD_BORDER_WIDTH_BOTTOM,
