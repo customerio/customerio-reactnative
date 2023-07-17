@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "SampleApp",
+    "name": "RN APN Sample",
     "slug": "SampleApp",
     "version": "1.0.0",
     "assetBundlePatterns": [
@@ -8,5 +8,5 @@
     ]
   },
   "name": "SampleApp",
-  "displayName": "SampleApp"
+  "displayName": "RN APN Sample"
 }

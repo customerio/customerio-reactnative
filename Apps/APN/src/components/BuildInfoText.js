@@ -12,7 +12,7 @@ const BuildInfoText = () => {
     const value =
       `Customer.io` +
       ` React Native SDK ${sdkPackageJson.version}` +
-      ` Sample App ${getVersion()} (${getBuildNumber()})`;
+      ` Ami App ${getVersion()} (${getBuildNumber()})`;
     setBuildInfo(value);
   }, [buildInfo]);
 
