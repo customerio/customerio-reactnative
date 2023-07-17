@@ -1,3 +1,10 @@
+### [3.1.3](https://github.com/customerio/customerio-reactnative/compare/3.1.2...3.1.3) (2023-07-14)
+
+
+### Bug Fixes
+
+* hardcode android native SDK version ([#167](https://github.com/customerio/customerio-reactnative/issues/167)) ([be03bd5](https://github.com/customerio/customerio-reactnative/commit/be03bd5dfff7fdf142958c8ddf5f2f9c1ad21e2b))
+
 ### [3.1.2](https://github.com/customerio/customerio-reactnative/compare/3.1.1...3.1.2) (2023-07-12)
 
 
