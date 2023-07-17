@@ -84,9 +84,8 @@ const Dashboard = ({ navigation }) => {
       .then((status) => {
         switch (status) {
           case PushPermissionStatus.Granted:
-            Prompts.showAlert({
-              title: pushPermissionAlertTitle,
-              message: 'Push notifications are now enabled on this device',
+            Prompts.showSnackbar({
+              text: 'Push notifications are now enabled on this device',
             });
             break;
 
