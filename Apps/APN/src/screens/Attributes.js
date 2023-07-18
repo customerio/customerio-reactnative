@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FilledButton } from '../components/Button';
@@ -74,6 +74,9 @@ const Attributes = ({ route }) => {
     }
   };
 
+  const attributeNameRef = useRef();
+  const attributeValueRef = useRef();
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.content}>
@@ -85,6 +88,15 @@ const Attributes = ({ route }) => {
           placeholder=""
           onChangeText={(text) => setAttributeName(text)}
           value={attributeName}
+          textInputRef={attributeNameRef}
+          getNextTextInput={() => ({
+            ref: attributeValueRef,
+            value: attributeValue,
+          })}
+          textInputProps={{
+            autoCapitalize: 'none',
+            keyboardType: 'default',
+          }}
         />
 
         <TextField
@@ -93,6 +105,11 @@ const Attributes = ({ route }) => {
           placeholder=""
           onChangeText={(text) => setAttributeValue(text)}
           value={attributeValue}
+          textInputRef={attributeValueRef}
+          textInputProps={{
+            autoCapitalize: 'none',
+            keyboardType: 'default',
+          }}
         />
 
         <FilledButton

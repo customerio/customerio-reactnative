@@ -22,6 +22,8 @@ export const TextField = ({
   labelProps,
   textInputStyle,
   textInputProps,
+  textInputRef,
+  getNextTextInput,
   leadingIconImageSource,
   onLeadingIconPress,
   leadingIconContainerStyle,
@@ -30,6 +32,37 @@ export const TextField = ({
   leadingIconImageProps,
   ...props
 }) => {
+  const focusNextField = () => {
+    const { ref: nextTextInputRef, value: nextTextInputValue } =
+      getNextTextInput();
+    const nextTextInput = nextTextInputRef?.current;
+    // By default, focus moves to the beginning of the text input by calling focus()
+    nextTextInput?.focus();
+    // Set cursor to end of text input for better user experience
+    const length = nextTextInputValue?.toString()?.length ?? 0;
+    if (length > 0) {
+      nextTextInput?.setNativeProps({
+        selection: {
+          start: length,
+          end: length,
+        },
+      });
+    }
+  };
+
+  let blurOnSubmit;
+  let onSubmitEditing;
+  let returnKeyType;
+
+  // If getNextTextInput is not defined, then this text input is the last one in the form
+  if (getNextTextInput) {
+    blurOnSubmit = false;
+    onSubmitEditing = () => focusNextField();
+    returnKeyType = 'next';
+  } else {
+    returnKeyType = 'done';
+  }
+
   return (
     <View style={[styles.row, style]} {...props}>
       {label && (
@@ -42,7 +75,11 @@ export const TextField = ({
         onChangeText={onChangeText}
         value={value}
         placeholder={placeholder}
-        editable={editable ?? true}
+        editable={editable}
+        ref={textInputRef}
+        blurOnSubmit={blurOnSubmit}
+        onSubmitEditing={onSubmitEditing}
+        returnKeyType={returnKeyType}
         {...textInputProps}
       />
       {leadingIconImageSource && (

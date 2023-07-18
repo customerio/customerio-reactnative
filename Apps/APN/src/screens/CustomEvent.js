@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { FilledButton } from '../components/Button';
+import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import CustomerIOService from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
-import { Text } from '../components/Text';
 
 const CustomEvent = () => {
   const [eventName, setEventName] = useState('');
@@ -42,6 +42,10 @@ const CustomEvent = () => {
     Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
 
+  const eventNameRef = useRef();
+  const propertyNameRef = useRef();
+  const propertyValueRef = useRef();
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.content}>
@@ -53,6 +57,15 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setEventName(text)}
           value={eventName}
+          textInputRef={eventNameRef}
+          getNextTextInput={() => ({
+            ref: propertyNameRef,
+            value: propertyName,
+          })}
+          textInputProps={{
+            autoCapitalize: 'none',
+            keyboardType: 'default',
+          }}
         />
 
         <TextField
@@ -61,6 +74,15 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setPropertyName(text)}
           value={propertyName}
+          textInputRef={propertyNameRef}
+          getNextTextInput={() => ({
+            ref: propertyValueRef,
+            value: propertyValue,
+          })}
+          textInputProps={{
+            autoCapitalize: 'none',
+            keyboardType: 'default',
+          }}
         />
 
         <TextField
@@ -69,6 +91,11 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setPropertyValue(text)}
           value={propertyValue}
+          textInputRef={propertyValueRef}
+          textInputProps={{
+            autoCapitalize: 'none',
+            keyboardType: 'default',
+          }}
         />
 
         <FilledButton

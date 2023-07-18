@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -205,6 +206,12 @@ const Settings = ({ navigation, route }) => {
     Prompts.showSnackbar({ text: 'Device token copied to clipboard' });
   };
 
+  const trackUrlRef = useRef();
+  const siteIdRef = useRef();
+  const apiKeyRef = useRef();
+  const bqSecondsDelayRef = useRef();
+  const bqMinNumberOfTasksRef = useRef();
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -222,6 +229,12 @@ const Settings = ({ navigation, route }) => {
             label="CIO Track URL"
             value={trackUrl}
             onChangeText={(text) => setTrackUrl(text)}
+            textInputRef={trackUrlRef}
+            getNextTextInput={() => ({ ref: siteIdRef, value: siteId })}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'url',
+            }}
           />
         </View>
         <View style={styles.section}>
@@ -230,12 +243,27 @@ const Settings = ({ navigation, route }) => {
             label="Site Id"
             value={siteId}
             onChangeText={(text) => setSiteId(text)}
+            textInputRef={siteIdRef}
+            getNextTextInput={() => ({ ref: apiKeyRef, value: apiKey })}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'default',
+            }}
           />
           <TextField
             style={styles.textInputContainer}
             label="API Key"
             value={apiKey}
             onChangeText={(text) => setApiKey(text)}
+            textInputRef={apiKeyRef}
+            getNextTextInput={() => ({
+              ref: bqSecondsDelayRef,
+              value: bqSecondsDelay,
+            })}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'default',
+            }}
           />
         </View>
         <View style={styles.section}>
@@ -247,6 +275,15 @@ const Settings = ({ navigation, route }) => {
               let value = toFloatOrNull(text);
               return setBQSecondsDelay(value === null ? undefined : text);
             }}
+            textInputRef={bqSecondsDelayRef}
+            getNextTextInput={() => ({
+              ref: bqMinNumberOfTasksRef,
+              value: bqMinNumberOfTasks,
+            })}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'decimal-pad',
+            }}
           />
           <TextField
             style={styles.textInputContainer}
@@ -255,6 +292,11 @@ const Settings = ({ navigation, route }) => {
             onChangeText={(text) => {
               let value = toIntOrNull(text, 10);
               return setBQMinNumberOfTasks(value === null ? undefined : text);
+            }}
+            textInputRef={bqMinNumberOfTasksRef}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'number-pad',
             }}
           />
         </View>

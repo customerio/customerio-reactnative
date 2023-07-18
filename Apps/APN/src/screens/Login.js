@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
@@ -53,6 +53,9 @@ const Login = ({ navigation }) => {
     onUserStateChanged(user);
   };
 
+  const firstNameRef = useRef();
+  const emailRef = useRef();
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -78,12 +81,23 @@ const Login = ({ navigation }) => {
             placeholder="First Name"
             onChangeText={(text) => setName(text)}
             value={name}
+            textInputRef={firstNameRef}
+            getNextTextInput={() => ({ ref: emailRef, value: email })}
+            textInputProps={{
+              autoCapitalize: 'words',
+              keyboardType: 'default',
+            }}
           />
           <TextField
             style={styles.textInputContainer}
             placeholder="Email"
             onChangeText={(text) => setEmail(text)}
             value={email}
+            textInputRef={emailRef}
+            textInputProps={{
+              autoCapitalize: 'none',
+              keyboardType: 'email-address',
+            }}
           />
           <FilledButton
             style={styles.loginButton}
