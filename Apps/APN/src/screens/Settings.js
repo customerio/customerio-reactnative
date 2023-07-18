@@ -29,8 +29,8 @@ import Prompts from '../utils/prompts';
 
 const Settings = ({ navigation, route }) => {
   const { params } = route;
-  const initialSiteId = params.site_id;
-  const initialApiKey = params.api_key;
+  const initialSiteId = params?.site_id;
+  const initialApiKey = params?.api_key;
   const { config: initialConfig, onSdkConfigStateChanged } =
     useCustomerIoSdkContext();
   const { user } = useUserStateContext();
