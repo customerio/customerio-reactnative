@@ -11,7 +11,7 @@ import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
 import Login from '../screens/Login';
 import Settings from '../screens/Settings';
-import CustomerIOService from '../services/CustomerIOService';
+import { trackScreen } from '../services/CustomerIOService';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import {
@@ -181,7 +181,7 @@ const AppNavigator = () => {
           const currentRouteName = navigationRef.getCurrentRoute().name;
 
           if (previousRouteName !== currentRouteName) {
-            CustomerIOService.trackScreen(currentRouteName);
+            trackScreen(currentRouteName);
           }
           routeNameRef.current = currentRouteName;
         }

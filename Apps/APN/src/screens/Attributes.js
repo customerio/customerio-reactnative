@@ -6,7 +6,10 @@ import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import Screen from '../data/enums/Screen';
-import CustomerIOService from '../services/CustomerIOService';
+import {
+  trackDeviceAttribute,
+  trackProfileAttribute,
+} from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
 
 const Attributes = ({ route }) => {
@@ -60,12 +63,12 @@ const Attributes = ({ route }) => {
 
     switch (screen) {
       case Screen.DEVICE_ATTRIBUTES:
-        CustomerIOService.setDeviceAttribute(attributeName, attributeValue);
+        trackDeviceAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Device attribute sent successfully!' });
         break;
 
       case Screen.PROFILE_ATTRIBUTES:
-        CustomerIOService.setProfileAttribute(attributeName, attributeValue);
+        trackProfileAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Profile attribute sent successfully!' });
         break;
 

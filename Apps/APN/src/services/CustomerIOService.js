@@ -5,69 +5,67 @@ import {
   CustomerioConfig,
 } from 'customerio-reactnative';
 
-class CustomerIOService {
-  static initializeSDK(sdkConfig) {
-    const env = new CustomerIOEnv();
-    env.siteId = sdkConfig.siteId;
-    env.apiKey = sdkConfig.apiKey;
+export const initializeCustomerIoSDK = (sdkConfig) => {
+  const env = new CustomerIOEnv();
+  env.siteId = sdkConfig.siteId;
+  env.apiKey = sdkConfig.apiKey;
 
-    const config = new CustomerioConfig();
-    if (sdkConfig.debugMode) {
-      config.logLevel = CioLogLevel.debug;
-    }
-    if (sdkConfig.trackingApiUrl) {
-      config.trackingApiUrl = sdkConfig.trackingApiUrl;
-    }
-    config.enableInApp = true;
-    config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-    config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-    config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
+  const config = new CustomerioConfig();
+  config.enableInApp = true;
 
-    CustomerIO.initialize(env, config);
+  if (sdkConfig.debugMode) {
+    config.logLevel = CioLogLevel.debug;
   }
-
-  static identifyUser(user) {
-    CustomerIO.identify(user.email, {
-      first_name: user.name,
-      email: user.email,
-    });
+  if (sdkConfig.trackingApiUrl) {
+    config.trackingApiUrl = sdkConfig.trackingApiUrl;
   }
+  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
+  config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
+  config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
+  config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
 
-  static clearUserIdentify() {
-    CustomerIO.clearIdentify();
+  CustomerIO.initialize(env, config);
+};
+
+export const onUserLoggedIn = (user) => {
+  CustomerIO.identify(user.email, {
+    first_name: user.name,
+    email: user.email,
+  });
+};
+
+export const onUserLoggedOut = () => {
+  CustomerIO.clearIdentify();
+};
+
+export const trackScreen = (screenName) => {
+  CustomerIO.screen(screenName);
+};
+
+export const trackEvent = (eventName, propertyName, propertyValue) => {
+  const data = {};
+  if (propertyName) {
+    data[propertyName] = propertyValue;
   }
+  CustomerIO.track(eventName, data);
+};
 
-  static trackScreen(screenName) {
-    CustomerIO.screen(screenName);
-  }
+export const trackDeviceAttribute = (name, value) => {
+  const data = {};
+  data[name] = value;
+  CustomerIO.setDeviceAttributes(data);
+};
 
-  static sendEvent(eventName, propertyName, propertyValue) {
-    const data = {};
-    if (propertyName) {
-      data[propertyName] = propertyValue;
-    }
-    CustomerIO.track(eventName, data);
-  }
+export const trackProfileAttribute = (name, value) => {
+  const data = {};
+  data[name] = value;
+  CustomerIO.setProfileAttributes(data);
+};
 
-  static setDeviceAttribute(name, value) {
-    const data = {};
-    data[name] = value;
-    CustomerIO.setDeviceAttributes(data);
-  }
+export const getPushPermissionStatus = () => {
+  return CustomerIO.getPushPermissionStatus();
+};
 
-  static setProfileAttribute(name, value) {
-    const data = {};
-    data[name] = value;
-    CustomerIO.setProfileAttributes(data);
-  }
-
-  static getPushPermissionStatus() {
-    return CustomerIO.getPushPermissionStatus();
-  }
-
-  static showPromptForPushNotifications(options) {
-    return CustomerIO.showPromptForPushNotifications(options);
-  }
-}
-
-export default CustomerIOService;
+export const requestPushNotificationsPermission = (options) => {
+  return CustomerIO.showPromptForPushNotifications(options);
+};

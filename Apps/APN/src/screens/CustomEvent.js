@@ -5,7 +5,7 @@ import { FilledButton } from '../components/Button';
 import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
-import CustomerIOService from '../services/CustomerIOService';
+import { trackEvent } from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
 
 const CustomEvent = () => {
@@ -38,7 +38,7 @@ const CustomEvent = () => {
       return;
     }
 
-    CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
+    trackEvent(eventName, propertyName, propertyValue);
     Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
 

@@ -2,7 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
 import AppNavigator from './src/navigation/AppNavigator';
-import CustomerIOService from './src/services/CustomerIOService';
+import {
+  initializeCustomerIoSDK,
+  onUserLoggedIn,
+  onUserLoggedOut,
+} from './src/services/CustomerIOService';
 import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
 import { UserStateContext } from './src/state/userState';
@@ -53,7 +57,7 @@ export default function App() {
 
   const applyCustomerIoConfig = useCallback((config) => {
     const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(config);
-    CustomerIOService.initializeSDK(sdkConfig);
+    initializeCustomerIoSDK(sdkConfig);
     return sdkConfig;
   }, []);
 
@@ -75,10 +79,10 @@ export default function App() {
         // Save user to storage
         await storageService.saveUser(user);
         // Identify user to Customer.io
-        CustomerIOService.identifyUser(user);
+        onUserLoggedIn(user);
       } else {
         // Clear user identify from Customer.io
-        CustomerIOService.clearUserIdentify();
+        onUserLoggedOut();
         // Clear user from storage
         await storageService.clearUser();
       }

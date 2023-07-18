@@ -14,7 +14,11 @@ import { Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
 import Screen from '../data/enums/Screen';
-import CustomerIOService from '../services/CustomerIOService';
+import {
+  getPushPermissionStatus,
+  requestPushNotificationsPermission,
+  trackEvent,
+} from '../services/CustomerIOService';
 import { useUserStateContext } from '../state/userState';
 import { generateRandomNumber } from '../utils/helpers';
 import { navigateToScreen } from '../utils/navigation';
@@ -55,12 +59,12 @@ const Dashboard = ({ navigation }) => {
         break;
     }
 
-    CustomerIOService.sendEvent(eventName, propertyName, propertyValue);
+    trackEvent(eventName, propertyName, propertyValue);
     Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
 
   const handlePushPermissionCheck = () => {
-    CustomerIOService.getPushPermissionStatus().then((status) => {
+    getPushPermissionStatus().then((status) => {
       switch (status) {
         case PushPermissionStatus.Granted:
           Prompts.showAlert({
@@ -80,7 +84,7 @@ const Dashboard = ({ navigation }) => {
   const requestPushPermission = () => {
     let options = { ios: { sound: true, badge: true } };
 
-    CustomerIOService.showPromptForPushNotifications(options)
+    requestPushNotificationsPermission(options)
       .then((status) => {
         switch (status) {
           case PushPermissionStatus.Granted:
