@@ -15,6 +15,9 @@ export const SwitchField = ({
   switchProps,
   ...props
 }) => {
+  // Helps increase the touchable area of the switch
+  const switchPaddingDefault = 6;
+
   return (
     <View style={[styles.row, style]} {...props}>
       {label && (
@@ -26,6 +29,16 @@ export const SwitchField = ({
         style={switchStyle}
         onValueChange={onValueChange}
         value={value}
+        trackColor={{
+          false: Colors.SWITCH_TRACK_COLOR_OFF,
+          true: Colors.SWITCH_TRACK_COLOR_ON,
+        }}
+        thumbColor={
+          value ? Colors.SWITCH_THUMB_COLOR_ON : Colors.SWITCH_THUMB_COLOR_OFF
+        }
+        ios_backgroundColor={Colors.SWITCH_TRACK_COLOR_OFF}
+        hitSlop={switchPaddingDefault}
+        padding={switchPaddingDefault}
         {...switchProps}
       />
     </View>

@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   switchRow: {
-    marginBottom: 16,
+    marginBottom: 4,
   },
   buttonContainer: {
     flex: 1,
