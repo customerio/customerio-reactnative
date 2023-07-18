@@ -1,263 +1,106 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ActivityIndicator, Linking, StyleSheet } from 'react-native';
-import Login from './components/Login';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
+import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
+import AppNavigator from './src/navigation/AppNavigator';
 import {
-  NavigationContainer,
-  useNavigationContainerRef,
-} from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  CustomerIO,
-  CustomerioConfig,
-  CioLogLevel,
-  CustomerIOEnv,
-} from 'customerio-reactnative';
-import Dashboard from './components/Dashboard';
-import CustomDataScreen from './components/CustomDataScreen';
-import SettingsScreen from './components/SettingsScreen';
-import Env from './env';
-import CioManager from './manager/CioManager';
-import CioKeyValueStorage from './manager/KeyValueStorage';
-import Deeplinks from './components/Deeplink';
-import DefaultConstants from './util/DefaultConstants';
-
-const Stack = createNativeStackNavigator();
+  initializeCustomerIoSDK,
+  onUserLoggedIn,
+  onUserLoggedOut,
+} from './src/services/CustomerIOService';
+import StorageService from './src/services/StorageService';
+import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
+import { UserStateContext } from './src/state/userState';
 
 export default function App() {
-  const [firstScreen, setFirstScreen] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [isScreenTrackEnabled, setIsScreenTrackEnabled] = useState(null);
-  const [isDeviceAttrTrackEnabled, setIsDeviceAttrTrackEnabled] =
-    useState(null);
-  const [isDebugModeEnabled, setIsDebugModeEnabled] = useState(null);
-  const [bgDelayValue, setBgDelayValue] = useState(null);
-  const [bgTasksValue, setBgTasksValue] = useState(null);
-  const [trackingUrl, setTrackingUrl] = useState(null);
+  const [userState, setUserState] = useState(undefined);
+  const [customerIoSdkState, setCustomerIoSdk] = useState(undefined);
 
   useEffect(() => {
-    (async () => {
-      const keyStorageObj = new CioKeyValueStorage();
-      const status = await keyStorageObj.getLoginStatus();
+    const prepare = async () => {
+      const storageService = new StorageService();
+      const storage = await storageService.loadAll();
+
+      updateUserState(storage.user);
+      const sdkConfig = applyCustomerIoConfig(storage.sdkConfig);
+      updateCustomerIoSdkState(sdkConfig);
       setLoading(false);
-      if (JSON.parse(status)) {
-        setFirstScreen('Dashboard');
-        return;
-      }
-      setFirstScreen('Login');
-    })();
-  }, []);
-
-  // Automatic screen tracking
-  const navigationRef = useNavigationContainerRef();
-  const routeNameRef = useRef();
-  const config = {
-    screens: {
-      Deeplinks: 'deeplink',
-    },
-  };
-  const linking = {
-    prefixes: ['apn-rn-sample://'],
-    config,
-  };
-
-  useEffect(() => {
-    fetchConfigsOrSetDefault();
-  }, []);
-
-  useEffect(() => {
-    if (
-      isDeviceAttrTrackEnabled !== null &&
-      isScreenTrackEnabled !== null &&
-      isDebugModeEnabled != null &&
-      bgDelayValue !== null &&
-      bgTasksValue !== null
-    )
-      initialiseCioPackage();
-  }, [
-    isDeviceAttrTrackEnabled,
-    isScreenTrackEnabled,
-    isDebugModeEnabled,
-    bgDelayValue,
-    bgTasksValue,
-    initialiseCioPackage,
-  ]);
-
-  const fetchConfigsOrSetDefault = async () => {
-    const keyStorageObj = new CioKeyValueStorage();
-    const bgDelayValue = await keyStorageObj.getBGQSecondsDelay();
-    const bgTasksValue = await keyStorageObj.getBGQMinTasksInQueue();
-    const screenTrackValue = await keyStorageObj.getScreenTrack();
-    const deviceAttrValue = await keyStorageObj.getDeviceAttributesTrack();
-    const debugModeValue = await keyStorageObj.getDebugModeConfig();
-    const trackUrl = await keyStorageObj.getTrackingUrl();
-
-    // Setting values here to show default values on Settings screens
-    if (screenTrackValue === null) {
-      await keyStorageObj.saveScreenTrack(DefaultConstants.SCREEN_TRACK_STATUS);
-    }
-    if (bgDelayValue === null) {
-      await keyStorageObj.saveBGQSecondsDelay(
-        `${DefaultConstants.BGQ_SECONDS_DELAY}`
-      );
-    }
-    if (bgTasksValue === null) {
-      await keyStorageObj.saveBGQMinTasksInQueue(
-        `${DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE}`
-      );
-    }
-    if (deviceAttrValue === null) {
-      await keyStorageObj.saveDeviceAttributesTrack(
-        `${DefaultConstants.TRACK_DEVICE_ATTRIBUTES_STATUS}`
-      );
-    }
-    if (debugModeValue === null) {
-      await keyStorageObj.saveDebugModeConfig(
-        `${DefaultConstants.DEBUG_MODE_STATUS}`
-      );
-    }
-    setIsDeviceAttrTrackEnabled(
-      deviceAttrValue === null ? true : JSON.parse(deviceAttrValue)
-    );
-    setIsScreenTrackEnabled(
-      screenTrackValue === null ? true : JSON.parse(screenTrackValue)
-    );
-    setIsDebugModeEnabled(
-      debugModeValue === null ? true : JSON.parse(debugModeValue)
-    );
-    setBgDelayValue(
-      bgDelayValue === null
-        ? DefaultConstants.BGQ_SECONDS_DELAY
-        : parseInt(bgDelayValue)
-    );
-    setBgTasksValue(
-      bgTasksValue === null
-        ? DefaultConstants.BGQ_MIN_TASKS_IN_QUEUE
-        : parseInt(bgTasksValue)
-    );
-    setTrackingUrl(trackUrl);
-  };
-
-  const initialiseCioPackage = useCallback(() => {
-    const configuration = new CustomerioConfig();
-    configuration.logLevel =
-      isDebugModeEnabled === null ? CioLogLevel.debug : isDebugModeEnabled;
-    configuration.autoTrackDeviceAttributes =
-      isDeviceAttrTrackEnabled === null ? true : isDeviceAttrTrackEnabled;
-    configuration.backgroundQueueMinNumberOfTasks = bgTasksValue;
-    configuration.backgroundQueueSecondsDelay = bgDelayValue;
-    if (trackingUrl != null) {
-      configuration.trackingApiUrl = trackingUrl;
-    }
-
-    const env = new CustomerIOEnv();
-    env.siteId = Env.siteId;
-    env.apiKey = Env.apiKey;
-
-    const cioManager = new CioManager();
-    cioManager.initializeCio(env, configuration);
-  }, [
-    isDebugModeEnabled,
-    isDeviceAttrTrackEnabled,
-    bgTasksValue,
-    bgDelayValue,
-    trackingUrl,
-  ]);
-
-  useEffect(() => {
-    const getUrlAsync = async () => {
-      const initialUrl = await Linking.getInitialURL();
-
-      setTimeout(() => {
-        if (initialUrl !== null) {
-          alert(initialUrl);
-        }
-        // Setting 1000 only to add some delay to show alert, otherwise pops up immediately
-      }, 1000);
     };
 
-    getUrlAsync();
+    prepare();
+  }, [
+    applyCustomerIoConfig,
+    handleCustomerIoConfigChanged,
+    updateCustomerIoSdkState,
+    updateUserState,
+  ]);
+
+  const updateCustomerIoSdkState = useCallback(
+    (config) => {
+      setCustomerIoSdk({
+        config: config,
+        onSdkConfigStateChanged: handleCustomerIoConfigChanged,
+      });
+    },
+    [handleCustomerIoConfigChanged]
+  );
+
+  const handleCustomerIoConfigChanged = useCallback(
+    async (config) => {
+      const storageService = new StorageService();
+      const sdkConfig = applyCustomerIoConfig(config);
+      updateCustomerIoSdkState(sdkConfig);
+      await storageService.saveSDKConfigurations(config);
+    },
+    [applyCustomerIoConfig, updateCustomerIoSdkState]
+  );
+
+  const applyCustomerIoConfig = useCallback((config) => {
+    const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(config);
+    initializeCustomerIoSDK(sdkConfig);
+    return sdkConfig;
   }, []);
 
-  if (loading == true) {
-    return <ActivityIndicator />;
-  } else {
-    return (
-      // MARK:- AUTO SCREEN TRACKING
-      // Start
-      <NavigationContainer
-        ref={navigationRef}
-        linking={linking}
-        onReady={() => {
-          routeNameRef.current = navigationRef.getCurrentRoute().name;
-        }}
-        onStateChange={async () => {
-          if (isScreenTrackEnabled) {
-            const previousRouteName = routeNameRef.current;
-            const currentRouteName = navigationRef.getCurrentRoute().name;
+  const updateUserState = useCallback(
+    (user) => {
+      setUserState({
+        user: user,
+        onUserStateChanged: handleUserStateChanged,
+      });
+    },
+    [handleUserStateChanged]
+  );
 
-            if (previousRouteName !== currentRouteName) {
-              CustomerIO.screen(currentRouteName);
-            }
-            routeNameRef.current = currentRouteName;
-          }
-        }}
-        // End
-      >
-        <Stack.Navigator initialRouteName={firstScreen}>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-              gestureDirection: 'vertical',
-            }}
-          />
-          <Stack.Screen
-            name="Dashboard"
-            component={Dashboard}
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-          <Stack.Screen
-            name="CustomDataScreen"
-            component={CustomDataScreen}
-            options={{
-              title: '',
-              headerStyle: {
-                backgroundColor: '#ffffff',
-              },
-            }}
-          />
-          <Stack.Screen
-            name="Deeplinks"
-            component={Deeplinks}
-            options={{
-              title: '',
-            }}
-          />
-          <Stack.Screen
-            name="SettingsScreen"
-            component={SettingsScreen}
-            options={{
-              title: '',
-              headerStyle: {
-                // backgroundColor: '#ffffff'
-              },
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
+  const handleUserStateChanged = useCallback(
+    async (user) => {
+      setLoading(true);
+      const storageService = new StorageService();
+      if (user) {
+        // Save user to storage
+        await storageService.saveUser(user);
+        // Identify user to Customer.io
+        onUserLoggedIn(user);
+      } else {
+        // Clear user identify from Customer.io
+        onUserLoggedOut();
+        // Clear user from storage
+        await storageService.clearUser();
+      }
+      updateUserState(user);
+      setLoading(false);
+    },
+    [updateUserState]
+  );
+
+  if (loading) {
+    return <ActivityIndicator />;
   }
+
+  return (
+    <CustomerIoSdkContext.Provider value={customerIoSdkState}>
+      <UserStateContext.Provider value={userState}>
+        <AppNavigator />
+      </UserStateContext.Provider>
+    </CustomerIoSdkContext.Provider>
+  );
 }
-const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingTop: 50,
-    justifyContent: 'center',
-  },
-});

@@ -41,8 +41,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   NSMutableDictionary *modifiedLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
         NSDictionary *pushContent = launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey];
-        if (pushContent[@"react-deep-link"]) {
-            NSString *initialURL = pushContent[@"react-deep-link"];
+        if (pushContent[@"CIO"] && pushContent[@"CIO"][@"push"] && pushContent[@"CIO"][@"push"][@"link"]) {
+          NSString *initialURL = pushContent[@"CIO"][@"push"][@"link"];
             if (!launchOptions[UIApplicationLaunchOptionsURLKey]) {
                 modifiedLaunchOptions[UIApplicationLaunchOptionsURLKey] = [NSURL URLWithString:initialURL];
             }
@@ -153,9 +153,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 // Required to register device token.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
+  // Register device to receive push notifications with device token
   [pnHandlerObj application:application deviceToken:deviceToken];
- [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  [super application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 // Required for the notification event. You must call the completion handler after handling the remote notification.
@@ -169,10 +168,8 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
   [pnHandlerObj application:application error:error];
- [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
-  
-  [super application:application didFailToRegisterForRemoteNotificationsWithError:error];
 }
+
 // Required for localNotification event
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
@@ -196,4 +193,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
  {
    return [RCTLinkingManager application:application openURL:url options:options];
  }
+
+// Universal Link deep link handling
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
+}
 @end
