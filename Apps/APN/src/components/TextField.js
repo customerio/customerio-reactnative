@@ -36,17 +36,24 @@ export const TextField = ({
     const { ref: nextTextInputRef, value: nextTextInputValue } =
       getNextTextInput();
     const nextTextInput = nextTextInputRef?.current;
+    if (!nextTextInput) {
+      return;
+    }
+
     // By default, focus moves to the beginning of the text input by calling focus()
-    nextTextInput?.focus();
+    nextTextInput.focus();
+
     // Set cursor to end of text input for better user experience
     const length = nextTextInputValue?.toString()?.length ?? 0;
     if (length > 0) {
-      nextTextInput?.setNativeProps({
+      nextTextInput.setNativeProps({
         selection: {
           start: length,
           end: length,
         },
       });
+      // Clear selection after 0ms to prevent cursor from showing up constantly at the selection set above
+      setTimeout(() => nextTextInput.setNativeProps({ selection: null }), 0);
     }
   };
 
