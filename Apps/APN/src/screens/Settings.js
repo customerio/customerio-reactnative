@@ -10,6 +10,7 @@ import React, {
 import {
   BackHandler,
   Clipboard,
+  Platform,
   ScrollView,
   StyleSheet,
   View,
@@ -63,6 +64,7 @@ const Settings = ({ navigation, route }) => {
           <HeaderBackButton
             {...props}
             style={styles.backButton}
+            labelVisible={Platform.OS === 'ios'}
             onPress={() => handleOnBackPress()}
           />
         ),
