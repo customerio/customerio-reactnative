@@ -65,6 +65,7 @@ const Settings = ({ navigation, route }) => {
             {...props}
             style={styles.backButton}
             labelVisible={Platform.OS === 'ios'}
+            accessibilityLabel="Navigate up"
             onPress={() => handleOnBackPress()}
           />
         ),
