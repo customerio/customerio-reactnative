@@ -156,6 +156,7 @@ const Dashboard = ({ navigation }) => {
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={handleSettingsPress}
+          accessibilityLabel="Settings"
         >
           <Image
             source={require('../../assets/images/black-settings-button.png')}
@@ -168,7 +169,9 @@ const Dashboard = ({ navigation }) => {
         <View style={styles.spaceTop} />
 
         <View style={styles.content}>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.email} contentDesc="Email ID Text">
+            {user.email}
+          </Text>
           <Text style={styles.title}>What would you like to test?</Text>
           {Object.values(ActionItem).map((action) => (
             <FilledButton
@@ -176,6 +179,7 @@ const Dashboard = ({ navigation }) => {
               style={styles.actionButton}
               onPress={() => handleButtonClick(action)}
               text={action.text}
+              contentDesc={action.contentDesc}
             />
           ))}
         </View>

@@ -62,6 +62,7 @@ const Login = ({ navigation }) => {
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={handleSettingsPress}
+          accessibilityLabel="Settings"
         >
           <Image
             source={require('../../assets/images/black-settings-button.png')}
@@ -82,6 +83,7 @@ const Login = ({ navigation }) => {
             onChangeText={(text) => setName(text)}
             value={name}
             textInputRef={firstNameRef}
+            contentDesc="First Name Input"
             getNextTextInput={() => ({ ref: emailRef, value: email })}
             textInputProps={{
               autoCapitalize: 'words',
@@ -93,6 +95,7 @@ const Login = ({ navigation }) => {
             placeholder="Email"
             onChangeText={(text) => setEmail(text)}
             value={email}
+            contentDesc="Email Input"
             textInputRef={emailRef}
             textInputProps={{
               autoCapitalize: 'none',
@@ -103,12 +106,14 @@ const Login = ({ navigation }) => {
             style={styles.loginButton}
             onPress={handleLoginPress}
             text="Login"
+            contentDesc="Login Button"
             textStyle={styles.loginButtonText}
           />
           <TextButton
             style={styles.randomLoginButton}
             onPress={handleRandomLoginPress}
             text="Generate Random Login"
+            contentDesc="Random Login Button"
           />
         </View>
 

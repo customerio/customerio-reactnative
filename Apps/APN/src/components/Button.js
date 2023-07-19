@@ -11,12 +11,14 @@ export const FilledButton = ({
   style,
   textStyle,
   textProps,
+  contentDesc,
   ...props
 }) => {
   return (
     <TouchableOpacity
       style={[styles.filledButtonContainer, style]}
       onPress={onPress}
+      accessibilityLabel={contentDesc}
       {...props}
     >
       <Text style={[styles.filledButtonText, textStyle]} {...textProps}>
@@ -32,12 +34,14 @@ export const TextButton = ({
   style,
   textStyle,
   textProps,
+  contentDesc,
   ...props
 }) => {
   return (
     <TouchableOpacity
       style={[styles.textButtonContainer, style]}
       onPress={onPress}
+      accessibilityLabel={contentDesc}
       {...props}
     >
       <Text style={[styles.textButtonText, textStyle]} {...textProps}>

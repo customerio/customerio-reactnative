@@ -3,9 +3,13 @@ import { Text as ReactNativeText, StyleSheet } from 'react-native';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 
-export const Text = ({ children, style, ...props }) => {
+export const Text = ({ children, style, contentDesc, ...props }) => {
   return (
-    <ReactNativeText style={[styles.text, style]} {...props}>
+    <ReactNativeText
+      style={[styles.text, style]}
+      accessibilityLabel={contentDesc}
+      {...props}
+    >
       {children}
     </ReactNativeText>
   );

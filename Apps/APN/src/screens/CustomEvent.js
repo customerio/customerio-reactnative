@@ -57,6 +57,7 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setEventName(text)}
           value={eventName}
+          contentDesc="Event Name Input"
           textInputRef={eventNameRef}
           getNextTextInput={() => ({
             ref: propertyNameRef,
@@ -74,6 +75,7 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setPropertyName(text)}
           value={propertyName}
+          contentDesc="Property Name Input"
           textInputRef={propertyNameRef}
           getNextTextInput={() => ({
             ref: propertyValueRef,
@@ -91,6 +93,7 @@ const CustomEvent = () => {
           placeholder=""
           onChangeText={(text) => setPropertyValue(text)}
           value={propertyValue}
+          contentDesc="Property Value Input"
           textInputRef={propertyValueRef}
           textInputProps={{
             autoCapitalize: 'none',
@@ -102,6 +105,7 @@ const CustomEvent = () => {
           style={styles.sendButton}
           onPress={handleSendPress}
           text="Send Event"
+          contentDesc="Send Event Button"
         />
       </View>
     </ScrollView>

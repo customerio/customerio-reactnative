@@ -222,6 +222,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="Device Token"
             value={deviceToken}
+            contentDesc="Device Token Input"
             editable={false}
             leadingIconImageSource={require('../../assets/images/paper.png')}
             onLeadingIconPress={() => copyToDeviceClipboard()}
@@ -230,6 +231,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="CIO Track URL"
             value={trackUrl}
+            contentDesc="Track URL Input"
             onChangeText={(text) => setTrackUrl(text)}
             textInputRef={trackUrlRef}
             getNextTextInput={() => ({ ref: siteIdRef, value: siteId })}
@@ -244,6 +246,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="Site Id"
             value={siteId}
+            contentDesc="Site ID Input"
             onChangeText={(text) => setSiteId(text)}
             textInputRef={siteIdRef}
             getNextTextInput={() => ({ ref: apiKeyRef, value: apiKey })}
@@ -256,6 +259,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="API Key"
             value={apiKey}
+            contentDesc="API Key Input"
             onChangeText={(text) => setApiKey(text)}
             textInputRef={apiKeyRef}
             getNextTextInput={() => ({
@@ -273,6 +277,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="backgroundQueueSecondsDelay"
             value={bqSecondsDelay ?? ''}
+            contentDesc="BQ Seconds Delay Input"
             onChangeText={(text) => {
               let value = toFloatOrNull(text);
               return setBQSecondsDelay(value === null ? undefined : text);
@@ -291,6 +296,7 @@ const Settings = ({ navigation, route }) => {
             style={styles.textInputContainer}
             label="backgroundQueueMinNumberOfTasks"
             value={bqMinNumberOfTasks ?? ''}
+            contentDesc="BQ Min Number of Tasks Input"
             onChangeText={(text) => {
               let value = toIntOrNull(text, 10);
               return setBQMinNumberOfTasks(value === null ? undefined : text);
@@ -309,6 +315,7 @@ const Settings = ({ navigation, route }) => {
             label="Track Screens"
             onValueChange={() => setTrackScreensEnabled(!isTrackScreensEnabled)}
             value={isTrackScreensEnabled}
+            contentDesc="Track Screens Toggle"
           />
           <SwitchField
             style={styles.switchRow}
@@ -317,12 +324,14 @@ const Settings = ({ navigation, route }) => {
               setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
             }
             value={isTrackDeviceAttributesEnabled}
+            contentDesc="Track Device Attributes Toggle"
           />
           <SwitchField
             style={styles.switchRow}
             label="Debug Mode"
             onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
             value={isDebugModeEnabled}
+            contentDesc="Debug Mode Toggle"
           />
         </View>
         <View style={styles.buttonContainer}>
@@ -330,12 +339,14 @@ const Settings = ({ navigation, route }) => {
             style={styles.saveButton}
             onPress={handleSavePress}
             text="Save"
+            contentDesc="Save Settings Button"
             textStyle={styles.saveButtonText}
           />
           <TextButton
             style={styles.restoreDefaultsButton}
             onPress={handleRestoreDefaultsPress}
             text="Restore Defaults"
+            contentDesc="Restore Default Settings Button"
           />
           <Caption style={styles.note}>
             Note: You must restart the app to apply these settings

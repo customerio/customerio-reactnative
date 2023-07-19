@@ -7,6 +7,7 @@ import { Text } from './Text';
 export const SwitchField = ({
   value,
   label,
+  contentDesc,
   onValueChange,
   style,
   labelStyle,
@@ -29,6 +30,7 @@ export const SwitchField = ({
         style={switchStyle}
         onValueChange={onValueChange}
         value={value}
+        accessibilityLabel={contentDesc}
         trackColor={{
           false: Colors.SWITCH_TRACK_COLOR_OFF,
           true: Colors.SWITCH_TRACK_COLOR_ON,

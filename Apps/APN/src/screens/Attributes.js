@@ -18,16 +18,18 @@ const Attributes = ({ route }) => {
   const [attributeName, setAttributeName] = useState('');
   const [attributeValue, setAttributeValue] = useState('');
 
-  let title, sendButtonText;
+  let title, sendButtonText, sendButtonContentDesc;
   switch (screen) {
     case Screen.DEVICE_ATTRIBUTES:
       title = 'Set Custom Device Attribute';
       sendButtonText = 'Send device attributes';
+      sendButtonContentDesc = 'Set Device Attribute Button';
       break;
 
     case Screen.PROFILE_ATTRIBUTES:
       title = 'Set Custom Profile Attribute';
       sendButtonText = 'Send profile attributes';
+      sendButtonContentDesc = 'Set Profile Attribute Button';
       break;
 
     default:
@@ -91,6 +93,7 @@ const Attributes = ({ route }) => {
           placeholder=""
           onChangeText={(text) => setAttributeName(text)}
           value={attributeName}
+          contentDesc="Attribute Name Input"
           textInputRef={attributeNameRef}
           getNextTextInput={() => ({
             ref: attributeValueRef,
@@ -108,6 +111,7 @@ const Attributes = ({ route }) => {
           placeholder=""
           onChangeText={(text) => setAttributeValue(text)}
           value={attributeValue}
+          contentDesc="Attribute Value Input"
           textInputRef={attributeValueRef}
           textInputProps={{
             autoCapitalize: 'none',
@@ -119,6 +123,7 @@ const Attributes = ({ route }) => {
           style={styles.sendButton}
           onPress={handleSendPress}
           text={sendButtonText}
+          contentDesc={sendButtonContentDesc}
         />
       </View>
     </ScrollView>
