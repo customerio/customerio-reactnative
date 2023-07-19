@@ -25,11 +25,18 @@ export default function App() {
       updateUserState(storage.user);
       const sdkConfig = applyCustomerIoConfig(storage.sdkConfig);
       updateCustomerIoSdkState(sdkConfig);
-      registerInAppEventListener();
+      let inAppEventListener = registerInAppEventListener();
       setLoading(false);
+      return [inAppEventListener];
     };
 
-    prepare();
+    const listeners = prepare();
+    // Remove listeners once unmounted
+    return () => {
+      for (let listener of listeners) {
+        listener.remove();
+      }
+    };
   }, [
     applyCustomerIoConfig,
     handleCustomerIoConfigChanged,
