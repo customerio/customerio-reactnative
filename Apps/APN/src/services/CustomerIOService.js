@@ -3,6 +3,7 @@ import {
   CustomerIO,
   CustomerIOEnv,
   CustomerioConfig,
+  InAppMessageEventType,
 } from 'customerio-reactnative';
 
 export const initializeCustomerIoSDK = (sdkConfig) => {
@@ -68,4 +69,52 @@ export const getPushPermissionStatus = () => {
 
 export const requestPushNotificationsPermission = (options) => {
   return CustomerIO.showPromptForPushNotifications(options);
+};
+
+export const registerInAppEventListener = () => {
+  const logInAppEvent = (eventName, event) => {
+    console.log(`in-app message: ${eventName}. event: %s`, event);
+  };
+
+  const onInAppEventReceived = (eventName, eventParams) => {
+    logInAppEvent(eventName);
+
+    const { deliveryId, messageId, actionValue, actionName } = eventParams;
+    const data = {
+      'event-name': eventName,
+      'delivery-id': deliveryId ?? 'NULL',
+      'message-id': messageId ?? 'NULL',
+    };
+    if (actionName) {
+      data['action-name'] = actionName;
+    }
+    if (actionValue) {
+      data['action-value'] = actionValue;
+    }
+
+    CustomerIO.track('in-app message action', data);
+  };
+
+  CustomerIO.inAppMessaging().registerEventsListener((event) => {
+    switch (event.eventType) {
+      case InAppMessageEventType.messageShown:
+        onInAppEventReceived('messageShown', event);
+        break;
+
+      case InAppMessageEventType.messageDismissed:
+        onInAppEventReceived('messageDismissed', event);
+        break;
+
+      case InAppMessageEventType.errorWithMessage:
+        onInAppEventReceived('errorWithMessage', event);
+        break;
+
+      case InAppMessageEventType.messageActionTaken:
+        onInAppEventReceived('messageActionTaken', event);
+        break;
+
+      default:
+        onInAppEventReceived('unsupported event', event);
+    }
+  });
 };

@@ -6,6 +6,7 @@ import {
   initializeCustomerIoSDK,
   onUserLoggedIn,
   onUserLoggedOut,
+  registerInAppEventListener,
 } from './src/services/CustomerIOService';
 import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
@@ -24,6 +25,7 @@ export default function App() {
       updateUserState(storage.user);
       const sdkConfig = applyCustomerIoConfig(storage.sdkConfig);
       updateCustomerIoSdkState(sdkConfig);
+      registerInAppEventListener();
       setLoading(false);
     };
 
