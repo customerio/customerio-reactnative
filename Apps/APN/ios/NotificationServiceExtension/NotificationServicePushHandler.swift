@@ -12,7 +12,7 @@ public class NotificationServicePushHandler : NSObject {
     public func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
 
       // TODO: Add Env.swift and fetch values from file, update values from CI secret keys
-      CustomerIO.initialize(siteId: "YourSiteId", apiKey: "YourApiKey", region: .US) { config in
+      CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
         config.autoTrackDeviceAttributes = true
         config.logLevel = .debug
       }

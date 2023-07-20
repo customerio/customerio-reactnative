@@ -1,5 +1,6 @@
 import Foundation
 import CioMessagingPushAPN
+import CioTracking
 import UserNotifications
 
 // This class manages all function calls to CustomerIO SDK.
@@ -27,6 +28,14 @@ public class MyAppPushNotificationsHandler : NSObject {
     // completion handler. If the SDK did handle it, it called the completion handler for you.
     if !handled {
       completionHandler()
+    }
+  }
+  
+  @objc(initializeCioSdk)
+  public func initializeCioSdk() {
+    CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
+      config.autoTrackDeviceAttributes = true
+      config.logLevel = .debug
     }
   }
 }

@@ -5,6 +5,7 @@ fastlane/report.xml
 
 # iOS
 iOS/build
+*/ios/Env.swift
 
 # Android/IntelliJ
 #
