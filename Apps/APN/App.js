@@ -29,7 +29,7 @@ export default function App() {
     };
 
     prepare();
-    const listeners = registerInAppEventListener();
+    const listeners = [registerInAppEventListener()];
 
     // Remove listeners once unmounted
     return () => {
