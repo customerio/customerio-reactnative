@@ -73,11 +73,11 @@ export const requestPushNotificationsPermission = (options) => {
 
 export const registerInAppEventListener = () => {
   const logInAppEvent = (eventName, event) => {
-    console.log(`in-app message: ${eventName}. event: %s`, event);
+    console.log(`in-app message: ${eventName}. event: `, event);
   };
 
   const onInAppEventReceived = (eventName, eventParams) => {
-    logInAppEvent(eventName);
+    logInAppEvent(eventName, eventParams);
 
     const { deliveryId, messageId, actionValue, actionName } = eventParams;
     const data = {
