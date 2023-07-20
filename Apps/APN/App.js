@@ -29,13 +29,11 @@ export default function App() {
     };
 
     prepare();
-    const listeners = [registerInAppEventListener()];
+    const inAppEventListener = registerInAppEventListener();
 
     // Remove listeners once unmounted
     return () => {
-      for (let listener of listeners) {
-        listener.remove();
-      }
+      inAppEventListener.remove();
     };
   }, [
     applyCustomerIoConfig,
