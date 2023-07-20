@@ -95,7 +95,8 @@ export const registerInAppEventListener = () => {
     CustomerIO.track('in-app message action', data);
   };
 
-  return CustomerIO.inAppMessaging().registerEventsListener((event) => {
+  const inAppMessaging = CustomerIO.inAppMessaging();
+  return inAppMessaging.registerEventsListener((event) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:
         onInAppEventReceived('messageShown', event);
@@ -111,6 +112,10 @@ export const registerInAppEventListener = () => {
 
       case InAppMessageEventType.messageActionTaken:
         onInAppEventReceived('messageActionTaken', event);
+        // Dismiss in app message message if the action is 'dismiss' or 'close'
+        if (event.actionValue === 'dismiss' || event.actionValue === 'close') {
+          inAppMessaging.dismissMessage();
+        }
         break;
 
       default:
