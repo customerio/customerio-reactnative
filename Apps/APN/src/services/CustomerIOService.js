@@ -112,7 +112,7 @@ export const registerInAppEventListener = () => {
 
       case InAppMessageEventType.messageActionTaken:
         onInAppEventReceived('messageActionTaken', event);
-        // Dismiss in app message message if the action is 'dismiss' or 'close'
+        // Dismiss in app message if the action is 'dismiss' or 'close'
         if (event.actionValue === 'dismiss' || event.actionValue === 'close') {
           inAppMessaging.dismissMessage();
         }
