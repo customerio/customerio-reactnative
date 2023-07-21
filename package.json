@@ -8,7 +8,7 @@
   "react-native": "src/index",
   "source": "src/index",
   "expoVersion": "",
-  "cioNativeiOSSdkVersion": "= 2.7.5",
+  "cioNativeiOSSdkVersion": "= 2.7.4",
   "files": [
     "src",
     "lib",
@@ -21,7 +21,8 @@
     "!ios/build",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!apps"
   ],
   "scripts": {
     "test": "jest",
@@ -33,7 +34,8 @@
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods",
     "postinstall": "node src/postInstall.js",
-    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
+    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)",
+    "dev:update": "npm pack && mv customerio-reactnative-*.tgz customerio-reactnative.tgz"
   },
   "keywords": [
     "react-native",
