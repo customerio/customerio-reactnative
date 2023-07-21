@@ -1,3 +1,10 @@
+### [3.1.4](https://github.com/customerio/customerio-reactnative/compare/3.1.3...3.1.4) (2023-07-20)
+
+
+### Bug Fixes
+
+* deinit cleanup repo bad memory access ([#171](https://github.com/customerio/customerio-reactnative/issues/171)) ([25f10b1](https://github.com/customerio/customerio-reactnative/commit/25f10b1c07796cb8931b9865bb05ee2d10cffe3f))
+
 ### [3.1.3](https://github.com/customerio/customerio-reactnative/compare/3.1.2...3.1.3) (2023-07-14)
 
 
