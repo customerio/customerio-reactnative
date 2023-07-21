@@ -77,6 +77,10 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  // Workaround for an outstanding issue preventing the React Native SDK from capturing a device token while the app starts
+  [pnHandlerObj initializeCioSdk];
+
   return YES;
 }
 

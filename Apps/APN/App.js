@@ -6,6 +6,7 @@ import {
   initializeCustomerIoSDK,
   onUserLoggedIn,
   onUserLoggedOut,
+  registerInAppEventListener,
 } from './src/services/CustomerIOService';
 import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
@@ -28,6 +29,12 @@ export default function App() {
     };
 
     prepare();
+    const inAppEventListener = registerInAppEventListener();
+
+    // Remove listeners once unmounted
+    return () => {
+      inAppEventListener.remove();
+    };
   }, [
     applyCustomerIoConfig,
     handleCustomerIoConfigChanged,

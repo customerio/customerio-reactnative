@@ -17,6 +17,7 @@ export const TextField = ({
   placeholder,
   onChangeText,
   editable,
+  contentDesc,
   style,
   labelStyle,
   labelProps,
@@ -87,6 +88,7 @@ export const TextField = ({
         blurOnSubmit={blurOnSubmit}
         onSubmitEditing={onSubmitEditing}
         returnKeyType={returnKeyType}
+        accessibilityLabel={contentDesc}
         {...textInputProps}
       />
       {leadingIconImageSource && (
