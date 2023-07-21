@@ -1,3 +1,10 @@
+### [3.1.5](https://github.com/customerio/customerio-reactnative/compare/3.1.4...3.1.5) (2023-07-21)
+
+
+### Bug Fixes
+
+* sdk ignores requests when initializing the SDK from react native and from native iOS ([#173](https://github.com/customerio/customerio-reactnative/issues/173)) ([8bc7beb](https://github.com/customerio/customerio-reactnative/commit/8bc7beb338869bd69eb06f60f8f101a8106ee9dc))
+
 ### [3.1.4](https://github.com/customerio/customerio-reactnative/compare/3.1.3...3.1.4) (2023-07-20)
 
 
