@@ -23,12 +23,13 @@ const Login = ({ navigation }) => {
   };
 
   const handleLoginPress = () => {
-    if (!validateEmail(email)) {
+    const trimmedEmail = email.trim();
+    if (!validateEmail(trimmedEmail)) {
       // eslint-disable-next-line no-alert
       alert('Please enter valid email');
       return;
     }
-    performLogin(new User(email, { name: name }));
+    performLogin(new User(trimmedEmail, { name: name }));
   };
 
   const validateEmail = (text) => {
