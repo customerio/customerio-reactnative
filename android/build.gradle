@@ -48,7 +48,6 @@ android {
 repositories {
   mavenCentral()
   google()
-  maven { url 'https://maven.gist.build' }
 
   def found = false
   def defaultDir = null

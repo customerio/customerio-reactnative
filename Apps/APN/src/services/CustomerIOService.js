@@ -17,8 +17,8 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
   if (sdkConfig.debugMode) {
     config.logLevel = CioLogLevel.debug;
   }
-  if (sdkConfig.trackingApiUrl) {
-    config.trackingApiUrl = sdkConfig.trackingApiUrl;
+  if (sdkConfig.trackingUrl) {
+    config.trackingApiUrl = sdkConfig.trackingUrl;
   }
   // Advanced SDK configurations only required by sample app, may not be required by most customer apps
   config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;

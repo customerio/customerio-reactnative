@@ -47,17 +47,6 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
       }
       ```
 
-1. Add the in-app dependency to the `dependencyResolutionManagement` block in your `android/settings.gradle` file—if it exists. Otherwise, add the dependency to your project-level `android/build.gradle` file.
-   ```groovy
-   // in build.gradle
-   allprojects {
-      repositories {
-         // add in-app messaging dependency
-         maven { url 'https://maven.gist.build' }
-      }
-   }
-   ```
-
 1. Add the following line to `android/app/build.gradle`:
    ```groovy
    apply plugin: 'com.google.gms.google-services'  // Google Services plugin
