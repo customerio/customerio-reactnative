@@ -1,3 +1,10 @@
+### [3.1.6](https://github.com/customerio/customerio-reactnative/compare/3.1.5...3.1.6) (2023-07-24)
+
+
+### Bug Fixes
+
+* in-app messages not displaying for release builds on Android ([#174](https://github.com/customerio/customerio-reactnative/issues/174)) ([973d1cc](https://github.com/customerio/customerio-reactnative/commit/973d1cc811c178c75e50a0016342b0e8bc066114))
+
 ### [3.1.5](https://github.com/customerio/customerio-reactnative/compare/3.1.4...3.1.5) (2023-07-21)
 
 
