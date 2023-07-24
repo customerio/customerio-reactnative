@@ -8,7 +8,8 @@
     "bundle:ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
     "clean-install": "./scripts/clean-install-dependencies.sh",
     "clean-install-android": "./scripts/clean-run-android.sh",
-    "clean-install-ios": "./scripts/clean-run-ios.sh"
+    "clean-install-ios": "./scripts/clean-run-ios.sh",
+    "dev:update": "../../scripts/dev:update.sh && pod update --repo-update --project-directory=ios"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.11",
@@ -16,7 +17,7 @@
     "@react-native-community/push-notification-ios": "^1.10.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
-    "customerio-reactnative": "../..",
+    "customerio-reactnative": "file:../../customerio-reactnative-1690212805.tgz",
     "expo": "~42.0.1",
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
