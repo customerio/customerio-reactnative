@@ -89,6 +89,7 @@ export const TextField = ({
         onSubmitEditing={onSubmitEditing}
         returnKeyType={returnKeyType}
         accessibilityLabel={contentDesc}
+        placeholderTextColor={Colors.INPUT_FIELD_HINT_COLOR}
         {...textInputProps}
       />
       {leadingIconImageSource && (

@@ -36,33 +36,7 @@ const Attributes = ({ route }) => {
       throw new Error(`Invalid screen prop: ${screen}.`);
   }
 
-  const isFormValid = () => {
-    let message;
-    let emptyFieldMessageBuilder = (fieldName) => {
-      return `${fieldName} cannot be empty`;
-    };
-
-    if (!attributeName) {
-      message = emptyFieldMessageBuilder('Attribute Name');
-    } else if (!attributeValue) {
-      message = emptyFieldMessageBuilder('Attribute Value');
-    }
-
-    if (message) {
-      Prompts.showAlert({
-        title: 'Error',
-        message: message,
-      });
-      return false;
-    }
-    return true;
-  };
-
   const handleSendPress = () => {
-    if (!isFormValid()) {
-      return;
-    }
-
     switch (screen) {
       case Screen.DEVICE_ATTRIBUTES:
         trackDeviceAttribute(attributeName, attributeValue);

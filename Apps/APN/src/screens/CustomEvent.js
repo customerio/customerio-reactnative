@@ -13,31 +13,7 @@ const CustomEvent = () => {
   const [propertyName, setPropertyName] = useState('');
   const [propertyValue, setPropertyValue] = useState('');
 
-  const isFormValid = () => {
-    let message;
-    let emptyFieldMessageBuilder = (fieldName) => {
-      return `${fieldName} cannot be empty`;
-    };
-
-    if (!eventName) {
-      message = emptyFieldMessageBuilder('Event Name');
-    }
-
-    if (message) {
-      Prompts.showAlert({
-        title: 'Error',
-        message: message,
-      });
-      return false;
-    }
-    return true;
-  };
-
   const handleSendPress = () => {
-    if (!isFormValid()) {
-      return;
-    }
-
     trackEvent(eventName, propertyName, propertyValue);
     Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
