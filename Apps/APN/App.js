@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
 import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
 import AppNavigator from './src/navigation/AppNavigator';
 import {
@@ -106,8 +106,16 @@ export default function App() {
   return (
     <CustomerIoSdkContext.Provider value={customerIoSdkState}>
       <UserStateContext.Provider value={userState}>
-        <AppNavigator />
+        <SafeAreaView style={styles.container}>
+          <AppNavigator />
+        </SafeAreaView>
       </UserStateContext.Provider>
     </CustomerIoSdkContext.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
