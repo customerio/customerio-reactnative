@@ -15,6 +15,7 @@ target 'SampleApp' do
   flags = get_default_flags()
 
   pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'
+  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: "apn")
   # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: false, push_service: "apn")
 
   use_react_native!(
@@ -35,5 +36,6 @@ end
 
 target 'NotificationServiceExtension' do
   pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "apn")
   # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: true, push_service: "apn")
 end
