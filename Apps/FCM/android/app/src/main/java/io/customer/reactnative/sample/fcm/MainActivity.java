@@ -1,4 +1,4 @@
-package com.fcmsampleapp;
+package io.customer.reactnative.sample.fcm;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

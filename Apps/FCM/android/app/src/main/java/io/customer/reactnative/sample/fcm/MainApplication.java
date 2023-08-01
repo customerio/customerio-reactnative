@@ -1,4 +1,4 @@
-package com.fcmsampleapp;
+package io.customer.reactnative.sample.fcm;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
