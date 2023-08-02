@@ -5,7 +5,7 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useRef } from 'react';
 import * as Colors from '../constants/Colors';
-import Screen from '../data/enums/Screen';
+import { Screen, ScreenName } from '../data/enums/Screen';
 import Attributes from '../screens/Attributes';
 import CustomEvent from '../screens/CustomEvent';
 import Dashboard from '../screens/Dashboard';
@@ -22,28 +22,37 @@ import {
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = () => {
+interface NavigationStackProps {
+  key: string;
+  name: string;
+  options: any;
+  initialParams?: any;
+}
+
+const AppNavigator: React.FC = () => {
   const { config: sdkConfig } = useCustomerIoSdkContext();
   const { user } = useUserStateContext();
   const navigationRef = useNavigationContainerRef();
-  const routeNameRef = useRef();
+  const routeNameRef: React.MutableRefObject<string | undefined> = useRef();
 
-  const getComponentForScreen = screen => {
+  const getComponentForScreen = (
+    screen: ScreenName,
+  ): React.ComponentType<any> => {
     switch (screen) {
-      case Screen.LOGIN:
+      case ScreenName.LOGIN:
         return Login;
 
-      case Screen.DASHBOARD:
+      case ScreenName.DASHBOARD:
         return Dashboard;
 
-      case Screen.SETTINGS:
+      case ScreenName.SETTINGS:
         return Settings;
 
-      case Screen.CUSTOM_EVENTS:
+      case ScreenName.CUSTOM_EVENTS:
         return CustomEvent;
 
-      case Screen.DEVICE_ATTRIBUTES:
-      case Screen.PROFILE_ATTRIBUTES:
+      case ScreenName.DEVICE_ATTRIBUTES:
+      case ScreenName.PROFILE_ATTRIBUTES:
         return Attributes;
 
       default:
@@ -51,7 +60,10 @@ const AppNavigator = () => {
     }
   };
 
-  const createNavigationStackProps = screen => {
+  const createNavigationStackProps = (
+    screenName: ScreenName,
+  ): NavigationStackProps => {
+    const screen = Screen[screenName];
     let stackPropsDefault = {
       key: screen.name,
       name: screen.name,
@@ -115,27 +127,27 @@ const AppNavigator = () => {
     return props;
   };
 
-  let initialRouteScreen;
+  let initialRouteScreen: ScreenName;
   let linkingScreensConfig;
-  let screens;
+  let screens: Array<ScreenName>;
 
   if (user) {
-    initialRouteScreen = Screen.DASHBOARD;
-    screens = Object.values(Screen).filter(
+    initialRouteScreen = ScreenName.DASHBOARD;
+    screens = Object.values(ScreenName).filter(
       item => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item),
     );
     linkingScreensConfig = {
-      Dashboard: Screen.DASHBOARD.path,
-      Settings: Screen.SETTINGS.path,
+      Dashboard: Screen[ScreenName.DASHBOARD].path,
+      Settings: Screen[ScreenName.SETTINGS].path,
     };
   } else {
-    initialRouteScreen = Screen.LOGIN;
-    screens = Object.values(Screen).filter(
+    initialRouteScreen = ScreenName.LOGIN;
+    screens = Object.values(ScreenName).filter(
       item => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item),
     );
     linkingScreensConfig = {
-      Login: Screen.LOGIN.path,
-      Settings: Screen.SETTINGS.path,
+      Login: Screen[ScreenName.LOGIN].path,
+      Settings: Screen[ScreenName.SETTINGS].path,
     };
   }
 
@@ -161,7 +173,7 @@ const AppNavigator = () => {
           key={key}
           name={name}
           options={options}
-          component={component}
+          getComponent={() => component}
           initialParams={initialParams}
         />
       );
@@ -173,20 +185,20 @@ const AppNavigator = () => {
       ref={navigationRef}
       linking={linking}
       onReady={() => {
-        routeNameRef.current = navigationRef.getCurrentRoute().name;
+        routeNameRef.current = navigationRef.getCurrentRoute()?.name;
       }}
       onStateChange={async () => {
-        if (sdkConfig.trackScreens) {
+        if (sdkConfig?.trackScreens === true) {
           const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.getCurrentRoute().name;
+          const currentRouteName = navigationRef.getCurrentRoute()?.name;
 
-          if (previousRouteName !== currentRouteName) {
+          if (currentRouteName && previousRouteName !== currentRouteName) {
             trackScreen(currentRouteName);
           }
           routeNameRef.current = currentRouteName;
         }
       }}>
-      <Stack.Navigator initialRouteName={initialRouteScreen.name}>
+      <Stack.Navigator initialRouteName={Screen[initialRouteScreen].name}>
         {renderScreenComponents()}
       </Stack.Navigator>
     </NavigationContainer>

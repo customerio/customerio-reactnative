@@ -1,3 +1,4 @@
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { PushPermissionStatus } from 'customerio-reactnative';
 import React from 'react';
 import {
@@ -13,7 +14,7 @@ import { FilledButton } from '../components/Button';
 import { Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import Screen from '../data/enums/Screen';
+import { ScreenName } from '../data/enums/Screen';
 import {
   getPushPermissionStatus,
   requestPushNotificationsPermission,
@@ -26,7 +27,11 @@ import Prompts from '../utils/prompts';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
-const Dashboard = ({ navigation }) => {
+interface DashboardProps {
+  navigation: NavigationProp<ParamListBase>;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   const { onUserStateChanged, user } = useUserStateContext();
 
   const sendRandomEvent = () => {
@@ -54,8 +59,8 @@ const Dashboard = ({ navigation }) => {
       case 1:
       default:
         eventName = 'Order Purchased';
-        propertyName = null;
-        propertyValue = null;
+        propertyName = undefined;
+        propertyValue = undefined;
         break;
     }
 
@@ -64,7 +69,7 @@ const Dashboard = ({ navigation }) => {
   };
 
   const handlePushPermissionCheck = () => {
-    getPushPermissionStatus().then(status => {
+    getPushPermissionStatus().then((status: PushPermissionStatus) => {
       switch (status) {
         case PushPermissionStatus.Granted:
           Prompts.showAlert({
@@ -85,7 +90,7 @@ const Dashboard = ({ navigation }) => {
     let options = { ios: { sound: true, badge: true } };
 
     requestPushNotificationsPermission(options)
-      .then(status => {
+      .then((status: PushPermissionStatus) => {
         switch (status) {
           case PushPermissionStatus.Granted:
             Prompts.showSnackbar({
@@ -116,7 +121,8 @@ const Dashboard = ({ navigation }) => {
             break;
         }
       })
-      .catch(error => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .catch((error: any) => {
         Prompts.showAlert({
           title: pushPermissionAlertTitle,
           message: 'Unable to request permission. Please try again later.',
@@ -125,10 +131,10 @@ const Dashboard = ({ navigation }) => {
   };
 
   const handleSettingsPress = () => {
-    navigateToScreen(navigation, Screen.SETTINGS);
+    navigateToScreen(navigation, ScreenName.SETTINGS);
   };
 
-  const handleButtonClick = async action => {
+  const handleButtonClick = async (action: ActionItemType) => {
     switch (action) {
       case ActionItem.RANDOM_EVENT:
         sendRandomEvent();
@@ -139,13 +145,13 @@ const Dashboard = ({ navigation }) => {
         break;
 
       case ActionItem.SIGN_OUT:
-        onUserStateChanged(null);
+        await onUserStateChanged(undefined);
         break;
 
       case ActionItem.CUSTOM_EVENT:
       case ActionItem.DEVICE_ATTRIBUTES:
       case ActionItem.PROFILE_ATTRIBUTES:
-        navigateToScreen(navigation, action.targetScreen);
+        navigateToScreen(navigation, action.targetScreen!);
         break;
     }
   };
@@ -169,7 +175,7 @@ const Dashboard = ({ navigation }) => {
 
         <View style={styles.content}>
           <Text style={styles.email} contentDesc="Email ID Text">
-            {user.email}
+            {user?.email}
           </Text>
           <Text style={styles.title}>What would you like to test?</Text>
           {Object.values(ActionItem).map(action => (
@@ -191,36 +197,39 @@ const Dashboard = ({ navigation }) => {
   );
 };
 
-const ActionItem = {
+interface ActionItemType {
+  text: string;
+  contentDesc: string;
+  targetScreen?: ScreenName;
+}
+
+const ActionItem: Record<string, ActionItemType> = {
   RANDOM_EVENT: {
     text: 'Send Random Event',
     contentDesc: 'Random Event Button',
-    targetScreen: null,
   },
   CUSTOM_EVENT: {
     text: 'Send Custom Event',
     contentDesc: 'Custom Event Button',
-    targetScreen: Screen.CUSTOM_EVENTS,
+    targetScreen: ScreenName.CUSTOM_EVENTS,
   },
   DEVICE_ATTRIBUTES: {
     text: 'Set Device Attribute',
     contentDesc: 'Device Attribute Button',
-    targetScreen: Screen.DEVICE_ATTRIBUTES,
+    targetScreen: ScreenName.DEVICE_ATTRIBUTES,
   },
   PROFILE_ATTRIBUTES: {
     text: 'Set Profile Attribute',
     contentDesc: 'Profile Attribute Button',
-    targetScreen: Screen.PROFILE_ATTRIBUTES,
+    targetScreen: ScreenName.PROFILE_ATTRIBUTES,
   },
   SHOW_PUSH_PROMPT: {
     text: 'Show Push Prompt',
     contentDesc: 'Show Push Prompt Button',
-    targetScreen: null,
   },
   SIGN_OUT: {
     text: 'Log Out',
     contentDesc: 'Log Out Button',
-    targetScreen: null,
   },
 };
 

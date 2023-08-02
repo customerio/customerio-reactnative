@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import User from './src/data/models/user';
 import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
 import AppNavigator from './src/navigation/AppNavigator';
 import {
@@ -9,23 +10,74 @@ import {
   onUserLoggedOut,
   registerInAppEventListener,
 } from './src/services/CustomerIOService';
-import StorageService from './src/services/StorageService';
-import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
-import { UserStateContext } from './src/state/userState';
+import { StorageService } from './src/services/StorageService';
+import {
+  CustomerIoSdkContext,
+  CustomerIoSdkStateEmpty,
+} from './src/state/customerIoSdkState';
+import { UserStateContext, UserStateContextEmpty } from './src/state/userState';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [userState, setUserState] = useState(undefined);
-  const [customerIoSdkState, setCustomerIoSdk] = useState(undefined);
+  const [userState, setUserState] = useState(UserStateContextEmpty);
+  const [customerIoSdkState, setCustomerIoSdk] = useState(
+    CustomerIoSdkStateEmpty,
+  );
+
+  const applyCustomerIoConfig = useCallback((config?: CustomerIoSDKConfig) => {
+    const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(config);
+    initializeCustomerIoSDK(sdkConfig);
+    return sdkConfig;
+  }, []);
+
+  const handleUserStateChanged = useCallback(async (user?: User) => {
+    setLoading(true);
+    const storageService = new StorageService();
+    if (user) {
+      // Save user to storage
+      await storageService.saveUser(user);
+      // Identify user to Customer.io
+      onUserLoggedIn(user);
+    } else {
+      // Clear user identify from Customer.io
+      onUserLoggedOut();
+      // Clear user from storage
+      await storageService.clearUser();
+    }
+    setUserState({
+      user: user,
+      onUserStateChanged: handleUserStateChanged,
+    });
+    setLoading(false);
+  }, []);
+
+  const handleCustomerIoConfigChanged = useCallback(
+    async (config: CustomerIoSDKConfig) => {
+      const storageService = new StorageService();
+      const sdkConfig = applyCustomerIoConfig(config);
+      setCustomerIoSdk({
+        config: sdkConfig,
+        onSdkConfigStateChanged: handleCustomerIoConfigChanged,
+      });
+      await storageService.saveSDKConfigurations(config);
+    },
+    [applyCustomerIoConfig],
+  );
 
   useEffect(() => {
     const prepare = async () => {
       const storageService = new StorageService();
       const storage = await storageService.loadAll();
 
-      updateUserState(storage.user);
+      setUserState({
+        user: storage.user,
+        onUserStateChanged: handleUserStateChanged,
+      });
       const sdkConfig = applyCustomerIoConfig(storage.sdkConfig);
-      updateCustomerIoSdkState(sdkConfig);
+      setCustomerIoSdk({
+        config: sdkConfig,
+        onSdkConfigStateChanged: handleCustomerIoConfigChanged,
+      });
       setLoading(false);
     };
 
@@ -39,66 +91,8 @@ export default function App() {
   }, [
     applyCustomerIoConfig,
     handleCustomerIoConfigChanged,
-    updateCustomerIoSdkState,
-    updateUserState,
+    handleUserStateChanged,
   ]);
-
-  const updateCustomerIoSdkState = useCallback(
-    config => {
-      setCustomerIoSdk({
-        config: config,
-        onSdkConfigStateChanged: handleCustomerIoConfigChanged,
-      });
-    },
-    [handleCustomerIoConfigChanged],
-  );
-
-  const handleCustomerIoConfigChanged = useCallback(
-    async config => {
-      const storageService = new StorageService();
-      const sdkConfig = applyCustomerIoConfig(config);
-      updateCustomerIoSdkState(sdkConfig);
-      await storageService.saveSDKConfigurations(config);
-    },
-    [applyCustomerIoConfig, updateCustomerIoSdkState],
-  );
-
-  const applyCustomerIoConfig = useCallback(config => {
-    const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(config);
-    initializeCustomerIoSDK(sdkConfig);
-    return sdkConfig;
-  }, []);
-
-  const updateUserState = useCallback(
-    user => {
-      setUserState({
-        user: user,
-        onUserStateChanged: handleUserStateChanged,
-      });
-    },
-    [handleUserStateChanged],
-  );
-
-  const handleUserStateChanged = useCallback(
-    async user => {
-      setLoading(true);
-      const storageService = new StorageService();
-      if (user) {
-        // Save user to storage
-        await storageService.saveUser(user);
-        // Identify user to Customer.io
-        onUserLoggedIn(user);
-      } else {
-        // Clear user identify from Customer.io
-        onUserLoggedOut();
-        // Clear user from storage
-        await storageService.clearUser();
-      }
-      updateUserState(user);
-      setLoading(false);
-    },
-    [updateUserState],
-  );
 
   if (loading) {
     return <ActivityIndicator />;

@@ -3,10 +3,14 @@ import {
   CustomerIO,
   CustomerIOEnv,
   CustomerioConfig,
+  InAppMessageEvent,
   InAppMessageEventType,
+  PushPermissionOptions,
 } from 'customerio-reactnative';
+import User from '../data/models/user';
+import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 
-export const initializeCustomerIoSDK = (sdkConfig) => {
+export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
   const env = new CustomerIOEnv();
   env.siteId = sdkConfig.siteId;
   env.apiKey = sdkConfig.apiKey;
@@ -28,7 +32,7 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
   CustomerIO.initialize(env, config);
 };
 
-export const onUserLoggedIn = (user) => {
+export const onUserLoggedIn = (user: User) => {
   CustomerIO.identify(user.email, {
     first_name: user.name,
     email: user.email,
@@ -39,27 +43,31 @@ export const onUserLoggedOut = () => {
   CustomerIO.clearIdentify();
 };
 
-export const trackScreen = (screenName) => {
+export const trackScreen = (screenName: string) => {
   CustomerIO.screen(screenName);
 };
 
-export const trackEvent = (eventName, propertyName, propertyValue) => {
-  const data = {};
+export const trackEvent = (
+  eventName: string,
+  propertyName?: string,
+  propertyValue?: any,
+) => {
+  const data: Map<string, any> = new Map();
   if (propertyName) {
-    data[propertyName] = propertyValue;
+    data.set(propertyName, propertyValue);
   }
   CustomerIO.track(eventName, data);
 };
 
-export const trackDeviceAttribute = (name, value) => {
-  const data = {};
-  data[name] = value;
+export const trackDeviceAttribute = (name: string, value: any) => {
+  const data: Map<string, any> = new Map();
+  data.set(name, value);
   CustomerIO.setDeviceAttributes(data);
 };
 
-export const trackProfileAttribute = (name, value) => {
-  const data = {};
-  data[name] = value;
+export const trackProfileAttribute = (name: string, value: any) => {
+  const data: Map<string, any> = new Map();
+  data.set(name, value);
   CustomerIO.setProfileAttributes(data);
 };
 
@@ -67,36 +75,40 @@ export const getPushPermissionStatus = () => {
   return CustomerIO.getPushPermissionStatus();
 };
 
-export const requestPushNotificationsPermission = (options) => {
+export const requestPushNotificationsPermission = (
+  options: PushPermissionOptions,
+) => {
   return CustomerIO.showPromptForPushNotifications(options);
 };
 
 export const registerInAppEventListener = () => {
-  const logInAppEvent = (name, params) => {
+  const logInAppEvent = (name: string, params: InAppMessageEvent) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
-  const onInAppEventReceived = (eventName, eventParams) => {
+  const onInAppEventReceived = (
+    eventName: string,
+    eventParams: InAppMessageEvent,
+  ) => {
     logInAppEvent(eventName, eventParams);
 
     const { deliveryId, messageId, actionValue, actionName } = eventParams;
-    const data = {
-      'event-name': eventName,
-      'delivery-id': deliveryId ?? 'NULL',
-      'message-id': messageId ?? 'NULL',
-    };
+    const data: Map<string, any> = new Map();
+    data.set('event-name', eventName);
+    data.set('delivery-id', deliveryId ?? 'NULL');
+    data.set('message-id', messageId ?? 'NULL');
     if (actionName) {
-      data['action-name'] = actionName;
+      data.set('action-name', actionName);
     }
     if (actionValue) {
-      data['action-value'] = actionValue;
+      data.set('action-value', actionValue);
     }
 
     CustomerIO.track('in-app message action', data);
   };
 
   const inAppMessaging = CustomerIO.inAppMessaging();
-  return inAppMessaging.registerEventsListener((event) => {
+  return inAppMessaging.registerEventsListener((event: InAppMessageEvent) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:
         onInAppEventReceived('messageShown', event);

@@ -1,27 +1,38 @@
 import Env from '../../../env';
 
+interface SDKConfigParams {
+  siteId: string;
+  apiKey: string;
+  trackingUrl?: string;
+  bqSecondsDelay?: number;
+  bqMinNumberOfTasks?: number;
+  trackScreens?: boolean;
+  trackDeviceAttributes?: boolean;
+  debugMode?: boolean;
+}
+
 export default class CustomerIoSDKConfig {
-  constructor({
-    siteId,
-    apiKey,
-    trackingUrl,
-    bqSecondsDelay,
-    bqMinNumberOfTasks,
-    trackScreens,
-    trackDeviceAttributes,
-    debugMode,
-  } = {}) {
-    this.siteId = siteId;
-    this.apiKey = apiKey;
-    this.trackingUrl = trackingUrl;
-    this.bqSecondsDelay = bqSecondsDelay;
-    this.bqMinNumberOfTasks = bqMinNumberOfTasks;
-    this.trackScreens = trackScreens;
-    this.trackDeviceAttributes = trackDeviceAttributes;
-    this.debugMode = debugMode;
+  siteId: string;
+  apiKey: string;
+  trackingUrl?: string;
+  bqSecondsDelay?: number;
+  bqMinNumberOfTasks?: number;
+  trackScreens?: boolean;
+  trackDeviceAttributes?: boolean;
+  debugMode?: boolean;
+
+  constructor(params: SDKConfigParams = { siteId: '', apiKey: '' }) {
+    this.siteId = params.siteId;
+    this.apiKey = params.apiKey;
+    this.trackingUrl = params.trackingUrl;
+    this.bqSecondsDelay = params.bqSecondsDelay;
+    this.bqMinNumberOfTasks = params.bqMinNumberOfTasks;
+    this.trackScreens = params.trackScreens;
+    this.trackDeviceAttributes = params.trackDeviceAttributes;
+    this.debugMode = params.debugMode;
   }
 
-  static createDefault() {
+  static createDefault(): CustomerIoSDKConfig {
     return new CustomerIoSDKConfig({
       siteId: Env.siteId,
       apiKey: Env.apiKey,
@@ -34,7 +45,9 @@ export default class CustomerIoSDKConfig {
     });
   }
 
-  static applyDefaultForUndefined(other) {
+  static applyDefaultForUndefined(
+    other?: SDKConfigParams,
+  ): CustomerIoSDKConfig {
     const defaultConfig = this.createDefault();
     return new CustomerIoSDKConfig({
       siteId: other?.siteId ?? defaultConfig.siteId,

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 import { Caption } from './Text';
 
-const BuildInfoText = () => {
+const BuildInfoText: React.FC = () => {
   const [buildInfo, setBuildInfo] = useState('');
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import * as Colors from '../constants/Colors';
 import { trackEvent } from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
 
-const CustomEvent = () => {
+const CustomEvent: React.FC = () => {
   const [eventName, setEventName] = useState('');
   const [propertyName, setPropertyName] = useState('');
   const [propertyValue, setPropertyValue] = useState('');

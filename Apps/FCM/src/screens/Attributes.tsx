@@ -1,3 +1,4 @@
+import { RouteProp } from '@react-navigation/native';
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -5,14 +6,18 @@ import { FilledButton } from '../components/Button';
 import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
-import Screen from '../data/enums/Screen';
+import { ScreenName } from '../data/enums/Screen';
 import {
   trackDeviceAttribute,
   trackProfileAttribute,
 } from '../services/CustomerIOService';
 import Prompts from '../utils/prompts';
 
-const Attributes = ({ route }) => {
+interface AttributesProps {
+  route: RouteProp<{ params: { screen: ScreenName } }, 'params'>;
+}
+
+const Attributes: React.FC<AttributesProps> = ({ route }) => {
   const { screen } = route.params;
 
   const [attributeName, setAttributeName] = useState('');
@@ -20,13 +25,13 @@ const Attributes = ({ route }) => {
 
   let title, sendButtonText, sendButtonContentDesc;
   switch (screen) {
-    case Screen.DEVICE_ATTRIBUTES:
+    case ScreenName.DEVICE_ATTRIBUTES:
       title = 'Set Custom Device Attribute';
       sendButtonText = 'Send device attributes';
       sendButtonContentDesc = 'Set Device Attribute Button';
       break;
 
-    case Screen.PROFILE_ATTRIBUTES:
+    case ScreenName.PROFILE_ATTRIBUTES:
       title = 'Set Custom Profile Attribute';
       sendButtonText = 'Send profile attributes';
       sendButtonContentDesc = 'Set Profile Attribute Button';
@@ -38,12 +43,12 @@ const Attributes = ({ route }) => {
 
   const handleSendPress = () => {
     switch (screen) {
-      case Screen.DEVICE_ATTRIBUTES:
+      case ScreenName.DEVICE_ATTRIBUTES:
         trackDeviceAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Device attribute sent successfully!' });
         break;
 
-      case Screen.PROFILE_ATTRIBUTES:
+      case ScreenName.PROFILE_ATTRIBUTES:
         trackProfileAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Profile attribute sent successfully!' });
         break;

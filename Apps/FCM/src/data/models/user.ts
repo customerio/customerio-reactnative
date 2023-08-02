@@ -1,6 +1,9 @@
 export default class User {
-  constructor(email, { name } = { name: '' }) {
+  email: string;
+  name: string;
+
+  constructor(email: string, { name }: { name?: string } = {}) {
     this.email = email;
-    this.name = name;
+    this.name = name ?? '';
   }
 }

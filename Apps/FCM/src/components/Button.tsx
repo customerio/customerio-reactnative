@@ -1,11 +1,20 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import ReactNative, { StyleSheet, TouchableOpacity } from 'react-native';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import { Text } from './Text';
 
-export const FilledButton = ({
+interface ButtonProps {
+  text: string;
+  onPress: () => void;
+  style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+  textStyle?: ReactNative.StyleProp<ReactNative.TextStyle>;
+  contentDesc?: string;
+  textProps?: ReactNative.TextProps;
+}
+
+export const FilledButton: React.FC<ButtonProps> = ({
   text,
   onPress,
   style,
@@ -27,7 +36,7 @@ export const FilledButton = ({
   );
 };
 
-export const TextButton = ({
+export const TextButton: React.FC<ButtonProps> = ({
   text,
   onPress,
   style,
@@ -64,7 +73,7 @@ const styles = StyleSheet.create({
   filledButtonText: {
     color: Colors.TEXT_COLOR_ON_PRIMARY,
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    fontWeight: Fonts.FONT_WEIGHT_BOLD,
     textAlign: 'center',
   },
   textButtonContainer: {
@@ -81,7 +90,7 @@ const styles = StyleSheet.create({
   textButtonText: {
     color: Colors.SECONDARY_COLOR,
     fontSize: Fonts.FONT_SIZE_BUTTON_DEFAULT,
-    fontWeight: Fonts.FONT_FAMILY_BOLD,
+    fontWeight: Fonts.FONT_WEIGHT_BOLD,
     textAlign: 'center',
   },
 });

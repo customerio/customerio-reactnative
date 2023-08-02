@@ -1,5 +1,5 @@
 import React from 'react';
-import {
+import ReactNative, {
   Image,
   StyleSheet,
   TextInput,
@@ -11,7 +11,32 @@ import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
 import { Text } from './Text';
 
-export const TextField = ({
+interface TextFieldProps {
+  value: any;
+  label?: string;
+  placeholder?: string;
+  onChangeText?: (text: string) => void;
+  editable?: boolean;
+  contentDesc?: string;
+  style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+  labelStyle?: ReactNative.StyleProp<ReactNative.TextStyle>;
+  labelProps?: ReactNative.TextProps;
+  textInputStyle?: ReactNative.StyleProp<ReactNative.TextStyle>;
+  textInputProps?: ReactNative.TextInputProps;
+  textInputRef?: React.RefObject<ReactNative.TextInput | undefined>;
+  getNextTextInput?: () => {
+    ref: React.RefObject<ReactNative.TextInput | undefined>;
+    value: string | number | undefined;
+  };
+  leadingIconImageSource?: ReactNative.ImageSourcePropType;
+  onLeadingIconPress?: () => void;
+  leadingIconContainerStyle?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+  leadingIconContainerProps?: ReactNative.TouchableOpacityProps;
+  leadingIconImageStyle?: ReactNative.StyleProp<ReactNative.ImageStyle>;
+  leadingIconImageProps?: ReactNative.ImageProps;
+}
+
+export const TextField: React.FC<TextFieldProps> = ({
   value,
   label,
   placeholder,
@@ -34,8 +59,13 @@ export const TextField = ({
   ...props
 }) => {
   const focusNextField = () => {
+    const nextTextInputResult = getNextTextInput && getNextTextInput();
+    if (!nextTextInputResult) {
+      return;
+    }
+
     const { ref: nextTextInputRef, value: nextTextInputValue } =
-      getNextTextInput();
+      nextTextInputResult;
     const nextTextInput = nextTextInputRef?.current;
     if (!nextTextInput) {
       return;
@@ -60,7 +90,7 @@ export const TextField = ({
 
   let blurOnSubmit;
   let onSubmitEditing;
-  let returnKeyType;
+  let returnKeyType: ReactNative.ReturnKeyTypeOptions;
 
   // If getNextTextInput is not defined, then this text input is the last one in the form
   if (getNextTextInput) {
@@ -84,7 +114,7 @@ export const TextField = ({
         value={value}
         placeholder={placeholder}
         editable={editable}
-        ref={textInputRef}
+        ref={textInputRef as React.RefObject<TextInput>}
         blurOnSubmit={blurOnSubmit}
         onSubmitEditing={onSubmitEditing}
         returnKeyType={returnKeyType}

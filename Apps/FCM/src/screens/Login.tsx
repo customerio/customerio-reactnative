@@ -1,3 +1,4 @@
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import React, { useRef, useState } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -7,32 +8,39 @@ import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import Screen from '../data/enums/Screen';
+import { ScreenName } from '../data/enums/Screen';
 import User from '../data/models/user';
 import { useUserStateContext } from '../state/userState';
 import { navigateToScreen } from '../utils/navigation';
+import Prompts from '../utils/prompts';
 
-const Login = ({ navigation }) => {
+interface LoginProps {
+  navigation: NavigationProp<ParamListBase>;
+}
+
+const Login: React.FC<LoginProps> = ({ navigation }) => {
   const { onUserStateChanged } = useUserStateContext();
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
 
   const handleSettingsPress = () => {
-    navigateToScreen(navigation, Screen.SETTINGS);
+    navigateToScreen(navigation, ScreenName.SETTINGS);
   };
 
   const handleLoginPress = () => {
     const trimmedEmail = email.trim();
     if (!validateEmail(trimmedEmail)) {
-      // eslint-disable-next-line no-alert
-      alert('Please enter valid email');
+      Prompts.showAlert({
+        title: 'Error',
+        message: 'Please enter valid email',
+      });
       return;
     }
     performLogin(new User(trimmedEmail, { name: name }));
   };
 
-  const validateEmail = text => {
+  const validateEmail = (text: string) => {
     // Regular expression pattern for email validation
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(text);
@@ -50,8 +58,8 @@ const Login = ({ navigation }) => {
     performLogin(new User(`${username}@customer.io`, { name: '' }));
   };
 
-  const performLogin = async user => {
-    onUserStateChanged(user);
+  const performLogin = async (user: User) => {
+    await onUserStateChanged(user);
   };
 
   const firstNameRef = useRef();

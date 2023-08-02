@@ -1,5 +1,10 @@
 import { HeaderBackButton } from '@react-navigation/elements';
-import { useFocusEffect } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  RouteProp,
+  useFocusEffect,
+} from '@react-navigation/native';
 import React, {
   useCallback,
   useEffect,
@@ -28,7 +33,15 @@ import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
 
-const Settings = ({ navigation, route }) => {
+interface SettingsProps {
+  navigation: NavigationProp<ParamListBase>;
+  route: RouteProp<
+    { params?: { site_id?: string; api_key?: string } },
+    'params'
+  >;
+}
+
+const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const { params } = route;
   const initialSiteId = params?.site_id;
   const initialApiKey = params?.api_key;
@@ -41,8 +54,12 @@ const Settings = ({ navigation, route }) => {
   const [trackUrl, setTrackUrl] = useState('');
   const [siteId, setSiteId] = useState('');
   const [apiKey, setApiKey] = useState('');
-  const [bqSecondsDelay, setBQSecondsDelay] = useState(undefined);
-  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState(undefined);
+  const [bqSecondsDelay, setBQSecondsDelay] = useState<string | undefined>(
+    undefined,
+  );
+  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState<
+    string | undefined
+  >(undefined);
   const [isTrackScreensEnabled, setTrackScreensEnabled] = useState(false);
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
@@ -60,7 +77,8 @@ const Settings = ({ navigation, route }) => {
   useLayoutEffect(() => {
     if (!navigation.canGoBack()) {
       navigation.setOptions({
-        headerLeft: props => (
+        // eslint-disable-next-line react/no-unstable-nested-components
+        headerLeft: (props: any) => (
           <HeaderBackButton
             {...props}
             style={styles.backButton}
@@ -85,21 +103,39 @@ const Settings = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    setTrackUrl(initialConfig.trackingUrl);
-    setSiteId(initialSiteId ?? initialConfig.siteId);
-    setApiKey(initialApiKey ?? initialConfig.apiKey);
-    setBQSecondsDelay(initialConfig.bqSecondsDelay.toString());
-    setBQMinNumberOfTasks(initialConfig.bqMinNumberOfTasks.toString());
-    setTrackScreensEnabled(initialConfig.trackScreens);
-    setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
-    setDebugModeEnabled(initialConfig.debugMode);
+    let setValueIfPresent: <T>(
+      value: T | undefined,
+      setter: (value: T) => void,
+    ) => void = (value, setter) => {
+      if (value) {
+        setter(value);
+      }
+    };
+
+    setValueIfPresent(initialConfig?.trackingUrl, setTrackUrl);
+    setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
+    setValueIfPresent(initialApiKey ?? initialConfig?.apiKey, setApiKey);
+    setValueIfPresent(
+      initialConfig?.bqSecondsDelay?.toString(),
+      setBQSecondsDelay,
+    );
+    setValueIfPresent(
+      initialConfig?.bqMinNumberOfTasks?.toString(),
+      setBQMinNumberOfTasks,
+    );
+    setValueIfPresent(initialConfig?.trackScreens, setTrackScreensEnabled);
+    setValueIfPresent(
+      initialConfig?.trackDeviceAttributes,
+      setTrackDeviceAttributesEnabled,
+    );
+    setValueIfPresent(initialConfig?.debugMode, setDebugModeEnabled);
   }, [initialApiKey, initialConfig, initialSiteId]);
 
   const handleRestoreDefaultsPress = async () => {
     saveConfigurations(defaultConfig);
   };
 
-  const isTrackingURLValid = value => {
+  const isTrackingURLValid = (value: string) => {
     const url = value.trim();
 
     // Empty text is not considered valid.
@@ -125,27 +161,27 @@ const Settings = ({ navigation, route }) => {
     );
   };
 
-  const toIntOrNull = value => {
-    let number = parseInt(value, 10);
-    return isNaN(number) ? null : number;
+  const toIntOrUndefined = (value: string | undefined): number | undefined => {
+    return value !== undefined ? parseInt(value, 10) || undefined : undefined;
   };
 
-  const toFloatOrNull = value => {
-    let number = parseFloat(value);
-    return isNaN(number) ? null : number;
+  const toFloatOrUndefined = (
+    value: string | undefined,
+  ): number | undefined => {
+    return value !== undefined ? parseFloat(value) || undefined : undefined;
   };
 
   const isFormValid = () => {
     let message;
-    let blankFieldMessageBuilder = fieldName => {
+    let blankFieldMessageBuilder = (fieldName: string) => {
       return `${fieldName} cannot be blank`;
     };
-    let outOfBoundsValueMessageBuilder = (fieldName, minValue) => {
+    let outOfBoundsValueMessageBuilder = (fieldName: string, minValue: any) => {
       return `${fieldName} must be greater than or equal to ${minValue}`;
     };
 
-    const bqSecondsDelayValue = toFloatOrNull(bqSecondsDelay);
-    const bqMinNumberOfTasksValue = toIntOrNull(bqMinNumberOfTasks);
+    const bqSecondsDelayValue = toFloatOrUndefined(bqSecondsDelay);
+    const bqMinNumberOfTasksValue = toIntOrUndefined(bqMinNumberOfTasks);
 
     if (!isTrackingURLValid(trackUrl)) {
       message = 'Please enter formatted url e.g. https://tracking.cio/';
@@ -155,17 +191,14 @@ const Settings = ({ navigation, route }) => {
       message = blankFieldMessageBuilder('API Key');
     } else if (!bqSecondsDelay) {
       message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
-    } else if (bqSecondsDelayValue === null || bqSecondsDelayValue < 1) {
+    } else if (!bqSecondsDelayValue || bqSecondsDelayValue < 1) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueSecondsDelay',
         1,
       );
     } else if (!bqMinNumberOfTasks) {
       message = blankFieldMessageBuilder('backgroundQueueMinNumberOfTasks');
-    } else if (
-      bqMinNumberOfTasksValue === null ||
-      bqMinNumberOfTasksValue < 1
-    ) {
+    } else if (!bqMinNumberOfTasksValue || bqMinNumberOfTasksValue < 1) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueMinNumberOfTasks',
         1,
@@ -191,15 +224,15 @@ const Settings = ({ navigation, route }) => {
     config.siteId = siteId;
     config.apiKey = apiKey;
     config.trackingUrl = trackUrl;
-    config.bqSecondsDelay = toFloatOrNull(bqSecondsDelay);
-    config.bqMinNumberOfTasks = toIntOrNull(bqMinNumberOfTasks);
+    config.bqSecondsDelay = toFloatOrUndefined(bqSecondsDelay);
+    config.bqMinNumberOfTasks = toIntOrUndefined(bqMinNumberOfTasks);
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
     saveConfigurations(config);
   };
 
-  const saveConfigurations = async config => {
+  const saveConfigurations = async (config: CustomerIoSDKConfig) => {
     await onSdkConfigStateChanged(config);
     navigation.goBack();
   };
@@ -280,8 +313,8 @@ const Settings = ({ navigation, route }) => {
             value={bqSecondsDelay ?? ''}
             contentDesc="BQ Seconds Delay Input"
             onChangeText={text => {
-              let value = toFloatOrNull(text);
-              return setBQSecondsDelay(value === null ? undefined : text);
+              let value = toFloatOrUndefined(text);
+              return setBQSecondsDelay(value ? text : undefined);
             }}
             textInputRef={bqSecondsDelayRef}
             getNextTextInput={() => ({
@@ -299,8 +332,8 @@ const Settings = ({ navigation, route }) => {
             value={bqMinNumberOfTasks ?? ''}
             contentDesc="BQ Min Number of Tasks Input"
             onChangeText={text => {
-              let value = toIntOrNull(text, 10);
-              return setBQMinNumberOfTasks(value === null ? undefined : text);
+              let value = toIntOrUndefined(text);
+              return setBQMinNumberOfTasks(value ? text : undefined);
             }}
             textInputRef={bqMinNumberOfTasksRef}
             textInputProps={{

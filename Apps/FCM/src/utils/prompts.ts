@@ -1,30 +1,38 @@
-import { Alert } from 'react-native';
-import Snackbar from 'react-native-snackbar';
+import { Alert, AlertButton, AlertOptions } from 'react-native';
+import Snackbar, { SnackBarOptions } from 'react-native-snackbar';
 
 class Prompts {
   static showAlert(
-    { title, message, buttons, options } = {
-      title: null,
-      message: null,
-      buttons: {
-        text: 'OK',
-        // eslint-disable-next-line prettier/prettier
-        onPress: () => { },
-      },
-      options: {
-        cancelable: true,
-      },
-    }
+    {
+      title,
+      message,
+      buttons,
+      options,
+    }: {
+      title: string;
+      message?: string;
+      buttons?: AlertButton[];
+      options?: AlertOptions;
+    } = {
+      title: '',
+      buttons: [
+        {
+          text: 'OK',
+          // eslint-disable-next-line prettier/prettier
+            onPress: () => { },
+        },
+      ],
+      options: { cancelable: true },
+    },
   ) {
     Alert.alert(title, message, buttons, options);
   }
 
   static showSnackbar(
-    { text, duration, action } = {
-      text: null,
+    { text, duration, action }: SnackBarOptions = {
+      text: '',
       duration: Snackbar.LENGTH_SHORT,
-      action: null,
-    }
+    },
   ) {
     Snackbar.show({
       text: text,

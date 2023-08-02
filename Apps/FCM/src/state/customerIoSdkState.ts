@@ -1,7 +1,20 @@
-import { createContext, useContext } from 'react';
+import { Context, createContext, useContext } from 'react';
+import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 
-export const CustomerIoSdkContext = createContext(null);
+interface CustomerIoSdkState {
+  config?: CustomerIoSDKConfig;
+  onSdkConfigStateChanged: (config: CustomerIoSDKConfig) => Promise<void>;
+}
 
-export function useCustomerIoSdkContext() {
+export const CustomerIoSdkStateEmpty: CustomerIoSdkState = {
+  config: undefined,
+  onSdkConfigStateChanged: async () => {},
+};
+
+export const CustomerIoSdkContext: Context<CustomerIoSdkState> = createContext(
+  CustomerIoSdkStateEmpty,
+);
+
+export function useCustomerIoSdkContext(): CustomerIoSdkState {
   return useContext(CustomerIoSdkContext);
 }

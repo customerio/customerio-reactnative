@@ -1,7 +1,20 @@
-import { createContext, useContext } from 'react';
+import { Context, createContext, useContext } from 'react';
+import User from '../data/models/user';
 
-export const UserStateContext = createContext(null);
+interface UserState {
+  user?: User;
+  onUserStateChanged: (user?: User) => Promise<void>;
+}
 
-export function useUserStateContext() {
+export const UserStateContextEmpty: UserState = {
+  user: undefined,
+  onUserStateChanged: async () => {},
+};
+
+export const UserStateContext: Context<UserState> = createContext(
+  UserStateContextEmpty,
+);
+
+export function useUserStateContext(): UserState {
   return useContext(UserStateContext);
 }

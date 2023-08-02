@@ -3,8 +3,13 @@ import { SDK_CONFIG, USER_STATE } from '../constants/StorageConstants';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 
-export default class StorageService {
-  async loadFromStorage(key) {
+export interface StorageValues {
+  sdkConfig?: CustomerIoSDKConfig;
+  user?: User;
+}
+
+export class StorageService {
+  async loadFromStorage(key: string): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(key);
     } catch (e) {
@@ -13,25 +18,23 @@ export default class StorageService {
     }
   }
 
-  removeFromStorage(key, value) {
+  removeFromStorage(key: string) {
     try {
       return AsyncStorage.removeItem(key);
     } catch (e) {
       console.log(e);
-      return null;
     }
   }
 
-  saveJsonToStorage(key, value) {
+  saveJsonToStorage(key: string, value: any) {
     try {
       return AsyncStorage.setItem(key, JSON.stringify(value));
     } catch (e) {
       console.log(e);
-      return null;
     }
   }
 
-  loadAll = async () => {
+  loadAll = async (): Promise<StorageValues> => {
     try {
       let values = await AsyncStorage.multiGet([USER_STATE, SDK_CONFIG]);
 
@@ -41,21 +44,21 @@ export default class StorageService {
       return { user: user, sdkConfig: sdkConfig };
     } catch (e) {
       console.log(e);
-      return null;
+      return { user: undefined, sdkConfig: undefined };
     }
   };
 
-  createSDKConfigurations = (value) => {
-    let json = value ? JSON.parse(value) : null;
-    return json ? new CustomerIoSDKConfig(json) : null;
+  createSDKConfigurations = (value: any): CustomerIoSDKConfig | undefined => {
+    let json = value ? JSON.parse(value) : undefined;
+    return json ? new CustomerIoSDKConfig(json) : undefined;
   };
-  saveSDKConfigurations = async (config) =>
+  saveSDKConfigurations = async (config: CustomerIoSDKConfig) =>
     this.saveJsonToStorage(SDK_CONFIG, config);
 
-  createUser = (value) => {
-    let json = value ? JSON.parse(value) : null;
-    return json ? new User(json.email, json) : null;
+  createUser = (value: any): User | undefined => {
+    let json = value ? JSON.parse(value) : undefined;
+    return json ? new User(json.email, json) : undefined;
   };
-  saveUser = async (user) => this.saveJsonToStorage(USER_STATE, user);
-  clearUser = async () => this.saveJsonToStorage(USER_STATE, null);
+  saveUser = async (user: User) => this.saveJsonToStorage(USER_STATE, user);
+  clearUser = async () => this.removeFromStorage(USER_STATE);
 }

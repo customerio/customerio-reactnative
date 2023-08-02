@@ -1,10 +1,22 @@
 import React from 'react';
-import { StyleSheet, Switch, View } from 'react-native';
+import ReactNative, { StyleSheet, Switch, View } from 'react-native';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import { Text } from './Text';
 
-export const SwitchField = ({
+interface SwitchButtonProps {
+  value: any;
+  label: string;
+  contentDesc?: string;
+  onValueChange: (value: boolean) => Promise<void> | void;
+  style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+  labelStyle?: ReactNative.StyleProp<ReactNative.TextStyle>;
+  labelProps?: ReactNative.TextProps;
+  switchStyle?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+  switchProps?: ReactNative.SwitchProps;
+}
+
+export const SwitchField: React.FC<SwitchButtonProps> = ({
   value,
   label,
   contentDesc,
@@ -17,7 +29,13 @@ export const SwitchField = ({
   ...props
 }) => {
   // Helps increase the touchable area of the switch
-  const switchPaddingDefault = 6;
+  const switchHitSlopDefault = 6;
+  const hitSlop: ReactNative.Insets = {
+    top: switchHitSlopDefault,
+    left: switchHitSlopDefault,
+    bottom: switchHitSlopDefault,
+    right: switchHitSlopDefault,
+  };
 
   return (
     <View style={[styles.row, style]} {...props}>
@@ -39,8 +57,7 @@ export const SwitchField = ({
           value ? Colors.SWITCH_THUMB_COLOR_ON : Colors.SWITCH_THUMB_COLOR_OFF
         }
         ios_backgroundColor={Colors.SWITCH_TRACK_COLOR_OFF}
-        hitSlop={switchPaddingDefault}
-        padding={switchPaddingDefault}
+        hitSlop={hitSlop}
         {...switchProps}
       />
     </View>

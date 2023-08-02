@@ -1,20 +1,31 @@
 import React from 'react';
-import { Text as ReactNativeText, StyleSheet } from 'react-native';
+import ReactNative, { StyleSheet } from 'react-native';
 import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 
-export const Text = ({ children, style, contentDesc, ...props }) => {
+interface TextProps {
+  children?: React.ReactNode | string;
+  style?: ReactNative.StyleProp<ReactNative.TextStyle>;
+  contentDesc?: string;
+}
+
+export const Text: React.FC<TextProps> = ({
+  children,
+  style,
+  contentDesc,
+  ...props
+}) => {
   return (
-    <ReactNativeText
+    <ReactNative.Text
       style={[styles.text, style]}
       accessibilityLabel={contentDesc}
       {...props}>
       {children}
-    </ReactNativeText>
+    </ReactNative.Text>
   );
 };
 
-export const Caption = ({ style, ...props }) => {
+export const Caption: React.FC<TextProps> = ({ style, ...props }) => {
   return <Text style={[styles.caption, style]} {...props} />;
 };
 
