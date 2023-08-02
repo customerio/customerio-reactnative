@@ -50,6 +50,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const { user } = useUserStateContext();
   const defaultConfig = CustomerIoSDKConfig.createDefault();
 
+  // Will be used once we roll out feature for exposing device token
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deviceToken, setDeviceToken] = useState('');
   const [trackUrl, setTrackUrl] = useState('');
   const [siteId, setSiteId] = useState('');
