@@ -14,7 +14,7 @@ import { FilledButton } from '../components/Button';
 import { Text } from '../components/Text';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { ScreenName } from '../data/enums/Screen';
+import { Screen } from '../data/enums/Screen';
 import {
   getPushPermissionStatus,
   requestPushNotificationsPermission,
@@ -131,7 +131,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
   };
 
   const handleSettingsPress = () => {
-    navigateToScreen(navigation, ScreenName.SETTINGS);
+    navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleButtonClick = async (action: ActionItemType) => {
@@ -200,7 +200,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
 interface ActionItemType {
   text: string;
   contentDesc: string;
-  targetScreen?: ScreenName;
+  targetScreen?: Screen;
 }
 
 const ActionItem: Record<string, ActionItemType> = {
@@ -211,17 +211,17 @@ const ActionItem: Record<string, ActionItemType> = {
   CUSTOM_EVENT: {
     text: 'Send Custom Event',
     contentDesc: 'Custom Event Button',
-    targetScreen: ScreenName.CUSTOM_EVENTS,
+    targetScreen: Screen.CUSTOM_EVENTS,
   },
   DEVICE_ATTRIBUTES: {
     text: 'Set Device Attribute',
     contentDesc: 'Device Attribute Button',
-    targetScreen: ScreenName.DEVICE_ATTRIBUTES,
+    targetScreen: Screen.DEVICE_ATTRIBUTES,
   },
   PROFILE_ATTRIBUTES: {
     text: 'Set Profile Attribute',
     contentDesc: 'Profile Attribute Button',
-    targetScreen: ScreenName.PROFILE_ATTRIBUTES,
+    targetScreen: Screen.PROFILE_ATTRIBUTES,
   },
   SHOW_PUSH_PROMPT: {
     text: 'Show Push Prompt',

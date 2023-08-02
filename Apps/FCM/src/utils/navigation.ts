@@ -1,41 +1,39 @@
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { ScreenName } from '../data/enums/Screen';
+import { Screen } from '../data/enums/Screen';
 import User from '../data/models/user';
 
 export const navigateToScreen = (
   navigation: NavigationProp<ParamListBase>,
-  screenName: ScreenName,
+  screen: Screen,
   params?: ParamListBase,
 ) => {
-  navigation.navigate(screenName, params);
+  navigation.navigate(screen.name, params);
 };
 
 export const resetRoute = (
   navigation: NavigationProp<ParamListBase>,
   user?: User,
 ) => {
-  let initialRoute: ScreenName;
+  let initialRoute: Screen;
   if (user) {
-    initialRoute = ScreenName.DASHBOARD;
+    initialRoute = Screen.DASHBOARD;
   } else {
-    initialRoute = ScreenName.LOGIN;
+    initialRoute = Screen.LOGIN;
   }
   navigation.reset({
     index: 0,
-    routes: [{ name: initialRoute }],
+    routes: [{ name: initialRoute.name }],
   });
 };
 
-export const isAuthenticatedViewOnly = (screenName: ScreenName) => {
-  return (
-    !isUnauthenticatedViewOnly(screenName) && !isPublicViewAllowed(screenName)
-  );
+export const isAuthenticatedViewOnly = (screen: Screen) => {
+  return !isUnauthenticatedViewOnly(screen) && !isPublicViewAllowed(screen);
 };
 
-export const isUnauthenticatedViewOnly = (screenName: ScreenName) => {
-  return screenName === ScreenName.LOGIN;
+export const isUnauthenticatedViewOnly = (screen: Screen) => {
+  return screen === Screen.LOGIN;
 };
 
-export const isPublicViewAllowed = (screenName: ScreenName) => {
-  return screenName === ScreenName.SETTINGS;
+export const isPublicViewAllowed = (screen: Screen) => {
+  return screen === Screen.SETTINGS;
 };

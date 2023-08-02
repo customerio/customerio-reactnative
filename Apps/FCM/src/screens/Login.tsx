@@ -8,7 +8,7 @@ import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
 import * as Sizes from '../constants/Sizes';
-import { ScreenName } from '../data/enums/Screen';
+import { Screen } from '../data/enums/Screen';
 import User from '../data/models/user';
 import { useUserStateContext } from '../state/userState';
 import { navigateToScreen } from '../utils/navigation';
@@ -25,7 +25,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
   const [name, setName] = useState('');
 
   const handleSettingsPress = () => {
-    navigateToScreen(navigation, ScreenName.SETTINGS);
+    navigateToScreen(navigation, Screen.SETTINGS);
   };
 
   const handleLoginPress = () => {

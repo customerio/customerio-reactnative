@@ -6,7 +6,7 @@ import { FilledButton } from '../components/Button';
 import { Text } from '../components/Text';
 import { TextField } from '../components/TextField';
 import * as Colors from '../constants/Colors';
-import { ScreenName } from '../data/enums/Screen';
+import { Screen } from '../data/enums/Screen';
 import {
   trackDeviceAttribute,
   trackProfileAttribute,
@@ -14,7 +14,7 @@ import {
 import Prompts from '../utils/prompts';
 
 interface AttributesProps {
-  route: RouteProp<{ params: { screen: ScreenName } }, 'params'>;
+  route: RouteProp<{ params: { screen: Screen } }, 'params'>;
 }
 
 const Attributes: React.FC<AttributesProps> = ({ route }) => {
@@ -25,13 +25,13 @@ const Attributes: React.FC<AttributesProps> = ({ route }) => {
 
   let title, sendButtonText, sendButtonContentDesc;
   switch (screen) {
-    case ScreenName.DEVICE_ATTRIBUTES:
+    case Screen.DEVICE_ATTRIBUTES:
       title = 'Set Custom Device Attribute';
       sendButtonText = 'Send device attributes';
       sendButtonContentDesc = 'Set Device Attribute Button';
       break;
 
-    case ScreenName.PROFILE_ATTRIBUTES:
+    case Screen.PROFILE_ATTRIBUTES:
       title = 'Set Custom Profile Attribute';
       sendButtonText = 'Send profile attributes';
       sendButtonContentDesc = 'Set Profile Attribute Button';
@@ -43,12 +43,12 @@ const Attributes: React.FC<AttributesProps> = ({ route }) => {
 
   const handleSendPress = () => {
     switch (screen) {
-      case ScreenName.DEVICE_ATTRIBUTES:
+      case Screen.DEVICE_ATTRIBUTES:
         trackDeviceAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Device attribute sent successfully!' });
         break;
 
-      case ScreenName.PROFILE_ATTRIBUTES:
+      case Screen.PROFILE_ATTRIBUTES:
         trackProfileAttribute(attributeName, attributeValue);
         Prompts.showSnackbar({ text: 'Profile attribute sent successfully!' });
         break;
