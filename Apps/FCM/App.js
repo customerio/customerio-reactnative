@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomerIoSDKConfig from './src/data/sdk/CustomerIoSDKConfig';
 import AppNavigator from './src/navigation/AppNavigator';
 import {
@@ -107,7 +108,9 @@ export default function App() {
     <CustomerIoSdkContext.Provider value={customerIoSdkState}>
       <UserStateContext.Provider value={userState}>
         <SafeAreaView style={styles.container}>
-          <AppNavigator />
+          <GestureHandlerRootView style={styles.container}>
+            <AppNavigator />
+          </GestureHandlerRootView>
         </SafeAreaView>
       </UserStateContext.Provider>
     </CustomerIoSdkContext.Provider>
