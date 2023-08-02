@@ -1,5 +1,7 @@
 package io.customer.reactnative.sample.fcm;
 
+import android.os.Bundle;
+
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
@@ -28,5 +30,12 @@ public class MainActivity extends ReactActivity {
         getMainComponentName(),
         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
+  }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    // Added for React Navigation to avoid crashes related to View state being not persisted consistently across Activity restarts
+    // https://reactnavigation.org/docs/getting-started/#installing-dependencies-into-a-bare-react-native-project
+    super.onCreate(null);
   }
 }
