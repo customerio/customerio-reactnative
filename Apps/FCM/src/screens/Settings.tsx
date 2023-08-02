@@ -60,7 +60,7 @@ const Settings = ({ navigation, route }) => {
   useLayoutEffect(() => {
     if (!navigation.canGoBack()) {
       navigation.setOptions({
-        headerLeft: (props) => (
+        headerLeft: props => (
           <HeaderBackButton
             {...props}
             style={styles.backButton}
@@ -77,11 +77,11 @@ const Settings = ({ navigation, route }) => {
     useCallback(() => {
       const subscription = BackHandler.addEventListener(
         'hardwareBackPress',
-        handleOnBackPress
+        handleOnBackPress,
       );
 
       return () => subscription.remove();
-    }, [handleOnBackPress])
+    }, [handleOnBackPress]),
   );
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const Settings = ({ navigation, route }) => {
     saveConfigurations(defaultConfig);
   };
 
-  const isTrackingURLValid = (value) => {
+  const isTrackingURLValid = value => {
     const url = value.trim();
 
     // Empty text is not considered valid.
@@ -125,19 +125,19 @@ const Settings = ({ navigation, route }) => {
     );
   };
 
-  const toIntOrNull = (value) => {
+  const toIntOrNull = value => {
     let number = parseInt(value, 10);
     return isNaN(number) ? null : number;
   };
 
-  const toFloatOrNull = (value) => {
+  const toFloatOrNull = value => {
     let number = parseFloat(value);
     return isNaN(number) ? null : number;
   };
 
   const isFormValid = () => {
     let message;
-    let blankFieldMessageBuilder = (fieldName) => {
+    let blankFieldMessageBuilder = fieldName => {
       return `${fieldName} cannot be blank`;
     };
     let outOfBoundsValueMessageBuilder = (fieldName, minValue) => {
@@ -158,7 +158,7 @@ const Settings = ({ navigation, route }) => {
     } else if (bqSecondsDelayValue === null || bqSecondsDelayValue < 1) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueSecondsDelay',
-        1
+        1,
       );
     } else if (!bqMinNumberOfTasks) {
       message = blankFieldMessageBuilder('backgroundQueueMinNumberOfTasks');
@@ -168,7 +168,7 @@ const Settings = ({ navigation, route }) => {
     ) {
       message = outOfBoundsValueMessageBuilder(
         'backgroundQueueMinNumberOfTasks',
-        1
+        1,
       );
     }
 
@@ -199,7 +199,7 @@ const Settings = ({ navigation, route }) => {
     saveConfigurations(config);
   };
 
-  const saveConfigurations = async (config) => {
+  const saveConfigurations = async config => {
     await onSdkConfigStateChanged(config);
     navigation.goBack();
   };
@@ -233,7 +233,7 @@ const Settings = ({ navigation, route }) => {
             label="CIO Track URL"
             value={trackUrl}
             contentDesc="Track URL Input"
-            onChangeText={(text) => setTrackUrl(text)}
+            onChangeText={text => setTrackUrl(text)}
             textInputRef={trackUrlRef}
             getNextTextInput={() => ({ ref: siteIdRef, value: siteId })}
             textInputProps={{
@@ -248,7 +248,7 @@ const Settings = ({ navigation, route }) => {
             label="Site Id"
             value={siteId}
             contentDesc="Site ID Input"
-            onChangeText={(text) => setSiteId(text)}
+            onChangeText={text => setSiteId(text)}
             textInputRef={siteIdRef}
             getNextTextInput={() => ({ ref: apiKeyRef, value: apiKey })}
             textInputProps={{
@@ -261,7 +261,7 @@ const Settings = ({ navigation, route }) => {
             label="API Key"
             value={apiKey}
             contentDesc="API Key Input"
-            onChangeText={(text) => setApiKey(text)}
+            onChangeText={text => setApiKey(text)}
             textInputRef={apiKeyRef}
             getNextTextInput={() => ({
               ref: bqSecondsDelayRef,
@@ -279,7 +279,7 @@ const Settings = ({ navigation, route }) => {
             label="backgroundQueueSecondsDelay"
             value={bqSecondsDelay ?? ''}
             contentDesc="BQ Seconds Delay Input"
-            onChangeText={(text) => {
+            onChangeText={text => {
               let value = toFloatOrNull(text);
               return setBQSecondsDelay(value === null ? undefined : text);
             }}
@@ -298,7 +298,7 @@ const Settings = ({ navigation, route }) => {
             label="backgroundQueueMinNumberOfTasks"
             value={bqMinNumberOfTasks ?? ''}
             contentDesc="BQ Min Number of Tasks Input"
-            onChangeText={(text) => {
+            onChangeText={text => {
               let value = toIntOrNull(text, 10);
               return setBQMinNumberOfTasks(value === null ? undefined : text);
             }}

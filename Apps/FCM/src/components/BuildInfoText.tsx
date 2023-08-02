@@ -10,7 +10,7 @@ const BuildInfoText = () => {
     const sdkPackageJson = require('customerio-reactnative/package.json');
 
     const value =
-      `Customer.io` +
+      'Customer.io' +
       ` React Native SDK ${sdkPackageJson.version}` +
       ` APN Sample ${getVersion()} (${getBuildNumber()})`;
     setBuildInfo(value);

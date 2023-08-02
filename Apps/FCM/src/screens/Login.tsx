@@ -32,7 +32,7 @@ const Login = ({ navigation }) => {
     performLogin(new User(trimmedEmail, { name: name }));
   };
 
-  const validateEmail = (text) => {
+  const validateEmail = text => {
     // Regular expression pattern for email validation
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(text);
@@ -44,13 +44,13 @@ const Login = ({ navigation }) => {
       '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
     const random = Array.from(
       { length: 10 },
-      () => whitelist[Math.floor(Math.random() * whitelist.length)]
+      () => whitelist[Math.floor(Math.random() * whitelist.length)],
     );
     const username = random.join('');
     performLogin(new User(`${username}@customer.io`, { name: '' }));
   };
 
-  const performLogin = async (user) => {
+  const performLogin = async user => {
     onUserStateChanged(user);
   };
 
@@ -63,8 +63,7 @@ const Login = ({ navigation }) => {
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={handleSettingsPress}
-          accessibilityLabel="Settings"
-        >
+          accessibilityLabel="Settings">
           <Image
             source={require('../../assets/images/black-settings-button.png')}
             style={styles.settingsIcon}
@@ -81,7 +80,7 @@ const Login = ({ navigation }) => {
           <TextField
             style={styles.textInputContainer}
             placeholder="First Name"
-            onChangeText={(text) => setName(text)}
+            onChangeText={text => setName(text)}
             value={name}
             textInputRef={firstNameRef}
             contentDesc="First Name Input"
@@ -94,7 +93,7 @@ const Login = ({ navigation }) => {
           <TextField
             style={styles.textInputContainer}
             placeholder="Email"
-            onChangeText={(text) => setEmail(text)}
+            onChangeText={text => setEmail(text)}
             value={email}
             contentDesc="Email Input"
             textInputRef={emailRef}

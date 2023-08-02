@@ -96,8 +96,7 @@ export const TextField = ({
         <TouchableOpacity
           style={[styles.leadingIconContainer, leadingIconContainerStyle]}
           onPress={onLeadingIconPress}
-          {...leadingIconContainerProps}
-        >
+          {...leadingIconContainerProps}>
           <Image
             style={[styles.leadingIconImage, leadingIconImageStyle]}
             source={leadingIconImageSource}

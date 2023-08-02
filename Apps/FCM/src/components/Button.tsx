@@ -19,8 +19,7 @@ export const FilledButton = ({
       style={[styles.filledButtonContainer, style]}
       onPress={onPress}
       accessibilityLabel={contentDesc}
-      {...props}
-    >
+      {...props}>
       <Text style={[styles.filledButtonText, textStyle]} {...textProps}>
         {text}
       </Text>
@@ -42,8 +41,7 @@ export const TextButton = ({
       style={[styles.textButtonContainer, style]}
       onPress={onPress}
       accessibilityLabel={contentDesc}
-      {...props}
-    >
+      {...props}>
       <Text style={[styles.textButtonText, textStyle]} {...textProps}>
         {text}
       </Text>

@@ -28,7 +28,7 @@ const AppNavigator = () => {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef();
 
-  const getComponentForScreen = (screen) => {
+  const getComponentForScreen = screen => {
     switch (screen) {
       case Screen.LOGIN:
         return Login;
@@ -51,7 +51,7 @@ const AppNavigator = () => {
     }
   };
 
-  const createNavigationStackProps = (screen) => {
+  const createNavigationStackProps = screen => {
     let stackPropsDefault = {
       key: screen.name,
       name: screen.name,
@@ -122,7 +122,7 @@ const AppNavigator = () => {
   if (user) {
     initialRouteScreen = Screen.DASHBOARD;
     screens = Object.values(Screen).filter(
-      (item) => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item)
+      item => isPublicViewAllowed(item) || isAuthenticatedViewOnly(item),
     );
     linkingScreensConfig = {
       Dashboard: Screen.DASHBOARD.path,
@@ -131,7 +131,7 @@ const AppNavigator = () => {
   } else {
     initialRouteScreen = Screen.LOGIN;
     screens = Object.values(Screen).filter(
-      (item) => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item)
+      item => isPublicViewAllowed(item) || isUnauthenticatedViewOnly(item),
     );
     linkingScreensConfig = {
       Login: Screen.LOGIN.path,
@@ -151,7 +151,7 @@ const AppNavigator = () => {
   };
 
   const renderScreenComponents = () => {
-    return screens.map((screen) => {
+    return screens.map(screen => {
       const component = getComponentForScreen(screen);
       const { key, name, options, initialParams } =
         createNavigationStackProps(screen);
@@ -185,8 +185,7 @@ const AppNavigator = () => {
           }
           routeNameRef.current = currentRouteName;
         }
-      }}
-    >
+      }}>
       <Stack.Navigator initialRouteName={initialRouteScreen.name}>
         {renderScreenComponents()}
       </Stack.Navigator>

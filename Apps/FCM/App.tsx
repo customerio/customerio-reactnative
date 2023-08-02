@@ -44,43 +44,43 @@ export default function App() {
   ]);
 
   const updateCustomerIoSdkState = useCallback(
-    (config) => {
+    config => {
       setCustomerIoSdk({
         config: config,
         onSdkConfigStateChanged: handleCustomerIoConfigChanged,
       });
     },
-    [handleCustomerIoConfigChanged]
+    [handleCustomerIoConfigChanged],
   );
 
   const handleCustomerIoConfigChanged = useCallback(
-    async (config) => {
+    async config => {
       const storageService = new StorageService();
       const sdkConfig = applyCustomerIoConfig(config);
       updateCustomerIoSdkState(sdkConfig);
       await storageService.saveSDKConfigurations(config);
     },
-    [applyCustomerIoConfig, updateCustomerIoSdkState]
+    [applyCustomerIoConfig, updateCustomerIoSdkState],
   );
 
-  const applyCustomerIoConfig = useCallback((config) => {
+  const applyCustomerIoConfig = useCallback(config => {
     const sdkConfig = CustomerIoSDKConfig.applyDefaultForUndefined(config);
     initializeCustomerIoSDK(sdkConfig);
     return sdkConfig;
   }, []);
 
   const updateUserState = useCallback(
-    (user) => {
+    user => {
       setUserState({
         user: user,
         onUserStateChanged: handleUserStateChanged,
       });
     },
-    [handleUserStateChanged]
+    [handleUserStateChanged],
   );
 
   const handleUserStateChanged = useCallback(
-    async (user) => {
+    async user => {
       setLoading(true);
       const storageService = new StorageService();
       if (user) {
@@ -97,7 +97,7 @@ export default function App() {
       updateUserState(user);
       setLoading(false);
     },
-    [updateUserState]
+    [updateUserState],
   );
 
   if (loading) {

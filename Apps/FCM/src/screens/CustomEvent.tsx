@@ -31,7 +31,7 @@ const CustomEvent = () => {
           style={styles.textInputContainer}
           label="Event Name"
           placeholder=""
-          onChangeText={(text) => setEventName(text)}
+          onChangeText={text => setEventName(text)}
           value={eventName}
           contentDesc="Event Name Input"
           textInputRef={eventNameRef}
@@ -49,7 +49,7 @@ const CustomEvent = () => {
           style={styles.textInputContainer}
           label="Property Name"
           placeholder=""
-          onChangeText={(text) => setPropertyName(text)}
+          onChangeText={text => setPropertyName(text)}
           value={propertyName}
           contentDesc="Property Name Input"
           textInputRef={propertyNameRef}
@@ -67,7 +67,7 @@ const CustomEvent = () => {
           style={styles.textInputContainer}
           label="Property Value"
           placeholder=""
-          onChangeText={(text) => setPropertyValue(text)}
+          onChangeText={text => setPropertyValue(text)}
           value={propertyValue}
           contentDesc="Property Value Input"
           textInputRef={propertyValueRef}

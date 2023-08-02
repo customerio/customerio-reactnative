@@ -65,7 +65,7 @@ const Attributes = ({ route }) => {
           style={styles.textInputContainer}
           label="Attribute Name"
           placeholder=""
-          onChangeText={(text) => setAttributeName(text)}
+          onChangeText={text => setAttributeName(text)}
           value={attributeName}
           contentDesc="Attribute Name Input"
           textInputRef={attributeNameRef}
@@ -83,7 +83,7 @@ const Attributes = ({ route }) => {
           style={styles.textInputContainer}
           label="Attribute Value"
           placeholder=""
-          onChangeText={(text) => setAttributeValue(text)}
+          onChangeText={text => setAttributeValue(text)}
           value={attributeValue}
           contentDesc="Attribute Value Input"
           textInputRef={attributeValueRef}

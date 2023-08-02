@@ -64,7 +64,7 @@ const Dashboard = ({ navigation }) => {
   };
 
   const handlePushPermissionCheck = () => {
-    getPushPermissionStatus().then((status) => {
+    getPushPermissionStatus().then(status => {
       switch (status) {
         case PushPermissionStatus.Granted:
           Prompts.showAlert({
@@ -85,7 +85,7 @@ const Dashboard = ({ navigation }) => {
     let options = { ios: { sound: true, badge: true } };
 
     requestPushNotificationsPermission(options)
-      .then((status) => {
+      .then(status => {
         switch (status) {
           case PushPermissionStatus.Granted:
             Prompts.showSnackbar({
@@ -116,7 +116,7 @@ const Dashboard = ({ navigation }) => {
             break;
         }
       })
-      .catch((error) => {
+      .catch(error => {
         Prompts.showAlert({
           title: pushPermissionAlertTitle,
           message: 'Unable to request permission. Please try again later.',
@@ -128,7 +128,7 @@ const Dashboard = ({ navigation }) => {
     navigateToScreen(navigation, Screen.SETTINGS);
   };
 
-  const handleButtonClick = async (action) => {
+  const handleButtonClick = async action => {
     switch (action) {
       case ActionItem.RANDOM_EVENT:
         sendRandomEvent();
@@ -156,8 +156,7 @@ const Dashboard = ({ navigation }) => {
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={handleSettingsPress}
-          accessibilityLabel="Settings"
-        >
+          accessibilityLabel="Settings">
           <Image
             source={require('../../assets/images/black-settings-button.png')}
             style={styles.settingsIcon}
@@ -173,7 +172,7 @@ const Dashboard = ({ navigation }) => {
             {user.email}
           </Text>
           <Text style={styles.title}>What would you like to test?</Text>
-          {Object.values(ActionItem).map((action) => (
+          {Object.values(ActionItem).map(action => (
             <FilledButton
               key={action.text}
               style={styles.actionButton}

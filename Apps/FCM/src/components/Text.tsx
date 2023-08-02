@@ -8,8 +8,7 @@ export const Text = ({ children, style, contentDesc, ...props }) => {
     <ReactNativeText
       style={[styles.text, style]}
       accessibilityLabel={contentDesc}
-      {...props}
-    >
+      {...props}>
       {children}
     </ReactNativeText>
   );
