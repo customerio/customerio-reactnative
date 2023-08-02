@@ -1,0 +1,7 @@
+{
+  "name": "customerio-reactnative",
+  "platforms": ["ios", "android"],
+  "ios": {
+    "appDelegateSubscribers": ["CustomerioAppDelegateSubscriber"],
+  }
+}
