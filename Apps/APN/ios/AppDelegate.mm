@@ -206,13 +206,12 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   if (!url) {
     return NO;
   }
-  NSURL *universalLinkUrl = [NSURL URLWithString:@"http://applinks:ciosample.page.link/reactnative"];
+  NSURL *universalLinkUrl = [NSURL URLWithString:@"http://www.amiapp-reactnative-apns.com"];
   
   // return true from this function if your app handled the deep link.
   // return false from this function if your app did not handle the deep link and you want sdk to open the URL in a browser.
   if (([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"]) &&
-      [url.host isEqualToString:universalLinkUrl.host] &&
-      [url.path isEqualToString:universalLinkUrl.path]) {
+      [url.host isEqualToString:universalLinkUrl.host]) {
     return [RCTLinkingManager application:application
                      continueUserActivity:userActivity
                        restorationHandler:restorationHandler];
