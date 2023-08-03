@@ -202,8 +202,19 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
- return [RCTLinkingManager application:application
-                  continueUserActivity:userActivity
-                    restorationHandler:restorationHandler];
+  NSURL *url = [NSURL URLWithString:@"http://applinks:ciosample.page.link/reactnative"];
+  
+  // return true from this function if your app handled the deep link.
+  // return false from this function if your app did not handle the deep link and you want sdk to open the URL in a browser.
+  if (([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"]) &&
+      [url.host isEqualToString:url.host] &&
+      [url.path isEqualToString:url.path]) {
+    return [RCTLinkingManager application:application
+                     continueUserActivity:userActivity
+                       restorationHandler:restorationHandler];
+  } else {
+    return NO;
+  }
+  
 }
 @end
