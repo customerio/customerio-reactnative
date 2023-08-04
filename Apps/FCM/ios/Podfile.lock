@@ -5,6 +5,8 @@ PODS:
     - CustomerIO/MessagingInApp (= 2.7.7)
     - CustomerIO/Tracking (= 2.7.7)
     - React-Core
+  - customerio-reactnative-richpush/fcm (3.1.7):
+    - CustomerIO/MessagingPushFCM (= 2.7.7)
   - customerio-reactnative/fcm (3.1.7):
     - CustomerIO/MessagingInApp (= 2.7.7)
     - CustomerIO/MessagingPushFCM (= 2.7.7)
@@ -568,6 +570,7 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative-richpush/fcm (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative/fcm (from `../node_modules/customerio-reactnative`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -645,6 +648,8 @@ EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   customerio-reactnative:
+    :path: "../node_modules/customerio-reactnative"
+  customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
@@ -740,6 +745,7 @@ SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CustomerIO: ad7274a7c0ab31c33516b9262dfc408bfc66efa7
   customerio-reactnative: 65c07e888b3810ac21357af3ed08e456ba0321bc
+  customerio-reactnative-richpush: 1e2a44da4acfbabec0e9d9f75cb7ca09566242b7
   CustomerIOCommon: 64985257333953ddf7f2ab4f314c74d6949c5216
   CustomerIOMessagingInApp: 5a1325c5638171bfb3418a914a550393488fdad9
   CustomerIOMessagingPush: 8e5b9692fc80d778a9ab3ef6b310f9160a7e00b6
@@ -804,6 +810,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
 
-PODFILE CHECKSUM: d55602dca9a11af556746e0230e4b5cda60d0632
+PODFILE CHECKSUM: 529d483b1d2267a4c330667ffec3260a53676a2e
 
 COCOAPODS: 1.12.1

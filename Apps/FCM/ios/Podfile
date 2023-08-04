@@ -67,6 +67,6 @@ target 'FCMSampleApp' do
   end
 end
 
-# target 'NotificationServiceExtension' do
-#   pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
-# end
+target 'NotificationServiceExtension' do
+  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+end
