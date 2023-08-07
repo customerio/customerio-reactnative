@@ -187,9 +187,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1001564516023:android:368e728065df6d3c1a2732",
+        "mobilesdk_app_id": "1:1001564516023:android:a42b1a4b28024eee1a2732",
         "android_client_info": {
-          "package_name": "io.customer.reactnative.sample.fcm"
+          "package_name": "io.customer.remotehabits"
         }
       },
       "oauth_client": [
@@ -223,9 +223,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1001564516023:android:a42b1a4b28024eee1a2732",
+        "mobilesdk_app_id": "1:1001564516023:android:2835273f9d64bb631a2732",
         "android_client_info": {
-          "package_name": "io.customer.remotehabits"
+          "package_name": "io.customer.rn_sample.fcm"
         }
       },
       "oauth_client": [

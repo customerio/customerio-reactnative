@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "io.customer.reactnative.sample.fcm"
+    namespace "io.customer.rn_sample.fcm"
     defaultConfig {
-        applicationId "io.customer.reactnative.sample.fcm"
+        applicationId "io.customer.rn_sample.fcm"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

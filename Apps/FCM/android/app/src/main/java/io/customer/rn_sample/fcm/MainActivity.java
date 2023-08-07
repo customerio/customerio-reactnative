@@ -1,4 +1,4 @@
-package io.customer.reactnative.sample.fcm;
+package io.customer.rn_sample.fcm;
 
 import android.os.Bundle;
 
