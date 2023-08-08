@@ -80,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>React Native APN Ami App</Text>
+        <Text style={styles.title}>React Native FCM Ami App</Text>
 
         <View style={styles.spaceTop} />
 

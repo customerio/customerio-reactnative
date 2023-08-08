@@ -12,7 +12,7 @@ const BuildInfoText: React.FC = () => {
     const value =
       'Customer.io' +
       ` React Native SDK ${sdkPackageJson.version}` +
-      ` APN Sample ${getVersion()} (${getBuildNumber()})`;
+      ` FCM Sample ${getVersion()} (${getBuildNumber()})`;
     setBuildInfo(value);
   }, [buildInfo]);
 
