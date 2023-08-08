@@ -49,11 +49,9 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FCMSampleApp/Info.plist; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-FCMSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCMSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-FCMSampleApp/Pods-FCMSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-FCMSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCMSampleApp.release.xcconfig"; path = "Target Support Files/Pods-FCMSampleApp/Pods-FCMSampleApp.release.xcconfig"; sourceTree = "<group>"; };
-		5B7EB9410499542E8C5724F5 /* Pods-FCMSampleApp-FCMSampleAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCMSampleApp-FCMSampleAppTests.debug.xcconfig"; path = "Target Support Files/Pods-FCMSampleApp-FCMSampleAppTests/Pods-FCMSampleApp-FCMSampleAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-FCMSampleApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FCMSampleApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FCMSampleApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		837684722DF24279191B126C /* libPods-NotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		89C6BE57DB24E9ADA2F236DE /* Pods-FCMSampleApp-FCMSampleAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCMSampleApp-FCMSampleAppTests.release.xcconfig"; path = "Target Support Files/Pods-FCMSampleApp-FCMSampleAppTests/Pods-FCMSampleApp-FCMSampleAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		A72BE16D2A7D001F005654B5 /* FCMSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = FCMSampleApp.entitlements; path = FCMSampleApp/FCMSampleApp.entitlements; sourceTree = "<group>"; };
 		A72BE1722A7D0055005654B5 /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A72BE1742A7D0055005654B5 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -157,8 +155,6 @@
 			children = (
 				3B4392A12AC88292D35C810B /* Pods-FCMSampleApp.debug.xcconfig */,
 				5709B34CF0A7D63546082F79 /* Pods-FCMSampleApp.release.xcconfig */,
-				5B7EB9410499542E8C5724F5 /* Pods-FCMSampleApp-FCMSampleAppTests.debug.xcconfig */,
-				89C6BE57DB24E9ADA2F236DE /* Pods-FCMSampleApp-FCMSampleAppTests.release.xcconfig */,
 				EF2A879F3A8E4DB7B0FC3245 /* Pods-NotificationServiceExtension.debug.xcconfig */,
 				CA35B6AA8D691ACD0AC6A778 /* Pods-NotificationServiceExtension.release.xcconfig */,
 			);
