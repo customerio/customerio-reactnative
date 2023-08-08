@@ -260,7 +260,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             value={deviceToken}
             contentDesc="Device Token Input"
             editable={false}
-            leadingIconImageSource={require('../../assets/images/paper.png')}
+            leadingIconImageSource={require('../../assets/images/ic_copy.png')}
             onLeadingIconPress={() => copyToDeviceClipboard()}
           />
           <TextField

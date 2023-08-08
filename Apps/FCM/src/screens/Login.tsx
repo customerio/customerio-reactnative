@@ -73,7 +73,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
           onPress={handleSettingsPress}
           accessibilityLabel="Settings">
           <Image
-            source={require('../../assets/images/black-settings-button.png')}
+            source={require('../../assets/images/ic_settings.png')}
             style={styles.settingsIcon}
           />
         </TouchableOpacity>

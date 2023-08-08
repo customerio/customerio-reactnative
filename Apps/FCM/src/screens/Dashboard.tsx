@@ -164,7 +164,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           onPress={handleSettingsPress}
           accessibilityLabel="Settings">
           <Image
-            source={require('../../assets/images/black-settings-button.png')}
+            source={require('../../assets/images/ic_settings.png')}
             style={styles.settingsIcon}
           />
         </TouchableOpacity>
