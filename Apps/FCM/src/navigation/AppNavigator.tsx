@@ -148,9 +148,9 @@ const AppNavigator: React.FC = () => {
 
   const linking = {
     prefixes: [
-      'amiapp-reactnative-apns://',
-      'http://www.amiapp-reactnative-apns.com',
-      'https://www.amiapp-reactnative-apns.com',
+      'amiapp-reactnative-fcm://',
+      'http://www.amiapp-reactnative-fcm.com',
+      'https://www.amiapp-reactnative-fcm.com',
     ],
     config: {
       screens: linkingScreensConfig,
