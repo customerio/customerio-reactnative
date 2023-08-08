@@ -9,7 +9,7 @@
     "@react-native-async-storage/async-storage": "^1.19.1",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
-    "customerio-reactnative": "^3.1.7",
+    "customerio-reactnative": "../..",
     "react": "18.2.0",
     "react-native": "0.72.3",
     "react-native-device-info": "^10.8.0",
