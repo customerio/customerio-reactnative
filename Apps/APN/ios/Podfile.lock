@@ -1,18 +1,18 @@
 PODS:
   - boost (1.76.0)
-  - customerio-reactnative (3.1.6):
-    - customerio-reactnative/nopush (= 3.1.6)
+  - customerio-reactnative (3.1.7):
+    - customerio-reactnative/nopush (= 3.1.7)
     - CustomerIO/MessagingInApp (= 2.7.7)
     - CustomerIO/Tracking (= 2.7.7)
     - React-Core
-  - customerio-reactnative-richpush/apn (3.1.6):
+  - customerio-reactnative-richpush/apn (3.1.7):
     - CustomerIO/MessagingPushAPN (= 2.7.7)
-  - customerio-reactnative/apn (3.1.6):
+  - customerio-reactnative/apn (3.1.7):
     - CustomerIO/MessagingInApp (= 2.7.7)
     - CustomerIO/MessagingPushAPN (= 2.7.7)
     - CustomerIO/Tracking (= 2.7.7)
     - React-Core
-  - customerio-reactnative/nopush (3.1.6):
+  - customerio-reactnative/nopush (3.1.7):
     - CustomerIO/MessagingInApp (= 2.7.7)
     - CustomerIO/Tracking (= 2.7.7)
     - React-Core
@@ -545,8 +545,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
   CustomerIO: ad7274a7c0ab31c33516b9262dfc408bfc66efa7
-  customerio-reactnative: 5ded6ce0cd049fe5e0808166e6e7214f4a13bf46
-  customerio-reactnative-richpush: 49dfaaed296b3aec14e92f216e9c222c92439d51
+  customerio-reactnative: 65c07e888b3810ac21357af3ed08e456ba0321bc
+  customerio-reactnative-richpush: 1e2a44da4acfbabec0e9d9f75cb7ca09566242b7
   CustomerIOCommon: 64985257333953ddf7f2ab4f314c74d6949c5216
   CustomerIOMessagingInApp: 5a1325c5638171bfb3418a914a550393488fdad9
   CustomerIOMessagingPush: 8e5b9692fc80d778a9ab3ef6b310f9160a7e00b6
@@ -597,6 +597,6 @@ SPEC CHECKSUMS:
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
 
-PODFILE CHECKSUM: e3e8e50af22b0749a6da080a7a66bfc3360928e7
+PODFILE CHECKSUM: d6144999ae7994e7bd61d0f75aa410828645f94f
 
 COCOAPODS: 1.12.1
