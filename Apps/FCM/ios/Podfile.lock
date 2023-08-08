@@ -559,7 +559,7 @@ PODS:
     - React-Core
   - RNGestureHandler (2.12.1):
     - React-Core
-  - RNScreens (3.23.0):
+  - RNScreens (3.24.0):
     - React-Core
     - React-RCTImage
   - RNSnackbar (2.6.2):
@@ -805,11 +805,11 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: f47fe18526970a69c34b548883e1aeceb115e3e1
   RNDeviceInfo: 5795b418ed3451ebcaf39384e6cf51f60cb931c9
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
-  RNScreens: 6a8a3c6b808aa48dca1780df7b73ea524f602c63
+  RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 8796b55dba14d7004f980b54bcc9833ee45b28ce
 
-PODFILE CHECKSUM: 529d483b1d2267a4c330667ffec3260a53676a2e
+PODFILE CHECKSUM: 157fbfa5fc5515d2e643e8036c489b4e86ea3c2d
 
 COCOAPODS: 1.12.1
