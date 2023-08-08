@@ -14,12 +14,12 @@ import React, {
 } from 'react';
 import {
   BackHandler,
-  Clipboard,
   Platform,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
