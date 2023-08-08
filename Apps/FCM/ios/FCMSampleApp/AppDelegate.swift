@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
        let cioContent = pushContent["CIO"] as? [String: Any],
        let pushContent = cioContent["push"] as? [String: Any],
        let initialLink = pushContent["link"] as? String {
-      modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = NSURL(string: initialLink)
+      modifiedLaunchOptions![UIApplication.LaunchOptionsKey.url] = URL(string: initialLink)
     }
     
     let bridge = RCTBridge(delegate: self, launchOptions: modifiedLaunchOptions)!
@@ -56,12 +56,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
   
+  // Deep links handling for app scheme links
   func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
     return RCTLinkingManager.application(app, open: url, options: options)
   }
   
+  // Deep links handling for universal links
   func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    return RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    guard let url = userActivity.webpageURL else {
+      return false
+    }
+    
+    let universalLinkUrl = URL(string: "http://www.amiapp-reactnative-fcm.com")
+
+    // Return true from this function if your app handled the link.
+    // Return false from this function if app does not handle the link and you want sdk to open the URL in a browser.
+    if (url.scheme == "http" || url.scheme == "https") && url.host == universalLinkUrl?.host {
+      return RCTLinkingManager.application(application, continue: userActivity, restorationHandler: restorationHandler)
+    } else {
+      return false
+    }
   }
 }
 
