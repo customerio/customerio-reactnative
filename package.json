@@ -105,6 +105,10 @@
       ]
     }
   },
+  "eslintIgnore": [
+    "node_modules/",
+    "Apps/FCM/"
+  ],
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
