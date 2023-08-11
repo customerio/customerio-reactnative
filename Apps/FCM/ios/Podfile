@@ -34,8 +34,6 @@ target 'FCMSampleApp' do
 
   # Pods required by Customer.io
   pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
-  pod 'Firebase'
-  pod 'FirebaseMessaging'
 
   use_react_native!(
     :path => config[:reactNativePath],
