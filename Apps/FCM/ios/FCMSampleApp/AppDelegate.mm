@@ -51,6 +51,13 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
   [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken:fcmToken];
 }
 
+// To capture push metrics and handle deep links
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+    didReceiveNotificationResponse:(UNNotificationResponse *)response
+             withCompletionHandler:(void (^)(void))completionHandler {
+  [pnHandlerObj userNotificationCenter:center response:response completionHandler:completionHandler];
+}
+
 // To show a notification when the app is in foreground
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
