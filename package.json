@@ -107,7 +107,7 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "Apps/FCM/"
   ],
   "prettier": {
     "quoteProps": "consistent",
