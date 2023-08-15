@@ -84,7 +84,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
           <HeaderBackButton
             {...props}
             style={styles.backButton}
-            labelVisible={Platform.OS === 'ios'}
             accessibilityLabel="Navigate up"
             onPress={() => handleOnBackPress()}
           />
