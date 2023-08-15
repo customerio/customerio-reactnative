@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import { HeaderBackButton } from '@react-navigation/elements';
 import {
   NavigationProp,
@@ -12,14 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {
-  BackHandler,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import { BackHandler, ScrollView, StyleSheet, View } from 'react-native';
 import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
@@ -78,17 +72,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
 
   useLayoutEffect(() => {
     if (!navigation.canGoBack()) {
-      navigation.setOptions({
-        // eslint-disable-next-line react/no-unstable-nested-components
-        headerLeft: (props: any) => (
-          <HeaderBackButton
-            {...props}
-            style={styles.backButton}
-            accessibilityLabel="Navigate up"
-            onPress={() => handleOnBackPress()}
-          />
-        ),
-      });
+      setNavigationOptions(navigation, handleOnBackPress);
     }
   }, [handleOnBackPress, navigation]);
 
@@ -440,5 +424,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+
+const setNavigationOptions = (
+  navigation: NavigationProp<ParamListBase>,
+  handleOnBackPress: () => void,
+) => {
+  navigation.setOptions({
+    headerLeft: (props: any) => (
+      <HeaderBackButton
+        {...props}
+        style={styles.backButton}
+        accessibilityLabel="Navigate up"
+        onPress={handleOnBackPress}
+      />
+    ),
+  });
+};
 
 export default Settings;
