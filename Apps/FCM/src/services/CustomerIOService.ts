@@ -25,9 +25,15 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
     config.trackingApiUrl = sdkConfig.trackingUrl;
   }
   // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
+  if (sdkConfig.trackDeviceAttributes !== undefined) {
+    config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
+  }
+  if (sdkConfig.bqMinNumberOfTasks !== undefined) {
+    config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
+  }
+  if (sdkConfig.bqSecondsDelay !== undefined) {
+    config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
+  }
 
   CustomerIO.initialize(env, config);
 };
