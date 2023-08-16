@@ -36,7 +36,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  RCTAppSetupPrepareApp(application);
+  RCTAppSetupPrepareApp(application, true);
 
   NSMutableDictionary *modifiedLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
@@ -60,7 +60,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 #endif
 
   NSDictionary *initProps = [self prepareInitialProps];
-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"SampleApp", initProps);
+  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"SampleApp", initProps, true);
 
   if (@available(iOS 13.0, *)) {
     rootView.backgroundColor = [UIColor systemBackgroundColor];
