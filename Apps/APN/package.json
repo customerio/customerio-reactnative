@@ -28,13 +28,23 @@
     "react-native-gesture-handler": "~1.10.2",
     "react-native-reanimated": "3.2.0",
     "react-native-safe-area-context": "^4.2.5",
-    "react-native-screens": "~3.4.0",
+    "react-native-screens": "~3.24.0",
     "react-native-snackbar": "^2.6.2",
     "react-native-unimodules": "0.14.10",
     "react-native-web": "~0.13.12"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0"
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/eslint-config": "^0.72.2",
+    "@react-native/metro-config": "^0.72.11",
+    "@tsconfig/react-native": "^3.0.0",
+    "metro-react-native-babel-preset": "0.76.8"
+
+  },
+  "engines": {
+    "node": ">=16"
   },
   "private": true
 }
