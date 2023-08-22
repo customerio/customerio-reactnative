@@ -16,6 +16,10 @@ public class MyAppPushNotificationsHandler : NSObject {
     // Remember to modify the siteId and apiKey with your own values.
     CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: Region.US) { config in
       config.autoTrackDeviceAttributes = true
+      
+      // Configuration settings below are convenient for internal Customer.io testing. 
+      // They are optional for your setup. 
+      config.logLevel = .debug
     }
     
     let center  = UNUserNotificationCenter.current()
