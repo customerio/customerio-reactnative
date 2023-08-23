@@ -28,13 +28,8 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
       }
     }
   }
-
-  // Initialize Customer.io SDK here
-  // This fixes an issue in which the React Native SDK identifies a profile, but an iOS device isn't added to the profile
-  [pnHandlerObj initializeCioSdk];
-
-  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
+  
+  [pnHandlerObj setupCustomerIOClickHandling:self];
 
   return [super application:application didFinishLaunchingWithOptions:modifiedLaunchOptions];
 }
@@ -48,15 +43,13 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
 }
 
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-  [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken:fcmToken];
+  [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken: fcmToken];
 }
 
-// To capture push metrics and handle deep links
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-    didReceiveNotificationResponse:(UNNotificationResponse *)response
-             withCompletionHandler:(void (^)(void))completionHandler {
-  [pnHandlerObj userNotificationCenter:center response:response completionHandler:completionHandler];
-}
+// Send push notification click events to the Customer.IO SDK for processing
+ - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
+   [pnHandlerObj userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
+ }
 
 // To show a notification when the app is in foreground
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center

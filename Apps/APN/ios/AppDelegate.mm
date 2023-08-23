@@ -69,8 +69,6 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   }
 
   [application registerForRemoteNotifications];
-  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -78,8 +76,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  // Workaround for an outstanding issue preventing the React Native SDK from capturing a device token while the app starts
-  [pnHandlerObj initializeCioSdk];
+  [pnHandlerObj setupCustomerIOClickHandling:self];
 
   return YES;
 }
