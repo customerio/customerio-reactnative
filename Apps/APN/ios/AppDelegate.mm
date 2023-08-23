@@ -4,7 +4,6 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import "SampleApp-Swift.h"
-//#import <React/RCTAppSetupUtils.h>
 #import <RCTAppSetupUtils.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
