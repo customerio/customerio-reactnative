@@ -1,13 +1,26 @@
 import Foundation
 import CioMessagingPushAPN
-import CioTracking
 import UserNotifications
+import CioTracking
 
-// This class manages all function calls to CustomerIO SDK.
 @objc
 public class MyAppPushNotificationsHandler : NSObject {
 
   public override init() {}
+
+  @objc(setupCustomerIOClickHandling:)
+  public func setupCustomerIOClickHandling(withNotificationDelegate notificationDelegate: UNUserNotificationCenterDelegate) {
+    // This line of code is required in order for the Customer.io SDK to handle push notification click events.
+    // We are working on removing this requirement in a future release.
+    // Remember to modify the siteId and apiKey with your own values.
+    CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
+      config.autoTrackDeviceAttributes = true
+      config.logLevel = .debug
+    }
+    
+    let center  = UNUserNotificationCenter.current()
+    center.delegate = notificationDelegate
+  }
 
   @objc(application:deviceToken:)
   public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -28,14 +41,6 @@ public class MyAppPushNotificationsHandler : NSObject {
     // completion handler. If the SDK did handle it, it called the completion handler for you.
     if !handled {
       completionHandler()
-    }
-  }
-  
-  @objc(initializeCioSdk)
-  public func initializeCioSdk() {
-    CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
-      config.autoTrackDeviceAttributes = true
-      config.logLevel = .debug
     }
   }
 }

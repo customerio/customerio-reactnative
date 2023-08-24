@@ -4,7 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import "SampleApp-Swift.h"
-#import <React/RCTAppSetupUtils.h>
+#import <RCTAppSetupUtils.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 #import <React/RCTLinkingManager.h>
@@ -36,7 +36,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  RCTAppSetupPrepareApp(application);
+  RCTAppSetupPrepareApp(application, true);
 
   NSMutableDictionary *modifiedLaunchOptions = [NSMutableDictionary dictionaryWithDictionary:launchOptions];
     if (launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey]) {
@@ -60,7 +60,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 #endif
 
   NSDictionary *initProps = [self prepareInitialProps];
-  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"SampleApp", initProps);
+  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"SampleApp", initProps, true);
 
   if (@available(iOS 13.0, *)) {
     rootView.backgroundColor = [UIColor systemBackgroundColor];
@@ -69,8 +69,6 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   }
 
   [application registerForRemoteNotifications];
-  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-  center.delegate = self;
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
@@ -78,8 +76,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  // Workaround for an outstanding issue preventing the React Native SDK from capturing a device token while the app starts
-  [pnHandlerObj initializeCioSdk];
+  [pnHandlerObj setupCustomerIOClickHandling:self];
 
   return YES;
 }
@@ -202,8 +199,22 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
- return [RCTLinkingManager application:application
-                  continueUserActivity:userActivity
-                    restorationHandler:restorationHandler];
+  NSURL *url = userActivity.webpageURL;
+  if (!url) {
+    return NO;
+  }
+  NSURL *universalLinkUrl = [NSURL URLWithString:@"http://www.amiapp-reactnative-apns.com"];
+  
+  // return true from this function if your app handled the deep link.
+  // return false from this function if your app did not handle the deep link and you want sdk to open the URL in a browser.
+  if (([url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"]) &&
+      [url.host isEqualToString:universalLinkUrl.host]) {
+    return [RCTLinkingManager application:application
+                     continueUserActivity:userActivity
+                       restorationHandler:restorationHandler];
+  } else {
+    return NO;
+  }
+  
 }
 @end

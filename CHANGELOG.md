@@ -1,3 +1,17 @@
+### [3.1.7](https://github.com/customerio/customerio-reactnative/compare/3.1.6...3.1.7) (2023-07-26)
+
+
+### Bug Fixes
+
+* support json array in attributes ([#180](https://github.com/customerio/customerio-reactnative/issues/180)) ([eb667a6](https://github.com/customerio/customerio-reactnative/commit/eb667a6d70a6a23afda440b42b357f07af00f07b))
+
+### [3.1.6](https://github.com/customerio/customerio-reactnative/compare/3.1.5...3.1.6) (2023-07-24)
+
+
+### Bug Fixes
+
+* in-app messages not displaying for release builds on Android ([#174](https://github.com/customerio/customerio-reactnative/issues/174)) ([973d1cc](https://github.com/customerio/customerio-reactnative/commit/973d1cc811c178c75e50a0016342b0e8bc066114))
+
 ### [3.1.5](https://github.com/customerio/customerio-reactnative/compare/3.1.4...3.1.5) (2023-07-21)
 
 

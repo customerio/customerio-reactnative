@@ -42,7 +42,7 @@ const Dashboard = ({ navigation }) => {
 
         eventName = 'appointmentScheduled';
         propertyName = 'appointmentTime';
-        propertyValue = appointmentTime.getTime() / 1000;
+        propertyValue = Math.round(appointmentTime.getTime() / 1000);
         break;
 
       case 2:
