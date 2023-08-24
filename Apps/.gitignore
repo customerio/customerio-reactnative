@@ -1,3 +1,6 @@
+# Because the sample apps install the RN SDK from a local file path, every time that someone makes a change to the RN SDK source code, all sample app lock files will be changed. This can make git commits noisey. To avoid this, we ignore all lock files in the sample apps. This is not recommended for production apps.
+package-lock.json
+
 # Config files
 #
 env.js

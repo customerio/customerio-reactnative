@@ -25,6 +25,7 @@
     "!apps"
   ],
   "scripts": {
+    "pre-deploy": "npm run typescript",
     "test": "jest",
     "typescript": "tsc --noEmit",
     "lint": "npx eslint --fix \"**/*.{js,ts,tsx}\"",
@@ -34,8 +35,7 @@
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods",
     "postinstall": "node src/postInstall.js",
-    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)",
-    "dev:update": "npm pack && mv customerio-reactnative-*.tgz customerio-reactnative.tgz"
+    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
   "keywords": [
     "react-native",

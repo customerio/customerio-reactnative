@@ -1,39 +1,42 @@
-set -e -x
+set -e
 
-# Update the SDK in the sample app during SDK development. 
-# Run this script from the root directory of the sample app. 
+# Updates the RN SDK in the sample app during SDK development. Great for testing changes to the SDK in the sample app.
+#
+# Usage: 
+# cd apps/APN/ # make sure you run this script from the root directory of the sample app. 
+# ../../scripts/dev:update.sh
+# 
+# It's recommended to add this to the package.json of the sample app:
+# "scripts": {
+#   "dev:update": "../../scripts/dev:update.sh"
+# }
+# Then, you can run `npm run dev:update` to be easier. 
+#
+# Note: 
+# This script assumes the sample app is using npm, not yarn. yarn has a caching 
+# mechanism that makes it difficult to update the SDK from a local install. 
+# https://github.com/yarnpkg/yarn/issues/5357 
 
-# check if yq is installed and suggest installing it not. 
-if ! command -v yq &> /dev/null
-then
-    echo "CLI program, yq, not yet installed. This script requires it. Install it: brew install yq"
-    exit
-fi
-
-# change directory to where you are executing the script. 
+# change directory to where you are executing the script from, not the directory where the script is located in. 
 RUNNING_DIRECTORY="$(pwd)"
 cd "$RUNNING_DIRECTORY"
 
-# We need to generate a unique filename each time we build to trick yarn to skip cache.
-# https://github.com/yarnpkg/yarn/issues/5357 
-echo "Generating a unique file name for the package to trick yarn to skip cache."
-UNIQUE_PACKAGE_NAME="customerio-reactnative-$(date "+%s").tgz"
-echo "UNIQUE_PACKAGE_NAME: $UNIQUE_PACKAGE_NAME"
-
-echo "Removing existing install of RN SDK"
-rm -rf node_modules/customerio-reactnative
-
 echo "Building RN SDK"
 cd ../../ 
-rm customerio-reactnative*.tgz || true # remove previous builds so that "mv" command renames the file we just created
+echo "Running pre-deploy script to compile code. We run the same commands as we do for production deployments so QA testing in sample apps is more accurate to a production environment"
+npm run pre-deploy 
 
-# We are generating 
-npm pack && mv customerio-reactnative-*.tgz "$UNIQUE_PACKAGE_NAME" 
-cd "$RUNNING_DIRECTORY" # go back to the same apps directory to install the package
+rm customerio-reactnative*.tgz || true # This is to prepare for the next step. Remove any existing .tgz files (from previous "npm pack" runs) so that the next command doesn't fail.
+npm pack # npm packages SDK the same way that it does before deploying to production. The .tgz file that npm produces here is the same one that is uploaded to npmjs.com for production deployments. Our sample apps will install the local SDK from this .tgz file to immiate a production deployment.
+mv customerio-reactnative-*.tgz customerio-reactnative.tgz # rename the .tgz file to a more predictable name. This is so our sample apps do not need to update the package.json file and can instead continue to use the same local file path for the "customerio-reactnative" package. 
+
+cd "$RUNNING_DIRECTORY" # go back to the same apps directory to install the package that we just built. 
 
 echo "Installing RN SDK"
-yq -iP ".dependencies[\"customerio-reactnative\"] = \"file:../../$UNIQUE_PACKAGE_NAME\"" package.json -o json
-yarn install
+# Update only the RN SDK because that's faster then updating all. 
+# using --no-audit to make update faster. 
+# using --verbose to find ways to make command run faster.
+npm update customerio-reactnative --verbose --no-audit
 
 echo "Cleanup"
-rm ../../$UNIQUE_PACKAGE_NAME
+rm ../../customerio-reactnative.tgz # delete since we no longer need it after it's installed. 
