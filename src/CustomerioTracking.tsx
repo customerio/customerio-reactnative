@@ -50,7 +50,7 @@ class CustomerIO {
     packageConfig.source = 'ReactNative';
     packageConfig.version = pversion;
     if (expoVersion !== '') {
-      packageConfig.source = 'Expo2';
+      packageConfig.source = 'Expo';
       packageConfig.version = expoVersion;
     }
 
