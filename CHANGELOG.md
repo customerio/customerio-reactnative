@@ -1,3 +1,10 @@
+### [3.1.8](https://github.com/customerio/customerio-reactnative/compare/3.1.7...3.1.8) (2023-08-28)
+
+
+### Bug Fixes
+
+* include required messagingpush dependency for no push configuration ([#187](https://github.com/customerio/customerio-reactnative/issues/187)) ([78bbc63](https://github.com/customerio/customerio-reactnative/commit/78bbc63035743714c9fc6a3ad7ad046312e20ca6))
+
 ### [3.1.7](https://github.com/customerio/customerio-reactnative/compare/3.1.6...3.1.7) (2023-07-26)
 
 
