@@ -37,6 +37,3 @@ echo "Installing RN SDK"
 # using --no-audit to make update faster. 
 # using --verbose to find ways to make command run faster.
 npm update customerio-reactnative --verbose --no-audit
-
-echo "Cleanup"
-rm ../../customerio-reactnative.tgz # delete since we no longer need it after it's installed. 
