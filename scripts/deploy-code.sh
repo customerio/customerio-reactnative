@@ -42,9 +42,9 @@ echo "Performing an install to make sure that all dependencies are installed"
 yarn install --frozen-lockfile
 echo "yarn install done."
 
-echo "Compiling typescript code so it's ready to be uploaded"
-yarn typescript
-echo "compiling code done"
+echo "Running pre-deploy script to compile code"
+yarn pre-deploy
+echo "pre-deploy step complete"
 
 # npmjs registry dist-tag for the release. 
 # "latest" is usually used for production. You can use whatever other value that you want for non-production builds. 
