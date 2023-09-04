@@ -214,29 +214,6 @@ class CustomerioReactnative: NSObject {
         })
     }
     
-    @objc
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        print("Printing device token \(String(apnDeviceToken: deviceToken))")
-    }
-    
-    private func swizzleDidReceiveRemoteNotification() {
-        
-        DispatchQueue.main.async {
-            let appDelegate = UIApplication.shared.delegate
-            let appDelegateClass: AnyClass? = object_getClass(appDelegate)
-            let originalSelector = #selector(UIApplicationDelegate.application(_:didRegisterForRemoteNotificationsWithDeviceToken:))
-            let swizzledSelector = #selector(CustomerioReactnative.self.application(_:didRegisterForRemoteNotificationsWithDeviceToken:))
-            
-            guard let swizzledMethod = class_getInstanceMethod(CustomerioReactnative.self, swizzledSelector) else {
-                return
-            }
-            
-            if let originalMethod = class_getInstanceMethod(appDelegateClass, originalSelector)  {
-                method_exchangeImplementations(originalMethod, swizzledMethod)
-            }
-        }
-    }
-    
     // MARK: - Push Notifications - End
     /**
         Initialize in-app using customerio package
