@@ -6,4 +6,8 @@ RCT_EXTERN_METHOD(trackNotificationResponseReceived : (nonnull NSDictionary *) p
 
 RCT_EXTERN_METHOD(trackNotificationReceived : (nonnull NSDictionary *) payload])
 
+RCT_EXTERN_METHOD(getRegisteredDeviceToken: (RCTPromiseResolveBlock) resolver
+                  rejecter:(RCTPromiseRejectBlock)rejecter)
+
+
 @end
