@@ -1,3 +1,10 @@
+### [3.1.9](https://github.com/customerio/customerio-reactnative/compare/3.1.8...3.1.9) (2023-09-05)
+
+
+### Bug Fixes
+
+* added url path encoding ([#194](https://github.com/customerio/customerio-reactnative/issues/194)) ([cd83f4b](https://github.com/customerio/customerio-reactnative/commit/cd83f4bb42160964d53c05c9afa58888791b0f92))
+
 ### [3.1.8](https://github.com/customerio/customerio-reactnative/compare/3.1.7...3.1.8) (2023-08-28)
 
 
