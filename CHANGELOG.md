@@ -1,3 +1,10 @@
+### [3.1.10](https://github.com/customerio/customerio-reactnative/compare/3.1.9...3.1.10) (2023-09-07)
+
+
+### Bug Fixes
+
+* concurrency issue in-app ([#197](https://github.com/customerio/customerio-reactnative/issues/197)) ([eb2d1fb](https://github.com/customerio/customerio-reactnative/commit/eb2d1fbff2fb17f9b3569f4b843817991de3de7c))
+
 ### [3.1.9](https://github.com/customerio/customerio-reactnative/compare/3.1.8...3.1.9) (2023-09-05)
 
 
