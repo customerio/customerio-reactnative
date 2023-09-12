@@ -20,9 +20,9 @@ jobs:
     name: Deploy SDK to Cocoapods 
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Checkout existing tag if manually running CI task  
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         # If input is not given, that probably means this CI task was run automatically by a new 
         # git tag being pushed. Skip this step and try to deploy pods for new tag. 
         if: ${{ github.event.inputs.tagToDeploy != '' }}
@@ -41,7 +41,7 @@ jobs:
           IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
       - name: Notify team of successful deployment
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.24.0
         if: ${{ success() }}
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -76,7 +76,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@v1.18.0
+        uses: slackapi/slack-github-action@v1.24.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder

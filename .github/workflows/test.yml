@@ -7,7 +7,7 @@ jobs:
     name: Test able to deploy to npm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
@@ -22,9 +22,11 @@ jobs:
 
   assert-lint:
     name: Assert lint check passes and no lint errors exist
+    permissions:
+      checks: write # for eslint annotation action to create check for the PR
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
