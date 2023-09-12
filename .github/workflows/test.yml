@@ -22,6 +22,8 @@ jobs:
 
   assert-lint:
     name: Assert lint check passes and no lint errors exist
+    permissions:
+      checks: write # for eslint annotation action to create check for the PR
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
