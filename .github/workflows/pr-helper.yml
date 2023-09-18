@@ -13,6 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Semantic PR helper
-        uses: levibostian/action-semantic-pr@v3
+        uses: levibostian/action-semantic-pr@v4
         with:
           readToken: ${{ secrets.GITHUB_TOKEN }}
