@@ -6,6 +6,6 @@ on:
 
 jobs:
   lint-pr-title:
-    uses: levibostian/action-conventional-pr-linter/.github/workflows/sharable-workflow.yml@v4
+    uses: levibostian/action-conventional-pr-linter/.github/workflows/sharable-workflow.yml@main
     permissions:
       pull-requests: write # github requires write permission when adding comments to an issue or pull request
