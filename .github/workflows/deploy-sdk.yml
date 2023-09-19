@@ -28,11 +28,11 @@ jobs:
         with:
           # version numbers below can be in many forms: M, M.m, M.m.p
           extra_plugins: |
-            conventional-changelog-conventionalcommits@4
-            @semantic-release/changelog@6
-            @semantic-release/git@10
-            @semantic-release/github@8
-            @semantic-release/exec@6
+            conventional-changelog-conventionalcommits
+            @semantic-release/changelog
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/exec
         env:
           # Needs to push git commits to repo. Needs write access.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
