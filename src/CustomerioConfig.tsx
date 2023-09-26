@@ -1,5 +1,5 @@
 import { CioLogLevel, Region } from './CustomerioEnum';
-import { AndroidNotificationClickBehavior } from './types';
+import { AndroidPushClickBehavior } from './types';
 
 /**
  * Configure package using CustomerioConfig
@@ -19,8 +19,8 @@ class CustomerioConfig {
   autoTrackPushEvents: boolean = true;
   backgroundQueueMinNumberOfTasks: number = 10;
   backgroundQueueSecondsDelay: number = 30;
-  androidNotificationClickBehavior: AndroidNotificationClickBehavior =
-    AndroidNotificationClickBehavior.ActivityPreventRestart;
+  androidPushClickBehavior: AndroidPushClickBehavior =
+    AndroidPushClickBehavior.ActivityPreventRestart;
 }
 
 class CustomerIOEnv {

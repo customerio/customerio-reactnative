@@ -1,4 +1,4 @@
-export enum AndroidNotificationClickBehavior {
+export enum AndroidPushClickBehavior {
   ResetTaskStack = 'RESET_TASK_STACK',
   ActivityPreventRestart = 'ACTIVITY_PREVENT_RESTART',
   ActivityNoFlags = 'ACTIVITY_NO_FLAGS',
