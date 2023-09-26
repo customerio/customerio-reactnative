@@ -41,4 +41,4 @@ class PackageConfig {
   source: string = '';
 }
 
-export { CustomerioConfig, CustomerIOEnv, PackageConfig };
+export { CustomerIOEnv, CustomerioConfig, PackageConfig };

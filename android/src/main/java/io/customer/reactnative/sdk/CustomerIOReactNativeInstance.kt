@@ -7,6 +7,7 @@ import io.customer.messaginginapp.ModuleMessagingInApp
 import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
+import io.customer.messagingpush.config.NotificationClickBehavior
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.*
 import io.customer.sdk.CustomerIO
@@ -64,6 +65,7 @@ object CustomerIOReactNativeInstance {
             sourceSDK?.equals(
                 other = "expo", ignoreCase = true,
             ) == true -> Client.Expo(sdkVersion = sourceSDKVersion)
+
             else -> Client.ReactNative(sdkVersion = sourceSDKVersion)
         }
     }
@@ -94,6 +96,16 @@ object CustomerIOReactNativeInstance {
                 config?.getProperty<Boolean>(Keys.Config.AUTO_TRACK_PUSH_EVENTS)?.let { value ->
                     setAutoTrackPushEvents(autoTrackPushEvents = value)
                 }
+                config?.getProperty<String>(Keys.Config.PUSH_CLICK_BEHAVIOR)
+                    ?.takeIfNotBlank()
+                    ?.let { value ->
+                        val behavior = kotlin.runCatching {
+                            enumValueOf<NotificationClickBehavior>(value)
+                        }.getOrNull()
+                        if (behavior != null) {
+                            setNotificationClickBehavior(notificationOnClickBehavior = behavior)
+                        }
+                    }
             }.build(),
         )
     }
