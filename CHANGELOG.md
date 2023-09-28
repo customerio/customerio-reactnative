@@ -1,3 +1,10 @@
+## [3.1.11](https://github.com/customerio/customerio-reactnative/compare/3.1.10...3.1.11) (2023-09-28)
+
+
+### Bug Fixes
+
+* stack-overflow caused by BQ recursion ([#204](https://github.com/customerio/customerio-reactnative/issues/204)) ([49dba31](https://github.com/customerio/customerio-reactnative/commit/49dba318d9706f50005ccd16aeab3f99d6ad044b))
+
 ### [3.1.10](https://github.com/customerio/customerio-reactnative/compare/3.1.9...3.1.10) (2023-09-07)
 
 
