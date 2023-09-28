@@ -7,7 +7,7 @@ import io.customer.messaginginapp.ModuleMessagingInApp
 import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
-import io.customer.messagingpush.config.NotificationClickBehavior
+import io.customer.messagingpush.config.PushClickBehavior
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.*
 import io.customer.sdk.CustomerIO
@@ -100,10 +100,10 @@ object CustomerIOReactNativeInstance {
                     ?.takeIfNotBlank()
                     ?.let { value ->
                         val behavior = kotlin.runCatching {
-                            enumValueOf<NotificationClickBehavior>(value)
+                            enumValueOf<PushClickBehavior>(value)
                         }.getOrNull()
                         if (behavior != null) {
-                            setNotificationClickBehavior(notificationOnClickBehavior = behavior)
+                            setPushClickBehavior(pushClickBehavior = behavior)
                         }
                     }
             }.build(),

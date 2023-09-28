@@ -15,7 +15,7 @@ internal object Keys {
         const val AUTO_TRACK_PUSH_EVENTS = "autoTrackPushEvents"
         const val BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS = "backgroundQueueMinNumberOfTasks"
         const val BACKGROUND_QUEUE_SECONDS_DELAY = "backgroundQueueSecondsDelay"
-        const val PUSH_CLICK_BEHAVIOR = "androidPushClickBehavior"
+        const val PUSH_CLICK_BEHAVIOR = "pushClickBehaviorAndroid"
     }
 
     object PackageConfig {
