@@ -1,0 +1,28 @@
+name: Update version on new tag
+
+on:
+  repository_dispatch:
+    types: new-tag
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Update version using script
+        run: |
+          ./update-native-sdk-version "${{ github.event.client_payload.repository }}" "${{ github.event.client_payload.tag }}"
+
+      - name: Create PR
+        id: create_pr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: Update version from ${{ github.event.client_payload.repository }}
+          title: Update version from ${{ github.event.client_payload.repository }}
+          reviewers: customerio/mobile
+
+      - name: Check PR
+        run: |
+          echo "Pull request created - ${{ steps.create_pr.outputs.pull-request-url }}"
