@@ -1,3 +1,10 @@
+## [3.1.12](https://github.com/customerio/customerio-reactnative/compare/3.1.11...3.1.12) (2023-10-11)
+
+
+### Bug Fixes
+
+* remove BQ tasks register device with empty profile identifier ([#207](https://github.com/customerio/customerio-reactnative/issues/207)) ([4cb9cbc](https://github.com/customerio/customerio-reactnative/commit/4cb9cbc9ec061f7129eded83db3e4ea946cf490b))
+
 ## [3.1.11](https://github.com/customerio/customerio-reactnative/compare/3.1.10...3.1.11) (2023-09-28)
 
 
