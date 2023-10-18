@@ -1,3 +1,10 @@
+## [3.1.13](https://github.com/customerio/customerio-reactnative/compare/3.1.12...3.1.13) (2023-10-18)
+
+
+### Bug Fixes
+
+* in-app positioning issue ([#208](https://github.com/customerio/customerio-reactnative/issues/208)) ([465b107](https://github.com/customerio/customerio-reactnative/commit/465b107eb192578ae02a4396746ce16b8c09372f))
+
 ## [3.1.12](https://github.com/customerio/customerio-reactnative/compare/3.1.11...3.1.12) (2023-10-11)
 
 
