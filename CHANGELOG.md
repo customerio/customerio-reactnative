@@ -1,3 +1,10 @@
+## [3.2.0](https://github.com/customerio/customerio-reactnative/compare/3.1.13...3.2.0) (2023-10-25)
+
+
+### Features
+
+* in-app persistant messages ([#210](https://github.com/customerio/customerio-reactnative/issues/210)) ([ea2ed3f](https://github.com/customerio/customerio-reactnative/commit/ea2ed3fd896d8d17b6e9b99f239f8b8a65b5576c))
+
 ## [3.1.13](https://github.com/customerio/customerio-reactnative/compare/3.1.12...3.1.13) (2023-10-18)
 
 
