@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/customerio/customerio-reactnative/compare/3.2.0...3.2.1) (2023-10-27)
+
+
+### Bug Fixes
+
+* **ios:** when queue cannot find task, expect queue runs next task ([#213](https://github.com/customerio/customerio-reactnative/issues/213)) ([fc747a5](https://github.com/customerio/customerio-reactnative/commit/fc747a52072e43e1ef03fccd655671508f720167))
+
 ## [3.2.0](https://github.com/customerio/customerio-reactnative/compare/3.1.13...3.2.0) (2023-10-25)
 
 
