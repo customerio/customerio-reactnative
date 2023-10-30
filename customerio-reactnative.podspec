@@ -20,8 +20,8 @@ Pod::Spec.new do |s|
 
   # Syntax of native iOS pods allows for automatically upgrading to the latest major version of the iOS SDK. 
   # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
-  s.dependency "CustomerIO/Tracking", package["cioNativeiOSSdkVersion"]
-  s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
+  s.dependency "CustomerIO/DashboardEarth/Tracking", package["cioNativeiOSSdkVersion"]
+  s.dependency "CustomerIO/DashboardEarth/MessagingInApp", package["cioNativeiOSSdkVersion"]
 
   # If we do not specify a default_subspec, then *all* dependencies inside of *all* the subspecs will be downloaded by cocoapods. 
   # We want customers to opt into push dependencies especially because the FCM subpsec downloads Firebase dependencies. APN customers should not install Firebase dependencies at all. 
@@ -30,15 +30,15 @@ Pod::Spec.new do |s|
   s.subspec 'nopush' do |ss|
     # This is the default subspec designed to not install any push dependencies. Customer should choose APN or FCM.
     # The SDK at runtime currently requires the MessagingPush module so we do include it here. 
-    ss.dependency "CustomerIO/MessagingPush", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/DashboardEarth/MessagingPush", package["cioNativeiOSSdkVersion"]
   end 
 
   # Note: Subspecs inherit all dependencies specified the parent spec (this file). 
   s.subspec 'apn' do |ss|
-    ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/DashboardEarth/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
   end
 
   s.subspec 'fcm' do |ss|
-    ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/DashboardEarth/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
   end
 end
