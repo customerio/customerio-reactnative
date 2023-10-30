@@ -22,10 +22,10 @@ Pod::Spec.new do |s|
 
   # Subspecs allow customers to choose between multiple options of what type of version of this rich push package they would like to install. 
   s.subspec 'apn' do |ss|
-    ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/DashboardEarth/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
   end
 
   s.subspec 'fcm' do |ss|
-    ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/DashboardEarth/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
   end
 end
