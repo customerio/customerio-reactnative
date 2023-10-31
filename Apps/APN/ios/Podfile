@@ -8,7 +8,7 @@ platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 require 'open-uri'
-IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
+IO.copy_stream(URI.open('https://raw.githubusercontent.com/dashboardearth/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
 load "/tmp/override_cio_sdk.rb"
 
 target 'SampleApp' do

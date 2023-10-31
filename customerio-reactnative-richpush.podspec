@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "13.0" }
-  s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/dashboardearth/customerio-ios.git", :branch => "main" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
