@@ -1,3 +1,59 @@
+## [3.2.1](https://github.com/customerio/customerio-reactnative/compare/3.2.0...3.2.1) (2023-10-27)
+
+
+### Bug Fixes
+
+* **ios:** when queue cannot find task, expect queue runs next task ([#213](https://github.com/customerio/customerio-reactnative/issues/213)) ([fc747a5](https://github.com/customerio/customerio-reactnative/commit/fc747a52072e43e1ef03fccd655671508f720167))
+
+## [3.2.0](https://github.com/customerio/customerio-reactnative/compare/3.1.13...3.2.0) (2023-10-25)
+
+
+### Features
+
+* in-app persistant messages ([#210](https://github.com/customerio/customerio-reactnative/issues/210)) ([ea2ed3f](https://github.com/customerio/customerio-reactnative/commit/ea2ed3fd896d8d17b6e9b99f239f8b8a65b5576c))
+
+## [3.1.13](https://github.com/customerio/customerio-reactnative/compare/3.1.12...3.1.13) (2023-10-18)
+
+
+### Bug Fixes
+
+* in-app positioning issue ([#208](https://github.com/customerio/customerio-reactnative/issues/208)) ([465b107](https://github.com/customerio/customerio-reactnative/commit/465b107eb192578ae02a4396746ce16b8c09372f))
+
+## [3.1.12](https://github.com/customerio/customerio-reactnative/compare/3.1.11...3.1.12) (2023-10-11)
+
+
+### Bug Fixes
+
+* remove BQ tasks register device with empty profile identifier ([#207](https://github.com/customerio/customerio-reactnative/issues/207)) ([4cb9cbc](https://github.com/customerio/customerio-reactnative/commit/4cb9cbc9ec061f7129eded83db3e4ea946cf490b))
+
+## [3.1.11](https://github.com/customerio/customerio-reactnative/compare/3.1.10...3.1.11) (2023-09-28)
+
+
+### Bug Fixes
+
+* stack-overflow caused by BQ recursion ([#204](https://github.com/customerio/customerio-reactnative/issues/204)) ([49dba31](https://github.com/customerio/customerio-reactnative/commit/49dba318d9706f50005ccd16aeab3f99d6ad044b))
+
+### [3.1.10](https://github.com/customerio/customerio-reactnative/compare/3.1.9...3.1.10) (2023-09-07)
+
+
+### Bug Fixes
+
+* concurrency issue in-app ([#197](https://github.com/customerio/customerio-reactnative/issues/197)) ([eb2d1fb](https://github.com/customerio/customerio-reactnative/commit/eb2d1fbff2fb17f9b3569f4b843817991de3de7c))
+
+### [3.1.9](https://github.com/customerio/customerio-reactnative/compare/3.1.8...3.1.9) (2023-09-05)
+
+
+### Bug Fixes
+
+* added url path encoding ([#194](https://github.com/customerio/customerio-reactnative/issues/194)) ([cd83f4b](https://github.com/customerio/customerio-reactnative/commit/cd83f4bb42160964d53c05c9afa58888791b0f92))
+
+### [3.1.8](https://github.com/customerio/customerio-reactnative/compare/3.1.7...3.1.8) (2023-08-28)
+
+
+### Bug Fixes
+
+* include required messagingpush dependency for no push configuration ([#187](https://github.com/customerio/customerio-reactnative/issues/187)) ([78bbc63](https://github.com/customerio/customerio-reactnative/commit/78bbc63035743714c9fc6a3ad7ad046312e20ca6))
+
 ### [3.1.7](https://github.com/customerio/customerio-reactnative/compare/3.1.6...3.1.7) (2023-07-26)
 
 

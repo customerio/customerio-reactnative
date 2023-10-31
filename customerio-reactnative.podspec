@@ -28,7 +28,9 @@ Pod::Spec.new do |s|
   s.default_subspec = "nopush"
 
   s.subspec 'nopush' do |ss|
-    # no dependencies. This is the default subspec designed to not install any push dependencies.
+    # This is the default subspec designed to not install any push dependencies. Customer should choose APN or FCM.
+    # The SDK at runtime currently requires the MessagingPush module so we do include it here. 
+    ss.dependency "CustomerIO/MessagingPush", package["cioNativeiOSSdkVersion"]
   end 
 
   # Note: Subspecs inherit all dependencies specified the parent spec (this file). 
