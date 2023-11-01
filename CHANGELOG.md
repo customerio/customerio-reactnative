@@ -1,3 +1,10 @@
+## [3.3.0](https://github.com/customerio/customerio-reactnative/compare/3.2.1...3.3.0) (2023-11-01)
+
+
+### Features
+
+* fetch currently stored device token using JS method ([#216](https://github.com/customerio/customerio-reactnative/issues/216)) ([482f780](https://github.com/customerio/customerio-reactnative/commit/482f7809866fb32fc0834856f891345d3b7cb25f))
+
 ## [3.2.1](https://github.com/customerio/customerio-reactnative/compare/3.2.0...3.2.1) (2023-10-27)
 
 
