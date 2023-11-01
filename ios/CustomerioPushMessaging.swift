@@ -23,7 +23,8 @@ class CustomerioPushMessaging: NSObject {
         
         trackPushMetrics(payload: payload, event: .delivered)
     }
-    
+   
+    // Get the currently registered device token for the app
     @objc(getRegisteredDeviceToken:rejecter:)
     func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
