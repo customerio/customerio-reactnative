@@ -86,11 +86,14 @@ const Settings = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    CustomerIO.pushMessaging().getRegisteredDeviceToken().then((token) => {
-      setDeviceToken(token)
-    }).catch((error) => {
-      console.log(error)
-    })
+    CustomerIO.pushMessaging()
+      .getRegisteredDeviceToken()
+      .then((token) => {
+        setDeviceToken(token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setTrackUrl(initialConfig.trackingUrl);
     setSiteId(initialSiteId ?? initialConfig.siteId);
     setApiKey(initialApiKey ?? initialConfig.apiKey);

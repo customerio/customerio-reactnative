@@ -96,7 +96,7 @@ class CustomerIOPushMessaging {
    * @returns Promise with device token as a string, or error if no token is
    * registered or the method fails to fetch token.
    */
-  static getRegisteredDeviceToken(): Promise<string> {
+  getRegisteredDeviceToken(): Promise<string> {
     return PushMessagingNative.getRegisteredDeviceToken();
   }
 
