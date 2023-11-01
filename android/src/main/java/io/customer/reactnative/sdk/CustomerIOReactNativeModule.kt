@@ -132,6 +132,22 @@ class CustomerIOReactNativeModule(
         pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
     }
 
+    @ReactMethod
+    fun getRegisteredDeviceToken(promise: Promise) {
+        try {
+            // Get the device token from SDK
+            val deviceToken: String? = customerIO()?.registeredDeviceToken
+
+            if (deviceToken != null) {
+                promise.resolve(deviceToken)
+            } else {
+                promise.reject("device_token_not_found", "The device token is not available.")
+            }
+        } catch (e: Exception) {
+            promise.reject("error_getting_device_token", "Error fetching registered device token.", e)
+        }
+    }
+
     companion object {
         internal const val MODULE_NAME = "CustomerioReactnative"
     }
