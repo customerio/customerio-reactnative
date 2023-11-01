@@ -27,13 +27,11 @@ class CustomerioPushMessaging: NSObject {
     @objc(getRegisteredDeviceToken:rejecter:)
     func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
-        //TODO: - Uncomment or Update this once https://github.com/customerio/customerio-ios/pull/378 PR is merged
-        /*
-         guard let token = CustomerIO.shared.registeredDeviceToken() else {
-            reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, "")
+         guard let token = CustomerIO.shared.registeredDeviceToken else {
+            reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, nil)
+             return
         }
         resolve(token)
-         */
     }
 
     private func trackPushMetrics(payload: NSDictionary, event : Metric) {
