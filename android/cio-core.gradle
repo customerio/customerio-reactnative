@@ -1,5 +1,6 @@
 dependencies {
-    implementation "io.customer.android:tracking:$cioAndroidSDKVersion"
-    implementation "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
-    implementation "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
+    implementation files('libs/common-test-release.aar')
+    implementation files('libs/messaginginapp-release.aar')
+    implementation files('libs/messagingpush-release.aar')
+    implementation files('libs/sdk-release.aar')
 }
