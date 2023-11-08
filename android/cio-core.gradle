@@ -1,6 +1,7 @@
 dependencies {
-    api project(':common-test')
-    api project(':messaginginapp')
-    api project(':messagingpush')
-    api project(':sdk')
+    implementation(name: 'common-test-release', ext: 'aar')
+    implementation(name: 'messaginginapp-release', ext: 'aar')
+    implementation(name: 'messagingpush-release', ext: 'aar')
+    implementation(name: 'sdk-release', ext: 'aar')
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
 }
