@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/customerio/customerio-reactnative/compare/3.3.0...3.3.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* **ios:** memory exception during SDK initialization async tasks ([#217](https://github.com/customerio/customerio-reactnative/issues/217)) ([7e420cf](https://github.com/customerio/customerio-reactnative/commit/7e420cfad70e194fa0ae08c4778791480a7f92f3))
+
 ## [3.3.0](https://github.com/customerio/customerio-reactnative/compare/3.2.1...3.3.0) (2023-11-01)
 
 
