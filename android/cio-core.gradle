@@ -1,7 +1,6 @@
 dependencies {
-    implementation files('libs/common-test-release.aar')
-    implementation files('libs/messaginginapp-release.aar')
-    implementation files('libs/messagingpush-release.aar')
-    implementation files('libs/sdk-release.aar')
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+    api project(':common-test')
+    api project(':messaginginapp')
+    api project(':messagingpush')
+    api project(':sdk')
 }

@@ -1,0 +1,4 @@
+include ':common-test'
+include ':messaginginapp'
+include ':messagingpush'
+include ':sdk'
