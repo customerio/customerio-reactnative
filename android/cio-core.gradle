@@ -3,4 +3,5 @@ dependencies {
     implementation files('libs/messaginginapp-release.aar')
     implementation files('libs/messagingpush-release.aar')
     implementation files('libs/sdk-release.aar')
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
 }
