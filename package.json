@@ -110,7 +110,8 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "Apps/FCM/"
+    "Apps/FCM/",
+    "Apps/APN/"
   ],
   "prettier": {
     "quoteProps": "consistent",
