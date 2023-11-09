@@ -1,7 +1,7 @@
 dependencies {
-    implementation(name: 'common-test-release', ext: 'aar')
-    implementation(name: 'messaginginapp-release', ext: 'aar')
-    implementation(name: 'messagingpush-release', ext: 'aar')
-    implementation(name: 'sdk-release', ext: 'aar')
+    implementation project(':customerio-common')
+    implementation project(':customerio-messaginginapp')
+    implementation project(':customerio-messagingpush')
+    implementation project(':customerio-sdk')
     implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
 }

@@ -1,4 +1,4 @@
-include ':common-test'
-include ':messaginginapp'
-include ':messagingpush'
-include ':sdk'
+include ':customerio-common'
+include ':customerio-messaginginapp'
+include ':customerio-sdk'
+include ':customerio-messagingpush'
