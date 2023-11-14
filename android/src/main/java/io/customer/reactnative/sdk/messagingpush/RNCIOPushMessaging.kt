@@ -115,6 +115,27 @@ class RNCIOPushMessaging(
     }
 
     /**
+     * Get the registered device token for the app.
+     * @returns Promise with device token as a string, or error if no token is
+     * registered or the method fails to fetch token.
+    */
+    @ReactMethod
+    fun getRegisteredDeviceToken(promise: Promise) {
+        try {
+            // Get the device token from SDK
+            val deviceToken: String? = CustomerIO.instance().registeredDeviceToken
+
+            if (deviceToken != null) {
+                promise.resolve(deviceToken)
+            } else {
+                promise.reject("device_token_not_found", "The device token is not available.")
+            }
+        } catch (e: Exception) {
+            promise.reject("error_getting_device_token", "Error fetching registered device token.", e)
+        }
+    }
+
+    /**
      * Checks current permission of push notification permission
      */
     private fun checkPushPermissionStatus(): PermissionStatus =

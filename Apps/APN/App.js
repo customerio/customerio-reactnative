@@ -11,6 +11,7 @@ import {
 import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
 import { UserStateContext } from './src/state/userState';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -104,13 +105,15 @@ export default function App() {
   }
 
   return (
-    <CustomerIoSdkContext.Provider value={customerIoSdkState}>
-      <UserStateContext.Provider value={userState}>
-        <SafeAreaView style={styles.container}>
-          <AppNavigator />
-        </SafeAreaView>
-      </UserStateContext.Provider>
-    </CustomerIoSdkContext.Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <CustomerIoSdkContext.Provider value={customerIoSdkState}>
+        <UserStateContext.Provider value={userState}>
+          <SafeAreaView style={styles.container}>
+            <AppNavigator />
+          </SafeAreaView>
+        </UserStateContext.Provider>
+      </CustomerIoSdkContext.Provider>
+    </GestureHandlerRootView>
   );
 }
 

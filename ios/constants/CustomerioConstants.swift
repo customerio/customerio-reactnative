@@ -33,7 +33,7 @@ struct CustomerioConstants {
     
     static let cioTag = "[CIO]"
     static let showPromptFailureError = "Error requesting push notification permission."
-    
+    static let showDeviceTokenFailureError = "Error fetching registered device token."
     static let platformiOS = "ios"
     static let sound = "sound"
     static let badge = "badge"

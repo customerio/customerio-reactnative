@@ -1,4 +1,8 @@
 #import "AppDelegate.h"
+#import <FCMSampleApp-Swift.h>
+#import <React/RCTLinkingManager.h>
+#import <React/RCTBundleURLProvider.h>
+#import <FirebaseCore.h>
 
 @implementation AppDelegate
 

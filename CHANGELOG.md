@@ -1,3 +1,38 @@
+## [3.3.1](https://github.com/customerio/customerio-reactnative/compare/3.3.0...3.3.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* **ios:** memory exception during SDK initialization async tasks ([#217](https://github.com/customerio/customerio-reactnative/issues/217)) ([7e420cf](https://github.com/customerio/customerio-reactnative/commit/7e420cfad70e194fa0ae08c4778791480a7f92f3))
+
+## [3.3.0](https://github.com/customerio/customerio-reactnative/compare/3.2.1...3.3.0) (2023-11-01)
+
+
+### Features
+
+* fetch currently stored device token using JS method ([#216](https://github.com/customerio/customerio-reactnative/issues/216)) ([482f780](https://github.com/customerio/customerio-reactnative/commit/482f7809866fb32fc0834856f891345d3b7cb25f))
+
+## [3.2.1](https://github.com/customerio/customerio-reactnative/compare/3.2.0...3.2.1) (2023-10-27)
+
+
+### Bug Fixes
+
+* **ios:** when queue cannot find task, expect queue runs next task ([#213](https://github.com/customerio/customerio-reactnative/issues/213)) ([fc747a5](https://github.com/customerio/customerio-reactnative/commit/fc747a52072e43e1ef03fccd655671508f720167))
+
+## [3.2.0](https://github.com/customerio/customerio-reactnative/compare/3.1.13...3.2.0) (2023-10-25)
+
+
+### Features
+
+* in-app persistant messages ([#210](https://github.com/customerio/customerio-reactnative/issues/210)) ([ea2ed3f](https://github.com/customerio/customerio-reactnative/commit/ea2ed3fd896d8d17b6e9b99f239f8b8a65b5576c))
+
+## [3.1.13](https://github.com/customerio/customerio-reactnative/compare/3.1.12...3.1.13) (2023-10-18)
+
+
+### Bug Fixes
+
+* in-app positioning issue ([#208](https://github.com/customerio/customerio-reactnative/issues/208)) ([465b107](https://github.com/customerio/customerio-reactnative/commit/465b107eb192578ae02a4396746ce16b8c09372f))
+
 ## [3.1.12](https://github.com/customerio/customerio-reactnative/compare/3.1.11...3.1.12) (2023-10-11)
 
 
