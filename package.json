@@ -71,8 +71,8 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-      "@customerio/analytics-react-native": "https://github.com/customerio/analytics-react-native#aman/fork-integrate-11653",
-      "@segment/sovran-react-native": "^1.0.0",
+      "@segment/analytics-react-native": "/Users/amandeepkaur/Documents/Github/analytics-react-native/packages/core",
+      "@segment/sovran-react-native": "/Users/amandeepkaur/Documents/Github/analytics-react-native/packages/sovran",
       "react-native-get-random-values": "^1.9.0"
     },
   "peerDependencies": {

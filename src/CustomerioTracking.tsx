@@ -8,7 +8,7 @@ import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
-import { createClient } from '@customerio/analytics-react-native';
+import { createClient } from '@segment/analytics-react-native';
 
 var pjson = require('customerio-reactnative/package.json');
 
