@@ -9,6 +9,7 @@ import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
 import { createClient } from '@segment/analytics-react-native';
+import { CustomerioDestination } from '../../../analytics-react-native/packages/core/src/plugins/CustomerioDestination';
 
 var pjson = require('customerio-reactnative/package.json');
 
@@ -77,6 +78,11 @@ class CustomerIO {
       cdnProxy: "https://cdp.customer.io/v1/projects",
       trackAppLifecycleEvents: true
     });
+
+    // Add CustomerioDestination plugin
+    const customerioPlugin = new CustomerioDestination();
+    segmentClient.add({plugin: customerioPlugin});
+    
     segmentClient.identify("123_cdp_test@gmail.com", {"firstName": "cdp tester on react native"});
     segmentClient.track('Awesome event');
     // CustomerioReactnative.initialize(env, config, packageConfig);
