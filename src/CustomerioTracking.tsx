@@ -8,8 +8,6 @@ import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
-import { createClient } from '@segment/analytics-react-native';
-
 var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
@@ -67,20 +65,8 @@ class CustomerIO {
         );
       }
     }
-    console.log("Initialising using Segment")
-    const writeKey = "c5f95d813d7a1fc460db"//`${env.apiKey}:${env.apiKey}`; 
-    console.log(writeKey)
-    const segmentClient = createClient({
-      writeKey: writeKey,
-      debug: true,
-      proxy: "https://cdp.customer.io/v1/b",
-      cdnProxy: "https://cdp.customer.io/v1/projects",
-      trackAppLifecycleEvents: true
-    });
-    
-    segmentClient.identify("123_cdp_test@gmail.com", {"firstName": "cdp tester on react native"});
-    segmentClient.track('Awesome event');
-    // CustomerioReactnative.initialize(env, config, packageConfig);
+
+    CustomerioReactnative.initialize(env, config, packageConfig);
   }
 
   /**
