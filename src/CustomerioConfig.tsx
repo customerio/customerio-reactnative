@@ -1,5 +1,4 @@
 import { CioLogLevel, Region } from './CustomerioEnum';
-import { PushClickBehaviorAndroid } from './types';
 
 /**
  * Configure package using CustomerioConfig
@@ -19,14 +18,13 @@ class CustomerioConfig {
   autoTrackPushEvents: boolean = true;
   backgroundQueueMinNumberOfTasks: number = 10;
   backgroundQueueSecondsDelay: number = 30;
-  pushClickBehaviorAndroid: PushClickBehaviorAndroid =
-    PushClickBehaviorAndroid.ActivityPreventRestart;
 }
 
 class CustomerIOEnv {
   siteId: string = '';
   apiKey: string = '';
   region: Region = Region.US;
+  writeKey: string = '';
   /**
    * @deprecated since version 2.0.2
    *
@@ -41,4 +39,4 @@ class PackageConfig {
   source: string = '';
 }
 
-export { CustomerIOEnv, CustomerioConfig, PackageConfig };
+export { CustomerioConfig, CustomerIOEnv, PackageConfig };

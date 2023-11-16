@@ -8,6 +8,8 @@ import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
+import { createClient, SegmentClient, UserTraits } from '@segment/analytics-react-native';
+
 var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
@@ -31,6 +33,7 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
     );
 
 class CustomerIO {
+  static segmentClient : SegmentClient; // global variable declaration
   /**
    * To initialize the package using workspace credentials
    * such as siteId, APIKey and region as optional.
@@ -53,7 +56,6 @@ class CustomerIO {
       packageConfig.source = 'Expo';
       packageConfig.version = expoVersion;
     }
-
     if (env.organizationId && env.organizationId !== '') {
       console.warn(
         '{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}'
@@ -66,7 +68,18 @@ class CustomerIO {
       }
     }
 
-    CustomerioReactnative.initialize(env, config, packageConfig);
+    var writeKey = `${env.apiKey}:${env.apiKey}`; // For backward compatibility
+    if (env.writeKey && env.writeKey !== '') {
+      writeKey = env.writeKey;
+    }
+    console.log("Initialising using Segment")
+    // TODO: Match configurations CIO = SEGMENT
+    this.segmentClient = createClient({
+      writeKey: writeKey,
+      debug: true,
+      trackAppLifecycleEvents: true,
+      autoAddCustomerIODestination: true
+  });
   }
 
   /**
@@ -78,8 +91,9 @@ class CustomerIO {
    * @param identifier unique identifier for a profile
    * @param body (Optional) data to identify a profile
    */
-  static identify(identifier: string, body?: Object) {
-    CustomerioReactnative.identify(identifier, body);
+  static identify(identifier: string, body?: UserTraits) {
+    this.segmentClient.identify(identifier, body);
+    // CustomerioReactnative.identify(identifier, body);
   }
 
   /**
