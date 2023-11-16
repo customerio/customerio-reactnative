@@ -5,8 +5,8 @@
     "baseUrl": "./",
     "paths": {
       "customerio-reactnative": ["./src/index"],
-      "@segment/analytics-react-native": ["/Users/amandeepkaur/Documents/Github/analytics-react-native/packages/core/src/index"],
-      "@segment/sovran-react-native": ["/Users/amandeepkaur/Documents/Github/analytics-react-native/packages/sovran/src/index"]
+      "@segment/analytics-react-native": ["../@segment/analytics-react-native/src/index"],
+      "@segment/sovran-react-native": ["../@segment/sovran-react-native/src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
