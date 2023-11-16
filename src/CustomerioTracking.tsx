@@ -8,7 +8,12 @@ import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
-import { createClient, SegmentClient, UserTraits } from '@segment/analytics-react-native';
+import {
+  createClient,
+  SegmentClient,
+  UserTraits,
+  JsonMap,
+} from '@segment/analytics-react-native';
 
 var pjson = require('customerio-reactnative/package.json');
 
@@ -33,7 +38,7 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
     );
 
 class CustomerIO {
-  static segmentClient : SegmentClient; // global variable declaration
+  static segmentClient: SegmentClient; // global variable declaration
   /**
    * To initialize the package using workspace credentials
    * such as siteId, APIKey and region as optional.
@@ -72,14 +77,14 @@ class CustomerIO {
     if (env.writeKey && env.writeKey !== '') {
       writeKey = env.writeKey;
     }
-    console.log("Initialising using Segment")
+    console.log('Initialising using Segment');
     // TODO: Match configurations CIO = SEGMENT
     this.segmentClient = createClient({
       writeKey: writeKey,
       debug: true,
       trackAppLifecycleEvents: true,
-      autoAddCustomerIODestination: true
-  });
+      autoAddCustomerIODestination: true,
+    });
   }
 
   /**
@@ -93,7 +98,6 @@ class CustomerIO {
    */
   static identify(identifier: string, body?: UserTraits) {
     this.segmentClient.identify(identifier, body);
-    // CustomerioReactnative.identify(identifier, body);
   }
 
   /**
@@ -103,7 +107,7 @@ class CustomerIO {
    * If no profile exists, request to clearIdentify will be ignored.
    */
   static clearIdentify() {
-    CustomerioReactnative.clearIdentify();
+    this.segmentClient.reset();
   }
 
   /**
@@ -113,8 +117,8 @@ class CustomerIO {
    * @param name event name to be tracked
    * @param data (Optional) data to be sent with event
    */
-  static track(name: string, data?: Object) {
-    CustomerioReactnative.track(name, data);
+  static track(name: string, data?: JsonMap) {
+    this.segmentClient.track(name, data);
   }
 
   /**
@@ -143,8 +147,8 @@ class CustomerIO {
    * @param name name of the screen user visited
    * @param data (Optional) any additional data to be sent
    */
-  static screen(name: string, data?: Object) {
-    CustomerioReactnative.screen(name, data);
+  static screen(name: string, data?: JsonMap) {
+    this.segmentClient.screen(name, data);
   }
 
   static inAppMessaging(): CustomerIOInAppMessaging {
