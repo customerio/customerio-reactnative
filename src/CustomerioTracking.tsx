@@ -137,8 +137,8 @@ class CustomerIO {
    *
    * @param data additional attributes for a user profile
    */
-  static setProfileAttributes(data: Object) {
-    CustomerioReactnative.setProfileAttributes(data);
+  static setProfileAttributes(data: UserTraits) {
+    this.segmentClient.identify(undefined, data);
   }
 
   /**
