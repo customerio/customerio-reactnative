@@ -128,7 +128,7 @@ class CustomerIO {
    * @param data device attributes data
    */
   static setDeviceAttributes(data: JsonMap) {
-    this.segmentClient.setDeviceAttributes(data)
+    this.segmentClient.registerDevice(data)
   }
 
   /**
@@ -169,11 +169,11 @@ class CustomerIO {
     if (token == null) {
       return;
     }
-    CustomerioReactnative.registerDeviceToken(token);
+    this.segmentClient.registerDevice({"token": token})
   }
 
   static deleteDeviceToken() {
-    CustomerioReactnative.deleteDeviceToken();
+    this.segmentClient.deleteDevice()
   }
 
   /**
