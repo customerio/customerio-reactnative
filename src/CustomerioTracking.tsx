@@ -127,8 +127,8 @@ class CustomerIO {
    *
    * @param data device attributes data
    */
-  static setDeviceAttributes(data: Object) {
-    CustomerioReactnative.setDeviceAttributes(data);
+  static setDeviceAttributes(data: JsonMap) {
+    this.segmentClient.setDeviceAttributes(data)
   }
 
   /**
