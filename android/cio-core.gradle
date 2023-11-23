@@ -1,7 +1,4 @@
 dependencies {
-    implementation project(':customerio-common')
-    implementation project(':customerio-messaginginapp')
-    implementation project(':customerio-messagingpush')
-    implementation project(':customerio-sdk')
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+    implementation "io.customer.android:tracking:$cioAndroidSDKVersion"
+    implementation "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
 }

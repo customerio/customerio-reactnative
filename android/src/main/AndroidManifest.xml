@@ -3,5 +3,9 @@
     package="io.customer.reactnative.sdk">
     
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
+    <application>
+        <activity
+            android:name="io.customer.messaginginapp.gist.presentation.GistModalActivity"
+            android:theme="@style/GistActivityTheme" />
+    </application>
 </manifest>
