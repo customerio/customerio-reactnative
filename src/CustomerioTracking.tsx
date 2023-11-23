@@ -77,7 +77,6 @@ class CustomerIO {
     if (env.writeKey && env.writeKey !== '') {
       writeKey = env.writeKey;
     }
-    console.log('Initialising using Segment');
     // TODO: Match configurations CIO = SEGMENT
     this.segmentClient = createClient({
       writeKey: writeKey,
@@ -128,7 +127,7 @@ class CustomerIO {
    * @param data device attributes data
    */
   static setDeviceAttributes(data: JsonMap) {
-    this.segmentClient.registerDevice(data)
+    this.segmentClient.registerDevice(data);
   }
 
   /**
@@ -169,11 +168,11 @@ class CustomerIO {
     if (token == null) {
       return;
     }
-    this.segmentClient.registerDevice({"token": token})
+    this.segmentClient.registerDevice({ token: token });
   }
 
   static deleteDeviceToken() {
-    this.segmentClient.deleteDevice()
+    this.segmentClient.deleteDevice();
   }
 
   /**
