@@ -1,4 +1,0 @@
-include ':customerio-common'
-include ':customerio-messaginginapp'
-include ':customerio-sdk'
-include ':customerio-messagingpush'
