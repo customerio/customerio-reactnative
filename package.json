@@ -71,8 +71,8 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@segment/analytics-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?aman/fork-integrate-11653",
-    "@segment/sovran-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?aman/fork-integrate-11653",
+    "@segment/analytics-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?3af2c12426379010c746819aab73359be70cb856",
+    "@segment/sovran-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?3af2c12426379010c746819aab73359be70cb856",
     "react-native-get-random-values": "^1.9.0"
   },
   "peerDependencies": {

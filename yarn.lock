@@ -1824,9 +1824,9 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.3.0.tgz#9e558170c106bbafaa1ef502bd8e6d4651012bf9"
   integrity "sha1-nlWBcMEGu6+qHvUCvY5tRlEBK/k= sha512-+zDZ20NUnSWghj7Ku5aFphMzuM9JulqCW+aPXT6IfIXFbb8tzYTTOSeRFOtuekJ99ibW2fUCSsjuKNlwDIbHFg=="
 
-"@segment/analytics-react-native@https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?aman/fork-integrate-11653":
+"@segment/analytics-react-native@https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?3af2c12426379010c746819aab73359be70cb856":
   version "2.17.0"
-  resolved "https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?aman/fork-integrate-11653#453d3ee26dea9c4a839942aaf05dc24ee87fd65d152d6da04fa936e9ab695110dbe234f90929d694a0d2fca6f827f0d2ea6009062736385c309269388b8f7f3d"
+  resolved "https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?3af2c12426379010c746819aab73359be70cb856#21fad8de014dc2b87c7ab574a697cd91ca7a0310"
   dependencies:
     "@segment/sovran-react-native" "^1"
     "@segment/tsub" "^2"
@@ -1843,9 +1843,9 @@
     deepmerge "^4.2.2"
     shell-quote "1.8.0"
 
-"@segment/sovran-react-native@https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?aman/fork-integrate-11653":
+"@segment/sovran-react-native@https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?3af2c12426379010c746819aab73359be70cb856":
   version "1.0.4"
-  resolved "https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?aman/fork-integrate-11653#d119862fb447e38f20b10d800fa78de06b953c5de835124916d32aea324c390242b8f1ea321c3727572e306a52ba6d1e863ca11664eda516db04bc226ff17f45"
+  resolved "https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?3af2c12426379010c746819aab73359be70cb856#15c2c55557f62c77e304ab8c2f03398fd5ea37f5"
   dependencies:
     ansi-regex "5.0.1"
     deepmerge "^4.2.2"
