@@ -22,8 +22,7 @@
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
-    "!apps",
-    "tsconfig.json"
+    "!apps"
   ],
   "scripts": {
     "pre-deploy": "npm run typescript",
