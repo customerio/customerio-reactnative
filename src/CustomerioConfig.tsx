@@ -27,6 +27,7 @@ class CustomerIOEnv {
   siteId: string = '';
   apiKey: string = '';
   region: Region = Region.US;
+  writeKey: string = '';
   /**
    * @deprecated since version 2.0.2
    *
@@ -41,4 +42,4 @@ class PackageConfig {
   source: string = '';
 }
 
-export { CustomerIOEnv, CustomerioConfig, PackageConfig };
+export { CustomerioConfig, CustomerIOEnv, PackageConfig };
