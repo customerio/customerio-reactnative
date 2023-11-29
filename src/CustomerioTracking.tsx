@@ -13,7 +13,7 @@ import {
   SegmentClient,
   UserTraits,
   JsonMap,
-} from '@segment/analytics-react-native';
+} from '@segment/analytics-react-native/src';
 
 var pjson = require('customerio-reactnative/package.json');
 
