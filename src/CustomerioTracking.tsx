@@ -13,7 +13,7 @@ import {
   SegmentClient,
   UserTraits,
   JsonMap,
-} from '@segment/analytics-react-native/src';
+} from '@segment/analytics-react-native';
 
 var pjson = require('customerio-reactnative/package.json');
 
@@ -82,7 +82,7 @@ class CustomerIO {
       writeKey: writeKey,
       debug: true,
       trackAppLifecycleEvents: true,
-      autoAddCustomerIODestination: true,
+      //autoAddCustomerIODestination: true,
     });
   }
 
@@ -126,9 +126,9 @@ class CustomerIO {
    *
    * @param data device attributes data
    */
-  static setDeviceAttributes(data: JsonMap) {
-    this.segmentClient.registerDevice(data);
-  }
+  //static setDeviceAttributes(data: JsonMap) {
+  //this.segmentClient.registerDevice(data);
+  //}
 
   /**
    * Set custom user profile information such as user preference, specific
@@ -168,11 +168,11 @@ class CustomerIO {
     if (token == null) {
       return;
     }
-    this.segmentClient.registerDevice({ token: token });
+    //this.segmentClient.registerDevice({ token: token });
   }
 
   static deleteDeviceToken() {
-    this.segmentClient.deleteDevice();
+    //this.segmentClient.deleteDevice();
   }
 
   /**

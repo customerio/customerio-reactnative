@@ -15,6 +15,11 @@
     "android",
     "ios",
     "cpp",
+    "segment/packages/core/",    
+    "segment/packages/sovran/",
+    "!segment/packages/core/src/",
+    "!segment/packages/sovran/src",
+    "!**/node_modules/**",
     "*.podspec",
     "!lib/typescript/example",
     "!android/build",
@@ -28,7 +33,7 @@
     "pre-deploy": "npm run typescript",
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "lint": "npx eslint --fix \"**/*.{js,ts,tsx}\"",
+    "lint": "npx eslint --fix \"src/*.{js,ts,tsx}\"",
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
     "prepare": "bob build",
     "example": "yarn --cwd example",
@@ -71,8 +76,8 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@segment/analytics-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/core?3af2c12426379010c746819aab73359be70cb856",
-    "@segment/sovran-react-native": "https://gitpkg.now.sh/customerio/analytics-react-native/packages/sovran?3af2c12426379010c746819aab73359be70cb856",
+    "@segment/analytics-react-native": "./segment/packages/core/",
+    "@segment/sovran-react-native": "./segment/packages/sovran/",
     "react-native-get-random-values": "^1.9.0"
   },
   "peerDependencies": {

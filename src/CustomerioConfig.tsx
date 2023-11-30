@@ -20,7 +20,7 @@ class CustomerioConfig {
   backgroundQueueMinNumberOfTasks: number = 10;
   backgroundQueueSecondsDelay: number = 30;
   pushClickBehaviorAndroid: PushClickBehaviorAndroid =
-  PushClickBehaviorAndroid.ActivityPreventRestart;
+    PushClickBehaviorAndroid.ActivityPreventRestart;
 }
 
 class CustomerIOEnv {

@@ -1,0 +1,4 @@
+[submodule "segment"]
+	path = segment
+	url = https://github.com/customerio/analytics-react-native
+	branch = aman/fork-integrate-11653
