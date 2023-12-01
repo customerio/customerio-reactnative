@@ -8,6 +8,13 @@ import { Region } from './CustomerioEnum';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
+import {
+  createClient,
+  SegmentClient,
+  UserTraits,
+  JsonMap,
+} from '@segment/analytics-react-native/src';
+
 var pjson = require('customerio-reactnative/package.json');
 
 const LINKING_ERROR =
@@ -31,6 +38,7 @@ const CustomerioReactnative = NativeModules.CustomerioReactnative
     );
 
 class CustomerIO {
+  static segmentClient: SegmentClient; // global variable declaration
   /**
    * To initialize the package using workspace credentials
    * such as siteId, APIKey and region as optional.
@@ -53,7 +61,6 @@ class CustomerIO {
       packageConfig.source = 'Expo';
       packageConfig.version = expoVersion;
     }
-
     if (env.organizationId && env.organizationId !== '') {
       console.warn(
         '{organizationId} is deprecated and will be removed in future releases, please remove {organizationId} and enable in-app messaging using {CustomerioConfig.enableInApp}'
@@ -66,7 +73,17 @@ class CustomerIO {
       }
     }
 
-    CustomerioReactnative.initialize(env, config, packageConfig);
+    var writeKey = `${env.apiKey}:${env.apiKey}`; // For backward compatibility
+    if (env.writeKey && env.writeKey !== '') {
+      writeKey = env.writeKey;
+    }
+    // TODO: Match configurations CIO = SEGMENT
+    this.segmentClient = createClient({
+      writeKey: writeKey,
+      debug: true,
+      trackAppLifecycleEvents: true,
+      autoAddCustomerIODestination: true,
+    });
   }
 
   /**
@@ -78,8 +95,10 @@ class CustomerIO {
    * @param identifier unique identifier for a profile
    * @param body (Optional) data to identify a profile
    */
+  // TODO: Test this in a typescript/javascript app once sample app issues are resolved
   static identify(identifier: string, body?: Object) {
-    CustomerioReactnative.identify(identifier, body);
+    const userTraits = body as UserTraits;
+    this.segmentClient.identify(identifier, userTraits);
   }
 
   /**
@@ -89,7 +108,7 @@ class CustomerIO {
    * If no profile exists, request to clearIdentify will be ignored.
    */
   static clearIdentify() {
-    CustomerioReactnative.clearIdentify();
+    this.segmentClient.reset();
   }
 
   /**
@@ -99,8 +118,8 @@ class CustomerIO {
    * @param name event name to be tracked
    * @param data (Optional) data to be sent with event
    */
-  static track(name: string, data?: Object) {
-    CustomerioReactnative.track(name, data);
+  static track(name: string, data?: JsonMap) {
+    this.segmentClient.track(name, data);
   }
 
   /**
@@ -109,8 +128,8 @@ class CustomerIO {
    *
    * @param data device attributes data
    */
-  static setDeviceAttributes(data: Object) {
-    CustomerioReactnative.setDeviceAttributes(data);
+  static setDeviceAttributes(data: JsonMap) {
+    this.segmentClient.registerDevice(data);
   }
 
   /**
@@ -119,8 +138,8 @@ class CustomerIO {
    *
    * @param data additional attributes for a user profile
    */
-  static setProfileAttributes(data: Object) {
-    CustomerioReactnative.setProfileAttributes(data);
+  static setProfileAttributes(data: UserTraits) {
+    this.segmentClient.identify(undefined, data);
   }
 
   /**
@@ -129,8 +148,8 @@ class CustomerIO {
    * @param name name of the screen user visited
    * @param data (Optional) any additional data to be sent
    */
-  static screen(name: string, data?: Object) {
-    CustomerioReactnative.screen(name, data);
+  static screen(name: string, data?: JsonMap) {
+    this.segmentClient.screen(name, data);
   }
 
   static inAppMessaging(): CustomerIOInAppMessaging {
@@ -151,11 +170,11 @@ class CustomerIO {
     if (token == null) {
       return;
     }
-    CustomerioReactnative.registerDeviceToken(token);
+    this.segmentClient.registerDevice({ token: token });
   }
 
   static deleteDeviceToken() {
-    CustomerioReactnative.deleteDeviceToken();
+    this.segmentClient.deleteDevice();
   }
 
   /**
