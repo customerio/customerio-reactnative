@@ -83,6 +83,8 @@ class CustomerIO {
       debug: true,
       trackAppLifecycleEvents: true,
       autoAddCustomerIODestination: true,
+      proxy: 'https://cdp.customer.io/v1/b',
+      cdnProxy: 'https://cdp.customer.io/v1/projects',
     });
   }
 
