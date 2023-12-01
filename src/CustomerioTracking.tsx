@@ -95,8 +95,10 @@ class CustomerIO {
    * @param identifier unique identifier for a profile
    * @param body (Optional) data to identify a profile
    */
-  static identify(identifier: string, body?: UserTraits) {
-    this.segmentClient.identify(identifier, body);
+  // TODO: Test this in a typescript/javascript app once sample app issues are resolved
+  static identify(identifier: string, body?: Object) {
+    const userTraits = body as UserTraits;
+    this.segmentClient.identify(identifier, userTraits);
   }
 
   /**
