@@ -141,8 +141,8 @@ const Dashboard = ({ navigation }) => {
         break;
 
       case ActionItem.SHOW_LOCAL_PUSH:
-        // How we are able to test behavior of pushes sent by other SDKs, not CIO. 
-        // Have 3rd party SDK create a push. We expect the SDK is able to handle this push that it owns.         
+        // How we are able to test behavior of pushes sent by other SDKs, not CIO.
+        // Have 3rd party SDK create a push. We expect the SDK is able to handle this push that it owns.
         Notifications.postLocalNotification({
           body: 'Try clicking on me. The SDK that sent this should also be able to handle it.',
           title: 'Local push not sent by Customer.io',
@@ -162,9 +162,9 @@ const Dashboard = ({ navigation }) => {
   };
 
   // Setup 3rd party SDK, react-native-notifications
-  // We install this SDK into sample app to make sure the CIO SDK behaves as expected when there is another SDK installed that handles push notifications.   
-  // 
-  // Important to test that 3rd party SDK is able to decide if a push is shown or not while app is in foreground for non-CIO sent pushes. 
+  // We install this SDK into sample app to make sure the CIO SDK behaves as expected when there is another SDK installed that handles push notifications.
+  //
+  // Important to test that 3rd party SDK is able to decide if a push is shown or not while app is in foreground for non-CIO sent pushes.
   Notifications.events().registerNotificationReceivedForeground(
     (notification: Notification, completion) => {
       console.log(
