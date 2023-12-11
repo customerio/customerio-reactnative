@@ -12,7 +12,6 @@ import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
 import { UserStateContext } from './src/state/userState';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { CustomerIO } from 'customerio-reactnative';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -31,7 +30,7 @@ export default function App() {
     };
 
     prepare();
-    const inAppEventListener = registerInAppEventListener();    
+    const inAppEventListener = registerInAppEventListener();
 
     // Remove listeners once unmounted
     return () => {
