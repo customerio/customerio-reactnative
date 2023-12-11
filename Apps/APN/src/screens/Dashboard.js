@@ -23,7 +23,7 @@ import { useUserStateContext } from '../state/userState';
 import { generateRandomNumber } from '../utils/helpers';
 import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
-import {Notifications} from 'react-native-notifications';
+import { Notifications } from 'react-native-notifications';
 import { CustomerIO } from 'customerio-reactnative';
 
 const pushPermissionAlertTitle = 'Push Permission';
@@ -141,12 +141,13 @@ const Dashboard = ({ navigation }) => {
         break;
 
       case ActionItem.SHOW_LOCAL_PUSH:
-        console.log('Sending local push');
-        let localNotification = Notifications.postLocalNotification({
-          body: "Try clicking on me. The SDK that sent this should also be able to handle it.",
-          title: "Local push not sent by Customer.io"          
+        // How we are able to test behavior of pushes sent by other SDKs, not CIO. 
+        // Have 3rd party SDK create a push. We expect the SDK is able to handle this push that it owns.         
+        Notifications.postLocalNotification({
+          body: 'Try clicking on me. The SDK that sent this should also be able to handle it.',
+          title: 'Local push not sent by Customer.io',
         });
-        break; 
+        break;
 
       case ActionItem.SIGN_OUT:
         onUserStateChanged(null);
@@ -160,24 +161,31 @@ const Dashboard = ({ navigation }) => {
     }
   };
 
-  // Setup react-native-notifications
-  Notifications.registerRemoteNotifications();
+  // Setup 3rd party SDK, react-native-notifications
+  // We install this SDK into sample app to make sure the CIO SDK behaves as expected when there is another SDK installed that handles push notifications.   
+  // 
+  // Important to test that 3rd party SDK is able to decide if a push is shown or not while app is in foreground for non-CIO sent pushes. 
+  Notifications.events().registerNotificationReceivedForeground(
+    (notification: Notification, completion) => {
+      console.log(
+        `Non-Customer.io notification received in foreground: ${notification.title} : ${notification.body}`
+      );
 
-  Notifications.events().registerNotificationReceivedForeground((notification: Notification, completion) => {
-    console.log(`Non-Customer.io notification received in foreground: ${notification.title} : ${notification.body}`);
+      completion({ alert: true, sound: true, badge: true });
+    }
+  );
+  // Important to test that 3rd party SDK is able to receive a callback when a push notification is clicked for non-CIO sent pushes.
+  Notifications.events().registerNotificationOpened(
+    (notification: Notification, completion) => {
+      console.log(
+        `Non-Customer.io notification opened: ${notification.payload}`
+      );
 
-    completion({alert: true, sound: true, badge: true});
-  });
+      CustomerIO.track('push clicked', { push: notification.payload });
 
-  Notifications.events().registerNotificationOpened((notification: Notification, completion) => {
-    console.log(`Non-Customer.io notification opened: ${notification.payload}`);
-
-    CustomerIO.track("push clicked", {"push": notification.payload})
-
-    completion();
-  });
-
-  console.log('Setup react-native-notifications');
+      completion();
+    }
+  );
 
   return (
     <View style={styles.container}>
