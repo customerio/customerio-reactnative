@@ -8,6 +8,7 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 #import <React/RCTLinkingManager.h>
+#import "RNNotifications.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -77,6 +78,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   [self.window makeKeyAndVisible];
   
   [pnHandlerObj setupCustomerIOClickHandling:self];
+
+  [RNNotifications startMonitorNotifications];
 
   return YES;
 }
@@ -156,6 +159,8 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 {
   // Register device to receive push notifications with device token
   [pnHandlerObj application:application deviceToken:deviceToken];
+
+  [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 // Required for the notification event. You must call the completion handler after handling the remote notification.
@@ -163,12 +168,16 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+
+  [RNNotifications didReceiveBackgroundNotification:userInfo withCompletionHandler:completionHandler];
 }
 
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
   [pnHandlerObj application:application error:error];
+
+  [RNNotifications didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
 // Required for localNotification event

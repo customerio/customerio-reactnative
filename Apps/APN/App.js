@@ -12,6 +12,8 @@ import StorageService from './src/services/StorageService';
 import { CustomerIoSdkContext } from './src/state/customerIoSdkState';
 import { UserStateContext } from './src/state/userState';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {Notifications} from 'react-native-notifications';
+import { CustomerIO } from 'customerio-reactnative';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -42,6 +44,25 @@ export default function App() {
     updateCustomerIoSdkState,
     updateUserState,
   ]);
+
+  // Setup react-native-notifications
+  useEffect(() => {
+    Notifications.registerRemoteNotifications();
+
+    Notifications.events().registerNotificationReceivedForeground((notification: Notification, completion) => {
+      console.log(`Non-Customer.io notification received in foreground: ${notification.title} : ${notification.body}`);
+
+      completion({alert: true, sound: true, badge: true});
+    });
+
+    Notifications.events().registerNotificationOpened((notification: Notification, completion) => {
+      console.log(`Non-Customer.io notification opened: ${notification.payload}`);
+
+      CustomerIO.track("push clicked", {"push": notification.payload})
+
+      completion();
+    });
+  });
 
   const updateCustomerIoSdkState = useCallback(
     (config) => {

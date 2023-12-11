@@ -23,6 +23,7 @@ import { useUserStateContext } from '../state/userState';
 import { generateRandomNumber } from '../utils/helpers';
 import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import {Notifications} from 'react-native-notifications';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
@@ -138,6 +139,13 @@ const Dashboard = ({ navigation }) => {
         handlePushPermissionCheck();
         break;
 
+      case ActionItem.SHOW_LOCAL_PUSH:
+        let localNotification = Notifications.postLocalNotification({
+          body: "Try clicking on me. The SDK that sent this should also be able to handle it.",
+          title: "Local push not sent by Customer.io"          
+        });
+        break; 
+
       case ActionItem.SIGN_OUT:
         onUserStateChanged(null);
         break;
@@ -218,6 +226,11 @@ const ActionItem = {
     contentDesc: 'Show Push Prompt Button',
     targetScreen: null,
   },
+  SHOW_LOCAL_PUSH: {
+    text: 'Show Local Push',
+    contentDesc: 'Show Local Push Button',
+    targetScreen: null,
+  }
   SIGN_OUT: {
     text: 'Log Out',
     contentDesc: 'Log Out Button',
