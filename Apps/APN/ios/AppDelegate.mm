@@ -77,7 +77,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
-  [pnHandlerObj setupCustomerIOClickHandling:self];
+  [pnHandlerObj setupCustomerIOClickHandling];
 
   [RNNotifications startMonitorNotifications];
 
@@ -178,22 +178,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
   [pnHandlerObj application:application error:error];
 
   [RNNotifications didFailToRegisterForRemoteNotificationsWithError:error];
-}
-
-// Required for localNotification event
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler
-{
-  [pnHandlerObj userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
-
-  [RNCPushNotificationIOS didReceiveNotificationResponse:response];
-}
-
-//Called when a notification is delivered to a foreground app.
--(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
-{
-  completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge);
 }
 
 // Deep linking
