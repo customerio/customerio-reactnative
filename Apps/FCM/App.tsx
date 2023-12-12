@@ -16,6 +16,8 @@ import {
   CustomerIoSdkStateEmpty,
 } from './src/state/customerIoSdkState';
 import { UserStateContext, UserStateContextEmpty } from './src/state/userState';
+import messaging from '@react-native-firebase/messaging';
+import { CustomerIO } from 'customerio-reactnative';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -93,6 +95,30 @@ export default function App() {
     handleCustomerIoConfigChanged,
     handleUserStateChanged,
   ]);
+
+  useEffect(() => {
+    // Setup 3rd party SDK, rn-firebase.
+    // We install this SDK into sample app to make sure the CIO SDK behaves as expected when there is another SDK installed that handles push notifications.
+    //
+    // Important to test that 3rd party SDK is able to decide if a push is shown or not while app is in foreground for non-CIO sent pushes.
+    // Only called when app in foreground and user receives a notification
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log(
+        `Non-Customer.io notification received in foreground: ${remoteMessage.notification?.title} : ${remoteMessage.notification?.body}`,
+      );
+    });
+
+    // Only called when app in background and user taps on notification
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log(
+        `Non-Customer.io notification opened: ${remoteMessage.notification}`,
+      );
+
+      CustomerIO.track('push clicked', { push: remoteMessage });
+    });
+
+    return unsubscribe;
+  }, []);
 
   if (loading) {
     return <ActivityIndicator />;
