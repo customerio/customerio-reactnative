@@ -17,7 +17,6 @@ import {
 } from './src/state/customerIoSdkState';
 import { UserStateContext, UserStateContextEmpty } from './src/state/userState';
 import messaging from '@react-native-firebase/messaging';
-import { CustomerIO } from 'customerio-reactnative';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -106,15 +105,6 @@ export default function App() {
       console.log(
         `Non-Customer.io notification received in foreground: ${remoteMessage.notification?.title} : ${remoteMessage.notification?.body}`,
       );
-    });
-
-    // Only called when app in background and user taps on notification
-    messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log(
-        `Non-Customer.io notification opened: ${remoteMessage.notification}`,
-      );
-
-      CustomerIO.track('push clicked', { push: remoteMessage });
     });
 
     return unsubscribe;
