@@ -99,8 +99,10 @@ export default function App() {
     // Setup 3rd party SDK, rn-firebase.
     // We install this SDK into sample app to make sure the CIO SDK behaves as expected when there is another SDK installed that handles push notifications.
     //
-    // Important to test that 3rd party SDK is able to decide if a push is shown or not while app is in foreground for non-CIO sent pushes.
-    // Only called when app in foreground and user receives a notification
+    // Important to test that 3rd party SDK is able to handle when a push is received on device when app is in foreground for non-CIO sent pushes.
+    // Only called when app in foreground and device receives a notification.
+    // A push will not be shown on the device. This is a FCM behavior, not a CIO SDK behavior.
+    // If you send a push via FCM in CIO, it will be shown on the device.
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log(
         `Non-Customer.io notification received in foreground: ${remoteMessage.notification?.title} : ${remoteMessage.notification?.body}`,
