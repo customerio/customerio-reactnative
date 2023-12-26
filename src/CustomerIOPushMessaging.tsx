@@ -91,6 +91,15 @@ class CustomerIOPushMessaging {
     PushMessagingNative.trackNotificationReceived(payload);
   }
 
+  /**
+   * Get the registered device token for the app.
+   * @returns Promise with device token as a string, or error if no token is
+   * registered or the method fails to fetch token.
+   */
+  getRegisteredDeviceToken(): Promise<string> {
+    return PushMessagingNative.getRegisteredDeviceToken();
+  }
+
   isAndroid(): boolean {
     return Platform.OS == 'android';
   }

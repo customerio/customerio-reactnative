@@ -18,6 +18,7 @@ data class GistProperties(
 data class Message(
     val messageId: String = "",
     val instanceId: String = UUID.randomUUID().toString(),
+    val priority: Int? = null,
     val queueId: String? = null,
     val properties: Map<String, Any?>? = null
 )

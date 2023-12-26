@@ -1,6 +1,6 @@
 {
   "name": "customerio-reactnative",
-  "version": "3.2.2-modified",
+  "version": "3.3.2",
   "description": "Official Customer.io SDK using React Native. Track customers and send messages to your iOS/Android apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -8,7 +8,7 @@
   "react-native": "src/index",
   "source": "src/index",
   "expoVersion": "",
-  "cioNativeiOSSdkVersion": "= 2.8.5-modified",
+  "cioNativeiOSSdkVersion": "= 2.9.2",
   "files": [
     "src",
     "lib",
@@ -42,13 +42,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://github.com/dashboardearth/customerio-reactnative",
+  "repository": "https://github.com/customerio/customerio-reactnative",
   "author": "ami-aman <aman@customer.io> (https://customer.io/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dashboardearth/customerio-reactnative/issues"
+    "url": "https://github.com/customerio/customerio-reactnative/issues"
   },
-  "homepage": "https://github.com/dashboardearth/customerio-reactnative#readme",
+  "homepage": "https://github.com/customerio/customerio-reactnative#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

@@ -12,12 +12,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import com.google.gson.Gson
+import io.customer.messaginginapp.R
+import io.customer.messaginginapp.databinding.ActivityGistBinding
 import io.customer.messaginginapp.gist.data.model.GistMessageProperties
 import io.customer.messaginginapp.gist.data.model.Message
 import io.customer.messaginginapp.gist.data.model.MessagePosition
 import io.customer.messaginginapp.gist.utilities.ElapsedTimer
-import io.customer.reactnative.sdk.databinding.ActivityGistBinding
-import io.customer.reactnative.sdk.R
 
 const val GIST_MESSAGE_INTENT: String = "GIST_MESSAGE"
 const val GIST_MODAL_POSITION_INTENT: String = "GIST_MODAL_POSITION"

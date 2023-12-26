@@ -21,6 +21,8 @@ public protocol CustomerIOInstance: AutoMockable {
         body: RequestBody
     )
 
+    var registeredDeviceToken: String? { get }
+
     func clearIdentify()
 
     func track(
@@ -118,7 +120,7 @@ public class CustomerIO: CustomerIOInstance {
     var diGraph: DIGraph?
 
     // strong reference to repository to prevent garbage collection as it runs tasks in async.
-    private var cleanupRepository: CleanupRepository?
+    @Atomic private var cleanupRepository: CleanupRepository?
 
     // private constructor to force use of singleton API
     private init() {}
@@ -215,8 +217,6 @@ public class CustomerIO: CustomerIOInstance {
         let logger = diGraph.logger
         let siteId = diGraph.sdkConfig.siteId
 
-        cleanupRepository = diGraph.cleanupRepository
-
         // Register Tracking module hooks now that the module is being initialized.
         hooks.add(key: .tracking, provider: TrackingModuleHookProvider())
 
@@ -227,15 +227,38 @@ public class CustomerIO: CustomerIOInstance {
             registerDeviceToken(token)
         }
 
-        // run cleanup in background to prevent locking the UI thread
-        threadUtil.runBackground { [weak self] in
-            self?.cleanupRepository?.cleanup()
+        // Only run async operations 1 time, no matter how many times the SDK initializes.
+        // Exceptions can occur when:
+        // - Instance of CleanupRepository created in thread A. Schedules async operation to occur on background thread.
+        // - New instance of CleanupRepository created by thread B.
+        // - Async operation in background thread begins. Tries to reference repository instance that was created by thread A, where it got scheduled.
+        // - Memory exception thrown because old repository instance from thread A is gone.
+        if cleanupRepository == nil { // Using cleanupRepository instance to determine if this has been run before.
+            cleanupRepository = diGraph.cleanupRepository
+
+            // run cleanup in background to prevent locking the UI thread
+            threadUtil.runBackground { [weak self] in
+                // Crash occurs on line below if repository gets re-assigned
+                self?.cleanupRepository?.cleanup()
+            }
         }
 
         logger
             .info(
                 "Customer.io SDK \(SdkVersion.version) initialized and ready to use for site id: \(siteId)"
             )
+    }
+
+    /**
+     Use `registeredDeviceToken` to fetch the current FCM/APN device token.
+     This returns an optional string value.
+     Example use:
+     ```
+     CustomerIO.shared.registeredDeviceToken
+     ```
+     */
+    public var registeredDeviceToken: String? {
+        implementation?.registeredDeviceToken
     }
 
     public var config: SdkConfig? {
