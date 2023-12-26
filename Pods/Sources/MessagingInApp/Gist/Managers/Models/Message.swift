@@ -19,6 +19,7 @@ public class GistProperties {
 public class Message {
     public private(set) var instanceId = UUID().uuidString.lowercased()
     public let queueId: String?
+    public let priority: Int?
     public let messageId: String
     public private(set) var gistProperties: GistProperties
 
@@ -30,12 +31,14 @@ public class Message {
 
     public init(messageId: String) {
         self.queueId = nil
+        self.priority = nil
         self.gistProperties = GistProperties(routeRule: nil, elementId: nil, campaignId: nil, position: .center, persistent: false)
         self.messageId = messageId
     }
 
-    init(queueId: String? = nil, messageId: String, properties: [String: Any]?) {
+    init(queueId: String? = nil, priority: Int? = nil, messageId: String, properties: [String: Any]?) {
         self.queueId = queueId
+        self.priority = priority
         self.gistProperties = GistProperties(routeRule: nil, elementId: nil, campaignId: nil, position: .center, persistent: false)
         self.messageId = messageId
 

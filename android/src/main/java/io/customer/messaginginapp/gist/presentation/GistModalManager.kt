@@ -13,7 +13,7 @@ internal class GistModalManager : GistListener {
         GistSdk.addListener(this)
     }
 
-    internal fun showModalMessage(message: Message, position: MessagePosition? = null): Boolean {
+    @Synchronized internal fun showModalMessage(message: Message, position: MessagePosition? = null): Boolean {
         currentMessage?.let { currentMessage ->
             Log.i(
                 GIST_TAG,

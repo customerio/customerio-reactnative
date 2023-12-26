@@ -72,6 +72,10 @@ class CustomerIOImplementation: CustomerIOInstance {
         }
     }
 
+    public var registeredDeviceToken: String? {
+        globalDataStore.pushDeviceToken
+    }
+
     // this function could use a refactor. It's long and complex. Our automated tests are what keeps us feeling
     // confident in the code, but the code here is difficult to maintain.
     // swiftlint:disable:next function_body_length

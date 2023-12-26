@@ -1,5 +1,6 @@
 import Foundation
 import CioInternalCommon
+import CioTracking
 import CioMessagingPush
 
 
@@ -22,7 +23,18 @@ class CustomerioPushMessaging: NSObject {
         
         trackPushMetrics(payload: payload, event: .delivered)
     }
-    
+   
+    // Get the currently registered device token for the app
+    @objc(getRegisteredDeviceToken:rejecter:)
+    func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        
+         guard let token = CustomerIO.shared.registeredDeviceToken else {
+            reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, nil)
+             return
+        }
+        resolve(token)
+    }
+
     private func trackPushMetrics(payload: NSDictionary, event : Metric) {
         guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String, let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String else
         {return}

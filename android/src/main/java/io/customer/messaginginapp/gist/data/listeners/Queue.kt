@@ -16,7 +16,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -24,7 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class Queue : GistListener {
 
     private var localMessageStore: MutableList<Message> = mutableListOf()
-    private val cacheMap = mutableMapOf<String, Response>()
 
     init {
         GistSdk.addListener(this)
@@ -143,7 +141,9 @@ class Queue : GistListener {
     }
 
     private fun handleMessages(messages: List<Message>) {
-        for (message in messages) {
+        // Sorting messages by priority and placing nulls last
+        val sortedMessages = messages.sortedWith(compareBy(nullsLast()) { it.priority })
+        for (message in sortedMessages) {
             processMessage(message)
         }
     }

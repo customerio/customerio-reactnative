@@ -1,3 +1,24 @@
+## [3.3.2](https://github.com/customerio/customerio-reactnative/compare/3.3.1...3.3.2) (2023-11-14)
+
+
+### Bug Fixes
+
+* improve android push click behavior ([#203](https://github.com/customerio/customerio-reactnative/issues/203)) ([8b1a836](https://github.com/customerio/customerio-reactnative/commit/8b1a836771811b408779d71362f11ab7a528a04e))
+
+## [3.3.1](https://github.com/customerio/customerio-reactnative/compare/3.3.0...3.3.1) (2023-11-08)
+
+
+### Bug Fixes
+
+* **ios:** memory exception during SDK initialization async tasks ([#217](https://github.com/customerio/customerio-reactnative/issues/217)) ([7e420cf](https://github.com/customerio/customerio-reactnative/commit/7e420cfad70e194fa0ae08c4778791480a7f92f3))
+
+## [3.3.0](https://github.com/customerio/customerio-reactnative/compare/3.2.1...3.3.0) (2023-11-01)
+
+
+### Features
+
+* fetch currently stored device token using JS method ([#216](https://github.com/customerio/customerio-reactnative/issues/216)) ([482f780](https://github.com/customerio/customerio-reactnative/commit/482f7809866fb32fc0834856f891345d3b7cb25f))
+
 ## [3.2.1](https://github.com/customerio/customerio-reactnative/compare/3.2.0...3.2.1) (2023-10-27)
 
 
