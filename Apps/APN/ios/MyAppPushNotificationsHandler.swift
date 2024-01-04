@@ -2,6 +2,13 @@ import Foundation
 import CioMessagingPushAPN
 import CioTracking
 
+/**
+ * This file was created based on the Customer.io React Native SDK documentation for setting up push notifications in your app. 
+ * 
+ * See the documentation to learn how to add this file to your app: 
+ * https://customer.io/docs/sdk/react-native/push-notifications/push/#integrate-push-capabilities-in-your-app
+ */
+
 @objc
 public class MyAppPushNotificationsHandler : NSObject {
 
