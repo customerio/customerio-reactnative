@@ -35,7 +35,7 @@ jobs:
       - run: yarn lint:report
 
       - name: Annotate Code Linting Results
-        uses: ataylorme/eslint-annotate-action@v2
+        uses: ataylorme/eslint-annotate-action@v3
         with:
           check-name: 'eslint results'
           only-pr-files: false 
