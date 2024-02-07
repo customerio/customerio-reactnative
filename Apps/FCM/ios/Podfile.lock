@@ -1,40 +1,40 @@
 PODS:
   - boost (1.76.0)
-  - customerio-reactnative (3.2.0):
-    - customerio-reactnative/nopush (= 3.2.0)
-    - CustomerIO/MessagingInApp (= 2.8.4)
-    - CustomerIO/Tracking (= 2.8.4)
+  - customerio-reactnative (3.3.2):
+    - customerio-reactnative/nopush (= 3.3.2)
+    - CustomerIO/MessagingInApp (= 2.10.2)
+    - CustomerIO/Tracking (= 2.10.2)
     - React-Core
-  - customerio-reactnative-richpush/fcm (3.2.0):
-    - CustomerIO/MessagingPushFCM (= 2.8.4)
-  - customerio-reactnative/fcm (3.2.0):
-    - CustomerIO/MessagingInApp (= 2.8.4)
-    - CustomerIO/MessagingPushFCM (= 2.8.4)
-    - CustomerIO/Tracking (= 2.8.4)
+  - customerio-reactnative-richpush/fcm (3.3.2):
+    - CustomerIO/MessagingPushFCM (= 2.10.2)
+  - customerio-reactnative/fcm (3.3.2):
+    - CustomerIO/MessagingInApp (= 2.10.2)
+    - CustomerIO/MessagingPushFCM (= 2.10.2)
+    - CustomerIO/Tracking (= 2.10.2)
     - React-Core
-  - customerio-reactnative/nopush (3.2.0):
-    - CustomerIO/MessagingInApp (= 2.8.4)
-    - CustomerIO/MessagingPush (= 2.8.4)
-    - CustomerIO/Tracking (= 2.8.4)
+  - customerio-reactnative/nopush (3.3.2):
+    - CustomerIO/MessagingInApp (= 2.10.2)
+    - CustomerIO/MessagingPush (= 2.10.2)
+    - CustomerIO/Tracking (= 2.10.2)
     - React-Core
-  - CustomerIO/MessagingInApp (2.8.4):
-    - CustomerIOMessagingInApp (= 2.8.4)
-  - CustomerIO/MessagingPush (2.8.4):
-    - CustomerIOMessagingPush (= 2.8.4)
-  - CustomerIO/MessagingPushFCM (2.8.4):
-    - CustomerIOMessagingPushFCM (= 2.8.4)
-  - CustomerIO/Tracking (2.8.4):
-    - CustomerIOTracking (= 2.8.4)
-  - CustomerIOCommon (2.8.4)
-  - CustomerIOMessagingInApp (2.8.4):
-    - CustomerIOTracking (= 2.8.4)
-  - CustomerIOMessagingPush (2.8.4):
-    - CustomerIOTracking (= 2.8.4)
-  - CustomerIOMessagingPushFCM (2.8.4):
-    - CustomerIOMessagingPush (= 2.8.4)
+  - CustomerIO/MessagingInApp (2.10.2):
+    - CustomerIOMessagingInApp (= 2.10.2)
+  - CustomerIO/MessagingPush (2.10.2):
+    - CustomerIOMessagingPush (= 2.10.2)
+  - CustomerIO/MessagingPushFCM (2.10.2):
+    - CustomerIOMessagingPushFCM (= 2.10.2)
+  - CustomerIO/Tracking (2.10.2):
+    - CustomerIOTracking (= 2.10.2)
+  - CustomerIOCommon (2.10.2)
+  - CustomerIOMessagingInApp (2.10.2):
+    - CustomerIOTracking (= 2.10.2)
+  - CustomerIOMessagingPush (2.10.2):
+    - CustomerIOTracking (= 2.10.2)
+  - CustomerIOMessagingPushFCM (2.10.2):
+    - CustomerIOMessagingPush (= 2.10.2)
     - FirebaseMessaging (< 11, >= 8.7.0)
-  - CustomerIOTracking (2.8.4):
-    - CustomerIOCommon (= 2.8.4)
+  - CustomerIOTracking (2.10.2):
+    - CustomerIOCommon (= 2.10.2)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.4)
   - FBReactNativeSpec (0.72.4):
@@ -44,21 +44,28 @@ PODS:
     - React-Core (= 0.72.4)
     - React-jsi (= 0.72.4)
     - ReactCommon/turbomodule/core (= 0.72.4)
-  - FirebaseCore (10.16.0):
+  - Firebase/CoreOnly (10.20.0):
+    - FirebaseCore (= 10.20.0)
+  - Firebase/Messaging (10.20.0):
+    - Firebase/CoreOnly
+    - FirebaseMessaging (~> 10.20.0)
+  - FirebaseCore (10.20.0):
     - FirebaseCoreInternal (~> 10.0)
-    - GoogleUtilities/Environment (~> 7.8)
-    - GoogleUtilities/Logger (~> 7.8)
-  - FirebaseCoreInternal (10.16.0):
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.20.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseCoreInternal (10.21.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseInstallations (10.16.0):
+  - FirebaseInstallations (10.21.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
     - PromisesObjC (~> 2.1)
-  - FirebaseMessaging (10.16.0):
+  - FirebaseMessaging (10.20.0):
     - FirebaseCore (~> 10.0)
     - FirebaseInstallations (~> 10.0)
-    - GoogleDataTransport (~> 9.2)
+    - GoogleDataTransport (~> 9.3)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/Reachability (~> 7.8)
@@ -66,36 +73,36 @@ PODS:
     - nanopb (< 2.30910.0, >= 2.30908.0)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - GoogleDataTransport (9.2.5):
+  - GoogleDataTransport (9.3.0):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.11.5):
+  - GoogleUtilities/AppDelegateSwizzler (7.12.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.11.5):
+  - GoogleUtilities/Environment (7.12.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.11.5):
+  - GoogleUtilities/Logger (7.12.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.11.5):
+  - GoogleUtilities/Network (7.12.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.11.5)"
-  - GoogleUtilities/Reachability (7.11.5):
+  - "GoogleUtilities/NSData+zlib (7.12.0)"
+  - GoogleUtilities/Reachability (7.12.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.11.5):
+  - GoogleUtilities/UserDefaults (7.12.0):
     - GoogleUtilities/Logger
   - hermes-engine (0.72.4):
     - hermes-engine/Pre-built (= 0.72.4)
   - hermes-engine/Pre-built (0.72.4)
   - libevent (2.1.12)
-  - nanopb (2.30909.0):
-    - nanopb/decode (= 2.30909.0)
-    - nanopb/encode (= 2.30909.0)
-  - nanopb/decode (2.30909.0)
-  - nanopb/encode (2.30909.0)
+  - nanopb (2.30909.1):
+    - nanopb/decode (= 2.30909.1)
+    - nanopb/encode (= 2.30909.1)
+  - nanopb/decode (2.30909.1)
+  - nanopb/encode (2.30909.1)
   - PromisesObjC (2.3.1)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -515,6 +522,14 @@ PODS:
     - React-Core
   - RNDeviceInfo (10.9.0):
     - React-Core
+  - RNFBApp (18.8.0):
+    - Firebase/CoreOnly (= 10.20.0)
+    - React-Core
+  - RNFBMessaging (18.8.0):
+    - Firebase/Messaging (= 10.20.0)
+    - FirebaseCoreExtension (= 10.20.0)
+    - React-Core
+    - RNFBApp
   - RNGestureHandler (2.12.1):
     - React-Core
   - RNScreens (3.24.0):
@@ -530,6 +545,11 @@ DEPENDENCIES:
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative-richpush/fcm (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative/fcm (from `../node_modules/customerio-reactnative`)
+  - CustomerIOCommon (from `https://github.com/customerio/customerio-ios.git`, branch `levi/tests-when-push-delivered`)
+  - CustomerIOMessagingInApp (from `https://github.com/customerio/customerio-ios.git`, branch `levi/tests-when-push-delivered`)
+  - CustomerIOMessagingPush (from `https://github.com/customerio/customerio-ios.git`, branch `levi/tests-when-push-delivered`)
+  - CustomerIOMessagingPushFCM (from `https://github.com/customerio/customerio-ios.git`, branch `levi/tests-when-push-delivered`)
+  - CustomerIOTracking (from `https://github.com/customerio/customerio-ios.git`, branch `levi/tests-when-push-delivered`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -573,6 +593,8 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSnackbar (from `../node_modules/react-native-snackbar`)
@@ -581,12 +603,9 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CustomerIO
-    - CustomerIOCommon
-    - CustomerIOMessagingInApp
-    - CustomerIOMessagingPush
-    - CustomerIOMessagingPushFCM
-    - CustomerIOTracking
+    - Firebase
     - FirebaseCore
+    - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseInstallations
     - FirebaseMessaging
@@ -605,6 +624,21 @@ EXTERNAL SOURCES:
     :path: "../node_modules/customerio-reactnative"
   customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
+  CustomerIOCommon:
+    :branch: levi/tests-when-push-delivered
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingInApp:
+    :branch: levi/tests-when-push-delivered
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPush:
+    :branch: levi/tests-when-push-delivered
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPushFCM:
+    :branch: levi/tests-when-push-delivered
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOTracking:
+    :branch: levi/tests-when-push-delivered
+    :git: https://github.com/customerio/customerio-ios.git
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -688,6 +722,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-clipboard/clipboard"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNFBApp:
+    :path: "../node_modules/@react-native-firebase/app"
+  RNFBMessaging:
+    :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
@@ -697,30 +735,49 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  CustomerIOCommon:
+    :commit: 3970ccfc7bc11c921b28edf73b09eba914571eda
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingInApp:
+    :commit: 3970ccfc7bc11c921b28edf73b09eba914571eda
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPush:
+    :commit: 3970ccfc7bc11c921b28edf73b09eba914571eda
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPushFCM:
+    :commit: 3970ccfc7bc11c921b28edf73b09eba914571eda
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOTracking:
+    :commit: 3970ccfc7bc11c921b28edf73b09eba914571eda
+    :git: https://github.com/customerio/customerio-ios.git
+
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  CustomerIO: 4a04f63c9951bced3f2160397e811451cba0de36
-  customerio-reactnative: 57a15506e537c89802847b819442ab4426de68eb
-  customerio-reactnative-richpush: 3866204a12a94ce8eaa6630ab39f069dea970b36
-  CustomerIOCommon: 65752b4280cd24edf8091eba59cae04347999fe1
-  CustomerIOMessagingInApp: ce4944ec4c9d1dd0d30ea7a0c6aee7137609d7e3
-  CustomerIOMessagingPush: 6a21e2bd5bb4a6b483671e7703dc011a4deb8178
-  CustomerIOMessagingPushFCM: 447bf98322bb4cedf42ed2ee0698391cd81cc986
-  CustomerIOTracking: 5eab210defdf8950e0708713f7d95b35b779e056
+  CustomerIO: 4bdba4650934a7570516d31e84a7103a7d6e6464
+  customerio-reactnative: e1695c5a972b472398ed32517cdd9916f0b8951a
+  customerio-reactnative-richpush: 87e8e36f5187406e4b320dc9f8d5e48259ca27d0
+  CustomerIOCommon: 2653ee7d27a99bdda0449eee8da553fffdd4a3e1
+  CustomerIOMessagingInApp: 99f365053161151cdbb58cce506a56c67e7138c3
+  CustomerIOMessagingPush: b09c7c263dd7f45967ec3911b43f09f2daad9542
+  CustomerIOMessagingPushFCM: 5ed3d82af72f46a46e90c167a1c216b6347a1ac3
+  CustomerIOTracking: 39bfbd4cf2c9e3f19b28cf68f0b56badd094d07a
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f
-  FirebaseCore: 65a801af84cca84361ef9eac3fd868656968a53b
-  FirebaseCoreInternal: 26233f705cc4531236818a07ac84d20c333e505a
-  FirebaseInstallations: b822f91a61f7d1ba763e5ccc9d4f2e6f2ed3b3ee
-  FirebaseMessaging: 80b4a086d20ed4fd385a702f4bfa920e14f5064d
+  Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
+  FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
+  FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
+  FirebaseCoreInternal: 43c1788eaeee9d1b97caaa751af567ce11010d00
+  FirebaseInstallations: 390ea1d10a4d02b20c965cbfd527ee9b3b412acb
+  FirebaseMessaging: 06c414a21b122396a26847c523d5c370f8325df5
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  GoogleDataTransport: 54dee9d48d14580407f8f5fbf2f496e92437a2f2
-  GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
+  GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
+  GoogleUtilities: 0759d1a57ebb953965c2dfe0ba4c82e95ccc2e34
   hermes-engine: 81191603c4eaa01f5e4ae5737a9efcf64756c7b2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  nanopb: d4d75c12cd1316f4a64e3c6963f879ecd4b5e0d5
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: c0569ecc035894e4a68baecb30fe6a7ea6e399f9
@@ -758,12 +815,14 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: c913ede1fa163a71cea118ed4670bbaaa4b511bb
   RNCClipboard: 3f0451a8100393908bea5c5c5b16f96d45f30bfc
   RNDeviceInfo: 02ea8b23e2280fa18e00a06d7e62804d74028579
+  RNFBApp: 5810d39f89d38272f29d9908cb19ef641922c081
+  RNFBMessaging: 8863c0206cc1a5577678eac6c1ec2b2965bd8e52
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
-PODFILE CHECKSUM: 1b885e7f93ba1589858914e53bb0411459d735f5
+PODFILE CHECKSUM: 61201757cfa30d4701e170cf4f1f387fe747abdc
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

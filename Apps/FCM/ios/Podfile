@@ -9,6 +9,10 @@ platform :ios, 13.0
 prepare_react_native_project!
 use_modular_headers!
 
+require 'open-uri'
+IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
+load "/tmp/override_cio_sdk.rb"
+
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
 #
@@ -34,6 +38,7 @@ target 'FCMSampleApp' do
 
   # Pods required by Customer.io
   pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
+  install_non_production_ios_sdk_git_branch(branch_name: 'levi/tests-when-push-delivered', is_app_extension: false, push_service: "fcm")
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -62,4 +67,5 @@ end
 
 target 'NotificationServiceExtension' do
   pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+  install_non_production_ios_sdk_git_branch(branch_name: 'levi/tests-when-push-delivered', is_app_extension: true, push_service: "fcm")
 end
