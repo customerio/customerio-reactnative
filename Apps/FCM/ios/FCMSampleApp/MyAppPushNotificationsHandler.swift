@@ -1,6 +1,5 @@
 import Foundation
 import CioMessagingPushFCM
-import UserNotifications
 import FirebaseMessaging
 import CioTracking
 
@@ -9,8 +8,8 @@ public class MyAppPushNotificationsHandler : NSObject {
 
   public override init() {}
 
-  @objc(setupCustomerIOClickHandling:)
-  public func setupCustomerIOClickHandling(withNotificationDelegate notificationDelegate: UNUserNotificationCenterDelegate) {
+  @objc(setupCustomerIOClickHandling)
+  public func setupCustomerIOClickHandling() {
     // This line of code is required in order for the Customer.io SDK to handle push notification click events.
     // We are working on removing this requirement in a future release.
     // Remember to modify the siteId and apiKey with your own values.
@@ -21,26 +20,12 @@ public class MyAppPushNotificationsHandler : NSObject {
       // They are optional for your setup. 
       config.logLevel = .debug
     }
-    
-    let center  = UNUserNotificationCenter.current()
-    center.delegate = notificationDelegate
+    MessagingPushFCM.initialize(configOptions: nil)    
   }
 
   // Register device on receiving a device token (FCM)
   @objc(didReceiveRegistrationToken:fcmToken:)
   public func didReceiveRegistrationToken(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
-  }
-
-  @objc(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
-  public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-    let handled = MessagingPush.shared.userNotificationCenter(center, didReceive: response,
-  withCompletionHandler: completionHandler)
-
-    // If the Customer.io SDK does not handle the push, it's up to you to handle it and call the
-    // completion handler. If the SDK did handle it, it called the completion handler for you.
-    if !handled {
-      completionHandler()
-    }
   }
 }
