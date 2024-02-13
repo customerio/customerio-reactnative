@@ -1,3 +1,10 @@
+## [3.4.0](https://github.com/customerio/customerio-reactnative/compare/3.3.2...3.4.0) (2024-02-12)
+
+
+### Features
+
+* increase opened metrics reliability and 3rd party push SDK compatibility ([#236](https://github.com/customerio/customerio-reactnative/issues/236)) ([514b719](https://github.com/customerio/customerio-reactnative/commit/514b7197b7a252bc835eec2c000ae7669f4fb391))
+
 ## [3.3.2](https://github.com/customerio/customerio-reactnative/compare/3.3.1...3.3.2) (2023-11-14)
 
 
