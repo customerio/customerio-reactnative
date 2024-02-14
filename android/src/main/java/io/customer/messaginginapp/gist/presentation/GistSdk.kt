@@ -25,12 +25,12 @@ const val GIST_TAG: String = "[CIO]"
 object GistSdk : Application.ActivityLifecycleCallbacks {
     private const val SHARED_PREFERENCES_NAME = "gist-sdk"
     private const val SHARED_PREFERENCES_USER_TOKEN_KEY = "userToken"
-    private const val POLL_INTERVAL = 5_000L
 
     private val sharedPreferences by lazy {
         application.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
     }
 
+    internal var pollInterval = 10_000L
     lateinit var siteId: String
     lateinit var dataCenter: String
     internal lateinit var gistEnvironment: GistEnvironment
@@ -153,6 +153,7 @@ object GistSdk : Application.ActivityLifecycleCallbacks {
                 Log.e(GIST_TAG, "Failed to show message: ${e.message}", e)
             }
         }
+
         return if (messageShown) message.instanceId else null
     }
 
@@ -186,16 +187,18 @@ object GistSdk : Application.ActivityLifecycleCallbacks {
 
     // Gist Message Observer
 
-    private fun observeMessagesForUser() {
+    internal fun observeMessagesForUser(skipQueueCheck: Boolean = false) {
         // Clean up any previous observers
         observeUserMessagesJob?.cancel()
 
         Log.i(GIST_TAG, "Messages timer started")
-        gistQueue.fetchUserMessages()
+        if (!skipQueueCheck) {
+            gistQueue.fetchUserMessages()
+        }
         observeUserMessagesJob = GlobalScope.launch {
             try {
                 // Poll for user messages
-                val ticker = ticker(POLL_INTERVAL, context = this.coroutineContext)
+                val ticker = ticker(pollInterval, context = this.coroutineContext)
                 for (tick in ticker) {
                     gistQueue.fetchUserMessages()
                 }

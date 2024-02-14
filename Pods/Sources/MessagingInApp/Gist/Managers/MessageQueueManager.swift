@@ -8,7 +8,7 @@ class MessageQueueManager {
 
     func setup() {
         queueTimer = Timer.scheduledTimer(
-            timeInterval: 5,
+            timeInterval: 10,
             target: self,
             selector: #selector(fetchUserMessages),
             userInfo: nil,
@@ -89,6 +89,12 @@ class MessageQueueManager {
     }
 
     private func handleMessage(message: Message) {
+        // Skip shown messages
+        if let queueId = message.queueId, Gist.shared.shownMessageQueueIds.contains(queueId) {
+            Logger.instance.info(message: "Message with queueId: \(queueId) already shown, skipping.")
+            return
+        }
+
         let position = message.gistProperties.position
 
         if let routeRule = message.gistProperties.routeRule {

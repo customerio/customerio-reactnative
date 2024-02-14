@@ -134,7 +134,7 @@ public class DeviceInfoMock: DeviceInfo, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingDeviceModel: String?
+    public var underlyingDeviceModel: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var deviceModelCalled: Bool {
         deviceModelGetCalled || deviceModelSetCalled
@@ -170,7 +170,7 @@ public class DeviceInfoMock: DeviceInfo, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingOsVersion: String?
+    public var underlyingOsVersion: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var osVersionCalled: Bool {
         osVersionGetCalled || osVersionSetCalled
@@ -206,7 +206,7 @@ public class DeviceInfoMock: DeviceInfo, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingOsName: String?
+    public var underlyingOsName: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var osNameCalled: Bool {
         osNameGetCalled || osNameSetCalled
@@ -494,7 +494,7 @@ class DeviceMetricsGrabberMock: DeviceMetricsGrabber, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    var underlyingAppBundleId: String?
+    var underlyingAppBundleId: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     var appBundleIdCalled: Bool {
         appBundleIdGetCalled || appBundleIdSetCalled
@@ -679,7 +679,7 @@ public class GlobalDataStoreMock: GlobalDataStore, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingPushDeviceToken: String?
+    public var underlyingPushDeviceToken: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var pushDeviceTokenCalled: Bool {
         pushDeviceTokenGetCalled || pushDeviceTokenSetCalled
@@ -715,7 +715,7 @@ public class GlobalDataStoreMock: GlobalDataStore, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingHttpRequestsPauseEnds: Date?
+    public var underlyingHttpRequestsPauseEnds: Date? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var httpRequestsPauseEndsCalled: Bool {
         httpRequestsPauseEndsGetCalled || httpRequestsPauseEndsSetCalled
@@ -1125,7 +1125,7 @@ class HttpRetryPolicyMock: HttpRetryPolicy, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    var underlyingNextSleepTime: Seconds?
+    var underlyingNextSleepTime: Seconds? = nil
     /// `true` if the getter or setter of property is called at least once.
     var nextSleepTimeCalled: Bool {
         nextSleepTimeGetCalled || nextSleepTimeSetCalled
@@ -1298,7 +1298,7 @@ public class ModuleHookProviderMock: ModuleHookProvider, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingProfileIdentifyHook: ProfileIdentifyHook?
+    public var underlyingProfileIdentifyHook: ProfileIdentifyHook? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var profileIdentifyHookCalled: Bool {
         profileIdentifyHookGetCalled || profileIdentifyHookSetCalled
@@ -1510,7 +1510,7 @@ public class ProfileStoreMock: ProfileStore, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingIdentifier: String?
+    public var underlyingIdentifier: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var identifierCalled: Bool {
         identifierGetCalled || identifierSetCalled

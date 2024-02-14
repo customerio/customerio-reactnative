@@ -1,8 +1,6 @@
 import CioInternalCommon
 import CioTracking
 import Foundation
-#if canImport(UserNotifications)
-import UserNotifications
 
 class RichPushRequestHandler {
     static let shared = RichPushRequestHandler()
@@ -12,11 +10,10 @@ class RichPushRequestHandler {
     private init() {}
 
     func startRequest(
-        _ request: UNNotificationRequest,
-        content: CustomerIOParsedPushPayload,
-        completionHandler: @escaping (UNNotificationContent) -> Void
+        push: PushNotification,
+        completionHandler: @escaping (PushNotification) -> Void
     ) {
-        let requestId = request.identifier
+        let requestId = push.pushId
 
         let existingRequest = requests[requestId]
         if existingRequest != nil { return }
@@ -29,8 +26,7 @@ class RichPushRequestHandler {
         let httpClient = diGraph.httpClient
 
         let newRequest = RichPushRequest(
-            pushContent: content,
-            request: request,
+            push: push,
             httpClient: httpClient,
             completionHandler: completionHandler
         )
@@ -47,4 +43,3 @@ class RichPushRequestHandler {
         requests = [:]
     }
 }
-#endif
