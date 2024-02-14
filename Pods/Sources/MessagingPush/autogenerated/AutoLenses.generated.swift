@@ -63,28 +63,4 @@ func |> <A, B, C>(f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
     { g(f($0)) }
 }
 
-extension CioPushPayload.Push {
-    static let linkLens = Lens<CioPushPayload.Push, String?>(
-        get: { $0.link },
-        set: { link, existing in
-            CioPushPayload.Push(link: link, image: existing.image)
-        }
-    )
-    static let imageLens = Lens<CioPushPayload.Push, String?>(
-        get: { $0.image },
-        set: { image, existing in
-            CioPushPayload.Push(link: existing.link, image: image)
-        }
-    )
-
-    // Convenient set functions to edit a property of the immutable object
-    func linkSet(_ link: String?) -> CioPushPayload.Push {
-        CioPushPayload.Push(link: link, image: image)
-    }
-
-    func imageSet(_ image: String?) -> CioPushPayload.Push {
-        CioPushPayload.Push(link: link, image: image)
-    }
-}
-
 // swiftlint:enable all

@@ -1,26 +1,23 @@
 import CioInternalCommon
 import Foundation
-#if canImport(UserNotifications)
-import UserNotifications
 
 class RichPushRequest {
-    private let completionHandler: (UNNotificationContent) -> Void
-    private let pushContent: CustomerIOParsedPushPayload
+    private let completionHandler: (PushNotification) -> Void
+    private var push: PushNotification
     private let httpClient: HttpClient
 
     init(
-        pushContent: CustomerIOParsedPushPayload,
-        request: UNNotificationRequest,
+        push: PushNotification,
         httpClient: HttpClient,
-        completionHandler: @escaping (UNNotificationContent) -> Void
+        completionHandler: @escaping (PushNotification) -> Void
     ) {
         self.completionHandler = completionHandler
-        self.pushContent = pushContent
+        self.push = push
         self.httpClient = httpClient
     }
 
     func start() {
-        guard let image = pushContent.image else {
+        guard let image = push.cioImage?.url else {
             // no async operations or modifications to the notification to do. Therefore, let's just finish.
             return finishImmediately()
         }
@@ -29,7 +26,7 @@ class RichPushRequest {
             guard let self = self else { return }
 
             if let localFilePath = localFilePath {
-                self.pushContent.addImage(localFilePath: localFilePath)
+                self.push.cioRichPushImageFile = localFilePath
             }
 
             self.finishImmediately()
@@ -39,7 +36,6 @@ class RichPushRequest {
     func finishImmediately() {
         httpClient.cancel(finishTasks: false)
 
-        completionHandler(pushContent.mutableNotificationContent)
+        completionHandler(push)
     }
 }
-#endif

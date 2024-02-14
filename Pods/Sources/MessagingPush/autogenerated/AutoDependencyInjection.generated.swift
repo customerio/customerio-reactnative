@@ -55,10 +55,37 @@ extension DIGraph {
     func testDependenciesAbleToResolve() -> Int {
         var countDependenciesResolved = 0
 
+        _ = automaticPushClickHandling
+        countDependenciesResolved += 1
+
         _ = deepLinkUtil
         countDependenciesResolved += 1
 
+        _ = pushEventHandler
+        countDependenciesResolved += 1
+
+        _ = pushClickHandler
+        countDependenciesResolved += 1
+
+        _ = pushHistory
+        countDependenciesResolved += 1
+
+        _ = userNotificationCenter
+        countDependenciesResolved += 1
+
         return countDependenciesResolved
+    }
+
+    // AutomaticPushClickHandling
+    @available(iOSApplicationExtension, unavailable)
+    var automaticPushClickHandling: AutomaticPushClickHandling {
+        getOverriddenInstance() ??
+            newAutomaticPushClickHandling
+    }
+
+    @available(iOSApplicationExtension, unavailable)
+    private var newAutomaticPushClickHandling: AutomaticPushClickHandling {
+        AutomaticPushClickHandlingImpl(notificationCenterAdapter: userNotificationsFrameworkAdapter, logger: logger)
     }
 
     // DeepLinkUtil
@@ -71,6 +98,64 @@ extension DIGraph {
     @available(iOSApplicationExtension, unavailable)
     private var newDeepLinkUtil: DeepLinkUtil {
         DeepLinkUtilImpl(logger: logger, uiKitWrapper: uIKitWrapper)
+    }
+
+    // PushEventHandler
+    @available(iOSApplicationExtension, unavailable)
+    var pushEventHandler: PushEventHandler {
+        getOverriddenInstance() ??
+            newPushEventHandler
+    }
+
+    @available(iOSApplicationExtension, unavailable)
+    private var newPushEventHandler: PushEventHandler {
+        IOSPushEventListener(jsonAdapter: jsonAdapter, pushEventHandlerProxy: pushEventHandlerProxy, moduleConfig: messagingPushConfigOptions, pushClickHandler: pushClickHandler, pushHistory: pushHistory, logger: logger)
+    }
+
+    // PushClickHandler
+    @available(iOSApplicationExtension, unavailable)
+    var pushClickHandler: PushClickHandler {
+        getOverriddenInstance() ??
+            newPushClickHandler
+    }
+
+    @available(iOSApplicationExtension, unavailable)
+    private var newPushClickHandler: PushClickHandler {
+        PushClickHandlerImpl(deepLinkUtil: deepLinkUtil, customerIO: customerIOInstance)
+    }
+
+    // PushHistory (singleton)
+    var pushHistory: PushHistory {
+        getOverriddenInstance() ??
+            sharedPushHistory
+    }
+
+    var sharedPushHistory: PushHistory {
+        // Use a DispatchQueue to make singleton thread safe. You must create unique dispatchqueues instead of using 1 shared one or you will get a crash when trying
+        // to call DispatchQueue.sync{} while already inside another DispatchQueue.sync{} call.
+        DispatchQueue(label: "DIGraph_PushHistory_singleton_access").sync {
+            if let overridenDep: PushHistory = getOverriddenInstance() {
+                return overridenDep
+            }
+            let existingSingletonInstance = self.singletons[String(describing: PushHistory.self)] as? PushHistory
+            let instance = existingSingletonInstance ?? _get_pushHistory()
+            self.singletons[String(describing: PushHistory.self)] = instance
+            return instance
+        }
+    }
+
+    private func _get_pushHistory() -> PushHistory {
+        PushHistoryImpl(lockManager: lockManager)
+    }
+
+    // UserNotificationCenter
+    var userNotificationCenter: UserNotificationCenter {
+        getOverriddenInstance() ??
+            newUserNotificationCenter
+    }
+
+    private var newUserNotificationCenter: UserNotificationCenter {
+        UserNotificationCenterImpl()
     }
 }
 

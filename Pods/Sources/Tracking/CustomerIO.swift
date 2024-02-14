@@ -422,4 +422,15 @@ public class CustomerIO: CustomerIOInstance {
     ) {
         implementation?.trackMetric(deliveryID: deliveryID, event: event, deviceToken: deviceToken)
     }
+}
+
+// Convenient way for other modules to access CustomerIOInstance as well as being able to mock CustomerIOInstance.
+public extension DIGraph {
+    var customerIOInstance: CustomerIOInstance {
+        if let override: CustomerIOInstance = getOverriddenInstance() {
+            return override
+        }
+
+        return CustomerIO.shared
+    }
 } // swiftlint:disable:this file_length

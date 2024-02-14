@@ -16,11 +16,11 @@ public class Lock {
 
     private init() {}
 
-    func lock() {
+    public func lock() {
         _lock.lock()
     }
 
-    func unlock() {
+    public func unlock() {
         _lock.unlock()
     }
 }

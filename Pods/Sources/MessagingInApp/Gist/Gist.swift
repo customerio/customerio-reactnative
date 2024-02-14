@@ -4,6 +4,7 @@ import UIKit
 public class Gist: GistDelegate {
     private var messageQueueManager = MessageQueueManager()
     private var messageManagers: [MessageManager] = []
+    var shownMessageQueueIds: Set<String> = []
     public var siteId: String = ""
     public var dataCenter: String = ""
 
@@ -113,6 +114,9 @@ public class Gist: GistDelegate {
 
     func logMessageView(message: Message) {
         messageQueueManager.removeMessageFromLocalStore(message: message)
+        if let queueId = message.queueId {
+            shownMessageQueueIds.insert(queueId)
+        }
         let userToken = UserManager().getUserToken()
         LogManager(siteId: siteId, dataCenter: dataCenter)
             .logView(message: message, userToken: userToken) { response in

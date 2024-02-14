@@ -4,6 +4,12 @@ import Foundation
 import UserNotifications
 #endif
 
+/**
+ Functions that customers can call when they want to perform manual push click handling.
+
+ Example: MessagingPush.shared.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+ */
+
 #if canImport(UserNotifications)
 @available(iOSApplicationExtension, unavailable)
 public extension MessagingPush {
@@ -53,6 +59,7 @@ extension MessagingPushImplementation {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) -> Bool {
+        // to keep this code DRY, forward the request to another function to perform all the logic:
         guard let pushContent = userNotificationCenter(center, didReceive: response) else {
             // push did not come from CIO
             // Do not call completionHandler() because push did not come from CIO. Another service might have sent it so
@@ -61,21 +68,8 @@ extension MessagingPushImplementation {
             return false
         }
 
-        switch response.actionIdentifier {
-        case UNNotificationDefaultActionIdentifier: // push notification was touched.
-            if let deepLinkUrl = pushContent.deepLink {
-                // A hack to get an instance of deepLinkUtil without making it a property of the MessagingPushImplementation class. deepLinkUtil is not available to app extensions but MessagingPushImplementation is.
-                // We get around this by getting a instance in this function, only.
-                if let deepLinkUtil = sdkInitializedUtil.postInitializedData?.diGraph.deepLinkUtil {
-                    deepLinkUtil.handleDeepLink(deepLinkUrl)
-                }
-            }
-        default: break
-        }
-
-        // Push came from CIO and the SDK handled it. Therefore, call the completionHandler for the customer and return
-        // true telling them that the SDK handled the push for them.
         completionHandler()
+
         return true
     }
 
@@ -83,30 +77,27 @@ extension MessagingPushImplementation {
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) -> CustomerIOParsedPushPayload? {
-        if sdkConfig.autoTrackPushEvents {
-            var pushMetric = Metric.delivered
+        let push = UNNotificationWrapper(notification: response.notification)
 
-            if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-                pushMetric = Metric.opened
-            }
-
-            trackMetric(notificationContent: response.notification.request.content, event: pushMetric)
-        }
-
-        // Time to handle rich push notifications.
-        guard let pushContent = CustomerIOParsedPushPayload
-            .parse(
-                notificationContent: response.notification.request.content,
-                jsonAdapter: jsonAdapter
-            )
-        else {
-            // push does not contain a CIO rich payload, so end early
+        guard push.isPushSentFromCio else {
             return nil
         }
 
-        cleanupAfterPushInteractedWith(pushContent: pushContent)
+        if response.didClickOnPush {
+            manualPushClickHandling(push: push)
+        }
 
-        return pushContent
+        return push
+    }
+
+    // Function that contains the logic for when a customer is wanting to manual handle a push click event.
+    // Function created for logic to be testable since automated test suite crashes when trying to access some UserNotification framework classes such as UNUserNotificationCenter.
+    func manualPushClickHandling(push: PushNotification) {
+        // A hack to get an instance of pushClickHandler without making it a property of the MessagingPushImplementation class. pushClickHandler is not available to app extensions but MessagingPushImplementation is.
+        // We get around this by getting a instance in this function, only.
+        if let pushClickHandler = sdkInitializedUtil.postInitializedData?.diGraph.pushClickHandler {
+            pushClickHandler.pushClicked(push)
+        }
     }
 }
 #endif

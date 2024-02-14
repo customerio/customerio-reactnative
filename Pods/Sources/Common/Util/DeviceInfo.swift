@@ -1,4 +1,5 @@
 import Foundation
+
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -77,9 +78,17 @@ public class CIODeviceInfo: DeviceInfo {
     public var deviceLocale: String {
         if let osSetLanguage = Locale.preferredLanguages.first {
             let locale = Locale(identifier: osSetLanguage)
+            let getLangCodeAndRegion: () -> (String?, String?) = {
+                if #available(iOS 16, *), #available(visionOS 1.0, *) {
+                    return (locale.language.languageCode?.identifier, locale.region?.identifier)
+                } else {
+                    return (locale.languageCode, locale.regionCode)
+                }
+            }
 
-            if let languageCode = locale.languageCode,
-               let regionCode = locale.regionCode {
+            let (languageCode, regionCode) = getLangCodeAndRegion()
+
+            if let languageCode, let regionCode {
                 return "\(languageCode)-\(regionCode)"
             }
         }

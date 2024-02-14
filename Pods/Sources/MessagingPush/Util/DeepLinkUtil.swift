@@ -1,8 +1,5 @@
 import CioInternalCommon
 import Foundation
-#if canImport(UIKit)
-import UIKit
-#endif
 
 protocol DeepLinkUtil: AutoMockable {
     func handleDeepLink(_ deepLinkUrl: URL)

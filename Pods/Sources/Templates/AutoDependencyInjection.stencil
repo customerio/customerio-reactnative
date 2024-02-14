@@ -91,6 +91,7 @@ extension DIGraph {
     {% elif dep|annotated:"InjectSingleton" %}
     // {{ class }} (singleton)
     {% call overrideGetterProperty class dep false true %}
+    {% call addPropertyWrappers dep %}
     {{ dep.accessLevel }} var shared{{ class }}: {{ class }} {
         // Use a DispatchQueue to make singleton thread safe. You must create unique dispatchqueues instead of using 1 shared one or you will get a crash when trying 
         // to call DispatchQueue.sync{} while already inside another DispatchQueue.sync{} call. 
@@ -104,6 +105,7 @@ extension DIGraph {
             return instance    
         }
     }
+    {% call addPropertyWrappers dep %}
     private func _get_{{ class|lowerFirstLetter }}() -> {{ class }} {
         return {{ dep.name }}({% for initializer in dep.initializers %}{% if not initializer.isConvenienceInitializer %}{% for param in initializer.parameters %}{{ param.name }}: self.{{ param.typeName|lowerFirstLetter }}{% if not forloop.last%}, {% endif %}{% endfor %}{% endif %}{% endfor %})
     }

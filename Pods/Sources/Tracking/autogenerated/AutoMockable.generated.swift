@@ -142,7 +142,7 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingSiteId: String?
+    public var underlyingSiteId: String? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var siteIdCalled: Bool {
         siteIdGetCalled || siteIdSetCalled
@@ -178,7 +178,7 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingConfig: SdkConfig?
+    public var underlyingConfig: SdkConfig? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var configCalled: Bool {
         configGetCalled || configSetCalled
@@ -685,7 +685,7 @@ public class SdkInitializedUtilMock: SdkInitializedUtil, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingCustomerio: CustomerIO?
+    public var underlyingCustomerio: CustomerIO? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var customerioCalled: Bool {
         customerioGetCalled || customerioSetCalled
@@ -757,7 +757,7 @@ public class SdkInitializedUtilMock: SdkInitializedUtil, Mock {
      When setter of the property called, the value given to setter is set here.
      When the getter of the property called, the value set here will be returned. Your chance to mock the property.
      */
-    public var underlyingPostInitializedData: (siteId: String, diGraph: DIGraph)?
+    public var underlyingPostInitializedData: (siteId: String, diGraph: DIGraph)? = nil
     /// `true` if the getter or setter of property is called at least once.
     public var postInitializedDataCalled: Bool {
         postInitializedDataGetCalled || postInitializedDataSetCalled

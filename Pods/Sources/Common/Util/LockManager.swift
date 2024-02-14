@@ -32,4 +32,6 @@ public class LockManager {
 public enum LockReference: String {
     case queueStorage
     case singleScheduleTimer
+    case pushHistory
+    case messagingPushModuleSetup
 }
