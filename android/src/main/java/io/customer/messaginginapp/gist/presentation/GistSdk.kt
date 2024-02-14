@@ -30,7 +30,7 @@ object GistSdk : Application.ActivityLifecycleCallbacks {
         application.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
     }
 
-    internal var pollInterval = 10_000L
+    internal var pollInterval = 5_000L
     lateinit var siteId: String
     lateinit var dataCenter: String
     internal lateinit var gistEnvironment: GistEnvironment

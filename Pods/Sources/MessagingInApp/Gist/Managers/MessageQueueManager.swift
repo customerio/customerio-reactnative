@@ -8,7 +8,7 @@ class MessageQueueManager {
 
     func setup() {
         queueTimer = Timer.scheduledTimer(
-            timeInterval: 10,
+            timeInterval: 5,
             target: self,
             selector: #selector(fetchUserMessages),
             userInfo: nil,
