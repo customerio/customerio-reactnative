@@ -1,3 +1,10 @@
+## [3.5.0](https://github.com/customerio/customerio-reactnative/compare/3.4.0...3.5.0) (2024-02-22)
+
+
+### Features
+
+* new header for polling interval and enable ios logging for in-app ([#237](https://github.com/customerio/customerio-reactnative/issues/237)) ([f77ff0e](https://github.com/customerio/customerio-reactnative/commit/f77ff0ecccab2d704d283e5e383065164ccd67e0))
+
 ## [3.4.0](https://github.com/customerio/customerio-reactnative/compare/3.3.2...3.4.0) (2024-02-12)
 
 
