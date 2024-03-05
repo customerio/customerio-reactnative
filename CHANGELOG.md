@@ -1,3 +1,10 @@
+## [3.5.2](https://github.com/customerio/customerio-reactnative/compare/3.5.1...3.5.2) (2024-03-05)
+
+
+### Bug Fixes
+
+* expo users reported app crash on didFailToRegisterForRemoteNotificationsWithError ([#244](https://github.com/customerio/customerio-reactnative/issues/244)) ([fb9a464](https://github.com/customerio/customerio-reactnative/commit/fb9a46438717b34c98c9f356daa9477bb2c7d95f))
+
 ## [3.5.1](https://github.com/customerio/customerio-reactnative/compare/3.5.0...3.5.1) (2024-02-26)
 
 
