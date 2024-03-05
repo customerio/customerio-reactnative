@@ -192,6 +192,7 @@
 				A79D30032A85125E00B19C94 /* Embed Foundation Extensions */,
 				1CCAD5FC80773D2224497908 /* [CP] Copy Pods Resources */,
 				CD95E466547FE84E094805A0 /* [CP-User] [RNFB] Core Configuration */,
+				110D6F29920335FAE74E5177 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -294,6 +295,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
+		};
+		110D6F29920335FAE74E5177 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FCMSampleApp/Pods-FCMSampleApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FCMSampleApp/Pods-FCMSampleApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FCMSampleApp/Pods-FCMSampleApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		1CCAD5FC80773D2224497908 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

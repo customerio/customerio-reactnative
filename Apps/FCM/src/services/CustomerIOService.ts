@@ -9,6 +9,13 @@ import {
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
+import { SegmentClient, SegmentDestination, createClient } from '@segment/analytics-react-native';
+
+export class CIODestination extends SegmentDestination {
+  key = 'Customer.io Data Pipelines';
+}
+
+let segmentClient: SegmentClient | null = null; // Use the type in your declaration
 
 export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
   const env = new CustomerIOEnv();
@@ -35,6 +42,13 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
     config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
   }
 
+  segmentClient = createClient({
+    writeKey: '${siteId}:${apiKey}',
+    proxy: "https://cdp.customer.io/v1/b",
+    cdnProxy: "https://cdp.customer.io/v1/projects",
+    autoAddSegmentDestination: false,
+  });
+  segmentClient.add({ plugin: new CIODestination() });
   CustomerIO.initialize(env, config);
 };
 
@@ -43,14 +57,20 @@ export const onUserLoggedIn = (user: User) => {
     first_name: user.name,
     email: user.email,
   });
+  segmentClient?.identify(user.email, {
+    first_name: user.name,
+    email: user.email,
+  });
 };
 
 export const onUserLoggedOut = () => {
   CustomerIO.clearIdentify();
+  segmentClient?.reset();
 };
 
 export const trackScreen = (screenName: string) => {
   CustomerIO.screen(screenName);
+  segmentClient?.screen(screenName);
 };
 
 export const trackEvent = (
@@ -60,6 +80,7 @@ export const trackEvent = (
 ) => {
   const data = propertyName ? { [propertyName]: propertyValue } : {};
   CustomerIO.track(eventName, data);
+  segmentClient?.track(eventName, data);
 };
 
 export const trackDeviceAttribute = (name: string, value: any) => {
