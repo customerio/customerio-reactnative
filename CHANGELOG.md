@@ -1,3 +1,10 @@
+## [3.5.1](https://github.com/customerio/customerio-reactnative/compare/3.5.0...3.5.1) (2024-02-26)
+
+
+### Bug Fixes
+
+* edge case for image download in rich push ([#242](https://github.com/customerio/customerio-reactnative/issues/242)) ([04b63f8](https://github.com/customerio/customerio-reactnative/commit/04b63f86a303708585fcc365d465d02321fd1a3e))
+
 ## [3.5.0](https://github.com/customerio/customerio-reactnative/compare/3.4.0...3.5.0) (2024-02-22)
 
 
