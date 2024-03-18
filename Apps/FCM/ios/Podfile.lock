@@ -2,39 +2,39 @@ PODS:
   - boost (1.76.0)
   - customerio-reactnative (3.5.2):
     - customerio-reactnative/nopush (= 3.5.2)
-    - CustomerIO/MessagingInApp (= 2.12.3)
-    - CustomerIO/Tracking (= 2.12.3)
+    - CustomerIO/MessagingInApp (= 2.12.5)
+    - CustomerIO/Tracking (= 2.12.5)
     - React-Core
   - customerio-reactnative-richpush/fcm (3.5.2):
-    - CustomerIO/MessagingPushFCM (= 2.12.3)
+    - CustomerIO/MessagingPushFCM (= 2.12.5)
   - customerio-reactnative/fcm (3.5.2):
-    - CustomerIO/MessagingInApp (= 2.12.3)
-    - CustomerIO/MessagingPushFCM (= 2.12.3)
-    - CustomerIO/Tracking (= 2.12.3)
+    - CustomerIO/MessagingInApp (= 2.12.5)
+    - CustomerIO/MessagingPushFCM (= 2.12.5)
+    - CustomerIO/Tracking (= 2.12.5)
     - React-Core
   - customerio-reactnative/nopush (3.5.2):
-    - CustomerIO/MessagingInApp (= 2.12.3)
-    - CustomerIO/MessagingPush (= 2.12.3)
-    - CustomerIO/Tracking (= 2.12.3)
+    - CustomerIO/MessagingInApp (= 2.12.5)
+    - CustomerIO/MessagingPush (= 2.12.5)
+    - CustomerIO/Tracking (= 2.12.5)
     - React-Core
-  - CustomerIO/MessagingInApp (2.12.3):
-    - CustomerIOMessagingInApp (= 2.12.3)
-  - CustomerIO/MessagingPush (2.12.3):
-    - CustomerIOMessagingPush (= 2.12.3)
-  - CustomerIO/MessagingPushFCM (2.12.3):
-    - CustomerIOMessagingPushFCM (= 2.12.3)
-  - CustomerIO/Tracking (2.12.3):
-    - CustomerIOTracking (= 2.12.3)
-  - CustomerIOCommon (2.12.3)
-  - CustomerIOMessagingInApp (2.12.3):
-    - CustomerIOTracking (= 2.12.3)
-  - CustomerIOMessagingPush (2.12.3):
-    - CustomerIOTracking (= 2.12.3)
-  - CustomerIOMessagingPushFCM (2.12.3):
-    - CustomerIOMessagingPush (= 2.12.3)
+  - CustomerIO/MessagingInApp (2.12.5):
+    - CustomerIOMessagingInApp (= 2.12.5)
+  - CustomerIO/MessagingPush (2.12.5):
+    - CustomerIOMessagingPush (= 2.12.5)
+  - CustomerIO/MessagingPushFCM (2.12.5):
+    - CustomerIOMessagingPushFCM (= 2.12.5)
+  - CustomerIO/Tracking (2.12.5):
+    - CustomerIOTracking (= 2.12.5)
+  - CustomerIOCommon (2.12.5)
+  - CustomerIOMessagingInApp (2.12.5):
+    - CustomerIOTracking (= 2.12.5)
+  - CustomerIOMessagingPush (2.12.5):
+    - CustomerIOTracking (= 2.12.5)
+  - CustomerIOMessagingPushFCM (2.12.5):
+    - CustomerIOMessagingPush (= 2.12.5)
     - FirebaseMessaging (< 11, >= 8.7.0)
-  - CustomerIOTracking (2.12.3):
-    - CustomerIOCommon (= 2.12.3)
+  - CustomerIOTracking (2.12.5):
+    - CustomerIOCommon (= 2.12.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.4)
   - FBReactNativeSpec (0.72.4):
@@ -412,7 +412,7 @@ PODS:
   - React-jsinspector (0.72.4)
   - React-logger (0.72.4):
     - glog
-  - react-native-safe-area-context (4.7.4):
+  - react-native-safe-area-context (4.9.0):
     - React-Core
   - React-NativeModulesApple (0.72.4):
     - hermes-engine
@@ -524,24 +524,24 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - RNCAsyncStorage (1.19.6):
+  - RNCAsyncStorage (1.22.3):
     - React-Core
-  - RNCClipboard (1.12.1):
+  - RNCClipboard (1.13.2):
     - React-Core
-  - RNDeviceInfo (10.11.0):
+  - RNDeviceInfo (10.13.1):
     - React-Core
-  - RNFBApp (18.8.0):
+  - RNFBApp (18.9.0):
     - Firebase/CoreOnly (= 10.20.0)
     - React-Core
-  - RNFBMessaging (18.8.0):
+  - RNFBMessaging (18.9.0):
     - Firebase/Messaging (= 10.20.0)
     - FirebaseCoreExtension (= 10.20.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.13.4):
+  - RNGestureHandler (2.15.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - RNScreens (3.27.0):
+  - RNScreens (3.29.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNSnackbar (2.6.2):
@@ -731,14 +731,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
-  CustomerIO: d00b5e1f44ab92200bb38dda75c52961fd2df86b
-  customerio-reactnative: dd29af7bb00cc5803022bfce65ce2f181f48afb8
-  customerio-reactnative-richpush: 16c55fe3ec6b073672fe769deeb1d2b17c86c6fa
-  CustomerIOCommon: cf2aeb5216ddc625c1d6fe8bc35830630cc18b29
-  CustomerIOMessagingInApp: 3caefed25b3628c02ede950f064f89e5fc1dd44f
-  CustomerIOMessagingPush: 88b2bab4f44961d0fef5ea16260358cae464aa2f
-  CustomerIOMessagingPushFCM: cb640797602c488fa5640f5aa10a51c54ccdfb59
-  CustomerIOTracking: 5bb93da2c9a41f327483152197fb39dbb255dd13
+  CustomerIO: 23b20c362c2824492147e50120c3da78dbd2d5a7
+  customerio-reactnative: 78f40eca3ed428d499b6710ac3cd8b070500b953
+  customerio-reactnative-richpush: 85255d203ab27e75e40893144342dc18f5815b12
+  CustomerIOCommon: 823ae9cec9fe1e3427e86ed01ff037f6b2fd225c
+  CustomerIOMessagingInApp: 193d5991459623b3657ea135ef143db48a1b127b
+  CustomerIOMessagingPush: cd27ef2331ed31891de651fa2327c300d7420dcf
+  CustomerIOMessagingPushFCM: b419b4b6bfe259754186f246098fbd11cd02cb82
+  CustomerIOTracking: 058bcae5ae2678de47f45c71066ac9eafafb7cd5
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 5d4a3b7f411219a45a6d952f77d2c0a6c9989da5
   FBReactNativeSpec: 3fc2d478e1c4b08276f9dd9128f80ec6d5d85c1f
@@ -771,7 +771,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: c7f826e40fa9cab5d37cab6130b1af237332b594
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
-  react-native-safe-area-context: 2cd91d532de12acdb0a9cbc8d43ac72a8e4c897c
+  react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
   React-RCTActionSheet: 02904b932b50e680f4e26e7a686b33ebf7ef3c00
@@ -789,17 +789,17 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 4941cc1b3cf08b792fbf666342c9fc95f1969035
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
-  RNCAsyncStorage: 191a99459b4a6d174cfe51579d34b5267201bbf3
-  RNCClipboard: d77213bfa269013bf4b857b7a9ca37ee062d8ef1
-  RNDeviceInfo: bf8a32acbcb875f568217285d1793b0e8588c974
-  RNFBApp: 5810d39f89d38272f29d9908cb19ef641922c081
-  RNFBMessaging: 8863c0206cc1a5577678eac6c1ec2b2965bd8e52
-  RNGestureHandler: 6e46dde1f87e5f018a54fe5d40cd0e0b942b49ee
-  RNScreens: 3c2d122f5e08c192e254c510b212306da97d2581
+  RNCAsyncStorage: 10591b9e0a91eaffee14e69b3721009759235125
+  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
+  RNDeviceInfo: 4f9c7cfd6b9db1b05eb919620a001cf35b536423
+  RNFBApp: a3e139715386fe79a09c387f2dbeb6890eb05b39
+  RNFBMessaging: a65862d8eba03cb6c838241bd328166504996894
+  RNGestureHandler: 7909c50383a18f0cb10ce1db7262b9a6da504c03
+  RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
 
 PODFILE CHECKSUM: 1b885e7f93ba1589858914e53bb0411459d735f5
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2
