@@ -1,3 +1,10 @@
+## [3.5.3](https://github.com/customerio/customerio-reactnative/compare/3.5.2...3.5.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* do not bundle .md files in cocoapods deployments ([a815336](https://github.com/customerio/customerio-reactnative/commit/a8153361ef08cff75d25e1eb3e4ed1da83fbc30a))
+
 ## [3.5.2](https://github.com/customerio/customerio-reactnative/compare/3.5.1...3.5.2) (2024-03-05)
 
 
