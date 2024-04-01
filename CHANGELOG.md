@@ -1,3 +1,38 @@
+## [3.5.3](https://github.com/customerio/customerio-reactnative/compare/3.5.2...3.5.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* do not bundle .md files in cocoapods deployments ([a815336](https://github.com/customerio/customerio-reactnative/commit/a8153361ef08cff75d25e1eb3e4ed1da83fbc30a))
+
+## [3.5.2](https://github.com/customerio/customerio-reactnative/compare/3.5.1...3.5.2) (2024-03-05)
+
+
+### Bug Fixes
+
+* expo users reported app crash on didFailToRegisterForRemoteNotificationsWithError ([#244](https://github.com/customerio/customerio-reactnative/issues/244)) ([fb9a464](https://github.com/customerio/customerio-reactnative/commit/fb9a46438717b34c98c9f356daa9477bb2c7d95f))
+
+## [3.5.1](https://github.com/customerio/customerio-reactnative/compare/3.5.0...3.5.1) (2024-02-26)
+
+
+### Bug Fixes
+
+* edge case for image download in rich push ([#242](https://github.com/customerio/customerio-reactnative/issues/242)) ([04b63f8](https://github.com/customerio/customerio-reactnative/commit/04b63f86a303708585fcc365d465d02321fd1a3e))
+
+## [3.5.0](https://github.com/customerio/customerio-reactnative/compare/3.4.0...3.5.0) (2024-02-22)
+
+
+### Features
+
+* new header for polling interval and enable ios logging for in-app ([#237](https://github.com/customerio/customerio-reactnative/issues/237)) ([f77ff0e](https://github.com/customerio/customerio-reactnative/commit/f77ff0ecccab2d704d283e5e383065164ccd67e0))
+
+## [3.4.0](https://github.com/customerio/customerio-reactnative/compare/3.3.2...3.4.0) (2024-02-12)
+
+
+### Features
+
+* increase opened metrics reliability and 3rd party push SDK compatibility ([#236](https://github.com/customerio/customerio-reactnative/issues/236)) ([514b719](https://github.com/customerio/customerio-reactnative/commit/514b7197b7a252bc835eec2c000ae7669f4fb391))
+
 ## [3.3.2](https://github.com/customerio/customerio-reactnative/compare/3.3.1...3.3.2) (2023-11-14)
 
 
