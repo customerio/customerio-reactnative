@@ -1,3 +1,10 @@
+## [3.5.4](https://github.com/customerio/customerio-reactnative/compare/3.5.3...3.5.4) (2024-04-09)
+
+
+### Bug Fixes
+
+* added proguard rules for R8 strict mode ([#253](https://github.com/customerio/customerio-reactnative/issues/253)) ([6686206](https://github.com/customerio/customerio-reactnative/commit/6686206b4e08dda711ea304d2fc291f27152b0c6))
+
 ## [3.5.3](https://github.com/customerio/customerio-reactnative/compare/3.5.2...3.5.3) (2024-03-19)
 
 
