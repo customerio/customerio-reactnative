@@ -70,11 +70,10 @@ def enableProguardInReleaseBuilds = true
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 android {
+    namespace 'io.customer.rn_sample.fcm'
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "io.customer.rn_sample.fcm"
     defaultConfig {
         applicationId "io.customer.rn_sample.fcm"
         minSdkVersion rootProject.ext.minSdkVersion

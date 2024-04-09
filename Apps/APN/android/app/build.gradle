@@ -129,8 +129,8 @@ def reactNativeArchitectures() {
 }
 
 android {
+    namespace 'io.customer.ami'
     ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {

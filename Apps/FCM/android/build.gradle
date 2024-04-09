@@ -24,5 +24,9 @@ buildscript {
 allprojects {
    repositories {
       google()  // Google's Maven repository
+      // Only required for using locally deployed versions of the SDK
+      mavenLocal()
+      // Only required for using SNAPSHOT versions of the SDK
+      maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
    }
 }
