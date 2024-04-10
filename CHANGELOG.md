@@ -1,3 +1,10 @@
+## [3.6.0](https://github.com/customerio/customerio-reactnative/compare/3.5.4...3.6.0) (2024-04-10)
+
+
+### Features
+
+* privacy manifest files ([#254](https://github.com/customerio/customerio-reactnative/issues/254)) ([6a7c1f1](https://github.com/customerio/customerio-reactnative/commit/6a7c1f1c33188b15edc54fea60650fb58361a3ff))
+
 ## [3.5.4](https://github.com/customerio/customerio-reactnative/compare/3.5.3...3.5.4) (2024-04-09)
 
 
