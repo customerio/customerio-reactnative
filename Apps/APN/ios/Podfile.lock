@@ -1,18 +1,18 @@
 PODS:
   - boost (1.76.0)
-  - customerio-reactnative (3.5.4):
-    - customerio-reactnative/nopush (= 3.5.4)
+  - customerio-reactnative (3.6.0):
+    - customerio-reactnative/nopush (= 3.6.0)
     - CustomerIO/MessagingInApp (= 2.13.0)
     - CustomerIO/Tracking (= 2.13.0)
     - React-Core
-  - customerio-reactnative-richpush/apn (3.5.4):
+  - customerio-reactnative-richpush/apn (3.6.0):
     - CustomerIO/MessagingPushAPN (= 2.13.0)
-  - customerio-reactnative/apn (3.5.4):
+  - customerio-reactnative/apn (3.6.0):
     - CustomerIO/MessagingInApp (= 2.13.0)
     - CustomerIO/MessagingPushAPN (= 2.13.0)
     - CustomerIO/Tracking (= 2.13.0)
     - React-Core
-  - customerio-reactnative/nopush (3.5.4):
+  - customerio-reactnative/nopush (3.6.0):
     - CustomerIO/MessagingInApp (= 2.13.0)
     - CustomerIO/MessagingPush (= 2.13.0)
     - CustomerIO/Tracking (= 2.13.0)
@@ -463,15 +463,13 @@ PODS:
     - React-jsi (= 0.72.4)
     - React-logger (= 0.72.4)
     - React-perflogger (= 0.72.4)
-  - RNCAsyncStorage (1.22.3):
-    - React-Core
-  - RNCClipboard (1.13.2):
+  - RNCAsyncStorage (1.23.1):
     - React-Core
   - RNCPushNotificationIOS (1.11.0):
     - React-Core
   - RNDeviceInfo (10.13.1):
     - React-Core
-  - RNGestureHandler (2.15.0):
+  - RNGestureHandler (2.16.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNReanimated (3.2.0):
@@ -555,7 +553,6 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -664,8 +661,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
-  RNCClipboard:
-    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNCPushNotificationIOS:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDeviceInfo:
@@ -684,8 +679,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CustomerIO: 55adb7377dff7afaf38c533c5bddaabfdd4203ac
-  customerio-reactnative: ac88b4a499afc7ea6b5360c355cdb329762232bc
-  customerio-reactnative-richpush: c8ffb0981d330fdb6faaee3313f71a01a0a76904
+  customerio-reactnative: 89ea13ea9f060034a75d05893d5ffe7825099751
+  customerio-reactnative-richpush: ef043c4b7aae8dd93fdcd246e6d7b94c993916cc
   CustomerIOCommon: 5c4c2d0ca81dd802dd3bab368c96fb3ee5ab7fe6
   CustomerIOMessagingInApp: abe108b80c8deecac70741fa2c9928289fda5814
   CustomerIOMessagingPush: c4a9a57de9e7ff1ab65e9b73cf49c7b4b155248e
@@ -732,11 +727,10 @@ SPEC CHECKSUMS:
   React-runtimescheduler: 4941cc1b3cf08b792fbf666342c9fc95f1969035
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
-  RNCAsyncStorage: 10591b9e0a91eaffee14e69b3721009759235125
-  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
+  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDeviceInfo: 4f9c7cfd6b9db1b05eb919620a001cf35b536423
-  RNGestureHandler: 7909c50383a18f0cb10ce1db7262b9a6da504c03
+  RNGestureHandler: 69d0a928253547ef857a7be4f453220b9c472e07
   RNReanimated: ede9ef73159ec1d4db04290f4ffc4a36c5fc1156
   RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
