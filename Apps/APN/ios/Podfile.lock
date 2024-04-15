@@ -1093,7 +1093,7 @@ PODS:
     - React-perflogger (= 0.73.6)
   - RNCAsyncStorage (1.23.1):
     - React-Core
-  - RNCClipboard (1.13.2):
+  - RNCClipboard (1.14.0):
     - React-Core
   - RNCPushNotificationIOS (1.11.0):
     - React-Core
@@ -1103,35 +1103,15 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNReanimated (3.2.0):
-    - DoubleConversion
-    - FBLazyVector
+  - RNReanimated (3.8.1):
     - glog
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-callinvoker
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - React-Core/DevSupport
-    - React-Core/RCTWebSocket
-    - React-CoreModules
-    - React-cxxreact
-    - React-jsi
-    - React-jsiexecutor
-    - React-jsinspector
-    - React-RCTActionSheet
-    - React-RCTAnimation
-    - React-RCTBlob
-    - React-RCTImage
-    - React-RCTLinking
-    - React-RCTNetwork
-    - React-RCTSettings
-    - React-RCTText
     - ReactCommon/turbomodule/core
-    - Yoga
-  - RNScreens (3.24.0):
+  - RNScreens (3.30.1):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
-    - React-RCTImage
   - RNSnackbar (2.6.2):
     - React-Core
   - SocketRocket (0.6.1)
@@ -1399,16 +1379,16 @@ SPEC CHECKSUMS:
   React-utils: d16c1d2251c088ad817996621947d0ac8167b46c
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
-  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
+  RNCClipboard: 090462274cc05b02628bd158baf6d73c3abe8441
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDeviceInfo: 4f9c7cfd6b9db1b05eb919620a001cf35b536423
   RNGestureHandler: bc2cdb2dc42facdf34992ae364b8a728e19a3686
-  RNReanimated: 6d095320d845f42c8189eda2ae4c1d0945534c07
-  RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
+  RNReanimated: 8a4d86eb951a4a99d8e86266dc71d7735c0c30a9
+  RNScreens: b6b64d956af3715adbfe84808694ae82d3fec74f
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: d17d2cc8105eed528474683b42e2ea310e1daf61
 
-PODFILE CHECKSUM: 7e649d0032b523a5096c194962c1161216a31191
+PODFILE CHECKSUM: 07c5427662cd5a19dbf58fc1a19a9651c33d045c
 
 COCOAPODS: 1.15.2
