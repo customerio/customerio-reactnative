@@ -1,21 +1,21 @@
 PODS:
   - boost (1.83.0)
-  - customerio-reactnative (3.5.3):
-    - customerio-reactnative/nopush (= 3.5.3)
-    - CustomerIO/MessagingInApp (= 2.12.5)
-    - CustomerIO/Tracking (= 2.12.5)
+  - customerio-reactnative (3.6.0):
+    - customerio-reactnative/nopush (= 3.6.0)
+    - CustomerIO/MessagingInApp (= 2.13.0)
+    - CustomerIO/Tracking (= 2.13.0)
     - React-Core
-  - customerio-reactnative-richpush/apn (3.5.3):
-    - CustomerIO/MessagingPushAPN (= 2.12.5)
-  - customerio-reactnative/apn (3.5.3):
-    - CustomerIO/MessagingInApp (= 2.12.5)
-    - CustomerIO/MessagingPushAPN (= 2.12.5)
-    - CustomerIO/Tracking (= 2.12.5)
+  - customerio-reactnative-richpush/apn (3.6.0):
+    - CustomerIO/MessagingPushAPN (= 2.13.0)
+  - customerio-reactnative/apn (3.6.0):
+    - CustomerIO/MessagingInApp (= 2.13.0)
+    - CustomerIO/MessagingPushAPN (= 2.13.0)
+    - CustomerIO/Tracking (= 2.13.0)
     - React-Core
-  - customerio-reactnative/nopush (3.5.3):
-    - CustomerIO/MessagingInApp (= 2.12.5)
-    - CustomerIO/MessagingPush (= 2.12.5)
-    - CustomerIO/Tracking (= 2.12.5)
+  - customerio-reactnative/nopush (3.6.0):
+    - CustomerIO/MessagingInApp (= 2.13.0)
+    - CustomerIO/MessagingPush (= 2.13.0)
+    - CustomerIO/Tracking (= 2.13.0)
     - React-Core
   - CustomerIO/MessagingInApp (2.13.0):
     - CustomerIOMessagingInApp (= 2.13.0)
@@ -1320,14 +1320,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  CustomerIO: 23b20c362c2824492147e50120c3da78dbd2d5a7
-  customerio-reactnative: cbce2fea6c4d76e8e5ff92947b2dc5964f819f55
-  customerio-reactnative-richpush: 1b789a7a28185db57787a1d5ac0fc7805d72fc7c
-  CustomerIOCommon: 823ae9cec9fe1e3427e86ed01ff037f6b2fd225c
-  CustomerIOMessagingInApp: 193d5991459623b3657ea135ef143db48a1b127b
-  CustomerIOMessagingPush: cd27ef2331ed31891de651fa2327c300d7420dcf
-  CustomerIOMessagingPushAPN: d4aae8b04c030eb39ca71d1f16fe60a3bb29111d
-  CustomerIOTracking: 058bcae5ae2678de47f45c71066ac9eafafb7cd5
+  CustomerIO: 55adb7377dff7afaf38c533c5bddaabfdd4203ac
+  customerio-reactnative: 89ea13ea9f060034a75d05893d5ffe7825099751
+  customerio-reactnative-richpush: ef043c4b7aae8dd93fdcd246e6d7b94c993916cc
+  CustomerIOCommon: 5c4c2d0ca81dd802dd3bab368c96fb3ee5ab7fe6
+  CustomerIOMessagingInApp: abe108b80c8deecac70741fa2c9928289fda5814
+  CustomerIOMessagingPush: c4a9a57de9e7ff1ab65e9b73cf49c7b4b155248e
+  CustomerIOMessagingPushAPN: 7bb31a9f6357c047475a6b27728c243a4090c2b1
+  CustomerIOTracking: d209e341d3732a8aa23858faed2565f4c6ee5ef7
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 9f2b8b243131565335437dba74923a8d3015e780
@@ -1389,6 +1389,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: d17d2cc8105eed528474683b42e2ea310e1daf61
 
-PODFILE CHECKSUM: 07c5427662cd5a19dbf58fc1a19a9651c33d045c
+PODFILE CHECKSUM: 229da98a144feaa2d9ca371d4a298206d434336a
 
 COCOAPODS: 1.15.2
