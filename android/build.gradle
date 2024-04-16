@@ -25,6 +25,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
@@ -33,15 +34,15 @@ android {
   
   buildTypes {
     release {
-      minifyEnabled false
+      minifyEnabled true
     }
   }
   lintOptions {
     disable 'GradleCompatible'
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
 }
 
