@@ -1,3 +1,17 @@
+## [3.6.0](https://github.com/customerio/customerio-reactnative/compare/3.5.4...3.6.0) (2024-04-10)
+
+
+### Features
+
+* privacy manifest files ([#254](https://github.com/customerio/customerio-reactnative/issues/254)) ([6a7c1f1](https://github.com/customerio/customerio-reactnative/commit/6a7c1f1c33188b15edc54fea60650fb58361a3ff))
+
+## [3.5.4](https://github.com/customerio/customerio-reactnative/compare/3.5.3...3.5.4) (2024-04-09)
+
+
+### Bug Fixes
+
+* added proguard rules for R8 strict mode ([#253](https://github.com/customerio/customerio-reactnative/issues/253)) ([6686206](https://github.com/customerio/customerio-reactnative/commit/6686206b4e08dda711ea304d2fc291f27152b0c6))
+
 ## [3.5.3](https://github.com/customerio/customerio-reactnative/compare/3.5.2...3.5.3) (2024-03-19)
 
 

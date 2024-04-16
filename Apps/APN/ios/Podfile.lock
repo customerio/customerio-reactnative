@@ -17,23 +17,23 @@ PODS:
     - CustomerIO/MessagingPush (= 2.12.5)
     - CustomerIO/Tracking (= 2.12.5)
     - React-Core
-  - CustomerIO/MessagingInApp (2.12.5):
-    - CustomerIOMessagingInApp (= 2.12.5)
-  - CustomerIO/MessagingPush (2.12.5):
-    - CustomerIOMessagingPush (= 2.12.5)
-  - CustomerIO/MessagingPushAPN (2.12.5):
-    - CustomerIOMessagingPushAPN (= 2.12.5)
-  - CustomerIO/Tracking (2.12.5):
-    - CustomerIOTracking (= 2.12.5)
-  - CustomerIOCommon (2.12.5)
-  - CustomerIOMessagingInApp (2.12.5):
-    - CustomerIOTracking (= 2.12.5)
-  - CustomerIOMessagingPush (2.12.5):
-    - CustomerIOTracking (= 2.12.5)
-  - CustomerIOMessagingPushAPN (2.12.5):
-    - CustomerIOMessagingPush (= 2.12.5)
-  - CustomerIOTracking (2.12.5):
-    - CustomerIOCommon (= 2.12.5)
+  - CustomerIO/MessagingInApp (2.13.0):
+    - CustomerIOMessagingInApp (= 2.13.0)
+  - CustomerIO/MessagingPush (2.13.0):
+    - CustomerIOMessagingPush (= 2.13.0)
+  - CustomerIO/MessagingPushAPN (2.13.0):
+    - CustomerIOMessagingPushAPN (= 2.13.0)
+  - CustomerIO/Tracking (2.13.0):
+    - CustomerIOTracking (= 2.13.0)
+  - CustomerIOCommon (2.13.0)
+  - CustomerIOMessagingInApp (2.13.0):
+    - CustomerIOTracking (= 2.13.0)
+  - CustomerIOMessagingPush (2.13.0):
+    - CustomerIOTracking (= 2.13.0)
+  - CustomerIOMessagingPushAPN (2.13.0):
+    - CustomerIOMessagingPush (= 2.13.0)
+  - CustomerIOTracking (2.13.0):
+    - CustomerIOCommon (= 2.13.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.73.6)
   - FBReactNativeSpec (0.73.6):
