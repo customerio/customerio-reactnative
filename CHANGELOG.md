@@ -1,3 +1,10 @@
+## [3.7.0](https://github.com/customerio/customerio-reactnative/compare/3.6.0...3.7.0) (2024-04-18)
+
+
+### Features
+
+* support for android gradle plugin 8 ([#258](https://github.com/customerio/customerio-reactnative/issues/258)) ([3544e66](https://github.com/customerio/customerio-reactnative/commit/3544e6626c90e0fb4f75e9bf7d94ea8e5da73906))
+
 ## [3.6.0](https://github.com/customerio/customerio-reactnative/compare/3.5.4...3.6.0) (2024-04-10)
 
 
