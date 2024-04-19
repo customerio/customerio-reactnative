@@ -5,10 +5,9 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, 13.0
+platform :ios, min_ios_version_supported
 prepare_react_native_project!
 use_modular_headers!
-
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
 #
@@ -18,7 +17,6 @@ use_modular_headers!
 #   dependencies: {
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -29,17 +27,8 @@ end
 target 'FCMSampleApp' do
   config = use_native_modules!
 
-  # Flags change depending on the env values.
-  flags = get_default_flags()
-
-  # Pods required by Customer.io
-  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
-
   use_react_native!(
     :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
     # Enables Flipper.
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
@@ -49,6 +38,10 @@ target 'FCMSampleApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
+  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: "fcm")
+  # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: false, push_service: "fcm")
+
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
@@ -56,10 +49,11 @@ target 'FCMSampleApp' do
       config[:reactNativePath],
       :mac_catalyst_enabled => false
     )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
 
 target 'NotificationServiceExtension' do
   pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "fcm")
+  # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: true, push_service: "fcm")
 end
