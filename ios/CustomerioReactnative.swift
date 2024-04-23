@@ -1,5 +1,5 @@
 import Foundation
-import CioTracking
+//import CioTracking
 import CioInternalCommon
 import CioMessagingInApp
 import UserNotifications
@@ -28,38 +28,38 @@ class CustomerioReactnative: NSObject {
     @objc(initialize:configData:packageConfig:)
     func initialize(env: Dictionary<String, AnyHashable>, configData: Dictionary<String, AnyHashable>, packageConfig: Dictionary<String, AnyHashable>) -> Void {
         
-        guard let siteId = env[CustomerioConstants.siteId] as? String, let apiKey = env[CustomerioConstants.apiKey] as? String, let region = env[CustomerioConstants.region] as? String else {
-            return
-        }
+        // guard let siteId = env[CustomerioConstants.siteId] as? String, let apiKey = env[CustomerioConstants.apiKey] as? String, let region = env[CustomerioConstants.region] as? String else {
+        //     return
+        // }
         
-        guard let pversion = packageConfig[CustomerioConstants.version] as? String, let source = packageConfig[CustomerioConstants.source] as? String else {
-            return
-        }
+        // guard let pversion = packageConfig[CustomerioConstants.version] as? String, let source = packageConfig[CustomerioConstants.source] as? String else {
+        //     return
+        // }
         
-        var sdkSource = SdkWrapperConfig.Source.reactNative
-        if source.lowercased() == CustomerioConstants.expo {
-            sdkSource = SdkWrapperConfig.Source.expo
-        }
+        // var sdkSource = SdkWrapperConfig.Source.reactNative
+        // if source.lowercased() == CustomerioConstants.expo {
+        //     sdkSource = SdkWrapperConfig.Source.expo
+        // }
         
-        CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
-            config._sdkWrapperConfig = SdkWrapperConfig(source: sdkSource, version: pversion )
-            config.autoTrackDeviceAttributes = configData[CustomerioConstants.autoTrackDeviceAttributes] as! Bool
-            config.logLevel = CioLogLevel.getLogValue(for: configData[CustomerioConstants.logLevel] as! Int)
-            config.autoTrackPushEvents = configData[CustomerioConstants.autoTrackPushEvents] as! Bool
-            config.backgroundQueueMinNumberOfTasks = configData[CustomerioConstants.bgQMinTasks] as! Int
-            config.backgroundQueueSecondsDelay = configData[CustomerioConstants.bgQSecondsDelay] as! Seconds
-            if let trackingApiUrl = configData[CustomerioConstants.trackingApiUrl] as? String, !trackingApiUrl.isEmpty {
-                config.trackingApiUrl = trackingApiUrl
-            }
-        }
-        if let isEnableInApp = configData[CustomerioConstants.enableInApp] as? Bool, isEnableInApp {
-            initializeInApp()
-        }
+        // CustomerIO.initialize(siteId: siteId, apiKey: apiKey, region: Region.getLocation(from: region)) { config in
+        //     config._sdkWrapperConfig = SdkWrapperConfig(source: sdkSource, version: pversion )
+        //     config.autoTrackDeviceAttributes = configData[CustomerioConstants.autoTrackDeviceAttributes] as! Bool
+        //     config.logLevel = CioLogLevel.getLogValue(for: configData[CustomerioConstants.logLevel] as! Int)
+        //     config.autoTrackPushEvents = configData[CustomerioConstants.autoTrackPushEvents] as! Bool
+        //     config.backgroundQueueMinNumberOfTasks = configData[CustomerioConstants.bgQMinTasks] as! Int
+        //     config.backgroundQueueSecondsDelay = configData[CustomerioConstants.bgQSecondsDelay] as! Seconds
+        //     if let trackingApiUrl = configData[CustomerioConstants.trackingApiUrl] as? String, !trackingApiUrl.isEmpty {
+        //         config.trackingApiUrl = trackingApiUrl
+        //     }
+        // }
+        // if let isEnableInApp = configData[CustomerioConstants.enableInApp] as? Bool, isEnableInApp {
+             initializeInApp()
+        // }
         
-        // Register app for push notifications if not done already
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
+        // // Register app for push notifications if not done already
+        // DispatchQueue.main.async {
+        //     UIApplication.shared.registerForRemoteNotifications()
+        // }
     }
     
     /**
@@ -72,11 +72,11 @@ class CustomerioReactnative: NSObject {
     @objc(identify:body:)
     func identify(identifier: String, body: Dictionary<String, AnyHashable>?) -> Void {
     
-        guard let data = body else {
-            CustomerIO.shared.identify(identifier: identifier)
-            return
-        }
-        CustomerIO.shared.identify(identifier: identifier, body: data)
+        // guard let data = body else {
+        //     CustomerIO.shared.identify(identifier: identifier)
+        //     return
+        // }
+        // CustomerIO.shared.identify(identifier: identifier, body: data)
     }
     
     /**
@@ -85,7 +85,7 @@ class CustomerioReactnative: NSObject {
      */
     @objc(clearIdentify)
     func clearIdentify() {
-        CustomerIO.shared.clearIdentify()
+//        CustomerIO.shared.clearIdentify()
     }
     
     
@@ -94,11 +94,11 @@ class CustomerioReactnative: NSObject {
      */
     @objc(track:data:)
     func track(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
-        guard let body = data else {
-            CustomerIO.shared.track(name: name)
-            return
-        }
-        CustomerIO.shared.track(name: name, data: body)
+        // guard let body = data else {
+        //     CustomerIO.shared.track(name: name)
+        //     return
+        // }
+        // CustomerIO.shared.track(name: name, data: body)
     }
     
     /**
@@ -106,7 +106,7 @@ class CustomerioReactnative: NSObject {
      */
     @objc(setDeviceAttributes:)
     func setDeviceAttributes(data: Dictionary<String, AnyHashable>) -> Void{
-        CustomerIO.shared.deviceAttributes = data
+//        CustomerIO.shared.deviceAttributes = data
     }
     
     /**
@@ -114,7 +114,7 @@ class CustomerioReactnative: NSObject {
      */
     @objc(setProfileAttributes:)
     func setProfileAttributes(data: Dictionary<String, AnyHashable>) -> Void{
-        CustomerIO.shared.profileAttributes = data
+//        CustomerIO.shared.profileAttributes = data
     }
     
     /**
@@ -123,11 +123,11 @@ class CustomerioReactnative: NSObject {
     @objc(screen:data:)
     func screen(name : String, data : Dictionary<String, AnyHashable>?) -> Void {
         
-        guard let body = data else {
-            CustomerIO.shared.screen(name: name)
-            return
-        }
-        CustomerIO.shared.screen(name: name, data: body)
+        // guard let body = data else {
+        //     CustomerIO.shared.screen(name: name)
+        //     return
+        // }
+        // CustomerIO.shared.screen(name: name, data: body)
     }
     /**
      To register device token with CustomerIO with respect to a user. If a user is not identified then device
@@ -135,12 +135,12 @@ class CustomerioReactnative: NSObject {
      */
     @objc(registerDeviceToken:)
     func registerDeviceToken(token: String) -> Void {
-        CustomerIO.shared.registerDeviceToken(token)
+//        CustomerIO.shared.registerDeviceToken(token)
     }
 
     @objc(deleteDeviceToken)
     func deleteDeviceToken() {
-        CustomerIO.shared.deleteDeviceToken()
+//        CustomerIO.shared.deleteDeviceToken()
     }
 
     /**
@@ -149,21 +149,21 @@ class CustomerioReactnative: NSObject {
     @objc(showPromptForPushNotifications:resolver:rejecter:)
     func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
-        // Show prompt if status is not determined
-        getPushNotificationPermissionStatus { status in
-            if status == .notDetermined {
-                self.requestPushAuthorization(options: options) { permissionStatus in
+        // // Show prompt if status is not determined
+        // getPushNotificationPermissionStatus { status in
+        //     if status == .notDetermined {
+        //         self.requestPushAuthorization(options: options) { permissionStatus in
                     
-                    guard let status = permissionStatus as? Bool else {
-                        reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
-                        return
-                    }
-                    resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
-                }
-            } else {
-                resolve(status.value)
-            }
-        }
+        //             guard let status = permissionStatus as? Bool else {
+        //                 reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
+        //                 return
+        //             }
+        //             resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
+        //         }
+        //     } else {
+        //         resolve(status.value)
+        //     }
+        // }
     }
 
     /**
@@ -171,9 +171,9 @@ class CustomerioReactnative: NSObject {
      */
     @objc(getPushPermissionStatus:rejecter:)
     func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
-        getPushNotificationPermissionStatus { status in
-            resolve(status.value)
-        }
+        // getPushNotificationPermissionStatus { status in
+        //     resolve(status.value)
+        // }
     }
     
     private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void

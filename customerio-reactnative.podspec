@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
 
   # Syntax of native iOS pods allows for automatically upgrading to the latest major version of the iOS SDK. 
   # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
-  s.dependency "CustomerIO/Tracking", package["cioNativeiOSSdkVersion"]
+  s.dependency "CustomerIO/DataPipelines", package["cioNativeiOSSdkVersion"]
   s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
 
   # If we do not specify a default_subspec, then *all* dependencies inside of *all* the subspecs will be downloaded by cocoapods. 
