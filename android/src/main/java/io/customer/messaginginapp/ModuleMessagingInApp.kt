@@ -2,7 +2,6 @@ package io.customer.messaginginapp
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
-import io.customer.base.internal.InternalCustomerIOApi
 import io.customer.messaginginapp.di.gistProvider
 import io.customer.messaginginapp.hook.ModuleInAppHookProvider
 import io.customer.sdk.CustomerIO
@@ -15,7 +14,7 @@ import io.customer.sdk.module.CustomerIOModule
 import io.customer.sdk.repository.TrackRepository
 
 class ModuleMessagingInApp
-@VisibleForTesting @InternalCustomerIOApi
+@VisibleForTesting
 internal constructor(
     override val moduleConfig: MessagingInAppModuleConfig = MessagingInAppModuleConfig.default(),
     private val overrideDiGraph: CustomerIOComponent?

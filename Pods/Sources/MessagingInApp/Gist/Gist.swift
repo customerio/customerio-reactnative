@@ -2,9 +2,9 @@ import Foundation
 import UIKit
 
 public class Gist: GistDelegate {
-    private var messageQueueManager = MessageQueueManager()
-    private var messageManagers: [MessageManager] = []
+    var messageQueueManager = MessageQueueManager()
     var shownMessageQueueIds: Set<String> = []
+    private var messageManagers: [MessageManager] = []
     public var siteId: String = ""
     public var dataCenter: String = ""
 

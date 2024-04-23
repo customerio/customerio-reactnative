@@ -27,6 +27,7 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { CustomerIO } from 'customerio-reactnative';
 
 const Settings = ({ navigation, route }) => {
   const { params } = route;
@@ -85,6 +86,14 @@ const Settings = ({ navigation, route }) => {
   );
 
   useEffect(() => {
+    CustomerIO.pushMessaging()
+      .getRegisteredDeviceToken()
+      .then((token) => {
+        setDeviceToken(token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setTrackUrl(initialConfig.trackingUrl);
     setSiteId(initialSiteId ?? initialConfig.siteId);
     setApiKey(initialApiKey ?? initialConfig.apiKey);

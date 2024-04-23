@@ -1,4 +1,8 @@
 #import "AppDelegate.h"
+#import <FCMSampleApp-Swift.h>
+#import <React/RCTLinkingManager.h>
+#import <React/RCTBundleURLProvider.h>
+#import <FirebaseCore.h>
 
 @implementation AppDelegate
 
@@ -29,13 +33,17 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
     }
   }
   
-  [pnHandlerObj setupCustomerIOClickHandling:self];
+  [pnHandlerObj setupCustomerIOClickHandling];
 
   return [super application:application didFinishLaunchingWithOptions:modifiedLaunchOptions];
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
-#if DEBUG
+  return [self getBundleURL];
+}
+ 
+- (NSURL *)getBundleURL {
+  #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
@@ -44,18 +52,6 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
   [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken: fcmToken];
-}
-
-// Send push notification click events to the Customer.IO SDK for processing
- - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)(void))completionHandler {
-   [pnHandlerObj userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
- }
-
-// To show a notification when the app is in foreground
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
-       willPresentNotification:(UNNotification *)notification
-         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-  completionHandler(UNNotificationPresentationOptionAlert + UNNotificationPresentationOptionSound);
 }
 
 // Deep links handling for app scheme links

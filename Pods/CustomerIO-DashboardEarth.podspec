@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |spec|
   spec.name         = "CustomerIO-DashboardEarth"
-  spec.version      = "2.11.0-modified" # Don't modify this line - it's automatically updated
+  spec.version      = "2.13.0-modified" # Don't modify this line - it's automatically updated
   spec.summary      = "Official Customer.io SDK for iOS."  
   spec.homepage     = "https://github.com/customerio/customerio-ios"
   spec.documentation_url = 'https://customer.io/docs/sdk/ios/'

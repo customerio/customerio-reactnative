@@ -45,6 +45,6 @@ extension MessagingPushAPN {
     // Swizzled method for `didFailToRegisterForRemoteNotificationsWithError'
     @objc
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        messagingPush.deleteDeviceToken()
+        MessagingPushAPN.shared.deleteDeviceToken()
     }
 }

@@ -26,6 +26,7 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { CustomerIO } from 'customerio-reactnative';
 
 interface SettingsProps {
   navigation: NavigationProp<ParamListBase>;
@@ -97,6 +98,14 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       }
     };
 
+    CustomerIO.pushMessaging()
+      .getRegisteredDeviceToken()
+      .then((token) => {
+        setDeviceToken(token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setValueIfPresent(initialConfig?.trackingUrl, setTrackUrl);
     setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
     setValueIfPresent(initialApiKey ?? initialConfig?.apiKey, setApiKey);

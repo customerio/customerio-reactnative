@@ -15,6 +15,7 @@ enum BaseNetwork {
         completionHandler: @escaping (Result<GistNetworkResponse, Error>) -> Void
     ) throws {
         var urlRequest = urlRequest
+        urlRequest.cachePolicy = .reloadIgnoringCacheData
         switch request.parameters {
         case .body(let body):
             urlRequest.httpBody = try JSONSerialization.data(withJSONObject: body.asDictionary(), options: [])
@@ -31,7 +32,7 @@ enum BaseNetwork {
         URLSession.shared.dataTask(with: urlRequest, completionHandler: { data, response, error in
             if let error = error { completionHandler(.failure(error)) }
             guard let data = data, let response = response as? HTTPURLResponse,
-                  (200 ... 299).contains(response.statusCode)
+                  (200 ... 304).contains(response.statusCode)
             else {
                 completionHandler(.failure(GistNetworkError.serverError))
                 return

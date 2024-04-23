@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	Docs for this section: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_data_use_in_privacy_manifests
+	This section is describing what information our SDK collects about the app user. 
+	
+	It's my understanding that this section is for what our SDK requires, not what a customer can do with our SDK. Therefore, if something is optional, use `false`.
+	Customers must create their own privacy file for what their app does and provide that to Apple. That's where customers report what they might be using our SDK for. 
+   -->   
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
+	
+	  <!-- 
+	  Section for SDKs that capture "Such as screen name, handle, account ID, assigned user ID, customer number, or other user- or account-level ID that can be used to identify a particular user or account."
+	  -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeUserID</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/> <!-- because of anonymous profiles, linking to a person is optional -->
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>				
+				<string>NSPrivacyCollectedDataTypePurposeProductPersonalization</string>
+			</array>
+		</dict>
+		
+		<!--
+		Section for SDKs that capture "Such as app launches, taps, clicks, scrolling information, music listening data, video views, saved place in a game, video, or song, or other information about how the user interacts with the app."
+		-->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeProductInteraction</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+                <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>				
+				<string>NSPrivacyCollectedDataTypePurposeProductPersonalization</string>
+			</array>
+		</dict>		
+	</array>
+
+  <!-- 
+  Document on this section: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files/describing_use_of_required_reason_api
+  Documents if our SDK uses certain system calls and why. Prevents SDK using fingerprinting.   
+  -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- "third-party SDK uses data for tracking as defined under the App Tracking Transparency framework."
+	See section "Asking permission to track" in this webpage: 
+	https://developer.apple.com/app-store/user-privacy-and-data-use/ 
+	-->
+	<key>NSPrivacyTracking</key>
+	<false/>
+	
+	<!-- Because we use NSPrivacyTracking=false, this section is not required.
+	<key>NSPrivacyTrackingDomains</key> 
+	-->
+</dict>
+</plist>

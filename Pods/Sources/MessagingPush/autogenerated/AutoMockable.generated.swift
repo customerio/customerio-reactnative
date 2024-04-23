@@ -449,38 +449,102 @@ class PushClickHandlerMock: PushClickHandler, Mock {
     }
 
     public func resetMock() {
-        pushClickedCallsCount = 0
-        pushClickedReceivedArguments = nil
-        pushClickedReceivedInvocations = []
+        cleanupAfterPushInteractedWithCallsCount = 0
+        cleanupAfterPushInteractedWithReceivedArguments = nil
+        cleanupAfterPushInteractedWithReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
+        trackPushMetricsCallsCount = 0
+        trackPushMetricsReceivedArguments = nil
+        trackPushMetricsReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
+        handleDeepLinkCallsCount = 0
+        handleDeepLinkReceivedArguments = nil
+        handleDeepLinkReceivedInvocations = []
 
         mockCalled = false // do last as resetting properties above can make this true
     }
 
-    // MARK: - pushClicked
+    // MARK: - cleanupAfterPushInteractedWith
 
     /// Number of times the function was called.
-    private(set) var pushClickedCallsCount = 0
+    private(set) var cleanupAfterPushInteractedWithCallsCount = 0
     /// `true` if the function was ever called.
-    var pushClickedCalled: Bool {
-        pushClickedCallsCount > 0
+    var cleanupAfterPushInteractedWithCalled: Bool {
+        cleanupAfterPushInteractedWithCallsCount > 0
     }
 
     /// The arguments from the *last* time the function was called.
-    private(set) var pushClickedReceivedArguments: PushNotification?
+    private(set) var cleanupAfterPushInteractedWithReceivedArguments: PushNotification?
     /// Arguments from *all* of the times that the function was called.
-    private(set) var pushClickedReceivedInvocations: [PushNotification] = []
+    private(set) var cleanupAfterPushInteractedWithReceivedInvocations: [PushNotification] = []
     /**
      Set closure to get called when function gets called. Great way to test logic or return a value for the function.
      */
-    var pushClickedClosure: ((PushNotification) -> Void)?
+    var cleanupAfterPushInteractedWithClosure: ((PushNotification) -> Void)?
 
-    /// Mocked function for `pushClicked(_ push: PushNotification)`. Your opportunity to return a mocked value and check result of mock in test code.
-    func pushClicked(_ push: PushNotification) {
+    /// Mocked function for `cleanupAfterPushInteractedWith(for push: PushNotification)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func cleanupAfterPushInteractedWith(for push: PushNotification) {
         mockCalled = true
-        pushClickedCallsCount += 1
-        pushClickedReceivedArguments = push
-        pushClickedReceivedInvocations.append(push)
-        pushClickedClosure?(push)
+        cleanupAfterPushInteractedWithCallsCount += 1
+        cleanupAfterPushInteractedWithReceivedArguments = push
+        cleanupAfterPushInteractedWithReceivedInvocations.append(push)
+        cleanupAfterPushInteractedWithClosure?(push)
+    }
+
+    // MARK: - trackPushMetrics
+
+    /// Number of times the function was called.
+    private(set) var trackPushMetricsCallsCount = 0
+    /// `true` if the function was ever called.
+    var trackPushMetricsCalled: Bool {
+        trackPushMetricsCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    private(set) var trackPushMetricsReceivedArguments: PushNotification?
+    /// Arguments from *all* of the times that the function was called.
+    private(set) var trackPushMetricsReceivedInvocations: [PushNotification] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    var trackPushMetricsClosure: ((PushNotification) -> Void)?
+
+    /// Mocked function for `trackPushMetrics(for push: PushNotification)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func trackPushMetrics(for push: PushNotification) {
+        mockCalled = true
+        trackPushMetricsCallsCount += 1
+        trackPushMetricsReceivedArguments = push
+        trackPushMetricsReceivedInvocations.append(push)
+        trackPushMetricsClosure?(push)
+    }
+
+    // MARK: - handleDeepLink
+
+    /// Number of times the function was called.
+    private(set) var handleDeepLinkCallsCount = 0
+    /// `true` if the function was ever called.
+    var handleDeepLinkCalled: Bool {
+        handleDeepLinkCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    private(set) var handleDeepLinkReceivedArguments: PushNotification?
+    /// Arguments from *all* of the times that the function was called.
+    private(set) var handleDeepLinkReceivedInvocations: [PushNotification] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    var handleDeepLinkClosure: ((PushNotification) -> Void)?
+
+    /// Mocked function for `handleDeepLink(for push: PushNotification)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func handleDeepLink(for push: PushNotification) {
+        mockCalled = true
+        handleDeepLinkCallsCount += 1
+        handleDeepLinkReceivedArguments = push
+        handleDeepLinkReceivedInvocations.append(push)
+        handleDeepLinkClosure?(push)
     }
 }
 

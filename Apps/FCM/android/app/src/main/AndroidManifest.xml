@@ -51,11 +51,25 @@
             </intent-filter>
         </activity>
 
+        <!-- Register Customer.io Firebase Messaging Service as we want our SDK to handle all push
+             notifications. This is not required. However, if you have multiple services added for
+             handling push notifications, you might need to add this service to ensure all
+             notifications are handled by Customer.io. Read more:
+             https://www.customer.io/docs/sdk/react-native/push-notifications/multiple-push-providers/ -->
+        <service
+            android:name="io.customer.messagingpush.CustomerIOFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/notification_icon" />
+            android:resource="@color/notification_icon"
+            tools:replace="android:resource" />
     </application>
 </manifest>

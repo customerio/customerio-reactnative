@@ -248,7 +248,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				4632B4CF283E5CB800AF05BC /* Embed App Extensions */,
 				9C9433299D4E03BE0A110713 /* [CP] Copy Pods Resources */,
-				16703B80BC6551EC401B4D44 /* [CP] Embed Pods Frameworks */,
+				74A960915E932AA283D380B5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -268,6 +268,7 @@
 				46D41ED42A0944BF0008DBA4 /* Sources */,
 				46D41ED52A0944BF0008DBA4 /* Frameworks */,
 				46D41ED62A0944BF0008DBA4 /* Resources */,
+				6C1A9415C2D81E3D11DD832C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -356,7 +357,27 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n../node_modules/expo-constants/scripts/get-app-config-ios.sh\n../node_modules/expo-updates/scripts/create-manifest-ios.sh\n";
 		};
-		16703B80BC6551EC401B4D44 /* [CP] Embed Pods Frameworks */ = {
+		6C1A9415C2D81E3D11DD832C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOMessagingPushAPN/CustomerIOMessagingPushAPN_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOTracking/CustomerIOTracking_Privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOMessagingPushAPN_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOTracking_Privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		74A960915E932AA283D380B5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -403,10 +424,16 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SampleApp/Pods-SampleApp-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOMessagingInApp/CustomerIOMessagingInApp_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOMessagingPushAPN/CustomerIOMessagingPushAPN_Privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOTracking/CustomerIOTracking_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOMessagingInApp_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOMessagingPushAPN_Privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOTracking_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,10 +13,8 @@ buildscript {
   }
 }
 
-plugins {
-  id 'com.android.library'
-  id 'org.jetbrains.kotlin.android'
-}
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['customerio.reactnative.' + name]
@@ -27,9 +25,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
-  buildFeatures {
-    viewBinding true
-  }
+  namespace 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
@@ -45,8 +41,8 @@ android {
     disable 'GradleCompatible'
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
 }
 
