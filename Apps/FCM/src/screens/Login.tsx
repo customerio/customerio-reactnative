@@ -13,6 +13,7 @@ import User from '../data/models/user';
 import { useUserStateContext } from '../state/userState';
 import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { InlineView } from "customerio-reactnative";
 
 interface LoginProps {
   navigation: NavigationProp<ParamListBase>;
@@ -65,6 +66,8 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
   const firstNameRef = useRef();
   const emailRef = useRef();
 
+  // Now that we have a RN View for displaying inline in-app messages, we can add it to our app's UI. (I added the View to the Login page for simple demonstration purposes. You can add it to any page in your app.)
+  // See <InlineView> below. Developers set a hard-coded width and set a flexible height. 
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -79,56 +82,9 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>React Native FCM Ami App</Text>
-
-        <View style={styles.spaceTop} />
-
-        <View style={styles.form}>
-          <TextField
-            style={styles.textInputContainer}
-            placeholder="First Name"
-            onChangeText={text => setName(text)}
-            value={name}
-            textInputRef={firstNameRef}
-            contentDesc="First Name Input"
-            getNextTextInput={() => ({ ref: emailRef, value: email })}
-            textInputProps={{
-              autoCapitalize: 'words',
-              keyboardType: 'default',
-            }}
-          />
-          <TextField
-            style={styles.textInputContainer}
-            placeholder="Email"
-            onChangeText={text => setEmail(text)}
-            value={email}
-            contentDesc="Email Input"
-            textInputRef={emailRef}
-            textInputProps={{
-              autoCapitalize: 'none',
-              keyboardType: 'email-address',
-            }}
-          />
-          <FilledButton
-            style={styles.loginButton}
-            onPress={handleLoginPress}
-            text="Login"
-            contentDesc="Login Button"
-            textStyle={styles.loginButtonText}
-          />
-          <TextButton
-            style={styles.randomLoginButton}
-            onPress={handleRandomLoginPress}
-            text="Generate Random Login"
-            contentDesc="Random Login Button"
-          />
-        </View>
-
-        <View style={styles.spaceBottom} />
+      <InlineView style={{width: 350, flex: 1}} />
 
         <BuildInfoText />
-      </ScrollView>
     </View>
   );
 };
