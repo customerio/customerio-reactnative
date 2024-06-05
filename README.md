@@ -1,8 +1,7 @@
-<p align="center">
+<p align=center>
   <a href="https://customer.io">
-    <img src="https://user-images.githubusercontent.com/6409227/144680509-907ee093-d7ad-4a9c-b0a5-f640eeb060cd.png" height="60">
+    <img src="https://avatars.githubusercontent.com/u/1152079?s=200&v=4" height="60">
   </a>
-  <p align="center">Power automated communication that people like to receive.</p>
 </p>
 
 [![npm version](https://img.shields.io/npm/v/customerio-reactnative.svg)](https://www.npmjs.com/package/customerio-reactnative)
