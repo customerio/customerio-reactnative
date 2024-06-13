@@ -1,3 +1,9 @@
+## [3.7.1](https://github.com/customerio/customerio-reactnative/compare/3.7.0...3.7.1) (2024-06-13)
+
+### Bug Fixes
+
+* 3rd party SDK compatibility when SDK forwards push events back to us ([#273](https://github.com/customerio/customerio-reactnative/issues/273)) ([456da1e](https://github.com/customerio/customerio-reactnative/commit/456da1ee961eccaa379cc8e8aee60e4937f6a30d))
+
 ## [3.7.0](https://github.com/customerio/customerio-reactnative/compare/3.6.0...3.7.0) (2024-04-18)
 
 
