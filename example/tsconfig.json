@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "customerio-reactnative": ["../src"],
+      "@assets/*": ["./src/assets/*"],
+      "@components": ["./src/components"],
+      "@screens": ["./src/screens"],
+      "@services": ["./src/services"],
+      "@colors": ["./src/colors"],
+      "@utils": ["./src/utils"],
+      "@navigation": ["./src/navigation"],
+    }
+  }
+}
