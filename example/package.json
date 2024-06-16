@@ -1,0 +1,46 @@
+{
+  "name": "example-app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "ios-fcm": "yarn ios --scheme FCM",
+    "ios-apn": "yarn ios --scheme APN",
+    "start": "react-native start --reset-cache",
+    "build:android": "cd android && ./gradlew assembleDebug --no-daemon --console=plain -PreactNativeArchitectures=arm64-v8a",
+    "build:ios": "cd ios && xcodebuild -workspace CustomerIO_RN.xcworkspace -scheme APN_Example -configuration Debug -sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO",
+    "pods": "npx pod-install"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.23.1",
+    "@react-native-clipboard/clipboard": "^1.14.1",
+    "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
+    "customerio-reactnative": "workspace:^",
+    "react": "18.2.0",
+    "react-native": "^0.74.2",
+    "react-native-device-info": "^11.1.0",
+    "react-native-flash-message": "^0.4.2",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-safe-area-context": "^4.10.4",
+    "react-native-screens": "^3.31.1",
+    "react-native-snackbar": "^2.6.2",
+    "react-native-typography": "^1.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/preset-env": "^7.20.0",
+    "@babel/runtime": "^7.20.0",
+    "@react-native/babel-preset": "0.74.83",
+    "@react-native/metro-config": "0.74.83",
+    "@react-native/typescript-config": "0.74.83",
+    "@tsconfig/react-native": "^3.0.5",
+    "@types/uuid": "^9.0.8",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "uuid": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
