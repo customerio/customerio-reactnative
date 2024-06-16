@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@interface RCT_EXTERN_MODULE(CustomerioPushMessaging, NSObject)
+@interface RCT_EXTERN_REMAP_MODULE(CustomerioPushMessaging, CustomerioPushMessaging, NSObject)
 
 RCT_EXTERN_METHOD(trackNotificationResponseReceived : (nonnull NSDictionary *) payload])
 

@@ -1,0 +1,3 @@
+[submodule "cio-native-sdks/customerio-ios"]
+	path = cio-native-sdks/customerio-ios
+	url = https://github.com/customerio/customerio-ios
