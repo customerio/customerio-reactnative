@@ -54,7 +54,9 @@ buck-out/
 *.jsbundle
 
 # CocoaPods
-Apps/APN/ios/Pods/
+Pods
 
-package-lock.json
-lib/module/index.js
+.Bundle
+
+# Yarn
+.yarn/install-state.gz

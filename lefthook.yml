@@ -7,11 +7,11 @@ pre-commit:
     lint:
       glob: "*.tsx"
       # Format code and then `git add` modified files from formatter. 
-      run: npm run format && git add {staged_files}    
+      run: yarn format && git add {staged_files}    
 
 # Commands to run before pushing code 
 pre-push:
   commands:
     lint: 
       # Run linter giving you errors to fix. 
-      run: npm run lint 
+      run: yarn lint 
