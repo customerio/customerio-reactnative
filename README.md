@@ -19,8 +19,9 @@ You'll find our [complete SDK documentation at https://customer.io/docs/sdk/reac
 
 ## Install and initialize the SDK
 
-1. Open your terminal and run `npm install customerio-reactnative`
-1. Add iOS dependencies to your project by going to the iOS subfolder and running `pod install`. 
+1. Open your terminal and run `npm install customerio-reactnative` or `yarn add customerio-reactnative`
+1. Add iOS dependencies to your project by going to the iOS subfolder and running `pod install`.
+> Note: In your iOS project subfolder, find the Podfile and make sure it uses `use_frameworks!`.
 
    Make sure your deployment target is set to at least 13.0. Before you perform this step, you may want to update your podfile to support [APNs and/or FCM push notifications](https://customer.io/docs/sdk/react-native/push/#install-the-push-package) and [rich push](https://customer.io/docs/sdk/react-native/rich-push/#rich-push) respectively.
 
