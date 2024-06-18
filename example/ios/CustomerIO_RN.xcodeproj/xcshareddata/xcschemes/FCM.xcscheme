@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6087A9D32C20AAE80071E0EE"
-               BuildableName = "FCM_Example.app"
-               BlueprintName = "FCM_Example"
+               BuildableName = "FCM.app"
+               BlueprintName = "FCM"
                ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6087A9D32C20AAE80071E0EE"
-            BuildableName = "FCM_Example.app"
-            BlueprintName = "FCM_Example"
+            BuildableName = "FCM.app"
+            BlueprintName = "FCM"
             ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6087A9D32C20AAE80071E0EE"
-            BuildableName = "FCM_Example.app"
-            BlueprintName = "FCM_Example"
+            BuildableName = "FCM.app"
+            BlueprintName = "FCM"
             ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

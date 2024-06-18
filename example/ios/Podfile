@@ -29,13 +29,13 @@ abstract_target 'CustomerIO_RN' do
   pod 'CustomerIODataPipelines', :path => '../../cio-native-sdks/customerio-ios'
   pod 'CustomerIOMessagingInApp', :path => '../../cio-native-sdks/customerio-ios'
   
-  target 'APN_Example' do
+  target 'APN' do
     pod 'CustomerIOReactNativePush/APN', :path => '../..'
     pod 'CustomerIOMessagingPushAPN', :path => '../../cio-native-sdks/customerio-ios'
     
   end
 
-  target 'FCM_Example' do
+  target 'FCM' do
     pod 'CustomerIOReactNativePush/FCM', :path => '../..'
     pod 'CustomerIOMessagingPushFCM', :path => '../../cio-native-sdks/customerio-ios'
   end

@@ -27,8 +27,8 @@
 		60C4E29E2C21EF47008A646A /* UntrackedEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C4E29D2C21EF47008A646A /* UntrackedEnv.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8FDB7C5639E7345E22D6A309 /* Pods_APN_NSE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4726BD6BE61FD975082C9769 /* Pods_APN_NSE.framework */; };
-		A69FD30E97EC7BCCC753C5A8 /* Pods_CustomerIO_RN_APN_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN_Example.framework */; };
-		CFAAA31F8E2AE913905EDFD6 /* Pods_CustomerIO_RN_FCM_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM_Example.framework */; };
+		A69FD30E97EC7BCCC753C5A8 /* Pods_CustomerIO_RN_APN.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN.framework */; };
+		CFAAA31F8E2AE913905EDFD6 /* Pods_CustomerIO_RN_FCM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM.framework */; };
 		EDA3918CD83446374E4690EB /* Pods_APN_NSE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4726BD6BE61FD975082C9769 /* Pods_APN_NSE.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,9 +75,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-APN_Example.debug.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-APN_Example/Pods-CustomerIO_RN-APN_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-APN.debug.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-APN/Pods-CustomerIO_RN-APN.debug.xcconfig"; sourceTree = "<group>"; };
 		11E30E2CE3839C25578BA375 /* Pods-FCM_NSE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCM_NSE.release.xcconfig"; path = "Target Support Files/Pods-FCM_NSE/Pods-FCM_NSE.release.xcconfig"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* APN_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APN_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* APN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = APN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -86,32 +86,32 @@
 		1F32DAE54E093C1C56EE6121 /* Pods-NSE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NSE.debug.xcconfig"; path = "Target Support Files/Pods-NSE/Pods-NSE.debug.xcconfig"; sourceTree = "<group>"; };
 		27F7CC50324FF190D6B88E16 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4726BD6BE61FD975082C9769 /* Pods_APN_NSE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_APN_NSE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		534323B81F419CAEB5E945A7 /* Pods-APN_Example-NSE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_Example-NSE.release.xcconfig"; path = "Target Support Files/Pods-APN_Example-NSE/Pods-APN_Example-NSE.release.xcconfig"; sourceTree = "<group>"; };
-		54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-APN_Example.release.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-APN_Example/Pods-CustomerIO_RN-APN_Example.release.xcconfig"; sourceTree = "<group>"; };
-		563AF043B672EAA8AA393A21 /* Pods-APN_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_Example.debug.xcconfig"; path = "Target Support Files/Pods-APN_Example/Pods-APN_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		534323B81F419CAEB5E945A7 /* Pods-APN-NSE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN-NSE.release.xcconfig"; path = "Target Support Files/Pods-APN-NSE/Pods-APN-NSE.release.xcconfig"; sourceTree = "<group>"; };
+		54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-APN.release.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-APN/Pods-CustomerIO_RN-APN.release.xcconfig"; sourceTree = "<group>"; };
+		563AF043B672EAA8AA393A21 /* Pods-APN.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN.debug.xcconfig"; path = "Target Support Files/Pods-APN/Pods-APN.debug.xcconfig"; sourceTree = "<group>"; };
 		5F1F34F857DB1EC1887F9319 /* Pods_FCM_NSE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FCM_NSE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		60850E742C1B807B0001D479 /* APN_NSE.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = APN_NSE.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		60850E762C1B807B0001D479 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		60850E782C1B807B0001D479 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6087A9E72C20AAE80071E0EE /* FCM_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FCM_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6087A9E72C20AAE80071E0EE /* FCM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FCM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6087A9EB2C20AC4E0071E0EE /* Entitlements.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
 		6087A9ED2C20B0CF0071E0EE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6087A9F32C20B20E0071E0EE /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		6087A9F42C20B2410071E0EE /* Constants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
-		6087A9F62C20B2780071E0EE /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = APN_Example/Constants.m; sourceTree = "<group>"; };
+		6087A9F62C20B2780071E0EE /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = APN/Constants.m; sourceTree = "<group>"; };
 		60B3609C2C2200B70051FD14 /* FCM_NSE.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FCM_NSE.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		60C4E29D2C21EF47008A646A /* UntrackedEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UntrackedEnv.swift; sourceTree = "<group>"; };
 		6277D3132D4BA3F4AE31B6FA /* Pods-NSE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NSE.release.xcconfig"; path = "Target Support Files/Pods-NSE/Pods-NSE.release.xcconfig"; sourceTree = "<group>"; };
-		6508547F23C511CB90E4CEE3 /* Pods-APN_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_Example.release.xcconfig"; path = "Target Support Files/Pods-APN_Example/Pods-APN_Example.release.xcconfig"; sourceTree = "<group>"; };
+		6508547F23C511CB90E4CEE3 /* Pods-APN.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN.release.xcconfig"; path = "Target Support Files/Pods-APN/Pods-APN.release.xcconfig"; sourceTree = "<group>"; };
 		6865311A422346E2D58E3ADC /* Pods-FCM_NSE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FCM_NSE.debug.xcconfig"; path = "Target Support Files/Pods-FCM_NSE/Pods-FCM_NSE.debug.xcconfig"; sourceTree = "<group>"; };
-		771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-FCM_Example.debug.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-FCM_Example/Pods-CustomerIO_RN-FCM_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CustomerIO_RN_FCM_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-FCM_Example.release.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-FCM_Example/Pods-CustomerIO_RN-FCM_Example.release.xcconfig"; sourceTree = "<group>"; };
+		771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-FCM.debug.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-FCM/Pods-CustomerIO_RN-FCM.debug.xcconfig"; sourceTree = "<group>"; };
+		77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CustomerIO_RN_FCM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomerIO_RN-FCM.release.xcconfig"; path = "Target Support Files/Pods-CustomerIO_RN-FCM/Pods-CustomerIO_RN-FCM.release.xcconfig"; sourceTree = "<group>"; };
 		7ED49B06F18ED3835AE7B83A /* Pods-NotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		929CFC55B79DE2DB37B5DDE8 /* Pods-NotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
-		92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CustomerIO_RN_APN_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B20C0C0554E2BADCDA1FFDA0 /* Pods-APN_Example-NSE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_Example-NSE.debug.xcconfig"; path = "Target Support Files/Pods-APN_Example-NSE/Pods-APN_Example-NSE.debug.xcconfig"; sourceTree = "<group>"; };
+		92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CustomerIO_RN_APN.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B20C0C0554E2BADCDA1FFDA0 /* Pods-APN-NSE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN-NSE.debug.xcconfig"; path = "Target Support Files/Pods-APN-NSE/Pods-APN-NSE.debug.xcconfig"; sourceTree = "<group>"; };
 		C6E5836D253C611647D42E75 /* Pods-APN_NSE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_NSE.release.xcconfig"; path = "Target Support Files/Pods-APN_NSE/Pods-APN_NSE.release.xcconfig"; sourceTree = "<group>"; };
 		C70BA0DB1EAA6217AD9C754A /* libPods-NotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB3588B4435C763484B48B4F /* Pods-APN_NSE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-APN_NSE.debug.xcconfig"; path = "Target Support Files/Pods-APN_NSE/Pods-APN_NSE.debug.xcconfig"; sourceTree = "<group>"; };
@@ -123,7 +123,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69FD30E97EC7BCCC753C5A8 /* Pods_CustomerIO_RN_APN_Example.framework in Frameworks */,
+				A69FD30E97EC7BCCC753C5A8 /* Pods_CustomerIO_RN_APN.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +140,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFAAA31F8E2AE913905EDFD6 /* Pods_CustomerIO_RN_FCM_Example.framework in Frameworks */,
+				CFAAA31F8E2AE913905EDFD6 /* Pods_CustomerIO_RN_FCM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,13 +155,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* APN_Example */ = {
+		13B07FAE1A68108700A75B9A /* APN */ = {
 			isa = PBXGroup;
 			children = (
 				6087A9F62C20B2780071E0EE /* Constants.m */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 			);
-			name = APN_Example;
+			name = APN;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -170,8 +170,8 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				C70BA0DB1EAA6217AD9C754A /* libPods-NotificationServiceExtension.a */,
 				4726BD6BE61FD975082C9769 /* Pods_APN_NSE.framework */,
-				92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN_Example.framework */,
-				77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM_Example.framework */,
+				92DAD3522B50FAC9FA1E97DD /* Pods_CustomerIO_RN_APN.framework */,
+				77BCFEEFE345A314C067FB8D /* Pods_CustomerIO_RN_FCM.framework */,
 				5F1F34F857DB1EC1887F9319 /* Pods_FCM_NSE.framework */,
 			);
 			name = Frameworks;
@@ -187,13 +187,13 @@
 			path = NSE;
 			sourceTree = "<group>";
 		};
-		6087A9EA2C20AB7B0071E0EE /* FCM_Example */ = {
+		6087A9EA2C20AB7B0071E0EE /* FCM */ = {
 			isa = PBXGroup;
 			children = (
 				6087A9ED2C20B0CF0071E0EE /* Info.plist */,
 				6087A9F42C20B2410071E0EE /* Constants.m */,
 			);
-			path = FCM_Example;
+			path = FCM;
 			sourceTree = "<group>";
 		};
 		6087A9EC2C20AC4E0071E0EE /* Shared */ = {
@@ -221,8 +221,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* APN_Example */,
-				6087A9EA2C20AB7B0071E0EE /* FCM_Example */,
+				13B07FAE1A68108700A75B9A /* APN */,
+				6087A9EA2C20AB7B0071E0EE /* FCM */,
 				6087A9EC2C20AC4E0071E0EE /* Shared */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				60850E752C1B807B0001D479 /* NSE */,
@@ -238,9 +238,9 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* APN_Example.app */,
+				13B07F961A680F5B00A75B9A /* APN.app */,
 				60850E742C1B807B0001D479 /* APN_NSE.appex */,
-				6087A9E72C20AAE80071E0EE /* FCM_Example.app */,
+				6087A9E72C20AAE80071E0EE /* FCM.app */,
 				60B3609C2C2200B70051FD14 /* FCM_NSE.appex */,
 			);
 			name = Products;
@@ -251,16 +251,16 @@
 			children = (
 				1F32DAE54E093C1C56EE6121 /* Pods-NSE.debug.xcconfig */,
 				6277D3132D4BA3F4AE31B6FA /* Pods-NSE.release.xcconfig */,
-				B20C0C0554E2BADCDA1FFDA0 /* Pods-APN_Example-NSE.debug.xcconfig */,
-				534323B81F419CAEB5E945A7 /* Pods-APN_Example-NSE.release.xcconfig */,
+				B20C0C0554E2BADCDA1FFDA0 /* Pods-APN-NSE.debug.xcconfig */,
+				534323B81F419CAEB5E945A7 /* Pods-APN-NSE.release.xcconfig */,
 				7ED49B06F18ED3835AE7B83A /* Pods-NotificationServiceExtension.debug.xcconfig */,
 				929CFC55B79DE2DB37B5DDE8 /* Pods-NotificationServiceExtension.release.xcconfig */,
-				563AF043B672EAA8AA393A21 /* Pods-APN_Example.debug.xcconfig */,
-				6508547F23C511CB90E4CEE3 /* Pods-APN_Example.release.xcconfig */,
-				02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN_Example.debug.xcconfig */,
-				54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN_Example.release.xcconfig */,
-				771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM_Example.debug.xcconfig */,
-				7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM_Example.release.xcconfig */,
+				563AF043B672EAA8AA393A21 /* Pods-APN.debug.xcconfig */,
+				6508547F23C511CB90E4CEE3 /* Pods-APN.release.xcconfig */,
+				02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN.debug.xcconfig */,
+				54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN.release.xcconfig */,
+				771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM.debug.xcconfig */,
+				7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM.release.xcconfig */,
 				CB3588B4435C763484B48B4F /* Pods-APN_NSE.debug.xcconfig */,
 				C6E5836D253C611647D42E75 /* Pods-APN_NSE.release.xcconfig */,
 				6865311A422346E2D58E3ADC /* Pods-FCM_NSE.debug.xcconfig */,
@@ -272,9 +272,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* APN_Example */ = {
+		13B07F861A680F5B00A75B9A /* APN */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "APN_Example" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "APN" */;
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -289,9 +289,9 @@
 			dependencies = (
 				60850E7A2C1B807B0001D479 /* PBXTargetDependency */,
 			);
-			name = APN_Example;
-			productName = APN_Example;
-			productReference = 13B07F961A680F5B00A75B9A /* APN_Example.app */;
+			name = APN;
+			productName = APN;
+			productReference = 13B07F961A680F5B00A75B9A /* APN.app */;
 			productType = "com.apple.product-type.application";
 		};
 		60850E732C1B807B0001D479 /* APN_NSE */ = {
@@ -312,9 +312,9 @@
 			productReference = 60850E742C1B807B0001D479 /* APN_NSE.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		6087A9D32C20AAE80071E0EE /* FCM_Example */ = {
+		6087A9D32C20AAE80071E0EE /* FCM */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6087A9E42C20AAE80071E0EE /* Build configuration list for PBXNativeTarget "FCM_Example" */;
+			buildConfigurationList = 6087A9E42C20AAE80071E0EE /* Build configuration list for PBXNativeTarget "FCM" */;
 			buildPhases = (
 				289D06FE39E9CC48B67B9B07 /* [CP] Check Pods Manifest.lock */,
 				6087A9D72C20AAE80071E0EE /* Sources */,
@@ -329,9 +329,9 @@
 			dependencies = (
 				60B360A02C2202B80051FD14 /* PBXTargetDependency */,
 			);
-			name = FCM_Example;
-			productName = APN_Example;
-			productReference = 6087A9E72C20AAE80071E0EE /* FCM_Example.app */;
+			name = FCM;
+			productName = APN;
+			productReference = 6087A9E72C20AAE80071E0EE /* FCM.app */;
 			productType = "com.apple.product-type.application";
 		};
 		60B360912C2200B70051FD14 /* FCM_NSE */ = {
@@ -383,9 +383,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* APN_Example */,
+				13B07F861A680F5B00A75B9A /* APN */,
 				60850E732C1B807B0001D479 /* APN_NSE */,
-				6087A9D32C20AAE80071E0EE /* FCM_Example */,
+				6087A9D32C20AAE80071E0EE /* FCM */,
 				60B360912C2200B70051FD14 /* FCM_NSE */,
 			);
 		};
@@ -451,15 +451,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN_Example/Pods-CustomerIO_RN-APN_Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN/Pods-CustomerIO_RN-APN-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN_Example/Pods-CustomerIO_RN-APN_Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN/Pods-CustomerIO_RN-APN-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN_Example/Pods-CustomerIO_RN-APN_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-APN/Pods-CustomerIO_RN-APN-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		289D06FE39E9CC48B67B9B07 /* [CP] Check Pods Manifest.lock */ = {
@@ -477,7 +477,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CustomerIO_RN-FCM_Example-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-CustomerIO_RN-FCM-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -537,7 +537,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CustomerIO_RN-APN_Example-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-CustomerIO_RN-APN-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -572,15 +572,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM_Example/Pods-CustomerIO_RN-FCM_Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM/Pods-CustomerIO_RN-FCM-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM_Example/Pods-CustomerIO_RN-FCM_Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM/Pods-CustomerIO_RN-FCM-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM_Example/Pods-CustomerIO_RN-FCM_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CustomerIO_RN-FCM/Pods-CustomerIO_RN-FCM-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -642,7 +642,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN_Example.debug.xcconfig */;
+			baseConfigurationReference = 02B197A32880A081F4422500 /* Pods-CustomerIO_RN-APN.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -654,8 +654,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 7Q37QJKEN8;
 				ENABLE_BITCODE = NO;
 				ENABLE_MODULE_VERIFIER = YES;
-				INFOPLIST_FILE = APN_Example/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = APN_Example;
+				INFOPLIST_FILE = APN/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = APN;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -669,14 +669,14 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.customer.ami;
-				PRODUCT_NAME = APN_Example;
+				PRODUCT_NAME = APN;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RN;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "APN_Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "APN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -686,7 +686,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN_Example.release.xcconfig */;
+			baseConfigurationReference = 54B7F71FB1E36740BE14FB93 /* Pods-CustomerIO_RN-APN.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -697,8 +697,8 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 7Q37QJKEN8;
 				ENABLE_MODULE_VERIFIER = YES;
-				INFOPLIST_FILE = APN_Example/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = APN_Example;
+				INFOPLIST_FILE = APN/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = APN;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -712,14 +712,14 @@
 					"-lc++",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.customer.ami;
-				PRODUCT_NAME = APN_Example;
+				PRODUCT_NAME = APN;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = RN;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "APN_Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "APN-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -819,7 +819,7 @@
 		};
 		6087A9E52C20AAE80071E0EE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM_Example.debug.xcconfig */;
+			baseConfigurationReference = 771AD79D45550ABF7400DA49 /* Pods-CustomerIO_RN-FCM.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -831,8 +831,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 7Q37QJKEN8;
 				ENABLE_BITCODE = NO;
 				ENABLE_MODULE_VERIFIER = YES;
-				INFOPLIST_FILE = FCM_Example/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FCM_Example;
+				INFOPLIST_FILE = FCM/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FCM;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -853,7 +853,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "APN_Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "APN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -863,7 +863,7 @@
 		};
 		6087A9E62C20AAE80071E0EE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM_Example.release.xcconfig */;
+			baseConfigurationReference = 7B15FA75591D52F231CFD60D /* Pods-CustomerIO_RN-FCM.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -874,8 +874,8 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 7Q37QJKEN8;
 				ENABLE_MODULE_VERIFIER = YES;
-				INFOPLIST_FILE = FCM_Example/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FCM_Example;
+				INFOPLIST_FILE = FCM/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FCM;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -896,7 +896,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "APN_Example-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "APN-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1161,7 +1161,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -1173,7 +1176,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "APN_Example" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "APN" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -1191,7 +1194,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6087A9E42C20AAE80071E0EE /* Build configuration list for PBXNativeTarget "FCM_Example" */ = {
+		6087A9E42C20AAE80071E0EE /* Build configuration list for PBXNativeTarget "FCM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6087A9E52C20AAE80071E0EE /* Debug */,

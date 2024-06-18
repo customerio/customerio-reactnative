@@ -61,8 +61,4 @@
 #endif
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
-  [CioMessagingPush application:application didFailToRegisterForRemoteNotificationsWithError:error];
-}
-
 @end

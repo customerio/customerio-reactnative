@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "APN_Example.app"
-               BlueprintName = "APN_Example"
+               BuildableName = "APN.app"
+               BlueprintName = "APN"
                ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "APN_Example.app"
-            BlueprintName = "APN_Example"
+            BuildableName = "APN.app"
+            BlueprintName = "APN"
             ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "APN_Example.app"
-            BlueprintName = "APN_Example"
+            BuildableName = "APN.app"
+            BlueprintName = "APN"
             ReferencedContainer = "container:CustomerIO_RN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
