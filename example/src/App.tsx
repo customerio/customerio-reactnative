@@ -9,7 +9,7 @@ import { appTheme } from '@utils';
 import { CustomerIO } from 'customerio-reactnative';
 import FlashMessage from 'react-native-flash-message';
 
-export default function App() {
+export default function App({ moduleName }: { moduleName: string }) {
   const [isLoading, setIsLoading] = React.useState(true);
   const storage = Storage.instance;
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function App() {
           }}
         >
           <NavigationContainer theme={appTheme}>
-            <ContentNavigator />
+            <ContentNavigator moduleName={moduleName} />
             <FlashMessage position="top" duration={4000} />
           </NavigationContainer>
         </NavigationCallbackContext.Provider>

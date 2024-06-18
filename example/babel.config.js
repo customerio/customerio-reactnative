@@ -15,6 +15,7 @@ module.exports = {
           '@components': './src/components',
           '@constants': './src/constants',
           '@screens': './src/screens',
+          '@screens-context': './src/screens/context.ts',
           '@services': './src/services',
           '@colors': './src/colors',
           '@utils': './src/utils',

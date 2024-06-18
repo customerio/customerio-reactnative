@@ -24,7 +24,9 @@
   self.moduleName = MODULE_NAME;
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
-  self.initialProps = @{};
+  self.initialProps = @{
+    @"moduleName": MODULE_NAME
+  };
   
   // 1. Setup CioMessagingPush
   [CioMessagingPush setup];
