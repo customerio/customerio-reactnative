@@ -36,7 +36,6 @@ export class CustomerIO {
     id?: string,
     traits?: Record<string, any>
   ) => {
-    CustomerIO.assrtInitialized();
     if (!id && !traits) {
       throw new Error('You must provide an id or traits to identify');
     }
@@ -44,7 +43,6 @@ export class CustomerIO {
   };
 
   static readonly clearIdentify = async () => {
-    CustomerIO.assrtInitialized();
     return NativeCustomerIO.clearIdentify();
   };
 
@@ -74,14 +72,12 @@ export class CustomerIO {
   static readonly setProfileAttributes = async (
     attributes: Record<string, any>
   ) => {
-    CustomerIO.assrtInitialized();
     return NativeCustomerIO.setProfileAttributes(attributes);
   };
 
   static readonly setDeviceAttributes = async (
     attributes: Record<string, any>
   ) => {
-    CustomerIO.assrtInitialized();
     return NativeCustomerIO.setDeviceAttributes(attributes);
   };
 
