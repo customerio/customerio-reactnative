@@ -10,12 +10,19 @@ import {
 export const NavigationButton = ({
   onPress,
   iconSource,
+  onLongPress,
 }: {
   onPress: () => void;
+  onLongPress?: () => void;
   iconSource: ImageSourcePropType;
 }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity
+      onPress={onPress}
+      onLongPress={() => {
+        onLongPress?.();
+      }}
+    >
       <Image
         source={iconSource}
         tintColor={Colors.bodySecondaryText}

@@ -18,15 +18,9 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
-const defaultCioConfig: Partial<CioConfig> = {
-  region: CioRegion.US,
-  logLevel: CioLogLevel.Error,
-  trackApplicationLifecycleEvents: true,
-};
-
 export const SettingsScreen = () => {
   const [config, setConfig] = useState<Partial<CioConfig>>(
-    Storage.instance.getCioConfig() ?? defaultCioConfig
+    Storage.instance.getCioConfig() ?? Storage.instance.getDefaultCioConfig()
   );
 
   return (
@@ -119,7 +113,7 @@ export const SettingsScreen = () => {
               CustomerIO.initialize(config as CioConfig);
               showMessage({
                 message:
-                  'CustomerIO settings saved successfully CustomerIO.initialize() has been called with the new settings',
+                  'CustomerIO settings saved successfully and CustomerIO.initialize() has been called with the new settings',
                 type: 'success',
               });
             }
@@ -130,8 +124,7 @@ export const SettingsScreen = () => {
           title="Reset to Default"
           experience={ButtonExperience.secondary}
           onPress={() => {
-            setConfig(defaultCioConfig);
-            Storage.instance.setCioConfig(defaultCioConfig as CioConfig);
+            Storage.instance.resetCioConfig();
             showMessage({
               message: 'CustomerIO settings has been reset!',
               type: 'success',

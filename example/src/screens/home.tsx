@@ -2,18 +2,18 @@ import { BuildInfoText, Button, Profile } from '@components';
 import {
   CustomDeviceAttrScreenName,
   CustomProfileAttrScreenName,
+  NavigationCallbackContext,
   NavigationScreenProps,
 } from '@navigation';
 import { Storage } from '@services';
-import { CustomerIO } from 'customerio-reactnative';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 
 export const HomeScreen = ({
   navigation,
 }: NavigationScreenProps<'Customer.io'>) => {
   const [user] = useState(Storage.instance.getUser());
+  const { onTrackEvent } = useContext(NavigationCallbackContext);
   return (
     <>
       <ScrollView>
@@ -25,11 +25,10 @@ export const HomeScreen = ({
           <Button
             title="Send Random Event"
             onPress={() => {
-              showMessage({
-                message: 'Random event sent',
-                type: 'success',
+              onTrackEvent({
+                name: 'random_event',
+                properties: { random: Math.random() },
               });
-              CustomerIO.track('random_event', { random: Math.random() });
             }}
           />
           <Button

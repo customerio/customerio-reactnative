@@ -9,6 +9,7 @@ export const LoginScreenName = 'Login' as const;
 export const TrackScreenName = 'Track' as const;
 export const CustomProfileAttrScreenName = 'Profile Attributes' as const;
 export const CustomDeviceAttrScreenName = 'Device Attributes' as const;
+export const QASettingsScreenName = 'QA Settings' as const;
 
 export type NavigationStackParamList = {
   [SettingsScreenName]: undefined;
@@ -18,6 +19,7 @@ export type NavigationStackParamList = {
   [TrackScreenName]: undefined;
   [CustomProfileAttrScreenName]: undefined;
   [CustomDeviceAttrScreenName]: undefined;
+  [QASettingsScreenName]: undefined;
 };
 
 export type NavigationProps = NavigationProp<NavigationStackParamList>;

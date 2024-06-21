@@ -7,7 +7,7 @@ import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CustomerIO } from 'customerio-reactnative';
-import FlashMessage from 'react-native-flash-message';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 export default function App({ moduleName }: { moduleName: string }) {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -48,8 +48,16 @@ export default function App({ moduleName }: { moduleName: string }) {
               CustomerIO.clearIdentify();
             },
             onTrackEvent: (eventPayload) => {
-              console.log('Tracking event', eventPayload);
-              CustomerIO.track(eventPayload.name, eventPayload.properties);
+              if (CustomerIO.isInitialized()) {
+                console.log('Tracking event', eventPayload);
+                CustomerIO.track(eventPayload.name, eventPayload.properties);
+              } else {
+                showMessage({
+                  message: 'CustomerIO not initialized',
+                  description: 'Please set the CustomerIO config',
+                  type: 'danger',
+                });
+              }
             },
             onProfileAttributes(attributes) {
               console.log('Setting profile attributes', attributes);

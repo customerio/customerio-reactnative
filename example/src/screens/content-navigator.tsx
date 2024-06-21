@@ -5,6 +5,7 @@ import {
   LoginScreenName,
   NavigationCallbackContext,
   NavigationStackParamList,
+  QASettingsScreenName,
   SettingsScreenName,
   TrackScreenName,
 } from '@navigation';
@@ -17,6 +18,7 @@ import {
   CustomProfileAttrScreen,
   HomeScreen,
   LogingScreen,
+  QASettingsScreen,
   SettingsScreen,
   TrackScreen,
 } from '@screens';
@@ -53,6 +55,10 @@ export const ContentNavigator = ({ moduleName }: { moduleName: string }) => {
         }}
       >
         <Stack.Screen name={SettingsScreenName} component={SettingsScreen} />
+        <Stack.Screen
+          name={QASettingsScreenName}
+          component={QASettingsScreen}
+        />
         <Stack.Screen
           name={HomeScreenName}
           component={HomeScreen}

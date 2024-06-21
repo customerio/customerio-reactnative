@@ -7,6 +7,7 @@ export const SettingsNavButton = () => {
   return (
     <NavigationButton
       onPress={() => navigation.navigate('Settings')}
+      onLongPress={() => navigation.navigate('QA Settings')}
       iconSource={require('@assets/images/settings.png')}
     />
   );
