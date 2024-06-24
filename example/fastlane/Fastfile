@@ -1,0 +1,11 @@
+
+# Import functions for setting up code signing in development as well as CI server. 
+# See this README (https://github.com/customerio/apple-code-signing) for list of all fastlane functions that this imports and you can run. 
+import_from_git(
+  url: "https://github.com/customerio/apple-code-signing.git", 
+  branch: "main", 
+  path: "fastlane/Fastfile"
+)
+
+# That is all we have for now.  
+# See the iOS SDK fastlane files for more functionality that we could add to this project in the future. 
