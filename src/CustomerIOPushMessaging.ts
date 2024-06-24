@@ -101,7 +101,7 @@ class CustomerIOPushMessaging {
   }
 
   isAndroid(): boolean {
-    return Platform.OS == 'android';
+    return Platform.OS === 'android';
   }
 }
 

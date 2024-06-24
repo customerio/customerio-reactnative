@@ -1,6 +1,5 @@
 import Foundation
 import CioInternalCommon
-import CioTracking
 import CioMessagingPush
 
 
@@ -12,20 +11,20 @@ class CustomerioPushMessaging: NSObject {
     }
     
     // Tracks `opened` push metrics when a push notification is interacted with.
-    @objc(trackNotificationResponseReceived:)
+    @objc
     func trackNotificationResponseReceived(payload: NSDictionary) {
         trackPushMetrics(payload: payload, event: .opened)
     }
     
     // Tracks `delivered` push metrics when a push notification is received.
-    @objc(trackNotificationReceived:)
+    @objc
     func trackNotificationReceived(payload: NSDictionary) {
         
         trackPushMetrics(payload: payload, event: .delivered)
     }
    
     // Get the currently registered device token for the app
-    @objc(getRegisteredDeviceToken:rejecter:)
+    @objc
     func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
          guard let token = CustomerIO.shared.registeredDeviceToken else {
