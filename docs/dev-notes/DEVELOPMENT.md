@@ -2,46 +2,15 @@
 
 ### Getting started
 
-Since this SDK is npm package, it does not need to be compiled separately.
+Make sure your you have a working [React Native development environemnt](https://reactnative.dev/docs/set-up-your-environment). Make sure to 
 
 
-## Work on Ami App locally
+## Work on SDK Locally
 
-We use the [Ami App](https://github.com/customerio/amiapp-reactnative) to test the SDK in a real-world environment.
+1. Clone the SDK `git clone https://github.com/customerio/customerio-reactnative --recursive`
+2. `cd customerio-reactnative`
+3. `yarn install`
+4. `yarn example pods`
+5. to run either the APN or FCM apps `yarn example ios-apn` or `yarn example ios-cfm`
 
-When you install dependencies via yarn/npm in react native app, you can install it from your local machine directly. You need to follow the following steps to use local version of the SDK
-
-1. Go to `package.json` of your react native app
-1. Find the SDK dependency i.e. `"customerio-reactnative": "{version}"`
-1. Update the SDK version to path of the SDK e.g. `"customerio-reactnative": "../customerio-reactnative"`
-1. Run `yarn install` to update dependencies and use local version of SDK instead
-
-### Android
-
-Android SDK can be tested locally by following [instructions from native SDK](https://github.com/customerio/customerio-android/blob/develop/docs/dev-notes/DEVELOPMENT.md#work-on-remote-habits-locally). Once SDK release is installed locally, it can be included in Ami App using any of the following options:
-
-### Option 1: Updating in SDK
-
-Updating [`gradle.properties`](https://github.com/customerio/customerio-reactnative/blob/develop/android/gradle.properties) to use local version by updating following line:
-
-```
-customerio.reactnative.cioSDKVersionAndroid=local
-```
-
-### Option 2: Updating in Ami App
-
-React Native SDK allows overriding SDK version on app side, so Ami App can override the version and use local release instead by [adding the following line in `gradle.properties`](https://github.com/customerio/amiapp-reactnative/blob/main/android/gradle.properties)
-
-```
-cioSDKVersionAndroid=local
-```
-
----
-
-### iOS
-
-iOS SDK cannot be tested locally at this time. You must instead refer to a version of the iOS SDK already released to production. 
-
-If you make changes to native code, it sometimes may not be reflected in the app. View the [Ami App docs](https://github.com/customerio/amiapp-reactnative/blob/HEAD/docs/dev-notes/DEVELOPMENT.md#work-on-sdk-locally) for next steps on getting Ami App to install the SDK from your local directory.  
-
-> Please note that currently there is no script or automation that helps you make the changes, so you should revert the changes in `package.json` and `yarn.lock` for local version of `customerio-reactnative` before pushing any changes to git.
+At this point you can chose whether to run the iOS/Android example apps and you can open the native project for each in `example/ios` and `example/android` if you want to be able to debug the native code with the native development IDE.
