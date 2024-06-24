@@ -1186,11 +1186,6 @@ DEPENDENCIES:
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative-richpush/fcm (from `../node_modules/customerio-reactnative`)
   - customerio-reactnative/fcm (from `../node_modules/customerio-reactnative`)
-  - CustomerIOCommon (from `https://github.com/customerio/customerio-ios.git`, branch `levi/v2-multiple-push-handlers`)
-  - CustomerIOMessagingInApp (from `https://github.com/customerio/customerio-ios.git`, branch `levi/v2-multiple-push-handlers`)
-  - CustomerIOMessagingPush (from `https://github.com/customerio/customerio-ios.git`, branch `levi/v2-multiple-push-handlers`)
-  - CustomerIOMessagingPushFCM (from `https://github.com/customerio/customerio-ios.git`, branch `levi/v2-multiple-push-handlers`)
-  - CustomerIOTracking (from `https://github.com/customerio/customerio-ios.git`, branch `levi/v2-multiple-push-handlers`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -1255,6 +1250,11 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CustomerIO
+    - CustomerIOCommon
+    - CustomerIOMessagingInApp
+    - CustomerIOMessagingPush
+    - CustomerIOMessagingPushFCM
+    - CustomerIOTracking
     - Firebase
     - FirebaseCore
     - FirebaseCoreExtension
@@ -1276,21 +1276,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/customerio-reactnative"
   customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
-  CustomerIOCommon:
-    :branch: levi/v2-multiple-push-handlers
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingInApp:
-    :branch: levi/v2-multiple-push-handlers
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingPush:
-    :branch: levi/v2-multiple-push-handlers
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingPushFCM:
-    :branch: levi/v2-multiple-push-handlers
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOTracking:
-    :branch: levi/v2-multiple-push-handlers
-    :git: https://github.com/customerio/customerio-ios.git
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -1407,23 +1392,6 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
-CHECKOUT OPTIONS:
-  CustomerIOCommon:
-    :commit: c9f894cc1eb8de1a1d9a9e82fac0b6c224e270ae
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingInApp:
-    :commit: c9f894cc1eb8de1a1d9a9e82fac0b6c224e270ae
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingPush:
-    :commit: c9f894cc1eb8de1a1d9a9e82fac0b6c224e270ae
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOMessagingPushFCM:
-    :commit: c9f894cc1eb8de1a1d9a9e82fac0b6c224e270ae
-    :git: https://github.com/customerio/customerio-ios.git
-  CustomerIOTracking:
-    :commit: c9f894cc1eb8de1a1d9a9e82fac0b6c224e270ae
-    :git: https://github.com/customerio/customerio-ios.git
-
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: d0f43c1bc2aac2da1a89d1f0bb859f9f10064289
@@ -1505,6 +1473,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 47d399a73c0c0caa9ff824e5c657eae31215bfee
 
-PODFILE CHECKSUM: 3ddd3bd98e11769c2376d0d2500bf27df354c303
+PODFILE CHECKSUM: 856c598ef31ca9704d7f356fc3128c0680cd0c97
 
 COCOAPODS: 1.15.2
