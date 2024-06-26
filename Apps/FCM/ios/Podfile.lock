@@ -1,18 +1,18 @@
 PODS:
   - boost (1.83.0)
-  - customerio-reactnative (3.7.0):
-    - customerio-reactnative/nopush (= 3.7.0)
+  - customerio-reactnative (3.7.1):
+    - customerio-reactnative/nopush (= 3.7.1)
     - CustomerIO/MessagingInApp (= 2.13.1)
     - CustomerIO/Tracking (= 2.13.1)
     - React-Core
-  - customerio-reactnative-richpush/fcm (3.7.0):
+  - customerio-reactnative-richpush/fcm (3.7.1):
     - CustomerIO/MessagingPushFCM (= 2.13.1)
-  - customerio-reactnative/fcm (3.7.0):
+  - customerio-reactnative/fcm (3.7.1):
     - CustomerIO/MessagingInApp (= 2.13.1)
     - CustomerIO/MessagingPushFCM (= 2.13.1)
     - CustomerIO/Tracking (= 2.13.1)
     - React-Core
-  - customerio-reactnative/nopush (3.7.0):
+  - customerio-reactnative/nopush (3.7.1):
     - CustomerIO/MessagingInApp (= 2.13.1)
     - CustomerIO/MessagingPush (= 2.13.1)
     - CustomerIO/Tracking (= 2.13.1)
@@ -55,9 +55,9 @@ PODS:
     - GoogleUtilities/Logger (~> 7.12)
   - FirebaseCoreExtension (10.20.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.27.0):
+  - FirebaseCoreInternal (10.28.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseInstallations (10.27.0):
+  - FirebaseInstallations (10.28.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -983,6 +983,8 @@ PODS:
   - React-Mapbuffer (0.73.7):
     - glog
     - React-debug
+  - react-native-notifications (5.1.0):
+    - React-Core
   - react-native-safe-area-context (4.9.0):
     - React-Core
   - React-nativeconfig (0.73.7)
@@ -1213,6 +1215,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector-modern`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -1326,6 +1329,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-notifications:
+    :path: "../node_modules/react-native-notifications"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-nativeconfig:
@@ -1390,8 +1395,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: d0f43c1bc2aac2da1a89d1f0bb859f9f10064289
-  customerio-reactnative: f67983a684fb22fb119234f6249af32e9a821c5c
-  customerio-reactnative-richpush: b91c1e9f190a0bd99d0254e561707cd58f075ed5
+  customerio-reactnative: e87b4c5fa21d2a512407c4ee8fdfa35f74c4f42c
+  customerio-reactnative-richpush: c74c1bcbfa5256c08e30e1e1e73a9fe1f01cc7c2
   CustomerIOCommon: e5146548da6c21aa24ce31827f9e90a4aeee14d2
   CustomerIOMessagingInApp: 4af224900f34d5ac0ca1cc4f70c2d165bd277912
   CustomerIOMessagingPush: 0c0bb2fa4ef0a53c4356c3dad1227113372bab36
@@ -1403,8 +1408,8 @@ SPEC CHECKSUMS:
   Firebase: 10c8cb12fb7ad2ae0c09ffc86cd9c1ab392a0031
   FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
   FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
-  FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
-  FirebaseInstallations: 766dabca09fd94aef922538aaf144cc4a6fb6869
+  FirebaseCoreInternal: 58d07f1362fddeb0feb6a857d1d1d1c5e558e698
+  FirebaseInstallations: 60c1d3bc1beef809fd1ad1189a8057a040c59f2e
   FirebaseMessaging: 06c414a21b122396a26847c523d5c370f8325df5
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
@@ -1435,6 +1440,7 @@ SPEC CHECKSUMS:
   React-jsinspector: f356e49aa086380d3a4892708ca173ad31ac69c1
   React-logger: 7b19bdfb254772a0332d6cd4d66eceb0678b6730
   React-Mapbuffer: 6f392912435adb8fbf4c3eee0e79a0a0b4e4b717
+  react-native-notifications: 4601a5a8db4ced6ae7cfc43b44d35fe437ac50c4
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   React-nativeconfig: 754233aac2a769578f828093b672b399355582e6
   React-NativeModulesApple: a03b2da2b8e127d5f5ee29c683e0deba7a9e1575
@@ -1467,6 +1473,6 @@ SPEC CHECKSUMS:
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 47d399a73c0c0caa9ff824e5c657eae31215bfee
 
-PODFILE CHECKSUM: 8d8557dd1ff4a93c00082d7891396db321197157
+PODFILE CHECKSUM: 856c598ef31ca9704d7f356fc3128c0680cd0c97
 
 COCOAPODS: 1.15.2

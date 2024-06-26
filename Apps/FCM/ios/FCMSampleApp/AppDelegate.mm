@@ -3,6 +3,7 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTBundleURLProvider.h>
 #import <FirebaseCore.h>
+#import "RNNotifications.h"
 
 @implementation AppDelegate
 
@@ -34,6 +35,8 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
   }
   
   [pnHandlerObj setupCustomerIOClickHandling];
+  
+  [RNNotifications startMonitorNotifications];
 
   return [super application:application didFinishLaunchingWithOptions:modifiedLaunchOptions];
 }
@@ -52,6 +55,8 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
   [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken: fcmToken];
+  
+  [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:fcmToken];
 }
 
 // Deep links handling for app scheme links
