@@ -1,3 +1,9 @@
+## [3.7.2](https://github.com/customerio/customerio-reactnative/compare/3.7.1...3.7.2) (2024-06-26)
+
+### Bug Fixes
+
+* differentiate every push event handler installed in app ([#283](https://github.com/customerio/customerio-reactnative/issues/283)) ([84d7259](https://github.com/customerio/customerio-reactnative/commit/84d7259045affbc84c00512711c39cee6f7b3d31))
+
 ## [3.7.1](https://github.com/customerio/customerio-reactnative/compare/3.7.0...3.7.1) (2024-06-13)
 
 ### Bug Fixes
