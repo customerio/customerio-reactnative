@@ -1,3 +1,9 @@
+## [3.8.0](https://github.com/customerio/customerio-reactnative/compare/3.7.2...3.8.0) (2024-07-02)
+
+### Features
+
+* do not show modal message if screen changes and page rule mismatches ([#285](https://github.com/customerio/customerio-reactnative/issues/285)) ([478f644](https://github.com/customerio/customerio-reactnative/commit/478f6445fbc5dd2a92ae7ab32955c7fa5f92e812))
+
 ## [3.7.2](https://github.com/customerio/customerio-reactnative/compare/3.7.1...3.7.2) (2024-06-26)
 
 ### Bug Fixes
