@@ -1,11 +1,13 @@
+# Config file for Fastlane - tool to build apps, run tests, and more. 
 
-# Import functions for setting up code signing in development as well as CI server. 
-# See this README (https://github.com/customerio/apple-code-signing) for list of all fastlane functions that this imports and you can run. 
+# Ideally, we can reuse the config files from the native SDKs. To do that, import thier Fastlanes which means we can call the functions inside of them. 
+# See the Fastfiles for those projects to learn more about how to use them. 
+
 import_from_git(
-  url: "https://github.com/customerio/apple-code-signing.git", 
-  branch: "main", 
-  path: "fastlane/Fastfile"
+  url: "https://github.com/customerio/customerio-ios.git", 
+  branch: "levi/ci/make-fastlane-reusable", 
+  path: "Apps/fastlane/Fastfile"
 )
 
-# That is all we have for now.  
-# See the iOS SDK fastlane files for more functionality that we could add to this project in the future. 
+# the iOS SDK Fastlane imports functions for code signing iOS. 
+# See this README (https://github.com/customerio/apple-code-signing) for list of all fastlane functions that this imports and you can run. 
