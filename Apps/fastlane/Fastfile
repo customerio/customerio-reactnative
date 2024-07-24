@@ -11,3 +11,18 @@ import_from_git(
 
 # the iOS SDK Fastlane imports functions for code signing iOS. 
 # See this README (https://github.com/customerio/apple-code-signing) for list of all fastlane functions that this imports and you can run. 
+
+platform :ios do
+  # Functions specific to just the RN SDK repo can go here: 
+  lane :rnsdk_update_app_version do |arguments| 
+    new_build_number = arguments[:build_number] || get_new_build_version()
+    new_app_version = arguments[:app_version] || get_new_app_version()  
+
+    # Modify the source code with the new app version and build number before we compile the iOS app. This is a good idea to do to make installing builds on a test device easier. 
+    # The iOS OS might give errors when trying to install a build of an app if the app is already installed on the device. Having unique build number or app version can avoid those errors. 
+    update_app_version(
+      build_number: new_build_number,
+      app_version: new_app_version
+    )
+  end 
+end 
