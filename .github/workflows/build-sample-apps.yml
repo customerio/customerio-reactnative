@@ -1,9 +1,7 @@
 name: Build sample apps 
 
 on: 
-    pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
     push: 
-      branches: [main]
     workflow_dispatch: # allow manual run 
 
 concurrency: # cancel previous workflow run if one exists. 
