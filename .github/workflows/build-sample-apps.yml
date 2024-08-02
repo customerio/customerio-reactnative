@@ -44,10 +44,6 @@ jobs:
   build-ios-sample-apps:
     runs-on: macos-14
     name: Building iOS app...${{ matrix.sample-app }}
-    if: ${{ always() }} # do not skip running this step if update-pr-comment does not run 
-    needs: [update-pr-comment] # wait for PR comment to be created saying new builds are being made. 
-    permissions:
-      pull-requests: write # comment on pull request with build information 
     strategy:
       fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them. 
       matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build! 
