@@ -4,6 +4,7 @@
 #import <UserNotifications/UNUserNotificationCenter.h>
 #import <CustomerIOReactNativePush-Swift.h>
 #import "Constants.h"
+#import <React/RCTLinkingManager.h>
 
 #if __has_include(<FirebaseMessaging/FirebaseMessaging.h>)
 #define FCM
@@ -61,4 +62,11 @@
 #endif
 }
 
+// Deep linking
+ - (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+ {
+   return [RCTLinkingManager application:application openURL:url options:options];
+ }
 @end
