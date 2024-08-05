@@ -29,6 +29,16 @@ export default function App({ moduleName }: { moduleName: string }) {
     loadFromStorage();
   }, [storage]);
 
+  // Deep linking configuration
+  const getLinkingConfig = () => ({
+    prefixes: ['amiapp-reactnative-apns://'],
+    config: {
+      screens: {
+        Login: 'login',
+        Settings: 'qa-settings',
+      },
+    },
+  });
   return (
     <>
       {isLoading && <BodyText>Loading....</BodyText>}
@@ -76,7 +86,8 @@ export default function App({ moduleName }: { moduleName: string }) {
             },
           }}
         >
-          <NavigationContainer theme={appTheme}>
+          <NavigationContainer theme={appTheme}
+          linking={getLinkingConfig()}>
             <ContentNavigator moduleName={moduleName} />
             <FlashMessage position="top" duration={4000} />
           </NavigationContainer>
