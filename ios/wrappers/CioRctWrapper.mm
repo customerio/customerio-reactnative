@@ -11,6 +11,7 @@ RCT_EXTERN_METHOD(screen:(NSString *)title category: (NSString *)category proper
 RCT_EXTERN_METHOD(setProfileAttributes: (NSDictionary *)attributes)
 RCT_EXTERN_METHOD(setDeviceAttributes: (NSDictionary *)attributes)
 RCT_EXTERN_METHOD(registerDeviceToken: (NSString *)identify)
+RCT_EXTERN_METHOD(deleteDeviceToken)
 
 + (BOOL)requiresMainQueueSetup
 {

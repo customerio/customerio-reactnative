@@ -90,6 +90,9 @@ export class CustomerIO {
     NativeCustomerIO.registerDeviceToken(token);
   };
 
+  static readonly deleteDeviceToken = async () => {
+    NativeCustomerIO.deleteDeviceToken();
+  };
   static readonly isInitialized = () => CustomerIO.initialized;
 
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
