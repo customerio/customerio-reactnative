@@ -80,6 +80,11 @@ class CioRctWrapper: NSObject {
         CustomerIO.shared.deviceAttributes = attrs
         flush()
     }
+    
+    @objc
+    func registerDeviceToken(_ token: String){
+        CustomerIO.shared.registerDeviceToken(token)
+    }
 }
 
 extension CioRctWrapper: InAppEventListener {
