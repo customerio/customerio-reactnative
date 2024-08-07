@@ -71,6 +71,13 @@ class CustomerioPushMessaging: NSObject {
         }
     }
     
+    @objc
+    func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        getPushNotificationPermissionStatus { status in
+            resolve(status.value)
+        }
+    }
+    
     private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
         ) {
             let current = UNUserNotificationCenter.current()
