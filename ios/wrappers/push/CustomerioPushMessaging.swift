@@ -6,6 +6,10 @@ enum PushPermissionStatus: String, CaseIterable {
     case denied
     case notDetermined
     case granted
+    
+    var value: String {
+        return rawValue.prefix(1).uppercased() + dropFirst()
+    }
 }
 
 
