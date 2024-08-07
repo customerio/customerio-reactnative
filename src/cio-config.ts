@@ -18,3 +18,16 @@ export type CioConfig = {
   trackApplicationLifecycleEvents?: boolean;
   enableInApp?: boolean;
 };
+
+export type CioPushPermissionOptions = {
+  ios?: {
+    badge: boolean;
+    sound: boolean;
+  };
+}
+
+export enum CioPushPermissionStatus {
+  Granted = 'Granted',
+  Denied = 'Denied',
+  NotDetermined = 'NotDetermined',
+}
