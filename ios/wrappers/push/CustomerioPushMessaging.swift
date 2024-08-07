@@ -2,6 +2,12 @@ import Foundation
 import CioInternalCommon
 import CioMessagingPush
 
+enum PushPermissionStatus: String, CaseIterable {
+    case denied
+    case notDetermined
+    case granted
+}
+
 
 @objc(CustomerioPushMessaging)
 class CustomerioPushMessaging: NSObject {
@@ -39,5 +45,63 @@ class CustomerioPushMessaging: NSObject {
         {return}
         
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
+    }
+    
+    @objc(showPromptForPushNotifications:resolver:rejecter:)
+    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+        
+        // Show prompt if status is not determined
+        getPushNotificationPermissionStatus { status in
+            if status == .notDetermined {
+                self.requestPushAuthorization(options: options) { permissionStatus in
+                    
+                    guard let status = permissionStatus as? Bool else {
+                        reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
+                        return
+                    }
+                    resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
+                }
+            } else {
+                resolve(status.value)
+            }
+        }
+    }
+    
+    private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
+        ) {
+            let current = UNUserNotificationCenter.current()
+            var notificationOptions : UNAuthorizationOptions = [.alert]
+            if let ios = options[CustomerioConstants.platformiOS] as? [String: Any] {
+                
+                if let soundOption = ios[CustomerioConstants.sound] as? Bool, soundOption {
+                    notificationOptions.insert(.sound)
+                }
+                if let bagdeOption = ios[CustomerioConstants.badge] as? Bool, bagdeOption {
+                    notificationOptions.insert(.badge)
+                }
+            }
+            current.requestAuthorization(options: notificationOptions) { isGranted, error in
+                if let error = error {
+                    onComplete(error)
+                    return
+                }
+                onComplete(isGranted)
+            }
+        }
+        
+    private func getPushNotificationPermissionStatus(completionHandler: @escaping(PushPermissionStatus) -> Void) {
+        var status = PushPermissionStatus.notDetermined
+        let current = UNUserNotificationCenter.current()
+        current.getNotificationSettings(completionHandler: { permission in
+            switch permission.authorizationStatus  {
+            case .authorized, .provisional, .ephemeral:
+                status = .granted
+            case .denied:
+                status = .denied
+            default:
+                status = .notDetermined
+            }
+            completionHandler(status)
+        })
     }
 }
