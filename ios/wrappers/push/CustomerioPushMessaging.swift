@@ -51,7 +51,7 @@ class CustomerioPushMessaging: NSObject {
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
     
-    @objc(showPromptForPushNotifications:resolver:rejecter:)
+    @objc
     func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
         // Show prompt if status is not determined
