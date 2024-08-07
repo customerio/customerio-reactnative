@@ -103,7 +103,11 @@ class CustomerIOPushMessaging {
 
   showPromptForPushNotifications(options: CioPushPermissionOptions): Promise<CioPushPermissionStatus> {
     return PushMessagingNative.showPromptForPushNotifications(options);
-  };
+  }
+
+  getPushPermissionStatus(): Promise<CioPushPermissionStatus> {
+    return PushMessagingNative.getPushPermissionStatus();
+  }
 
   isAndroid(): boolean {
     return Platform.OS === 'android';
