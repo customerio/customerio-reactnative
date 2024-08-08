@@ -37,5 +37,6 @@ struct CustomerioConstants {
     static let platformiOS = "ios"
     static let sound = "sound"
     static let badge = "badge"
+    static let provisional = "provisional"
     
 }
