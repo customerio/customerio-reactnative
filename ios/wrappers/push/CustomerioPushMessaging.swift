@@ -8,10 +8,9 @@ enum PushPermissionStatus: String, CaseIterable {
     case granted
     
     var value: String {
-        return rawValue.prefix(1).uppercased() + dropFirst()
+        return rawValue.firstUppercased
     }
 }
-
 
 @objc(CustomerioPushMessaging)
 class CustomerioPushMessaging: NSObject {
