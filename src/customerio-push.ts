@@ -101,7 +101,7 @@ class CustomerIOPushMessaging {
     return PushMessagingNative.getRegisteredDeviceToken();
   }
 
-  showPromptForPushNotifications(options: CioPushPermissionOptions = { ios: { badge: true, sound: true } }): Promise<CioPushPermissionStatus> {
+  showPromptForPushNotifications(options: CioPushPermissionOptions = { ios: { badge: true, sound: true, provisional: false } }): Promise<CioPushPermissionStatus> {
     return PushMessagingNative.showPromptForPushNotifications(options);
   }
 
