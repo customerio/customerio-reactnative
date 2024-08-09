@@ -22,10 +22,4 @@ public class MyAppPushNotificationsHandler : NSObject {
     }
     MessagingPushFCM.initialize(configOptions: nil)    
   }
-
-  // Register device on receiving a device token (FCM)
-  @objc(didReceiveRegistrationToken:fcmToken:)
-  public func didReceiveRegistrationToken(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
-  }
 }

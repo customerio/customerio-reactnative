@@ -25,14 +25,4 @@ public class MyAppPushNotificationsHandler : NSObject {
     }
     MessagingPushAPN.initialize(configOptions: nil)
   }
-
-  @objc(application:deviceToken:)
-  public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
-  }
-
-  @objc(application:error:)
-  public func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
-  }
 }

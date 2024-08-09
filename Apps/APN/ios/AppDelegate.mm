@@ -154,12 +154,11 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
 
 #endif
 
-// Required to register device token.
+// Called when app receives a APN device token.
+// The Customer.io SDK automatically gets called when the token is received, no need to pass it to the SDK from this function.
+// To test that the Customer.io SDK is compatible with 3rd party SDKs, we pass the token to react-native-notifications SDK here and expect we can access the token from the JS code.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-  // Register device to receive push notifications with device token
-  [pnHandlerObj application:application deviceToken:deviceToken];
-
   [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
@@ -175,8 +174,6 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
-  [pnHandlerObj application:application error:error];
-
   [RNNotifications didFailToRegisterForRemoteNotificationsWithError:error];
 }
 

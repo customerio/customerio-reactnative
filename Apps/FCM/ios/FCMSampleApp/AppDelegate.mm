@@ -53,10 +53,18 @@ MyAppPushNotificationsHandler *pnHandlerObj = [[MyAppPushNotificationsHandler al
 #endif
 }
 
+// Called when app receives a APN device token.
+// The Customer.io SDK automatically gets called when the token is received, no need to pass it to the SDK from this function.
+// To test that the Customer.io SDK is compatible with 3rd party SDKs, we pass the token to react-native-notifications SDK here and expect we can access the token from the JS code.
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+}
+
+// Called when app receives a FCM device token.
+// The Customer.io SDK automatically gets called when the token is received, no need to pass it to the SDK from this function.
+// To test that the Customer.io SDK is compatible with 3rd party SDKs, we print the FCM token here to verify that the AppDelegate function is able to receive the token after the Customer.io SDK recieved it.
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
-  [pnHandlerObj didReceiveRegistrationToken:messaging fcmToken: fcmToken];
-  
-  [RNNotifications didRegisterForRemoteNotificationsWithDeviceToken:fcmToken];
+  printf("AppDelegate received a FCM device token, in native AppDelegate: %s\n", [fcmToken UTF8String]);
 }
 
 // Deep links handling for app scheme links

@@ -26,6 +26,7 @@ import { navigateToScreen } from '../utils/navigation';
 import Prompts from '../utils/prompts';
 import { Notification, Notifications } from 'react-native-notifications';
 import { CustomerIO } from 'customerio-reactnative';
+import messaging from '@react-native-firebase/messaging';
 
 const pushPermissionAlertTitle = 'Push Permission';
 
@@ -85,6 +86,12 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
           requestPushPermission();
           break;
       }
+    });
+
+    // To test if the Customer.io SDK is compatible with 3rd party SDKs registering device tokens, we expect that rnfirebase SDK is able to return back a FCM device token
+    // that it received from the iOS AppDelegate callback function. 
+    messaging().getToken().then(token => {
+      console.log(`rnfirebase SDK received a FCM device token: ${token}`)
     });
   };
 

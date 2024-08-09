@@ -17,6 +17,7 @@ import {
 } from './src/state/customerIoSdkState';
 import { UserStateContext, UserStateContextEmpty } from './src/state/userState';
 import messaging from '@react-native-firebase/messaging';
+import { Notifications } from 'react-native-notifications';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -64,6 +65,22 @@ export default function App() {
     },
     [applyCustomerIoConfig],
   );
+
+  useEffect(() => {
+    // Register listener when a device token is registered to the react-native-notifications SDK. 
+    // To test if the Customer.io SDK is compatible with 3rd party SDKs registering device tokens, we expect that react-notifications SDK is able to return back a APN device token 
+    // that it received from the iOS AppDelegate callback function. 
+    const onRemoteNotificationsRegistered = Notifications.events().registerRemoteNotificationsRegistered((event) => {
+      console.log(`react-native-notifications SDK received a APN device token: ${event.deviceToken}`)
+    });
+
+    // Now that the callback is registered, we can call the function to register for remote notifications and trigger the callback.
+    Notifications.registerRemoteNotifications();
+
+    return () => {
+      onRemoteNotificationsRegistered.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const prepare = async () => {
