@@ -60,7 +60,6 @@ Pods
 
 # Yarn
 .yarn/install-state.gz
-yarn.lock
 
 # Env to avoid accidental publishing workplace credentials
 UntrackedEnv.swift
