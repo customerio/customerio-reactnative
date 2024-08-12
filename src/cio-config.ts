@@ -4,10 +4,10 @@ export enum CioRegion {
 }
 
 export enum CioLogLevel {
-  none = 'none',
-  error = 'error',
-  info = 'info',
-  debug = 'debug',
+  None = 'none',
+  Error = 'error',
+  Info = 'info',
+  Debug = 'debug',
 }
 
 export enum PushClickBehaviorAndroid {
