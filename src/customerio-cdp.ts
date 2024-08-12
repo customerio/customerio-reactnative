@@ -86,8 +86,7 @@ export class CustomerIO {
 
   static readonly isInitialized = () => CustomerIO.initialized;
 
-  // TODO: Import the CustomerIOInAppMessaging, NativeLoggerListener and CustomerIOPushMessaging classes from their respective files
-  // when they are implemented.
+  // TODO: Update when implemented.
   // static readonly inAppMessaging = new CustomerIOInAppMessaging();
   // static readonly pushMessaging = new CustomerIOPushMessaging();
 
