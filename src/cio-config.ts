@@ -10,6 +10,12 @@ export enum CioLogLevel {
   debug = 'debug',
 }
 
+export enum PushClickBehaviorAndroid {
+  ResetTaskStack = 'RESET_TASK_STACK',
+  ActivityPreventRestart = 'ACTIVITY_PREVENT_RESTART',
+  ActivityNoFlags = 'ACTIVITY_NO_FLAGS',
+}
+
 export type CioConfig = {
   cdpApiKey: string;
   migrationSiteId?: string;
@@ -19,6 +25,7 @@ export type CioConfig = {
   flushInterval?: number; 
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
+  pushClickBehaviorAndroid?: PushClickBehaviorAndroid;
   inApp?: {
     siteId: string;
  }
