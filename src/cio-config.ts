@@ -15,6 +15,11 @@ export type CioConfig = {
   migrationSiteId?: string;
   region?: CioRegion;
   logLevel?: CioLogLevel;
+  flushAt?: number;
+  flushInterval?: number; 
   trackApplicationLifecycleEvents?: boolean;
-  enableInApp?: boolean;
+  autoTrackDeviceAttributes?: boolean;
+  inApp?: {
+    siteId: string;
+ }
 };
