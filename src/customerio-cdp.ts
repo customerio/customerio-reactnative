@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { CioLogLevel, type CioConfig } from './cio-config';
+import { type CioConfig } from './cio-config';
 // TODO: Import the CustomerIOInAppMessaging, NativeLoggerListener and CustomerIOPushMessaging classes from their respective files
 // when they are implemented.
 // import { CustomerIOInAppMessaging } from './customerio-inapp';
