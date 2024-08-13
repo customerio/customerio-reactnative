@@ -41,7 +41,7 @@ const Settings = ({ navigation, route }) => {
   const [deviceToken, setDeviceToken] = useState('');
   const [trackUrl, setTrackUrl] = useState('');
   const [siteId, setSiteId] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [cdpApiKey, setCdpApiKey] = useState('');
   const [bqSecondsDelay, setBQSecondsDelay] = useState(undefined);
   const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState(undefined);
   const [isTrackScreensEnabled, setTrackScreensEnabled] = useState(false);
@@ -96,7 +96,7 @@ const Settings = ({ navigation, route }) => {
       });
     setTrackUrl(initialConfig.trackingUrl);
     setSiteId(initialSiteId ?? initialConfig.siteId);
-    setApiKey(initialApiKey ?? initialConfig.apiKey);
+    setCdpApiKey(initialApiKey ?? initialConfig.apiKey);
     setBQSecondsDelay(initialConfig.bqSecondsDelay.toString());
     setBQMinNumberOfTasks(initialConfig.bqMinNumberOfTasks.toString());
     setTrackScreensEnabled(initialConfig.trackScreens);
@@ -160,7 +160,7 @@ const Settings = ({ navigation, route }) => {
       message = 'Please enter formatted url e.g. https://tracking.cio/';
     } else if (!siteId) {
       message = blankFieldMessageBuilder('Site Id');
-    } else if (!apiKey) {
+    } else if (!cdpApiKey) {
       message = blankFieldMessageBuilder('API Key');
     } else if (!bqSecondsDelay) {
       message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
@@ -259,7 +259,7 @@ const Settings = ({ navigation, route }) => {
             contentDesc="Site ID Input"
             onChangeText={(text) => setSiteId(text)}
             textInputRef={siteIdRef}
-            getNextTextInput={() => ({ ref: apiKeyRef, value: apiKey })}
+            getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
             textInputProps={{
               autoCapitalize: 'none',
               keyboardType: 'default',
@@ -267,10 +267,10 @@ const Settings = ({ navigation, route }) => {
           />
           <TextField
             style={styles.textInputContainer}
-            label="API Key"
-            value={apiKey}
-            contentDesc="API Key Input"
-            onChangeText={(text) => setApiKey(text)}
+            label="CDP API Key"
+            value={cdpApiKey}
+            contentDesc="CDP Api Key Input"
+            onChangeText={(text) => setCdpApiKey(text)}
             textInputRef={apiKeyRef}
             getNextTextInput={() => ({
               ref: bqSecondsDelayRef,
