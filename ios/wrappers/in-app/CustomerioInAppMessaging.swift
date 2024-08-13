@@ -27,7 +27,7 @@ class CustomerioInAppMessaging: RCTEventEmitter {
     /**
      * Dismisses any currently displayed in-app message
      */
-    @objc(dismissMessage)
+    @objc
     func dismissMessage() {
         MessagingInApp.shared.dismissMessage()
     }
