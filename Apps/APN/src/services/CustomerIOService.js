@@ -1,31 +1,19 @@
-import {
-  CioLogLevel,
-  CustomerIO,
-  CustomerIOEnv,
-  CustomerioConfig,
-  InAppMessageEventType,
-} from 'customerio-reactnative';
-
+import { CustomerIO, CioConfig } from 'customerio-reactnative';
 export const initializeCustomerIoSDK = (sdkConfig) => {
-  const env = new CustomerIOEnv();
-  env.siteId = sdkConfig.siteId;
-  env.apiKey = sdkConfig.apiKey;
-
-  const config = new CustomerioConfig();
-  config.enableInApp = true;
-
-  if (sdkConfig.debugMode) {
-    config.logLevel = CioLogLevel.debug;
-  }
-  if (sdkConfig.trackingUrl) {
-    config.trackingApiUrl = sdkConfig.trackingUrl;
-  }
-  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
-
-  CustomerIO.initialize(env, config);
+  const config = {
+    cdpApiKey: 'cdp_api_key', // Mandatory
+    migrationSiteId: 'site_id', // For migration
+    trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
+    flushAt: sdkConfig.bqMinNumberOfTasks,
+    flushInterval: sdkConfig.bqSecondsDelay,
+    inApp: {
+	    siteId: 'site_id',
+    }
+ };
+ if (sdkConfig.debugMode) {
+  config.logLevel = CioLogLevel.debug;
+}
+CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user) => {
