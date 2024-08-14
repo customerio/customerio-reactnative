@@ -1,10 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import {
-  CustomerioConfig,
-  CustomerIOEnv,
-  PackageConfig,
-} from './CustomerioConfig';
-import { Region } from './CustomerioEnum';
+import { type CioConfig } from './cio-config';
 import { CustomerIOInAppMessaging } from './CustomerIOInAppMessaging';
 import { CustomerIOPushMessaging } from './CustomerIOPushMessaging';
 import type { PushPermissionStatus, PushPermissionOptions } from './types';
@@ -40,9 +35,13 @@ class CustomerIO {
    * @returns
    */
   static initialize(
-    env: CustomerIOEnv,
-    config: CustomerioConfig = new CustomerioConfig()
+    config: CioConfig
   ) {
+
+    // TODO: Update this method to use the new config object when native module is updated
+
+    /* ----------------- Old implementation ----------------- */
+    /*
     let pversion = pjson.version ?? '';
     let expoVersion = pjson.expoVersion ?? '';
 
@@ -66,7 +65,8 @@ class CustomerIO {
       }
     }
 
-    CustomerioReactnative.initialize(env, config, packageConfig);
+    CustomerioReactnative.initialize(env, config, packageConfig); 
+    */
   }
 
   /**
