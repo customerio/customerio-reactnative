@@ -13,7 +13,7 @@ public class MyAppPushNotificationsHandler : NSObject {
     // This line of code is required in order for the Customer.io SDK to handle push notification click events.
     // We are working on removing this requirement in a future release.
     // Remember to modify the siteId and apiKey with your own values.
-    CustomerIO.initialize(withConfig: SDKConfigBuilder(cdpApiKey: Env.apiKey).build())
+    CustomerIO.initialize(withConfig: SDKConfigBuilder(cdpApiKey: Env.cdpApiKey).build())
     MessagingPushFCM.initialize(withConfig: MessagingPushConfigBuilder().build())
   }
 
