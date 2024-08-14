@@ -14,15 +14,10 @@ func flush() {
 class CioRctWrapper: NSObject {
     
     @objc var moduleRegistry: RCTModuleRegistry!
-    
-    private var logger: CioLogger!
-    
+        
     @objc
     func initialize(_ configJson: AnyObject, logLevel: String) {
         do {
-            logger = CioLoggerWrapper.getInstance(moduleRegistry: moduleRegistry, logLevel: CioLogLevel(rawValue: logLevel) ?? .none)
-            
-            logger.debug("Initializing CIO with config: \(configJson)")
             let rtcConfig = try RCTCioConfig.from(configJson)
             let cioInitConfig = cioInitializeConfig(from: rtcConfig, logLevel: logLevel)
             CustomerIO.initialize(withConfig: cioInitConfig.cdp)
@@ -35,7 +30,7 @@ class CioRctWrapper: NSObject {
             }
             flush()
         } catch {
-            logger.error("Couldn't initialize CustomerIO: \(error)")
+            // TODO: Add log when logger feature is implemented
         }
     }
     
@@ -46,7 +41,7 @@ class CioRctWrapper: NSObject {
         } else if let userId {
             CustomerIO.shared.identify(userId: userId, traits: traits)
         } else {
-            logger.error("CustomerIO.identify called without an ID or traits")
+            // TODO: Add log when logger feature is implemented
         }
         flush()
     }
@@ -95,10 +90,13 @@ extension CioRctWrapper: InAppEventListener {
         if let actionName = actionName {
             body[CustomerioConstants.actionName] = actionName
         }
-        CustomerioInAppMessaging.shared?.sendEvent(
+        // TODO: Add when inapp feature is implemented
+        /*
+         CustomerioInAppMessaging.shared?.sendEvent(
             withName: CustomerioConstants.inAppEventListener,
             body: body
         )
+        */
     }
     
     func messageShown(message: InAppMessage) {
