@@ -87,7 +87,8 @@ export default function App() {
 
     // Remove listeners once unmounted
     return () => {
-      inAppEventListener.remove();
+      // TODO: Add this when inapp feature is implemented
+      // inAppEventListener.remove();
     };
   }, [
     applyCustomerIoConfig,

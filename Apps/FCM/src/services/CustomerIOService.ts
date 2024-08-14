@@ -4,11 +4,12 @@ import {
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
+import Env from '../../env';
 
 export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
   const config = {
-    cdpApiKey: 'cdp_api_key', // Mandatory
-    migrationSiteId: 'site_id', // For migration
+    cdpApiKey: Env.cdpApiKey, // Mandatory
+    migrationSiteId: Env.siteId, // For migration
     trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
     flushAt: sdkConfig.bqMinNumberOfTasks,
     flushInterval: sdkConfig.bqSecondsDelay,
