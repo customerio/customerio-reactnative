@@ -1,6 +1,6 @@
 const Env = {
   siteId: 'YourSiteId',
-  apiKey: 'YourApiKey',
+  cdpApiKey: 'YourCdpApiKey',
 };
 
 export default Env;
