@@ -48,7 +48,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   // Will be used once we roll out feature for exposing device token
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deviceToken, setDeviceToken] = useState('');
-  const [trackUrl, setTrackUrl] = useState('');
   const [siteId, setSiteId] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [bqSecondsDelay, setBQSecondsDelay] = useState<string | undefined>(
@@ -97,8 +96,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
         setter(value);
       }
     };
-
-    CustomerIO.pushMessaging()
+    
+    // TODO: Add this when push feature is implemented
+    /*CustomerIO.pushMessaging()
       .getRegisteredDeviceToken()
       .then((token) => {
         setDeviceToken(token);
@@ -106,7 +106,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       .catch((error) => {
         console.log(error);
       });
-    setValueIfPresent(initialConfig?.trackingUrl, setTrackUrl);
+    */
     setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
     setValueIfPresent(initialApiKey ?? initialConfig?.apiKey, setApiKey);
     setValueIfPresent(
@@ -127,32 +127,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
 
   const handleRestoreDefaultsPress = async () => {
     saveConfigurations(defaultConfig);
-  };
-
-  const isTrackingURLValid = (value: string) => {
-    const url = value.trim();
-
-    // Empty text is not considered valid.
-    if (url.length === 0) {
-      return false;
-    }
-
-    // Regex pattern to match URLs with http/https schemes, non-empty hosts, and end with a forward slash.
-    const urlRegex = /^(https?:\/\/)?([\w\d.-]+)(:\d+)?(\/.*)?$/;
-    const matches = url.match(urlRegex);
-    if (!matches) {
-      return false;
-    }
-
-    const scheme = matches[1] || '';
-    const host = matches[2] || '';
-    const path = matches[4] || '';
-
-    return (
-      (scheme === 'http://' || scheme === 'https://') &&
-      host.length > 0 &&
-      path.endsWith('/')
-    );
   };
 
   const toIntOrUndefined = (value: string | undefined): number | undefined => {
@@ -177,9 +151,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     const bqSecondsDelayValue = toFloatOrUndefined(bqSecondsDelay);
     const bqMinNumberOfTasksValue = toIntOrUndefined(bqMinNumberOfTasks);
 
-    if (!isTrackingURLValid(trackUrl)) {
-      message = 'Please enter formatted url e.g. https://tracking.cio/';
-    } else if (!siteId) {
+    if (!siteId) {
       message = blankFieldMessageBuilder('Site Id');
     } else if (!apiKey) {
       message = blankFieldMessageBuilder('API Key');
@@ -217,7 +189,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     const config = new CustomerIoSDKConfig();
     config.siteId = siteId;
     config.apiKey = apiKey;
-    config.trackingUrl = trackUrl;
     config.bqSecondsDelay = toFloatOrUndefined(bqSecondsDelay);
     config.bqMinNumberOfTasks = toIntOrUndefined(bqMinNumberOfTasks);
     config.trackScreens = isTrackScreensEnabled;
@@ -236,7 +207,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     Prompts.showSnackbar({ text: 'Device token copied to clipboard' });
   };
 
-  const trackUrlRef = useRef();
   const siteIdRef = useRef();
   const apiKeyRef = useRef();
   const bqSecondsDelayRef = useRef();
@@ -254,19 +224,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             editable={false}
             leadingIconImageSource={require('../../assets/images/ic_copy.png')}
             onLeadingIconPress={() => copyToDeviceClipboard()}
-          />
-          <TextField
-            style={styles.textInputContainer}
-            label="CIO Track URL"
-            value={trackUrl}
-            contentDesc="Track URL Input"
-            onChangeText={text => setTrackUrl(text)}
-            textInputRef={trackUrlRef}
-            getNextTextInput={() => ({ ref: siteIdRef, value: siteId })}
-            textInputProps={{
-              autoCapitalize: 'none',
-              keyboardType: 'url',
-            }}
           />
         </View>
         <View style={styles.section}>
