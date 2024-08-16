@@ -18,8 +18,6 @@ import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
 import { TextField } from '../components/TextField';
-import * as Fonts from '../constants/Fonts';
-import * as Sizes from '../constants/Sizes';
 import {styles as settingsStyles} from '../styles/stylesheet';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
