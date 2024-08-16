@@ -3,6 +3,7 @@ import { View, Text, ScrollView } from 'react-native';
 import { TextField } from '../components/TextField';
 import { FilledButton } from '../components/Button';
 import {styles as settingsStyles} from '../styles/stylesheet';
+
 const InternalSettings: React.FC = () => {
     const [apiHost, setApiHost] = useState('');
     const [cdnHost, setCdnHost] = useState('');
@@ -10,9 +11,7 @@ const InternalSettings: React.FC = () => {
     const [flushInterval, setFlushInterval] = useState('');
 
     const handleSave = () => {
-        // Save the API Host and CDN Host values
-        console.log('API Host:', apiHost);
-        console.log('CDN Host:', cdnHost);
+
     };
     
 
@@ -25,9 +24,9 @@ const InternalSettings: React.FC = () => {
                         label="CDN Host"
                         value={cdnHost}
                         contentDesc="CDN Host Input"
+                        placeholder='CDN Host'
                         onChangeText={text => setCdnHost(text)}
                         // textInputRef={siteIdRef}
-                        // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
                         textInputProps={{
                             autoCapitalize: 'none',
                             keyboardType: 'default',
@@ -37,10 +36,10 @@ const InternalSettings: React.FC = () => {
                         style={settingsStyles.textInputContainer}
                         label="API Host"
                         value={apiHost}
+                        placeholder='API Host'
                         contentDesc="API Host Input"
                         onChangeText={text => setApiHost(text)}
                         // textInputRef={siteIdRef}
-                        // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
                         textInputProps={{
                         autoCapitalize: 'none',
                         keyboardType: 'default',
@@ -56,6 +55,7 @@ const InternalSettings: React.FC = () => {
                         // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
                         textInputProps={{
                         autoCapitalize: 'none',
+                        placeholder: '30',
                         keyboardType: 'default',
                         }}
                     />
@@ -64,6 +64,7 @@ const InternalSettings: React.FC = () => {
                         label="Flush At"
                         value={flushAt}
                         contentDesc="Flush At Input"
+                        placeholder='20'
                         onChangeText={text => setFlushAt(text)}
                         // textInputRef={siteIdRef}
                         // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
