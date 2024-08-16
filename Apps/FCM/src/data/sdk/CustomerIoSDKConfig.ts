@@ -3,8 +3,8 @@ import Env from '../../../env';
 interface SDKConfigParams {
   siteId: string;
   cdpApiKey: string;
-  bqSecondsDelay?: number;
-  bqMinNumberOfTasks?: number;
+  flushInterval?: number;
+  flushAt?: number;
   trackScreens?: boolean;
   trackDeviceAttributes?: boolean;
   debugMode?: boolean;
@@ -14,8 +14,8 @@ interface SDKConfigParams {
 export default class CustomerIoSDKConfig {
   siteId: string;
   cdpApiKey: string;
-  bqSecondsDelay?: number;
-  bqMinNumberOfTasks?: number;
+  flushInterval?: number;
+  flushAt?: number;
   trackScreens?: boolean;
   trackDeviceAttributes?: boolean;
   trackAppLifecycleEvents?: boolean;
@@ -24,8 +24,8 @@ export default class CustomerIoSDKConfig {
   constructor(params: SDKConfigParams = { siteId: '', cdpApiKey: '' }) {
     this.siteId = params.siteId;
     this.cdpApiKey = params.cdpApiKey;
-    this.bqSecondsDelay = params.bqSecondsDelay;
-    this.bqMinNumberOfTasks = params.bqMinNumberOfTasks;
+    this.flushInterval = params.flushInterval;
+    this.flushAt = params.flushAt;
     this.trackScreens = params.trackScreens;
     this.trackDeviceAttributes = params.trackDeviceAttributes;
     this.trackAppLifecycleEvents = params.trackAppLifecycleEvents;
@@ -36,8 +36,6 @@ export default class CustomerIoSDKConfig {
     return new CustomerIoSDKConfig({
       siteId: Env.siteId,
       cdpApiKey: Env.cdpApiKey,
-      bqSecondsDelay: 30.0,
-      bqMinNumberOfTasks: 10,
       trackScreens: true,
       trackDeviceAttributes: true,
       debugMode: true,
@@ -51,9 +49,6 @@ export default class CustomerIoSDKConfig {
     return new CustomerIoSDKConfig({
       siteId: other?.siteId ?? defaultConfig.siteId,
       cdpApiKey: other?.cdpApiKey ?? defaultConfig.cdpApiKey,
-      bqSecondsDelay: other?.bqSecondsDelay ?? defaultConfig.bqSecondsDelay,
-      bqMinNumberOfTasks:
-        other?.bqMinNumberOfTasks ?? defaultConfig.bqMinNumberOfTasks,
       trackScreens: other?.trackScreens ?? defaultConfig.trackScreens,
       trackDeviceAttributes:
         other?.trackDeviceAttributes ?? defaultConfig.trackDeviceAttributes,

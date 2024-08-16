@@ -115,28 +115,12 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     saveConfigurations(defaultConfig);
   };
 
-  const toIntOrUndefined = (value: string | undefined): number | undefined => {
-    return value !== undefined ? parseInt(value, 10) || undefined : undefined;
-  };
-
-  const toFloatOrUndefined = (
-    value: string | undefined,
-  ): number | undefined => {
-    return value !== undefined ? parseFloat(value) || undefined : undefined;
-  };
-
   const isFormValid = () => {
     let message;
     let blankFieldMessageBuilder = (fieldName: string) => {
       return `${fieldName} cannot be blank`;
     };
-    let outOfBoundsValueMessageBuilder = (fieldName: string, minValue: any) => {
-      return `${fieldName} must be greater than or equal to ${minValue}`;
-    };
-
-    if (!siteId) {
-      message = blankFieldMessageBuilder('Site Id');
-    } else if (!cdpApiKey) {
+    if (!cdpApiKey) {
       message = blankFieldMessageBuilder('CDP API Key');
     }
 
