@@ -39,7 +39,7 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const { params } = route;
   const initialSiteId = params?.site_id;
-  const initialApiKey = params?.api_key;
+  const initialCdpApiKey = params?.api_key;
   const { config: initialConfig, onSdkConfigStateChanged } =
     useCustomerIoSdkContext();
   const { user } = useUserStateContext();
@@ -49,7 +49,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deviceToken, setDeviceToken] = useState('');
   const [siteId, setSiteId] = useState('');
-  const [apiKey, setApiKey] = useState('');
+  const [cdpApiKey, setCdpApiKey] = useState('');
   const [bqSecondsDelay, setBQSecondsDelay] = useState<string | undefined>(
     undefined,
   );
@@ -60,6 +60,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
   const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
+  const [isAppLifecycleEventTrackingEnabled, setAppLifecycleEventTrackingEnabled] = useState(true);
 
   const handleOnBackPress = useCallback(() => {
     if (!navigation.canGoBack()) {
@@ -108,7 +109,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       });
     */
     setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
-    setValueIfPresent(initialApiKey ?? initialConfig?.apiKey, setApiKey);
+    setValueIfPresent(initialCdpApiKey ?? initialConfig?.cdpApiKey, setCdpApiKey);
     setValueIfPresent(
       initialConfig?.bqSecondsDelay?.toString(),
       setBQSecondsDelay,
@@ -123,7 +124,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       setTrackDeviceAttributesEnabled,
     );
     setValueIfPresent(initialConfig?.debugMode, setDebugModeEnabled);
-  }, [initialApiKey, initialConfig, initialSiteId]);
+  }, [initialCdpApiKey, initialConfig, initialSiteId]);
 
   const handleRestoreDefaultsPress = async () => {
     saveConfigurations(defaultConfig);
@@ -153,8 +154,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
 
     if (!siteId) {
       message = blankFieldMessageBuilder('Site Id');
-    } else if (!apiKey) {
-      message = blankFieldMessageBuilder('API Key');
+    } else if (!cdpApiKey) {
+      message = blankFieldMessageBuilder('CDP API Key');
     } else if (!bqSecondsDelay) {
       message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
     } else if (!bqSecondsDelayValue || bqSecondsDelayValue < 1) {
@@ -188,7 +189,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
 
     const config = new CustomerIoSDKConfig();
     config.siteId = siteId;
-    config.apiKey = apiKey;
+    config.cdpApiKey = cdpApiKey;
     config.bqSecondsDelay = toFloatOrUndefined(bqSecondsDelay);
     config.bqMinNumberOfTasks = toIntOrUndefined(bqMinNumberOfTasks);
     config.trackScreens = isTrackScreensEnabled;
@@ -234,7 +235,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             contentDesc="Site ID Input"
             onChangeText={text => setSiteId(text)}
             textInputRef={siteIdRef}
-            getNextTextInput={() => ({ ref: apiKeyRef, value: apiKey })}
+            getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
             textInputProps={{
               autoCapitalize: 'none',
               keyboardType: 'default',
@@ -242,10 +243,10 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
           />
           <TextField
             style={styles.textInputContainer}
-            label="API Key"
-            value={apiKey}
-            contentDesc="API Key Input"
-            onChangeText={text => setApiKey(text)}
+            label="CDP API Key"
+            value={cdpApiKey}
+            contentDesc="CDP API Key Input"
+            onChangeText={text => setCdpApiKey(text)}
             textInputRef={apiKeyRef}
             getNextTextInput={() => ({
               ref: bqSecondsDelayRef,
@@ -317,6 +318,13 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
             value={isDebugModeEnabled}
             contentDesc="Debug Mode Toggle"
+          />
+          <SwitchField
+            style={styles.switchRow}
+            label="App Lifecycle Events Tracking"
+            onValueChange={() => setAppLifecycleEventTrackingEnabled(!isAppLifecycleEventTrackingEnabled)}
+            value={isAppLifecycleEventTrackingEnabled}
+            contentDesc="App Lifecycle Events Tracking Toggle"
           />
         </View>
         <View style={styles.buttonContainer}>
