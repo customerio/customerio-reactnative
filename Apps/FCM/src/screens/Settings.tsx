@@ -53,7 +53,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
   const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
-  const [isAppLifecycleEventTrackingEnabled, setAppLifecycleEventTrackingEnabled] = useState(true);
+  const [isAppLifecycleEventTrackingEnabled, setAppLifecycleEventTrackingEnabled] = useState(false);
 
   const handleOnBackPress = useCallback(() => {
     if (!navigation.canGoBack()) {
@@ -109,6 +109,8 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       setTrackDeviceAttributesEnabled,
     );
     setValueIfPresent(initialConfig?.debugMode, setDebugModeEnabled);
+    setValueIfPresent(initialConfig?.trackAppLifecycleEvents, setAppLifecycleEventTrackingEnabled);
+
   }, [initialCdpApiKey, initialConfig, initialSiteId]);
 
   const handleRestoreDefaultsPress = async () => {
@@ -145,12 +147,13 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
+    config.trackAppLifecycleEvents = isAppLifecycleEventTrackingEnabled;
     saveConfigurations(config);
+    navigation.goBack();
   };
 
   const saveConfigurations = async (config: CustomerIoSDKConfig) => {
     await onSdkConfigStateChanged(config);
-    navigation.goBack();
   };
 
   const copyToDeviceClipboard = async () => {

@@ -38,6 +38,7 @@ export default class CustomerIoSDKConfig {
       cdpApiKey: Env.cdpApiKey,
       trackScreens: true,
       trackDeviceAttributes: true,
+      trackAppLifecycleEvents: true,
       debugMode: true,
     });
   }
