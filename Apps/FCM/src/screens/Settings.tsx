@@ -18,9 +18,9 @@ import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
 import { TextField } from '../components/TextField';
-import * as Colors from '../constants/Colors';
 import * as Fonts from '../constants/Fonts';
 import * as Sizes from '../constants/Sizes';
+import {styles as settingsStyles} from '../styles/stylesheet';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
@@ -169,11 +169,11 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const apiKeyRef = useRef();
 
   return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.section}>
+    <View style={settingsStyles.container}>
+      <ScrollView contentContainerStyle={settingsStyles.content}>
+        <View style={settingsStyles.section}>
           <TextField
-            style={styles.textInputContainer}
+            style={settingsStyles.textInputContainer}
             label="Device Token"
             value={deviceToken}
             contentDesc="Device Token Input"
@@ -182,10 +182,10 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             onLeadingIconPress={() => copyToDeviceClipboard()}
           />
         </View>
-        <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Config Settings</Text>
+        <View style={settingsStyles.section}>
+        <Text style={settingsStyles.sectionLabel}>Config Settings</Text>
           <TextField
-            style={styles.textInputContainer}
+            style={settingsStyles.textInputContainer}
             label="Site Id"
             value={siteId}
             contentDesc="Site ID Input"
@@ -198,7 +198,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             }}
           />
           <TextField
-            style={styles.textInputContainer}
+            style={settingsStyles.textInputContainer}
             label="CDP API Key"
             value={cdpApiKey}
             contentDesc="CDP API Key Input"
@@ -210,16 +210,16 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             }}
           />
         </View>
-        <View style={styles.section}>
+        <View style={settingsStyles.section}>
           <SwitchField
-            style={styles.switchRow}
+            style={settingsStyles.switchRow}
             label="Track Screens"
             onValueChange={() => setTrackScreensEnabled(!isTrackScreensEnabled)}
             value={isTrackScreensEnabled}
             contentDesc="Track Screens Toggle"
           />
           <SwitchField
-            style={styles.switchRow}
+            style={settingsStyles.switchRow}
             label="Track Device Attributes"
             onValueChange={() =>
               setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
@@ -228,45 +228,45 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             contentDesc="Track Device Attributes Toggle"
           />
           <SwitchField
-            style={styles.switchRow}
+            style={settingsStyles.switchRow}
             label="App Lifecycle Events Tracking"
             onValueChange={() => setAppLifecycleEventTrackingEnabled(!isAppLifecycleEventTrackingEnabled)}
             value={isAppLifecycleEventTrackingEnabled}
             contentDesc="App Lifecycle Events Tracking Toggle"
           />
         </View>
-        <View style={styles.section}>
-        <Text style={styles.sectionLabel}>Development</Text>
+        <View style={settingsStyles.section}>
+        <Text style={settingsStyles.sectionLabel}>Development</Text>
         <SwitchField
-            style={styles.switchRow}
+            style={settingsStyles.switchRow}
             label="Debug Mode"
             onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
             value={isDebugModeEnabled}
             contentDesc="Debug Mode Toggle"
           />
           </View>
-        <View style={styles.buttonContainer}>
+        <View style={settingsStyles.buttonContainer}>
           <FilledButton
-            style={styles.saveButton}
+            style={settingsStyles.saveButton}
             onPress={handleSavePress}
             text="Save"
             contentDesc="Save Settings Button"
-            textStyle={styles.saveButtonText}
+            textStyle={settingsStyles.saveButtonText}
           />
           <FilledButton
-            style={styles.saveButton}
+            style={settingsStyles.saveButton}
             onPress={handleGoToInternalSettingsPress}
             text="Internal Settings"
             contentDesc="Internal Settings Button"
-            textStyle={styles.saveButtonText}
+            textStyle={settingsStyles.saveButtonText}
           />
           <TextButton
-            style={styles.restoreDefaultsButton}
+            style={settingsStyles.restoreDefaultsButton}
             onPress={handleRestoreDefaultsPress}
             text="Restore Defaults"
             contentDesc="Restore Default Settings Button"
           />
-          <Caption style={styles.note}>
+          <Caption style={settingsStyles.note}>
             Note: You must restart the app to apply these settings
           </Caption>
         </View>
@@ -274,56 +274,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  backButton: {
-    marginLeft: Sizes.BACK_BUTTON_MARGIN_LEFT,
-    marginRight: Sizes.BACK_BUTTON_MARGIN_RIGHT,
-  },
-  container: {
-    backgroundColor: Colors.CONTAINER_BACKGROUND_COLOR,
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionLabel: {
-    alignSelf: 'flex-start',
-    fontSize: 16,
-    fontWeight: Fonts.FONT_WEIGHT_BOLD,
-    marginBottom: 16,
-  },
-  textInputContainer: {
-    marginTop: 8,
-  },
-  switchRow: {
-    marginBottom: 4,
-  },
-  buttonContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  saveButton: {
-    marginTop: 8,
-  },
-  saveButtonText: {
-    textTransform: 'uppercase',
-  },
-  restoreDefaultsButton: {
-    marginTop: 16,
-    width: Sizes.BUTTON_MAX_WIDTH,
-  },
-  note: {
-    marginTop: 8,
-  },
-});
-
 const setNavigationOptions = (
   navigation: NavigationProp<ParamListBase>,
   handleOnBackPress: () => void,
@@ -332,7 +282,7 @@ const setNavigationOptions = (
     headerLeft: (props: any) => (
       <HeaderBackButton
         {...props}
-        style={styles.backButton}
+        style={settingsStyles.backButton}
         accessibilityLabel="Navigate up"
         onPress={handleOnBackPress}
       />
