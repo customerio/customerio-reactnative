@@ -161,6 +161,10 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     Prompts.showSnackbar({ text: 'Device token copied to clipboard' });
   };
 
+  const handleGoToInternalSettingsPress = async () => {
+    navigation.navigate('InternalSettings');
+  }
+
   const siteIdRef = useRef();
   const apiKeyRef = useRef();
 
@@ -179,6 +183,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
           />
         </View>
         <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Config Settings</Text>
           <TextField
             style={styles.textInputContainer}
             label="Site Id"
@@ -206,7 +211,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
           />
         </View>
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Features</Text>
           <SwitchField
             style={styles.switchRow}
             label="Track Screens"
@@ -225,25 +229,35 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
           />
           <SwitchField
             style={styles.switchRow}
-            label="Debug Mode"
-            onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
-            value={isDebugModeEnabled}
-            contentDesc="Debug Mode Toggle"
-          />
-          <SwitchField
-            style={styles.switchRow}
             label="App Lifecycle Events Tracking"
             onValueChange={() => setAppLifecycleEventTrackingEnabled(!isAppLifecycleEventTrackingEnabled)}
             value={isAppLifecycleEventTrackingEnabled}
             contentDesc="App Lifecycle Events Tracking Toggle"
           />
         </View>
+        <View style={styles.section}>
+        <Text style={styles.sectionLabel}>Development</Text>
+        <SwitchField
+            style={styles.switchRow}
+            label="Debug Mode"
+            onValueChange={() => setDebugModeEnabled(!isDebugModeEnabled)}
+            value={isDebugModeEnabled}
+            contentDesc="Debug Mode Toggle"
+          />
+          </View>
         <View style={styles.buttonContainer}>
           <FilledButton
             style={styles.saveButton}
             onPress={handleSavePress}
             text="Save"
             contentDesc="Save Settings Button"
+            textStyle={styles.saveButtonText}
+          />
+          <FilledButton
+            style={styles.saveButton}
+            onPress={handleGoToInternalSettingsPress}
+            text="Internal Settings"
+            contentDesc="Internal Settings Button"
             textStyle={styles.saveButtonText}
           />
           <TextButton
