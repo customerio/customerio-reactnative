@@ -36,13 +36,11 @@ class CioRctWrapper: NSObject {
     
     @objc
     func identify(_ userId: String? = nil, traits: [String: Any]? = nil) {
-        if let userId, let traits {
-            CustomerIO.shared.identify(userId: userId, traits: traits)
-        } else if let userId {
-            CustomerIO.shared.identify(userId: userId, traits: traits)
-        } else {
+        guard let userId = userId else {
             // TODO: Add log when logger feature is implemented
+            return
         }
+        CustomerIO.shared.identify(userId: userId, traits: nil)
         flush()
     }
     
