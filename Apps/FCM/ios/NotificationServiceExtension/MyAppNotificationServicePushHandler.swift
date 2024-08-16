@@ -1,5 +1,4 @@
 import CioMessagingPushFCM
-import CioTracking
 import Foundation
 import UserNotifications
 
@@ -13,12 +12,13 @@ public class MyAppNotificationServicePushHandler: NSObject {
     _ request: UNNotificationRequest,
     withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
   ) {
-    CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
-      config.autoTrackDeviceAttributes = true
-      config.logLevel = .debug
-    }
-    MessagingPush.shared.didReceive(request, withContentHandler: contentHandler)
-  }
+    MessagingPushFCM.initializeForExtension(
+      withConfig: MessagingPushConfigBuilder(cdpApiKey: Env.cdpApiKey)
+            .logLevel(.debug)
+            .build()
+    )
+
+    MessagingPush.shared.didReceive(request, withContentHandler: contentHandler)  }
 
   @objc(serviceExtensionTimeWillExpire)
   public func serviceExtensionTimeWillExpire() {
