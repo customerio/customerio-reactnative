@@ -26,7 +26,6 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
-import { CustomerIO } from 'customerio-reactnative';
 
 interface SettingsProps {
   navigation: NavigationProp<ParamListBase>;
@@ -50,12 +49,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
   const [deviceToken, setDeviceToken] = useState('');
   const [siteId, setSiteId] = useState('');
   const [cdpApiKey, setCdpApiKey] = useState('');
-  const [bqSecondsDelay, setBQSecondsDelay] = useState<string | undefined>(
-    undefined,
-  );
-  const [bqMinNumberOfTasks, setBQMinNumberOfTasks] = useState<
-    string | undefined
-  >(undefined);
   const [isTrackScreensEnabled, setTrackScreensEnabled] = useState(false);
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
@@ -110,14 +103,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     */
     setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
     setValueIfPresent(initialCdpApiKey ?? initialConfig?.cdpApiKey, setCdpApiKey);
-    setValueIfPresent(
-      initialConfig?.bqSecondsDelay?.toString(),
-      setBQSecondsDelay,
-    );
-    setValueIfPresent(
-      initialConfig?.bqMinNumberOfTasks?.toString(),
-      setBQMinNumberOfTasks,
-    );
     setValueIfPresent(initialConfig?.trackScreens, setTrackScreensEnabled);
     setValueIfPresent(
       initialConfig?.trackDeviceAttributes,
@@ -149,27 +134,10 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       return `${fieldName} must be greater than or equal to ${minValue}`;
     };
 
-    const bqSecondsDelayValue = toFloatOrUndefined(bqSecondsDelay);
-    const bqMinNumberOfTasksValue = toIntOrUndefined(bqMinNumberOfTasks);
-
     if (!siteId) {
       message = blankFieldMessageBuilder('Site Id');
     } else if (!cdpApiKey) {
       message = blankFieldMessageBuilder('CDP API Key');
-    } else if (!bqSecondsDelay) {
-      message = blankFieldMessageBuilder('backgroundQueueSecondsDelay');
-    } else if (!bqSecondsDelayValue || bqSecondsDelayValue < 1) {
-      message = outOfBoundsValueMessageBuilder(
-        'backgroundQueueSecondsDelay',
-        1,
-      );
-    } else if (!bqMinNumberOfTasks) {
-      message = blankFieldMessageBuilder('backgroundQueueMinNumberOfTasks');
-    } else if (!bqMinNumberOfTasksValue || bqMinNumberOfTasksValue < 1) {
-      message = outOfBoundsValueMessageBuilder(
-        'backgroundQueueMinNumberOfTasks',
-        1,
-      );
     }
 
     if (message) {
@@ -190,8 +158,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
     const config = new CustomerIoSDKConfig();
     config.siteId = siteId;
     config.cdpApiKey = cdpApiKey;
-    config.bqSecondsDelay = toFloatOrUndefined(bqSecondsDelay);
-    config.bqMinNumberOfTasks = toIntOrUndefined(bqMinNumberOfTasks);
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
@@ -210,8 +176,6 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
 
   const siteIdRef = useRef();
   const apiKeyRef = useRef();
-  const bqSecondsDelayRef = useRef();
-  const bqMinNumberOfTasksRef = useRef();
 
   return (
     <View style={styles.container}>
@@ -248,49 +212,9 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
             contentDesc="CDP API Key Input"
             onChangeText={text => setCdpApiKey(text)}
             textInputRef={apiKeyRef}
-            getNextTextInput={() => ({
-              ref: bqSecondsDelayRef,
-              value: bqSecondsDelay,
-            })}
             textInputProps={{
               autoCapitalize: 'none',
               keyboardType: 'default',
-            }}
-          />
-        </View>
-        <View style={styles.section}>
-          <TextField
-            style={styles.textInputContainer}
-            label="backgroundQueueSecondsDelay"
-            value={bqSecondsDelay ?? ''}
-            contentDesc="BQ Seconds Delay Input"
-            onChangeText={text => {
-              let value = toFloatOrUndefined(text);
-              return setBQSecondsDelay(value ? text : undefined);
-            }}
-            textInputRef={bqSecondsDelayRef}
-            getNextTextInput={() => ({
-              ref: bqMinNumberOfTasksRef,
-              value: bqMinNumberOfTasks,
-            })}
-            textInputProps={{
-              autoCapitalize: 'none',
-              keyboardType: 'decimal-pad',
-            }}
-          />
-          <TextField
-            style={styles.textInputContainer}
-            label="backgroundQueueMinNumberOfTasks"
-            value={bqMinNumberOfTasks ?? ''}
-            contentDesc="BQ Min Number of Tasks Input"
-            onChangeText={text => {
-              let value = toIntOrUndefined(text);
-              return setBQMinNumberOfTasks(value ? text : undefined);
-            }}
-            textInputRef={bqMinNumberOfTasksRef}
-            textInputProps={{
-              autoCapitalize: 'none',
-              keyboardType: 'number-pad',
             }}
           />
         </View>
