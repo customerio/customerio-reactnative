@@ -218,9 +218,9 @@ jobs:
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          # the variables APP_BUILD_NUMBER, APP_VERSION_STRING are created when fastlane runs "build".
+          # the variables APP_VERSION_NAME, APP_VERSION_CODE are generated above in generate_new_version lane
           body: |
-            * ${{ matrix.sample-app }}: `${{ env.APP_VERSION_STRING }} (${{ env.APP_BUILD_NUMBER }})`
+            * ${{ matrix.sample-app }}: `${{ env.APP_VERSION_NAME }} (${{ env.APP_VERSION_CODE }})`
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
 
       - name: Update sample builds PR comment with build failure message
