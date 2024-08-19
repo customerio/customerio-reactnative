@@ -26,7 +26,6 @@ const InternalSettings: React.FC = () => {
                         contentDesc="CDN Host Input"
                         placeholder='CDN Host'
                         onChangeText={text => setCdnHost(text)}
-                        // textInputRef={siteIdRef}
                         textInputProps={{
                             autoCapitalize: 'none',
                             keyboardType: 'default',
@@ -39,7 +38,6 @@ const InternalSettings: React.FC = () => {
                         placeholder='API Host'
                         contentDesc="API Host Input"
                         onChangeText={text => setApiHost(text)}
-                        // textInputRef={siteIdRef}
                         textInputProps={{
                         autoCapitalize: 'none',
                         keyboardType: 'default',
@@ -51,8 +49,6 @@ const InternalSettings: React.FC = () => {
                         value={flushInterval}
                         contentDesc="Flush Interval Input"
                         onChangeText={text => setFlushInterval(text)}
-                        // textInputRef={siteIdRef}
-                        // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
                         textInputProps={{
                         autoCapitalize: 'none',
                         placeholder: '30',
@@ -66,8 +62,6 @@ const InternalSettings: React.FC = () => {
                         contentDesc="Flush At Input"
                         placeholder='20'
                         onChangeText={text => setFlushAt(text)}
-                        // textInputRef={siteIdRef}
-                        // getNextTextInput={() => ({ ref: apiKeyRef, value: cdpApiKey })}
                         textInputProps={{
                         autoCapitalize: 'none',
                         keyboardType: 'default',
