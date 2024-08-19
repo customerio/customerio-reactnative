@@ -196,17 +196,8 @@ jobs:
 
       - name: Check build statuses and mark failure
         run: |
-          if [ "${{ steps.android_build.outcome }}" != "success" ]; then
-            echo "Android build failed."
-            BUILD_FAILED=1
-          fi
-
-          if [ "${{ steps.ios_build.outcome }}" != "success" ]; then
-            echo "iOS build failed."
-            BUILD_FAILED=1
-          fi
-
-          if [ "$BUILD_FAILED" == "1" ]; then
+          if [ "${{ steps.android_build.outcome }}" != "success" ] || [ "${{ steps.ios_build.outcome }}" != "success" ]; then
+            echo "One or more builds failed."
             exit 1
           fi
 
