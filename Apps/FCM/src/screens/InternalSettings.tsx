@@ -52,7 +52,7 @@ const InternalSettings: React.FC = () => {
                         textInputProps={{
                         autoCapitalize: 'none',
                         placeholder: '30',
-                        keyboardType: 'default',
+                        keyboardType: 'numeric',
                         }}
                     />
                     <TextField
@@ -64,7 +64,7 @@ const InternalSettings: React.FC = () => {
                         onChangeText={text => setFlushAt(text)}
                         textInputProps={{
                         autoCapitalize: 'none',
-                        keyboardType: 'default',
+                        keyboardType: 'numeric',
                         }}
                     />
                     <View style={settingsStyles.section}></View>
