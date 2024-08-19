@@ -6,7 +6,8 @@
     "start": "react-native start",
     "dev:update": "../../scripts/dev:update.sh",
     "postinstall": "pod update --project-directory=ios",
-    "preinstall": "npm run dev:update"
+    "preinstall": "npm run dev:update",
+    "ci:install": "npm run preinstall && npm ci"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.1",
