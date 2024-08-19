@@ -40,7 +40,7 @@ class CioRctWrapper: NSObject {
             // TODO: Add log when logger feature is implemented
             return
         }
-        CustomerIO.shared.identify(userId: userId, traits: nil)
+        CustomerIO.shared.identify(userId: userId, traits: traits)
         flush()
     }
     
