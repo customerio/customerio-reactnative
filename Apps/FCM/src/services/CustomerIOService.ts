@@ -11,8 +11,6 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
     cdpApiKey: Env.cdpApiKey, // Mandatory
     migrationSiteId: Env.siteId, // For migration
     trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
-    flushAt: sdkConfig.bqMinNumberOfTasks,
-    flushInterval: sdkConfig.bqSecondsDelay,
     inApp: {
       siteId: 'site_id',
     },
