@@ -75,7 +75,6 @@
 		467ECB9F283E702300EDB363 /* libCustomerIOMessagingPush.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPush.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		467ECBA1283E702300EDB363 /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		467ECBA3283E702300EDB363 /* libCustomerIOTracking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOTracking.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4698397D283E4FAD003FBBA8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		46C29DB7296590D20099A118 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		46C29DBA2965912D0099A118 /* MyAppPushNotificationsHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyAppPushNotificationsHandler.swift; sourceTree = "<group>"; };
 		46D41ED82A0944BF0008DBA4 /* NotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,7 +127,6 @@
 				46FB06302965B4EC00001290 /* main.m */,
 				46C29DBA2965912D0099A118 /* MyAppPushNotificationsHandler.swift */,
 				46C29DB7296590D20099A118 /* AppDelegate.h */,
-				4698397D283E4FAD003FBBA8 /* GoogleService-Info.plist */,
 				46347F672715616600050A1E /* SampleApp.entitlements */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
