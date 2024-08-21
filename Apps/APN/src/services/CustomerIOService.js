@@ -1,4 +1,4 @@
-import { CustomerIO } from 'customerio-reactnative';
+import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
     cdpApiKey: 'cdp_api_key', // Mandatory
@@ -57,8 +57,9 @@ export const requestPushNotificationsPermission = (options) => {
   return CustomerIO.showPromptForPushNotifications(options);
 };
 
+// TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
-  const logInAppEvent = (name, params) => {
+  /*const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -107,5 +108,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });
+  });*/
 };
