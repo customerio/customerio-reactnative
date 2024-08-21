@@ -1,4 +1,4 @@
-import { CustomerIO, CioConfig } from 'customerio-reactnative';
+import { CustomerIO } from 'customerio-reactnative';
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
     cdpApiKey: 'cdp_api_key', // Mandatory

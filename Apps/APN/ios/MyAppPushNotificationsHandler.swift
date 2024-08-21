@@ -1,6 +1,5 @@
 import Foundation
 import CioMessagingPushAPN
-import CioTracking
 
 /**
  * This file was created based on the Customer.io React Native SDK documentation for setting up push notifications in your app. 

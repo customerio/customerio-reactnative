@@ -12,7 +12,6 @@
 		39854C74C84BE330EF912B1C /* libPods-SampleApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E78FF94E1C2B50F221C9B9 /* libPods-SampleApp.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4606A0C1296C7D6500B98CC8 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4606A0C0296C7D6500B98CC8 /* AppDelegate.mm */; };
-		464F84BA296D5DD2005918DF /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 464F84B9296D5DD2005918DF /* main.jsbundle */; };
 		46C29DBB2965912D0099A118 /* MyAppPushNotificationsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46C29DBA2965912D0099A118 /* MyAppPushNotificationsHandler.swift */; };
 		46D41EDC2A0944BF0008DBA4 /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D41EDB2A0944BF0008DBA4 /* NotificationService.m */; };
 		46D41EE02A0944BF0008DBA4 /* NotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 46D41ED82A0944BF0008DBA4 /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -67,7 +66,6 @@
 		4632B4E5283E678300AF05BC /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		46347F672715616600050A1E /* SampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SampleApp.entitlements; path = SampleApp/SampleApp.entitlements; sourceTree = "<group>"; };
 		464F84B8296D5B7F005918DF /* SampleApp-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SampleApp-Bridging-Header.h"; sourceTree = "<group>"; };
-		464F84B9296D5DD2005918DF /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		467B1650283F7B4F00104031 /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		467B1652283F7F7F00104031 /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		467B1654283F7FA500104031 /* libCustomerIOMessagingPushAPN.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libCustomerIOMessagingPushAPN.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,7 +119,6 @@
 		13B07FAE1A68108700A75B9A /* SampleApp */ = {
 			isa = PBXGroup;
 			children = (
-				464F84B9296D5DD2005918DF /* main.jsbundle */,
 				464F84B8296D5B7F005918DF /* SampleApp-Bridging-Header.h */,
 				4606A0C0296C7D6500B98CC8 /* AppDelegate.mm */,
 				46FB06302965B4EC00001290 /* main.m */,
@@ -325,7 +322,6 @@
 			files = (
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				464F84BA296D5DD2005918DF /* main.jsbundle in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 			);
@@ -598,6 +594,10 @@
 				INFOPLIST_FILE = SampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-DFOLLY_NO_CONFIG",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -677,6 +677,10 @@
 				INFOPLIST_FILE = SampleApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-DFOLLY_NO_CONFIG",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -831,10 +835,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -888,10 +889,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
