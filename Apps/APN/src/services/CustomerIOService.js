@@ -1,11 +1,10 @@
-import { CustomerIO, CioConfig } from 'customerio-reactnative';
+import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
+import Env from '../../env';
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
-    cdpApiKey: 'cdp_api_key', // Mandatory
-    migrationSiteId: 'site_id', // For migration
+    cdpApiKey: Env.cdpApiKey, // Mandatory
+    migrationSiteId: Env.siteId, // For migration
     trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
-    flushAt: sdkConfig.bqMinNumberOfTasks,
-    flushInterval: sdkConfig.bqSecondsDelay,
     inApp: {
 	    siteId: 'site_id',
     }
@@ -59,8 +58,9 @@ export const requestPushNotificationsPermission = (options) => {
   return CustomerIO.showPromptForPushNotifications(options);
 };
 
+// TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
-  const logInAppEvent = (name, params) => {
+  /*const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -109,5 +109,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });
+  });*/
 };

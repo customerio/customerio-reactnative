@@ -32,10 +32,8 @@ export default function App() {
     prepare();
     const inAppEventListener = registerInAppEventListener();
 
-    // Remove listeners once unmounted
-    return () => {
-      inAppEventListener.remove();
-    };
+    // TODO: Add this when inapp feature is implemented
+    // inAppEventListener.remove();
   }, [
     applyCustomerIoConfig,
     handleCustomerIoConfigChanged,
