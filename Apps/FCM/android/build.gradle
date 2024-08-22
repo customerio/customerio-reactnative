@@ -1,14 +1,11 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     ext {
-        buildToolsVersion = "33.0.0"
+        buildToolsVersion = "34.0.0"
         minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
-
-        // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
-        ndkVersion = "23.1.7779620"
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        ndkVersion = "25.1.8937393"
+        kotlinVersion = "1.8.0"
     }
     repositories {
         google()
@@ -17,6 +14,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
         classpath("com.google.gms:google-services:4.3.15") // Google Services plugin
     }
 }
@@ -28,3 +26,5 @@ allprojects {
       maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' } // Only required for using SNAPSHOT versions of the SDK
    }
 }
+
+apply plugin: "com.facebook.react.rootproject"
