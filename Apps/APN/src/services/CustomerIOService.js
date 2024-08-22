@@ -1,8 +1,9 @@
 import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
+import Env from '../../env';
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
-    cdpApiKey: 'cdp_api_key', // Mandatory
-    migrationSiteId: 'site_id', // For migration
+    cdpApiKey: Env.cdpApiKey, // Mandatory
+    migrationSiteId: Env.siteId, // For migration
     trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
     inApp: {
 	    siteId: 'site_id',
