@@ -2,39 +2,39 @@ PODS:
   - boost (1.83.0)
   - customerio-reactnative (3.8.0):
     - customerio-reactnative/nopush (= 3.8.0)
-    - CustomerIO/MessagingInApp (= 2.13.2)
-    - CustomerIO/Tracking (= 2.13.2)
+    - CustomerIO/MessagingInApp (= 2.14.1)
+    - CustomerIO/Tracking (= 2.14.1)
     - React-Core
   - customerio-reactnative-richpush/fcm (3.8.0):
-    - CustomerIO/MessagingPushFCM (= 2.13.2)
+    - CustomerIO/MessagingPushFCM (= 2.14.1)
   - customerio-reactnative/fcm (3.8.0):
-    - CustomerIO/MessagingInApp (= 2.13.2)
-    - CustomerIO/MessagingPushFCM (= 2.13.2)
-    - CustomerIO/Tracking (= 2.13.2)
+    - CustomerIO/MessagingInApp (= 2.14.1)
+    - CustomerIO/MessagingPushFCM (= 2.14.1)
+    - CustomerIO/Tracking (= 2.14.1)
     - React-Core
   - customerio-reactnative/nopush (3.8.0):
-    - CustomerIO/MessagingInApp (= 2.13.2)
-    - CustomerIO/MessagingPush (= 2.13.2)
-    - CustomerIO/Tracking (= 2.13.2)
+    - CustomerIO/MessagingInApp (= 2.14.1)
+    - CustomerIO/MessagingPush (= 2.14.1)
+    - CustomerIO/Tracking (= 2.14.1)
     - React-Core
-  - CustomerIO/MessagingInApp (2.13.2):
-    - CustomerIOMessagingInApp (= 2.13.2)
-  - CustomerIO/MessagingPush (2.13.2):
-    - CustomerIOMessagingPush (= 2.13.2)
-  - CustomerIO/MessagingPushFCM (2.13.2):
-    - CustomerIOMessagingPushFCM (= 2.13.2)
-  - CustomerIO/Tracking (2.13.2):
-    - CustomerIOTracking (= 2.13.2)
-  - CustomerIOCommon (2.13.2)
-  - CustomerIOMessagingInApp (2.13.2):
-    - CustomerIOTracking (= 2.13.2)
-  - CustomerIOMessagingPush (2.13.2):
-    - CustomerIOTracking (= 2.13.2)
-  - CustomerIOMessagingPushFCM (2.13.2):
-    - CustomerIOMessagingPush (= 2.13.2)
+  - CustomerIO/MessagingInApp (2.14.1):
+    - CustomerIOMessagingInApp (= 2.14.1)
+  - CustomerIO/MessagingPush (2.14.1):
+    - CustomerIOMessagingPush (= 2.14.1)
+  - CustomerIO/MessagingPushFCM (2.14.1):
+    - CustomerIOMessagingPushFCM (= 2.14.1)
+  - CustomerIO/Tracking (2.14.1):
+    - CustomerIOTracking (= 2.14.1)
+  - CustomerIOCommon (2.14.1)
+  - CustomerIOMessagingInApp (2.14.1):
+    - CustomerIOTracking (= 2.14.1)
+  - CustomerIOMessagingPush (2.14.1):
+    - CustomerIOTracking (= 2.14.1)
+  - CustomerIOMessagingPushFCM (2.14.1):
+    - CustomerIOMessagingPush (= 2.14.1)
     - FirebaseMessaging (< 11, >= 8.7.0)
-  - CustomerIOTracking (2.13.2):
-    - CustomerIOCommon (= 2.13.2)
+  - CustomerIOTracking (2.14.1):
+    - CustomerIOCommon (= 2.14.1)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.73.9)
   - FBReactNativeSpec (0.73.9):
@@ -1395,14 +1395,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  CustomerIO: 8c6f814f809be2b20d76247ea658a0f415a903ac
-  customerio-reactnative: 565b9b99debb3830f36995ed9c9963f7e2a6e9b2
-  customerio-reactnative-richpush: 078c9cc28802aa6f894e160a9688965b8d78f34d
-  CustomerIOCommon: eb9166e6cbbd1ec9d429d8c594bc14887c859348
-  CustomerIOMessagingInApp: 31b28ad6636a5a0a5106821e797ab209ccd7c652
-  CustomerIOMessagingPush: 1bfa2490de607240e70918238fc90f841a95f22e
-  CustomerIOMessagingPushFCM: 9865d20e61b9563012bb348777a2ed262b33a8d9
-  CustomerIOTracking: 03b07b9ba6c5a24712874ddcaa7c9fabdffc78b5
+  CustomerIO: fab11c52035a486ca5029383a60b3d50233ae07c
+  customerio-reactnative: a09b47a2f4ded54283d0e1ed1508353ff451d7bf
+  customerio-reactnative-richpush: 0a61158282853c12647101d5c4d9f7e54a36a7b7
+  CustomerIOCommon: fdfa2fd3250771fbdd8e1f174994701d40bce52c
+  CustomerIOMessagingInApp: a1d10a74f700438ab2bdfb7796debc2f4bb94e4b
+  CustomerIOMessagingPush: 3446201b4102f267f003affcb8a511f8c0bd6a54
+  CustomerIOMessagingPushFCM: f726d1e6a6481a49507c3906f535bd4f35897f2c
+  CustomerIOTracking: 7fba3ad0ce9462182aacc1df24144f45df0157fb
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 98c189b92292d4bfeac13ffa8df3ce3d84e2fc5b
   FBReactNativeSpec: 4fe1d8c2fadc7949344b197d933f76b40401aac5
