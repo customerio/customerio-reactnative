@@ -11,7 +11,7 @@ import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOShared
 import io.customer.sdk.util.Logger
 
-class CustomerIOReactNativeModule(
+class NativeCustomerIOModule(
     reactContext: ReactApplicationContext,
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
@@ -133,6 +133,6 @@ class CustomerIOReactNativeModule(
     }
 
     companion object {
-        internal const val MODULE_NAME = "CustomerioReactnative"
+        internal const val MODULE_NAME = "NativeCustomerIO"
     }
 }

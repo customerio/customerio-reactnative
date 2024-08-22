@@ -13,7 +13,7 @@ class CustomerIOReactNativePackage : ReactPackage {
         return listOf(
             inAppMessagingModule,
             pushMessagingModule,
-            CustomerIOReactNativeModule(
+            NativeCustomerIOModule(
                 reactContext = reactContext,
                 pushMessagingModule = pushMessagingModule,
                 inAppMessagingModule = inAppMessagingModule,
