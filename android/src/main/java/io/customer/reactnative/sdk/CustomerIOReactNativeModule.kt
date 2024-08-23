@@ -43,17 +43,17 @@ class NativeCustomerIOModule(
         configJson: ReadableMap,
         logLevel: String,
     ) {
-        val sdkInstance = customerIOInstance
+//        val sdkInstance = customerIOInstance
         // Checks if SDK was initialized before, which means lifecycle callbacks are already
         // registered as well.
         // SDK instance may only be initialized before when a notification was received while the
         // app was in terminated state. Checking the instance earlier helps us prevent adding
         // multiple listeners and request missed events.
-        val isLifecycleCallbacksRegistered = sdkInstance != null
-
-        if (sdkInstance != null) {
-            logger.info("Customer.io instance already initialized, reinitializing")
-        }
+//        val isLifecycleCallbacksRegistered = sdkInstance != null
+//
+//        if (sdkInstance != null) {
+//            logger.info("Customer.io instance already initialized, reinitializing")
+//        }
 
 //        logger.info(configJson)
 
@@ -69,7 +69,10 @@ class NativeCustomerIOModule(
                 autoTrackActivityScreens(false)
                 build()
             }
-
+        }
+        catch (ex: Exception) {
+            logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
+        }
 //val newInstance = CustomerIOReactNativeInstance.initialize(
 //    context = reactApplicationContext,
 //    environment = env,
@@ -81,16 +84,16 @@ logger.info("Customer.io instance initialized successfully from app")
 // Request lifecycle events for first initialization only as relaunching app
 // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
 // will already be attached in this case as they are registered to application object.
-if (!isLifecycleCallbacksRegistered) {
-    currentActivity?.let { activity ->
-        logger.info("Requesting delayed activity lifecycle events")
+//if (!isLifecycleCallbacksRegistered) {
+//    currentActivity?.let { activity ->
+//        logger.info("Requesting delayed activity lifecycle events")
 //        val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
 //        lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
-    }
-}
-} catch (ex: Exception) {
-logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
-}
+//    }
+//}
+//} catch (ex: Exception) {
+//logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
+//}
 }
 
 @ReactMethod
