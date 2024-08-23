@@ -38,9 +38,8 @@ class NativeCustomerIOModule(
     @JvmOverloads
     @ReactMethod
     fun initialize(
-        environment: ReadableMap,
-        configuration: ReadableMap? = null,
-        packageConfiguration: ReadableMap? = null,
+        configJson: ReadableMap,
+        logLevel: String,
     ) {
         val sdkInstance = customerIOInstance
         // Checks if SDK was initialized before, which means lifecycle callbacks are already
@@ -54,85 +53,95 @@ class NativeCustomerIOModule(
             logger.info("Customer.io instance already initialized, reinitializing")
         }
 
-        val env = environment.toMap()
-        val config = configuration?.toMap()
-        val packageConfig = packageConfiguration?.toMap()
+        logger.info(configJson)
+
+        //val packageConfig = packageConfiguration?.toMap()
 
         try {
-            val newInstance = CustomerIOReactNativeInstance.initialize(
-                context = reactApplicationContext,
-                environment = env,
-                configuration = config,
-                packageConfig = packageConfig,
-                inAppEventListener = inAppMessagingModule,
-            )
-            logger.info("Customer.io instance initialized successfully from app")
-            // Request lifecycle events for first initialization only as relaunching app
-            // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
-            // will already be attached in this case as they are registered to application object.
-            if (!isLifecycleCallbacksRegistered) {
-                currentActivity?.let { activity ->
-                    logger.info("Requesting delayed activity lifecycle events")
-                    val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
-                    lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
-                }
+
+            CustomerIOBuilder(
+                applicationContext = reactApplicationContext,
+                cdpApiKey = "your_cdp_api_key"
+            ).apply {
+                autoTrackDeviceAttributes(true)
+                autoTrackActivityScreens(false)
+                build()
             }
-        } catch (ex: Exception) {
-            logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
-        }
-    }
 
-    @ReactMethod
-    fun clearIdentify() {
-        customerIO()?.clearIdentify()
+/*val newInstance = CustomerIOReactNativeInstance.initialize(
+//    context = reactApplicationContext,
+//    environment = env,
+//    configuration = config,
+//    packageConfig = packageConfig,
+//    inAppEventListener = inAppMessagingModule,
+//)
+logger.info("Customer.io instance initialized successfully from app")
+// Request lifecycle events for first initialization only as relaunching app
+// in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
+// will already be attached in this case as they are registered to application object.
+if (!isLifecycleCallbacksRegistered) {
+    currentActivity?.let { activity ->
+        logger.info("Requesting delayed activity lifecycle events")
+        val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
+        lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
     }
+}
+} catch (ex: Exception) {
+logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
+}
+}
 
-    @ReactMethod
-    fun identify(identifier: String, attributes: ReadableMap?) {
-        customerIO()?.identify(identifier, attributes.toMap())
-    }
+@ReactMethod
+fun clearIdentify() {
+customerIO()?.clearIdentify()
+}
 
-    @ReactMethod
-    fun track(name: String, attributes: ReadableMap?) {
-        customerIO()?.track(name, attributes.toMap())
-    }
+@ReactMethod
+fun identify(identifier: String, attributes: ReadableMap?) {
+customerIO()?.identify(identifier, attributes.toMap())
+}
 
-    @ReactMethod
-    fun setDeviceAttributes(attributes: ReadableMap?) {
-        customerIO()?.deviceAttributes = attributes.toMap()
-    }
+@ReactMethod
+fun track(name: String, attributes: ReadableMap?) {
+customerIO()?.track(name, attributes.toMap())
+}
 
-    @ReactMethod
-    fun setProfileAttributes(attributes: ReadableMap?) {
-        customerIO()?.profileAttributes = attributes.toMap()
-    }
+@ReactMethod
+fun setDeviceAttributes(attributes: ReadableMap?) {
+customerIO()?.deviceAttributes = attributes.toMap()
+}
 
-    @ReactMethod
-    fun screen(name: String, attributes: ReadableMap?) {
-        customerIO()?.screen(name, attributes.toMap())
-    }
+@ReactMethod
+fun setProfileAttributes(attributes: ReadableMap?) {
+customerIO()?.profileAttributes = attributes.toMap()
+}
 
-    @ReactMethod
-    fun registerDeviceToken(token: String) {
-        customerIO()?.registerDeviceToken(token)
-    }
+@ReactMethod
+fun screen(name: String, attributes: ReadableMap?) {
+customerIO()?.screen(name, attributes.toMap())
+}
 
-    @ReactMethod
-    fun deleteDeviceToken() {
-        customerIO()?.deleteDeviceToken()
-    }
+@ReactMethod
+fun registerDeviceToken(token: String) {
+customerIO()?.registerDeviceToken(token)
+}
 
-    @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
-        pushMessagingModule.getPushPermissionStatus(promise)
-    }
+@ReactMethod
+fun deleteDeviceToken() {
+customerIO()?.deleteDeviceToken()
+}
 
-    @ReactMethod
-    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
-        pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
-    }
+@ReactMethod
+fun getPushPermissionStatus(promise: Promise) {
+pushMessagingModule.getPushPermissionStatus(promise)
+}
 
-    companion object {
-        internal const val MODULE_NAME = "NativeCustomerIO"
-    }
+@ReactMethod
+fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
+}
+
+companion object {
+internal const val MODULE_NAME = "NativeCustomerIO"
+}
 }
