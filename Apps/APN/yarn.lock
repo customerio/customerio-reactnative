@@ -3694,7 +3694,7 @@ csstype@^3.0.2:
 "customerio-reactnative@file:../../customerio-reactnative.tgz":
   version "3.8.0"
   resolved "file:../../customerio-reactnative.tgz"
-  integrity sha512-cqC48RjkoCM+1lH+4nZkhK9VBHN4mR9OV8TG33I6GXuO0l0deEeSYfqFjAR1Jcja10+HhnBVlReaORphnWAmNQ==
+  integrity sha512-e+pg0veJlBWajgHLi6vlYL2rT4yNqRseR2RdyB4LctMAdl+tMYY28oQwhMt6FqlJEYBaTX7Ov+xLAXAUsmITOA==
 
 data-view-buffer@^1.0.1:
   version "1.0.1"

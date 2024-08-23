@@ -17,6 +17,7 @@ import io.customer.sdk.data.store.Client
  * Static property holder for ReactNative package to overcome SDK
  * initialization challenges
  */
+/*
 object CustomerIOReactNativeInstance {
     @Throws(IllegalArgumentException::class)
     internal fun initialize(
@@ -117,4 +118,4 @@ object CustomerIOReactNativeInstance {
             setEventListener(inAppEventListener)
         }.build(),
     )
-}
+}*/

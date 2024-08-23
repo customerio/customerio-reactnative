@@ -1,5 +1,6 @@
 package io.customer.reactnative.sdk
 
+import android.app.Application
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -8,8 +9,9 @@ import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.CustomerIOShared
-import io.customer.sdk.util.Logger
+import io.customer.sdk.CustomerIOBuilder
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.core.util.Logger
 
 class NativeCustomerIOModule(
     reactContext: ReactApplicationContext,
@@ -17,7 +19,7 @@ class NativeCustomerIOModule(
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
-        get() = CustomerIOShared.instance().diStaticGraph.logger
+        get() = SDKComponent.logger
 
     // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
     private val customerIOInstance: CustomerIO?
@@ -53,14 +55,14 @@ class NativeCustomerIOModule(
             logger.info("Customer.io instance already initialized, reinitializing")
         }
 
-        logger.info(configJson)
+//        logger.info(configJson)
 
         //val packageConfig = packageConfiguration?.toMap()
 
         try {
 
             CustomerIOBuilder(
-                applicationContext = reactApplicationContext,
+                applicationContext = reactApplicationContext as Application,
                 cdpApiKey = "your_cdp_api_key"
             ).apply {
                 autoTrackDeviceAttributes(true)
@@ -68,7 +70,7 @@ class NativeCustomerIOModule(
                 build()
             }
 
-/*val newInstance = CustomerIOReactNativeInstance.initialize(
+//val newInstance = CustomerIOReactNativeInstance.initialize(
 //    context = reactApplicationContext,
 //    environment = env,
 //    configuration = config,
@@ -82,8 +84,8 @@ logger.info("Customer.io instance initialized successfully from app")
 if (!isLifecycleCallbacksRegistered) {
     currentActivity?.let { activity ->
         logger.info("Requesting delayed activity lifecycle events")
-        val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
-        lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
+//        val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
+//        lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
     }
 }
 } catch (ex: Exception) {
