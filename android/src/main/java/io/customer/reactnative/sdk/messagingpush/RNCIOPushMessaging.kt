@@ -10,13 +10,12 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
-import io.customer.messagingpush.di.pushMessaging
 import io.customer.messagingpush.di.pushTrackingUtil
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.CustomerIOShared
-import io.customer.sdk.util.Logger
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.core.util.Logger
 import java.util.*
 
 /**
@@ -26,7 +25,7 @@ class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
     private val logger: Logger
-        get() = CustomerIOShared.instance().diStaticGraph.logger
+        get() = SDKComponent.logger
 
     /**
      * Temporarily holds reference for notification request as the request is dependent on Android
@@ -190,17 +189,21 @@ class RNCIOPushMessaging(
      */
     override fun onNewIntent(intent: Intent?) {
         val intentArguments = intent?.extras ?: return
+        //TODO: Implement pushMessaging later
+        /*
         kotlin.runCatching {
             val sdkInstance = CustomerIO.instance()
+
             val pushMessagingModuleConfig = sdkInstance.pushMessaging().moduleConfig
 
             if (pushMessagingModuleConfig.autoTrackPushEvents) {
-                sdkInstance.diGraph.pushTrackingUtil
+                SDKComponent.pushTrackingUtil
                     .parseLaunchedActivityForTracking(intentArguments)
             }
         }.onFailure { ex ->
             logger.error("Unable to parse push notification intent, reason: ${ex.message}")
         }
+        */
     }
 
     override fun getName(): String = "CustomerioPushMessaging"
