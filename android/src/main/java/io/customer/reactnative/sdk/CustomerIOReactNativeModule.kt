@@ -57,13 +57,13 @@ class NativeCustomerIOModule(
 
 //        logger.info(configJson)
 
-        //val packageConfig = packageConfiguration?.toMap()
-
+        val packageConfig = configJson.toMap()
+        val cdpApiKey = packageConfig["cdpApiKey"]
         try {
 
             CustomerIOBuilder(
                 applicationContext = reactApplicationContext as Application,
-                cdpApiKey = "your_cdp_api_key"
+                cdpApiKey = cdpApiKey.toString()
             ).apply {
                 autoTrackDeviceAttributes(true)
                 autoTrackActivityScreens(false)
