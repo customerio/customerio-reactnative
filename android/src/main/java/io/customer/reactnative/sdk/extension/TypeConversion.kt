@@ -2,8 +2,8 @@ package io.customer.reactnative.sdk.extension
 
 import com.facebook.react.bridge.ReadableMap
 import com.google.firebase.messaging.RemoteMessage
+import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.data.model.Region
-import io.customer.sdk.util.CioLogLevel
 
 internal fun ReadableMap?.toMap(): Map<String, Any> {
     return this?.toHashMap() ?: emptyMap()
