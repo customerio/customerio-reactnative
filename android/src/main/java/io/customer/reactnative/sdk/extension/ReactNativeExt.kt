@@ -1,6 +1,7 @@
 package io.customer.reactnative.sdk.extension
 
-import io.customer.sdk.CustomerIOShared
+import io.customer.sdk.CustomerIO
+import io.customer.sdk.core.di.SDKComponent
 
 @Throws(IllegalArgumentException::class)
 internal inline fun <reified T> Map<String, Any?>.getPropertyUnsafe(key: String): T {
@@ -17,7 +18,7 @@ internal inline fun <reified T> Map<String, Any?>.getPropertyUnsafe(key: String)
 internal inline fun <reified T> Map<String, Any?>.getProperty(key: String): T? = try {
     getPropertyUnsafe(key)
 } catch (ex: IllegalArgumentException) {
-    CustomerIOShared.instance().diStaticGraph.logger.error(
+    SDKComponent.logger.error(
         ex.message ?: "getProperty($key) -> IllegalArgumentException"
     )
     null
@@ -29,7 +30,7 @@ internal fun Map<String, Any?>.getString(key: String): String = try {
         "Invalid value provided for $key, must not be blank"
     )
 } catch (ex: IllegalArgumentException) {
-    CustomerIOShared.instance().diStaticGraph.logger.error(
+    SDKComponent.logger.error(
         ex.message ?: "getString($key) -> IllegalArgumentException"
     )
     throw ex
