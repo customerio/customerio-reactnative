@@ -1,5 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
-import { type CioConfig } from './cio-config';
+import { CioLogLevel, type CioConfig } from './cio-config';
 // TODO: Import the CustomerIOInAppMessaging, NativeLoggerListener and CustomerIOPushMessaging classes from their respective files
 // when they are implemented.
 // import { CustomerIOInAppMessaging } from './customerio-inapp';
@@ -31,7 +31,8 @@ export class CustomerIO {
     // if (config.logLevel && config.logLevel !== CioLogLevel.None) {
     //   NativeLoggerListener.initialize();
     // }
-    NativeCustomerIO.initialize(config, config.logLevel);
+    let logLevel = config.logLevel?.valueOf() ?? CioLogLevel.None.valueOf();
+    NativeCustomerIO.initialize(config, logLevel);
     CustomerIO.initialized = true;
   };
 

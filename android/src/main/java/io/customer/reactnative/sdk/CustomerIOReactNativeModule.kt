@@ -36,7 +36,7 @@ class NativeCustomerIOModule(
     private fun customerIO(): CustomerIO? {
         val sdkInstance = customerIOInstance
         if (sdkInstance == null) {
-            logger.error("Customer.io instance 123 not initialized")
+            logger.error("Customer.io instance not initialized")
         }
         return sdkInstance
     }
@@ -93,57 +93,57 @@ class NativeCustomerIOModule(
         }
     }
 
-@ReactMethod
-fun clearIdentify() {
-customerIO()?.clearIdentify()
-}
+    @ReactMethod
+    fun clearIdentify() {
+        customerIO()?.clearIdentify()
+    }
 
-@ReactMethod
-fun identify(identifier: String, attributes: ReadableMap?) {
-customerIO()?.identify(identifier, attributes.toMap())
-}
+    @ReactMethod
+    fun identify(identifier: String, attributes: ReadableMap?) {
+        customerIO()?.identify(identifier, attributes.toMap())
+    }
 
-@ReactMethod
-fun track(name: String, attributes: ReadableMap?) {
-customerIO()?.track(name, attributes.toMap())
-}
+    @ReactMethod
+    fun track(name: String, attributes: ReadableMap?) {
+        customerIO()?.track(name, attributes.toMap())
+    }
 
-@ReactMethod
-fun setDeviceAttributes(attributes: ReadableMap?) {
-customerIO()?.deviceAttributes = attributes.toMap()
-}
+    @ReactMethod
+    fun setDeviceAttributes(attributes: ReadableMap?) {
+        customerIO()?.deviceAttributes = attributes.toMap()
+    }
 
-@ReactMethod
-fun setProfileAttributes(attributes: ReadableMap?) {
-customerIO()?.profileAttributes = attributes.toMap()
-}
+    @ReactMethod
+    fun setProfileAttributes(attributes: ReadableMap?) {
+        customerIO()?.profileAttributes = attributes.toMap()
+    }
 
-@ReactMethod
-fun screen(name: String, attributes: ReadableMap?) {
-customerIO()?.screen(name, attributes.toMap())
-}
+    @ReactMethod
+    fun screen(name: String, attributes: ReadableMap?) {
+        customerIO()?.screen(name, attributes.toMap())
+    }
 
-@ReactMethod
-fun registerDeviceToken(token: String) {
-customerIO()?.registerDeviceToken(token)
-}
+    @ReactMethod
+    fun registerDeviceToken(token: String) {
+        customerIO()?.registerDeviceToken(token)
+    }
 
-@ReactMethod
-fun deleteDeviceToken() {
-customerIO()?.deleteDeviceToken()
-}
+    @ReactMethod
+    fun deleteDeviceToken() {
+        customerIO()?.deleteDeviceToken()
+    }
 
-@ReactMethod
-fun getPushPermissionStatus(promise: Promise) {
-pushMessagingModule.getPushPermissionStatus(promise)
-}
+    @ReactMethod
+    fun getPushPermissionStatus(promise: Promise) {
+        pushMessagingModule.getPushPermissionStatus(promise)
+    }
 
-@ReactMethod
-fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
-pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
-}
+    @ReactMethod
+    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+        pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
+    }
 
-companion object {
-internal const val MODULE_NAME = "NativeCustomerIO"
-}
+    companion object {
+        internal const val MODULE_NAME = "NativeCustomerIO"
+    }
 }
