@@ -1,0 +1,6 @@
+# Gemfile containing all the necessary plugins used by fastlane in the project
+
+gem 'fastlane-plugin-firebase_app_distribution'
+gem 'fastlane-plugin-versioning_android'
+gem 'fastlane-plugin-versioning_ios'
+gem 'fastlane-plugin-find_firebase_app_id'

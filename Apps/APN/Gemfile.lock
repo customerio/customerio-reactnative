@@ -172,7 +172,6 @@ GEM
       google-apis-firebaseappdistribution_v1alpha (~> 0.2.0)
     fastlane-plugin-versioning_android (0.1.1)
     fastlane-plugin-versioning_ios (0.1.0)
-    ffi (1.17.0)
     ffi (1.17.0-arm64-darwin)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -293,8 +292,8 @@ GEM
       xcpretty (~> 0.2, >= 0.0.7)
 
 PLATFORMS
+  arm64-darwin-21
   arm64-darwin-22
-  ruby
 
 DEPENDENCIES
   cocoapods (~> 1.12)

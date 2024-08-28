@@ -1,4 +1,0 @@
-app_identifier([
-  "io.customer.rn-sample.fcm",
-  "io.customer.rn-sample.fcm.richpush", 
-])

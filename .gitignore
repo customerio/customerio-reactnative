@@ -56,5 +56,4 @@ buck-out/
 # CocoaPods
 Apps/APN/ios/Pods/
 
-package-lock.json
 lib/module/index.js

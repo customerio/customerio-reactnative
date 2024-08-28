@@ -1,11 +1,78 @@
-
-# Import functions for setting up code signing in development as well as CI server. 
-# See this README (https://github.com/customerio/apple-code-signing) for list of all fastlane functions that this imports and you can run. 
+# import Fastfile from the apple-code-signing repo to reuse signing lanes
 import_from_git(
-  url: "https://github.com/customerio/apple-code-signing.git", 
-  branch: "main", 
+  url: "https://github.com/customerio/apple-code-signing.git",
+  branch: "main",
   path: "fastlane/Fastfile"
 )
 
-# That is all we have for now.  
-# See the iOS SDK fastlane files for more functionality that we could add to this project in the future. 
+# Use expand_path to import code so it automatically resolves the path based on the current file
+import File.expand_path('helpers/build_helper.rb', __dir__)
+import File.expand_path('helpers/version_helper.rb', __dir__)
+
+# Helper method to update package.json version
+def update_package_json_version(project_path, new_version)
+  package_json_path = File.join(project_path, 'package.json')
+
+  unless File.exist?(package_json_path)
+    UI.user_error!("package.json not found at #{package_json_path}")
+  end
+
+  package_json_content = File.read(package_json_path)
+  new_package_json_content = package_json_content.gsub(/"version":\s*".*"/, "\"version\": \"#{new_version}\"")
+
+  File.write(package_json_path, new_package_json_content)
+  UI.message("Updated version to #{new_version} in #{package_json_path}")
+end
+
+# Helper method to update app.json version
+def update_app_json_version(project_path, version_name, version_code)
+  app_json_path = File.join(project_path, 'app.json')
+
+  unless File.exist?(app_json_path)
+    UI.user_error!("app.json not found at #{app_json_path}")
+  end
+
+  app_json_content = File.read(app_json_path)
+  app_json_data = JSON.parse(app_json_content)
+
+  # Update version name and code
+  if app_json_data.dig('expo', 'version')
+    app_json_data['expo']['version'] = version_name if app_json_data['expo']['version']
+  end
+  if app_json_data.dig('expo', 'android', 'version')
+    app_json_data['expo']['android']['versionCode'] = version_code.to_i
+  end
+  if app_json_data.dig('expo', 'ios', 'buildNumber')
+    app_json_data['expo']['ios']['buildNumber'] = version_code.to_s
+  end
+
+  File.write(app_json_path, JSON.pretty_generate(app_json_data))
+  UI.message("Updated version to #{version_name} and versionCode to #{version_code} in #{app_json_path}")
+end
+
+# Lane to update React Native sdk version
+lane :update_react_native_sdk_version do |options|
+  project_path = File.expand_path(options[:project_path] || File.join(Dir.pwd, '../../..'))
+  version_name = options[:version_name] || ENV['SDK_VERSION_NAME']
+
+  UI.message("Updating SDK version to #{version_name} in #{project_path}")
+  update_package_json_version(project_path, version_name)
+end
+
+# Lane to update React Native sample app version
+lane :update_react_native_app_version do |options|
+  project_path = File.expand_path(options[:project_path] || File.join(Dir.pwd, '..'))
+  version_name = options[:version_name] || ENV['APP_VERSION_NAME']
+  version_code = options[:version_code] || ENV['APP_VERSION_CODE']
+
+  UI.message("Updating app versions to #{version_name} (version code: #{version_code}) in #{project_path}")
+
+  # Update versions in package.json
+  update_app_json_version(project_path, version_name, version_code)
+
+  # Update Android version
+  update_android_version(project_path, version_name, version_code)
+
+  # Update iOS version
+  update_ios_version(project_path, version_name, version_code)
+end
