@@ -37,13 +37,23 @@ export class CustomerIO {
   };
 
   static readonly identify = async (
-    id?: string,
+    idOrTraits?: string | Record<string, any>,
     traits?: Record<string, any>
   ) => {
-    if (!id && !traits) {
+    let id: string | undefined;
+    let resolvedTraits: Record<string, any> | undefined;
+  
+    if (typeof idOrTraits === 'string') {
+      id = idOrTraits;
+      resolvedTraits = traits;
+    } else if (typeof idOrTraits === 'object') {
+      resolvedTraits = idOrTraits;
+    }
+
+    if (!id && !resolvedTraits) {
       throw new Error('You must provide an id or traits to identify');
     }
-    return NativeCustomerIO.identify(id, traits);
+    return NativeCustomerIO.identify(id, resolvedTraits);
   };
 
   static readonly clearIdentify = async () => {
