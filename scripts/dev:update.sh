@@ -36,4 +36,11 @@ echo "Installing RN SDK"
 # Update only the RN SDK because that's faster then updating all. 
 # using --no-audit to make update faster. 
 # using --verbose to find ways to make command run faster.
-npm update customerio-reactnative --verbose --no-audit
+# Check if running in CI environment to use --package-lock-only to only update package-lock.json file.
+if [ "$CI" = "true" ]; then
+  echo "Running in CI, using --package-lock-only"
+  npm update customerio-reactnative --verbose --no-audit --package-lock-only
+else
+  echo "Running locally, without --package-lock-only"
+  npm update customerio-reactnative --verbose --no-audit
+fi
