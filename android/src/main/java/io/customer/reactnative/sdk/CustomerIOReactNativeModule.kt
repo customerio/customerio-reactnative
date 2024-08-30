@@ -52,41 +52,25 @@ class NativeCustomerIOModule(
             val builder = CustomerIOBuilder(
                 applicationContext = reactApplicationContext.applicationContext as Application,
                 cdpApiKey = cdpApiKey.toString()
-            )
+            ).apply {
 
-            // Auto track device attributes
-            (packageConfig[Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES] as? Boolean)?.let {
-                builder.autoTrackDeviceAttributes(it)
-            }
-            // Migration site id for migration
-            (packageConfig[Keys.Config.MIGRATION_SITE_ID] as? String)?.let {
-                builder.migrationSiteId(it)
-            }
-            // Set region for workspace
-            (packageConfig[Keys.Config.REGION] as? String)?.let {
-                builder.region(Region.getRegion(it))
-            }
-            // Set log level
-            builder.logLevel(CioLogLevel.getLogLevel(logLevel))
-
-            // Flush at
-            (packageConfig[Keys.Config.FLUSH_AT] as? Int )?.let {
-                builder.flushAt(it)
-            }
-
-            // Flush at
-            (packageConfig[Keys.Config.FLUSH_INTERVAL] as? Int )?.let {
-                builder.flushInterval(it)
-            }
-
-            // To track application lifecycle events
-            (packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean )?.let {
-                builder.trackApplicationLifecycleEvents(it)
-            }
-
+            packageConfig[Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES] as? Boolean
+                ?.let { autoTrackDeviceAttributes(it) }
+            packageConfig[Keys.Config.MIGRATION_SITE_ID] as? String
+                ?.let { migrationSiteId(it) }
+            packageConfig[Keys.Config.REGION] as? String
+                ?.let { region(Region.getRegion(it)) }
+            logLevel(CioLogLevel.getLogLevel(logLevel))
+            packageConfig[Keys.Config.FLUSH_AT] as? Int
+                ?.let { flushAt(it) }
+            packageConfig[Keys.Config.FLUSH_INTERVAL] as? Int
+                ?.let { flushInterval(it) }
+            packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean
+                ?.let { trackApplicationLifecycleEvents(it) }
             // TODO: Implement pushClickBehaviorAndroid when initializing messagingModule
-            builder.build()
+            }
             logger.info("Customer.io instance initialized successfully from app")
+
         }
         catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
