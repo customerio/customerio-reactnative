@@ -31,7 +31,7 @@ export class CustomerIO {
     // if (config.logLevel && config.logLevel !== CioLogLevel.None) {
     //   NativeLoggerListener.initialize();
     // }
-    let logLevel = config.logLevel?.valueOf() ?? CioLogLevel.None.valueOf();
+    let logLevel = config.logLevel?.valueOf() ?? CioLogLevel.Error.valueOf();
     NativeCustomerIO.initialize(config, logLevel);
     CustomerIO.initialized = true;
   };
