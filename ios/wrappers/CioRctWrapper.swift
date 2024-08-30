@@ -37,6 +37,10 @@ class CioRctWrapper: NSObject {
     @objc
     func identify(_ userId: String? = nil, traits: [String: Any]? = nil) {
         guard let userId = userId else {
+            if let traits = traits {
+                let codableDict = traits.mapValues { AnyCodable($0) }
+                    CustomerIO.shared.identify(traits: codableDict)
+            }
             // TODO: Add log when logger feature is implemented
             return
         }
