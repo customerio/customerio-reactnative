@@ -16,9 +16,11 @@ CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user) => {
-  CustomerIO.identify(user.email, {
-    first_name: user.name,
-    email: user.email,
+  CustomerIO.identify({ id: user.email,
+    traits: {
+        first_name: user.name,
+        email: user.email,
+      }
   });
 };
 
