@@ -1111,7 +1111,9 @@ PODS:
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNScreens (3.24.0):
+  - RNScreens (3.34.0):
+    - glog
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
     - React-RCTImage
   - RNSnackbar (2.6.2):
@@ -1390,7 +1392,7 @@ SPEC CHECKSUMS:
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDeviceInfo: 59344c19152c4b2b32283005f9737c5c64b42fba
   RNGestureHandler: 1155b1898ceddefeebf77792927360d44fe11e77
-  RNScreens: b21dc57dfa2b710c30ec600786a3fc223b1b92e7
+  RNScreens: 29418ceffb585b8f0ebd363de304288c3dce8323
   RNSnackbar: 3727b42bf6c4314a53c18185b5203e915a4ab020
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Sovran: f8212bb3855042a24689a73ea0219ca5295235da
