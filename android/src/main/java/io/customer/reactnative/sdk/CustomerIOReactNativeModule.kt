@@ -83,6 +83,10 @@ class NativeCustomerIOModule(
 
     @ReactMethod
     fun identify(identifier: String?, attributes: ReadableMap?) {
+        if (identifier == null && attributes == null) {
+            logger.error("Please provide either an ID or traits to identify.")
+            return
+        }
         identifier?.let {
             customerIO()?.identify(identifier, attributes.toMap())
         }?: run {
