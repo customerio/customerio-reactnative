@@ -47,28 +47,27 @@ class NativeCustomerIOModule(
         logLevel: String) {
         val packageConfig = configJson.toMap()
         val cdpApiKey = packageConfig[Keys.Config.CDP_API_KEY]
-
         try {
             val builder = CustomerIOBuilder(
                 applicationContext = reactApplicationContext.applicationContext as Application,
                 cdpApiKey = cdpApiKey.toString()
             ).apply {
 
-            packageConfig[Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES] as? Boolean
+                (packageConfig[Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES] as? Boolean)
                 ?.let { autoTrackDeviceAttributes(it) }
-            packageConfig[Keys.Config.MIGRATION_SITE_ID] as? String
+                (packageConfig[Keys.Config.MIGRATION_SITE_ID] as? String)
                 ?.let { migrationSiteId(it) }
-            packageConfig[Keys.Config.REGION] as? String
+                (packageConfig[Keys.Config.REGION] as? String)
                 ?.let { region(Region.getRegion(it)) }
-            logLevel(CioLogLevel.getLogLevel(logLevel))
-            packageConfig[Keys.Config.FLUSH_AT] as? Int
+                logLevel(CioLogLevel.getLogLevel(logLevel))
+                (packageConfig[Keys.Config.FLUSH_AT] as? Int)
                 ?.let { flushAt(it) }
-            packageConfig[Keys.Config.FLUSH_INTERVAL] as? Int
+                (packageConfig[Keys.Config.FLUSH_INTERVAL] as? Int)
                 ?.let { flushInterval(it) }
-            packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean
+                (packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean)
                 ?.let { trackApplicationLifecycleEvents(it) }
             // TODO: Implement pushClickBehaviorAndroid when initializing messagingModule
-            }
+            }.build()
             logger.info("Customer.io instance initialized successfully from app")
 
         }

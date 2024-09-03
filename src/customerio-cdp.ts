@@ -1,5 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import { CioLogLevel, type CioConfig } from './cio-config';
+import {type IdentifyParams } from './cio-params';
 // TODO: Import the CustomerIOInAppMessaging, NativeLoggerListener and CustomerIOPushMessaging classes from their respective files
 // when they are implemented.
 // import { CustomerIOInAppMessaging } from './customerio-inapp';
@@ -36,10 +37,8 @@ export class CustomerIO {
     CustomerIO.initialized = true;
   };
 
-  static readonly identify = async (
-    id?: string,
-    traits?: Record<string, any>
-  ) => {
+  static readonly identify = async ({ id, traits }: IdentifyParams = {}) => {
+    CustomerIO.assrtInitialized();
     if (!id && !traits) {
       throw new Error('You must provide an id or traits to identify');
     }
