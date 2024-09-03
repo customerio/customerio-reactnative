@@ -53,7 +53,6 @@ class CioRctWrapper: NSObject {
     @objc
     func screen(_ title: String, properties: [String: Any]?) {
         CustomerIO.shared.screen(title: title, properties: properties)
-        flush()
     }
     
     @objc
