@@ -82,8 +82,12 @@ class NativeCustomerIOModule(
     }
 
     @ReactMethod
-    fun identify(identifier: String, attributes: ReadableMap?) {
-        customerIO()?.identify(identifier, attributes.toMap())
+    fun identify(identifier: String?, attributes: ReadableMap?) {
+        identifier?.let {
+            customerIO()?.identify(identifier, attributes.toMap())
+        }?: run {
+            customerIO()?.profileAttributes = attributes.toMap()
+        }
     }
 
     @ReactMethod
