@@ -4,12 +4,6 @@ import CioMessagingPush
 import UserNotifications
 import React
 
-func flush() {
-#if DEBUG
-    CustomerIO.shared.flush()
-#endif
-}
-
 @objc(CioRctWrapper)
 class CioRctWrapper: NSObject {
     
@@ -28,7 +22,6 @@ class CioRctWrapper: NSObject {
                     MessagingInApp.shared.setEventListener(self)
                 }
             }
-            flush()
         } catch {
             // TODO: Add log when logger feature is implemented
         }
@@ -45,37 +38,31 @@ class CioRctWrapper: NSObject {
         } else {
             // TODO: Add log when logger feature is implemented
         }
-        flush()
     }
     
     @objc
     func clearIdentify() {
         CustomerIO.shared.clearIdentify()
-        flush()
     }
     
     @objc
     func track(_ name: String, properties: [String: Any]?) {
         CustomerIO.shared.track(name: name, properties: properties)
-        flush()
     }
     
     @objc
     func screen(_ title: String, category: String?, properties: [String: Any]?) {
         CustomerIO.shared.screen(title: title, category: category, properties: properties)
-        flush()
     }
     
     @objc
     func setProfileAttributes(_ attrs: [String: Any]) {
         CustomerIO.shared.profileAttributes = attrs
-        flush()
     }
     
     @objc
     func setDeviceAttributes(_ attrs: [String: Any]) {
         CustomerIO.shared.deviceAttributes = attrs
-        flush()
     }
 }
 

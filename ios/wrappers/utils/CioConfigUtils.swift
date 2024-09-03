@@ -70,9 +70,9 @@ struct AnyCodable: Codable {
         
         if let value = try? container.decode(String.self) {
             self.value = value
-        } else if let value = try? container.decode(Int.self) {
-            self.value = value
         } else if let value = try? container.decode(Double.self) {
+            self.value = value
+        } else if let value = try? container.decode(Int.self) {
             self.value = value
         } else if let value = try? container.decode(Bool.self) {
             self.value = value
