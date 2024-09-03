@@ -59,7 +59,7 @@ func cioInitializeConfig(from config: RCTCioConfig, logLevel: String?) -> CioCon
 
 // To convert dictionary to Codable
 struct AnyCodable: Codable {
-    var value: Any
+    let value: Any
     
     init(_ value: Any) {
         self.value = value
