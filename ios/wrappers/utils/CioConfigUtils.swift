@@ -80,6 +80,8 @@ struct AnyCodable: Codable {
             self.value = value.mapValues { $0.value }
         } else if let value = try? container.decode([AnyCodable].self) {
             self.value = value.map { $0.value }
+        } else if container.decodeNil() {
+            self.value = NSNull()
         } else {
             throw DecodingError.typeMismatch(AnyCodable.self, DecodingError.Context(
                 codingPath: decoder.codingPath,
@@ -99,10 +101,12 @@ struct AnyCodable: Codable {
             try container.encode(value)
         } else if let value = value as? Bool {
             try container.encode(value)
-        } else if let value = value as? [String: AnyCodable] {
-            try container.encode(value)
-        } else if let value = value as? [AnyCodable] {
-            try container.encode(value)
+        } else if let value = value as? [String: Any] {
+            try container.encode(value.mapValues { AnyCodable($0) })
+        } else if let value = value as? [Any] {
+            try container.encode(value.map { AnyCodable($0) })
+        } else if value is NSNull {
+            try container.encodeNil()
         } else {
             throw EncodingError.invalidValue(value, EncodingError.Context(
                 codingPath: encoder.codingPath,

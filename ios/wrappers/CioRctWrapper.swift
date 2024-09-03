@@ -36,17 +36,15 @@ class CioRctWrapper: NSObject {
     
     @objc
     func identify(_ userId: String? = nil, traits: [String: Any]? = nil) {
-        guard let userId = userId else {
-            // If user id is missing but traits are provided
-            // then anonymously identify the user
-            if let traits = traits {
-                let codableDict = traits.mapValues { AnyCodable($0) }
-                    CustomerIO.shared.identify(traits: codableDict)
-            }
+        let codableTraits = traits?.mapValues { AnyCodable($0) }
+        
+        if let userId = userId {
+            CustomerIO.shared.identify(userId: userId, traits: traits)
+        } else if codableTraits != nil {
+            CustomerIO.shared.identify(traits: codableTraits!)
+        } else {
             // TODO: Add log when logger feature is implemented
-            return
         }
-        CustomerIO.shared.identify(userId: userId, traits: traits)
         flush()
     }
     
