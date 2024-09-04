@@ -24,21 +24,23 @@ export class NativeLoggerListener {
     bridge.addListener(
       'CioLogEvent',
       (event: { logLevel: CioLogLevel; message: string }) => {
-        // if we just use console.log, it will log to the JS side but it will prevent RN default behavior of redirecting logs to the native side
-        // doing it async allows to be logged to the JS side and then to the native side
+        // Using console.log will log to the JavaScript side but prevent
+        // React Native’s default behavior of redirecting logs to the native side.
+        // By doing it asynchronously, we ensure the logs are captured on both
+        // the JavaScript and native ends.
         async function log() {
           switch (event.logLevel) {
             case CioLogLevel.Debug:
-              console.debug(event.message);
+              console.debug("[CIO] " + event.message);
               break;
             case CioLogLevel.Info:
-              console.info(event.message);
+              console.info("[CIO] " + event.message);
               break;
             case CioLogLevel.Error:
-              console.error(event.message);
+              console.error("[CIO] " + event.message);
               break;
             default:
-              console.log(event);
+              console.log("[CIO] " + event);
               break;
           }
         }
