@@ -62,14 +62,13 @@ export class CustomerIO {
 
   static readonly screen = async (
     title: string,
-    category?: string,
     properties?: Record<string, any>
   ) => {
     CustomerIO.assrtInitialized();
     if (!title) {
       throw new Error('You must provide a name to screen');
     }
-    return NativeCustomerIO.screen(title, category, properties);
+    return NativeCustomerIO.screen(title, properties);
   };
 
   static readonly setProfileAttributes = async (
