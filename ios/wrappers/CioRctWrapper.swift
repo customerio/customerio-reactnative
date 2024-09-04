@@ -8,10 +8,14 @@ import React
 class CioRctWrapper: NSObject {
     
     @objc var moduleRegistry: RCTModuleRegistry!
+    private var logger: CioLogger!
         
     @objc
     func initialize(_ configJson: AnyObject, logLevel: String) {
         do {
+            logger = CioLoggerWrapper.getInstance(moduleRegistry: moduleRegistry, logLevel: CioLogLevel(rawValue: logLevel) ?? .none)
+
+            logger.debug("Initializing CIO with config: \(configJson)")
             let rtcConfig = try RCTCioConfig.from(configJson)
             let cioInitConfig = cioInitializeConfig(from: rtcConfig, logLevel: logLevel)
             CustomerIO.initialize(withConfig: cioInitConfig.cdp)
