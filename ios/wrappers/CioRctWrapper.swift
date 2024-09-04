@@ -15,7 +15,7 @@ class CioRctWrapper: NSObject {
         do {
             logger = CioLoggerWrapper.getInstance(moduleRegistry: moduleRegistry, logLevel: CioLogLevel(rawValue: logLevel) ?? .none)
 
-            logger.debug("Initializing CIO with config: \(configJson)")
+            logger.debug("Initializing Customer.io SDK with config: \(configJson)")
             let rtcConfig = try RCTCioConfig.from(configJson)
             let cioInitConfig = cioInitializeConfig(from: rtcConfig, logLevel: logLevel)
             CustomerIO.initialize(withConfig: cioInitConfig.cdp)
@@ -27,7 +27,7 @@ class CioRctWrapper: NSObject {
                 }
             }
         } catch {
-            // TODO: Add log when logger feature is implemented
+            logger.error("Initializing Customer.io SDK failed with error \(error)")
         }
     }
     
@@ -40,7 +40,7 @@ class CioRctWrapper: NSObject {
         } else if codableTraits != nil {
             CustomerIO.shared.identify(traits: codableTraits!)
         } else {
-            // TODO: Add log when logger feature is implemented
+            logger.error("Provide id or traits to identify a user profile.")
         }
     }
     
