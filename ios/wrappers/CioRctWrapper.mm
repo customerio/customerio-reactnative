@@ -7,7 +7,7 @@ RCT_EXTERN_METHOD(initialize:(id)config logLevel:(NSString *)logLevel)
 RCT_EXTERN_METHOD(identify:(NSString *)identify traits:(NSDictionary *)traits)
 RCT_EXTERN_METHOD(clearIdentify)
 RCT_EXTERN_METHOD(track:(NSString *)name properties:(NSDictionary *)properties)
-RCT_EXTERN_METHOD(screen:(NSString *)title category: (NSString *)category properties:(NSDictionary *))
+RCT_EXTERN_METHOD(screen:(NSString *)title properties:(NSDictionary *))
 RCT_EXTERN_METHOD(setProfileAttributes: (NSDictionary *)attributes)
 RCT_EXTERN_METHOD(setDeviceAttributes: (NSDictionary *)attributes)
 

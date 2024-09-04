@@ -51,8 +51,8 @@ class CioRctWrapper: NSObject {
     }
     
     @objc
-    func screen(_ title: String, category: String?, properties: [String: Any]?) {
-        CustomerIO.shared.screen(title: title, category: category, properties: properties)
+    func screen(_ title: String, properties: [String: Any]?) {
+        CustomerIO.shared.screen(title: title, properties: properties)
     }
     
     @objc
