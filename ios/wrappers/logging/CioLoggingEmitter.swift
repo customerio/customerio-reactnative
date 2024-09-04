@@ -8,9 +8,14 @@ typealias CioLogger = CioInternalCommon.Logger
 class CioLoggingEmitter: RCTEventEmitter {
     
     fileprivate static var eventName = "CioLogEvent"
-
+    
     fileprivate var hasObservers = false
-        
+    
+    // Requires adding requiresMainQueueSetup method
+    // since it overrides init
+    @objc static override func requiresMainQueueSetup() -> Bool {
+        return true // Return true if the module must be initialized on the main queue
+    }
     override func startObserving() {
         hasObservers = true
     }
@@ -18,7 +23,7 @@ class CioLoggingEmitter: RCTEventEmitter {
     override func stopObserving() {
         hasObservers = false
     }
-
+    
     override func supportedEvents() -> [String] {
         [Self.eventName]
     }
