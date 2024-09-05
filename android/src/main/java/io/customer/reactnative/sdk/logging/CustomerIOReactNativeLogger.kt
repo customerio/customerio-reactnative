@@ -3,28 +3,19 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.core.util.Logger
 
-class CustomerIOReactNativeLoggingEmitter(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-
+class CustomerIOReactNativeLoggingEmitter(
+    private val reactContext: ReactApplicationContext,
+) : ReactContextBaseJavaModule(reactContext) {
     companion object {
         const val EVENT_NAME = "CioLogEvent"
     }
     private var listenerCount = 0
-    private var hasObservers = false
 
     override fun getName(): String {
         return "CioLoggingEmitter"
-    }
-
-    override fun initialize() {
-        hasObservers = true
-    }
-
-    override fun onCatalystInstanceDestroy() {
-        hasObservers = false
     }
 
     @ReactMethod
@@ -37,16 +28,10 @@ class CustomerIOReactNativeLoggingEmitter(reactContext: ReactApplicationContext)
         listenerCount -= count
     }
 
-    override fun getConstants(): MutableMap<String, Any> {
-        return hashMapOf("supportedEvents" to listOf(EVENT_NAME))
-    }
-
-    fun sendEvent(logLevel: String, message: String) {
-        if (hasObservers) {
-            reactApplicationContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                .emit(EVENT_NAME, mapOf("logLevel" to logLevel, "message" to message))
-        }
+    fun sendEvent(eventName: String, params: String) {
+        reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit(eventName, params)
     }
 }
 
