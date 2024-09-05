@@ -12,7 +12,7 @@ class CustomerIOReactNativeLoggingEmitter(reactContext: ReactApplicationContext)
     companion object {
         const val EVENT_NAME = "CioLogEvent"
     }
-
+    private var listenerCount = 0
     private var hasObservers = false
 
     override fun getName(): String {
@@ -28,13 +28,13 @@ class CustomerIOReactNativeLoggingEmitter(reactContext: ReactApplicationContext)
     }
 
     @ReactMethod
-    fun startObserving() {
-        hasObservers = true
+    fun addListener(eventName: String) {
+        listenerCount++
     }
 
     @ReactMethod
-    fun stopObserving() {
-        hasObservers = false
+    fun removeListeners(count: Int) {
+        listenerCount -= count
     }
 
     override fun getConstants(): MutableMap<String, Any> {
