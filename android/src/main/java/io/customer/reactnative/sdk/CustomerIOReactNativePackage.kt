@@ -10,9 +10,11 @@ class CustomerIOReactNativePackage : ReactPackage {
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
         val pushMessagingModule = RNCIOPushMessaging(reactContext)
         val inAppMessagingModule = RNCIOInAppMessaging(reactContext)
+        val loggerModule = CustomerIOReactNativeLoggingEmitter(reactContext)
         return listOf(
             inAppMessagingModule,
             pushMessagingModule,
+            loggerModule,
             NativeCustomerIOModule(
                 reactContext = reactContext,
                 pushMessagingModule = pushMessagingModule,
