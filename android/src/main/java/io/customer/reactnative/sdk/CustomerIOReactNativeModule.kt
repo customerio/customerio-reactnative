@@ -8,6 +8,7 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.logging.CustomerIOReactNativeLoggingWrapper
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
@@ -18,12 +19,13 @@ import io.customer.sdk.data.model.Region
 
 
 class NativeCustomerIOModule(
-    reactContext: ReactApplicationContext,
+    private val reactContext: ReactApplicationContext,
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     private val logger: Logger
-        get() = SDKComponent.logger
+        get() = CustomerIOReactNativeLoggingWrapper.getInstance(reactContext, CioLogLevel.DEBUG)
+        //SDKComponent.logger
 
     // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
     private val customerIOInstance: CustomerIO?
