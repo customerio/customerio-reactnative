@@ -24,7 +24,6 @@ export class NativeLoggerListener {
     bridge.addListener(
       'CioLogEvent',
       (event: { logLevel: CioLogLevel; message: string }) => {
-        console.log("I received the value here-->", event.message) // "someValue"
         // Using console.log will log to the JavaScript side but prevent
         // React Native’s default behavior of redirecting logs to the native side.
         // By doing it asynchronously, we ensure the logs are captured on both
