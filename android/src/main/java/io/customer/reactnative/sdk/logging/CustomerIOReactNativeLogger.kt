@@ -34,6 +34,8 @@ class CustomerIOReactNativeLoggingEmitter(
         listenerCount -= count
     }
 
+    // Not in use currently, check if we need it or not
+    // If not then remove EVENT_NAME as well 
     fun sendEvent(eventName: String, params: String) {
         println("I got control here")
         reactContext
@@ -41,26 +43,6 @@ class CustomerIOReactNativeLoggingEmitter(
             .emit(EVENT_NAME, params)
     }
 }
-
-/*class LoggerEmitter(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-
-    companion object {
-        const val EVENT_NAME = "SDKLogEvent"
-    }
-
-    override fun getName(): String {
-        return "LoggerEmitter"
-    }
-
-    // Send logs to React Native
-    fun sendLog(logLevel: String, message: String) {
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit(EVENT_NAME, mapOf("logLevel" to logLevel, "message" to message))
-    }
-}*/
-
-private const val s = "Hello, Emit"
 
 class CustomerIOReactNativeLoggingWrapper private constructor(
     private var moduleRegistry: ReactApplicationContext,
@@ -74,33 +56,27 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
         }
     }
 
-//    fun setLogLevel(level: CioLogLevel) {
-//        logLevel = level
-//    }
-
     override fun debug(message: String) {
         println("Hello, debug!")
         emit(message, CioLogLevel.DEBUG)
     }
 
     override fun info(message: String) {
-        println("Hello, debug!")
+        println("Hello, info!")
         emit(message, CioLogLevel.INFO)
     }
 
     override fun error(message: String) {
-        println("Hello, debug!")
+        println("Hello, error!")
         emit(message, CioLogLevel.ERROR)
     }
 
     private fun emit(message: String, level: CioLogLevel) {
         println("Hello, Emit!")
         if (shouldEmit(level)) {
-//            val emitter = moduleRegistry.getNativeModule(CustomerIOReactNativeLoggingEmitter::class.java)
-//            emitter?.sendEvent(level.name, message)
 
             val data = buildMap {
-                put("logLevel", CioLogLevel.DEBUG)
+                put("logLevel", "info")
                 put("message", message)
             }
 
