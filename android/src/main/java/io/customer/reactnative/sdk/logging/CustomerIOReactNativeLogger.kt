@@ -37,7 +37,6 @@ class CustomerIOReactNativeLoggingEmitter(
     }
 
     fun sendEvent(params: WritableMap) {
-        println("I got control here")
         reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit(EVENT_NAME, params)
@@ -60,26 +59,21 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
     }
 
     override fun debug(message: String) {
-        println("Hello, debug!")
         emit(message, CioLogLevel.DEBUG)
     }
 
     override fun info(message: String) {
-        println("Hello, info!")
         emit(message, CioLogLevel.INFO)
     }
 
     override fun error(message: String) {
-        println("Hello, error!")
         emit(message, CioLogLevel.ERROR)
     }
 
     private fun emit(message: String, level: CioLogLevel) {
-        println("Hello, Emit!")
         if (shouldEmit(level)) {
-
             val data = buildMap {
-                put("logLevel", "info")
+                put("logLevel", level.name.lowercase())
                 put("message", message)
             }
             emitter?.sendEvent(Arguments.makeNativeMap(data))
@@ -87,7 +81,6 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
     }
 
     private fun shouldEmit(level: CioLogLevel): Boolean {
-        println("Hello, shouldEmit!")
         return when (logLevel) {
             CioLogLevel.NONE -> false
             CioLogLevel.ERROR -> level == CioLogLevel.ERROR
@@ -95,5 +88,4 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
             CioLogLevel.DEBUG -> true
         }
     }
-
 }
