@@ -12,7 +12,6 @@ import io.customer.reactnative.sdk.logging.CustomerIOReactNativeLoggingWrapper
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
-import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.core.util.Logger
 import io.customer.sdk.data.model.Region
@@ -23,9 +22,7 @@ class NativeCustomerIOModule(
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
-    private val logger: Logger
-        get() = CustomerIOReactNativeLoggingWrapper.getInstance(reactContext, CioLogLevel.DEBUG)
-        //SDKComponent.logger
+    private lateinit var logger: Logger
 
     // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
     private val customerIOInstance: CustomerIO?
@@ -47,6 +44,8 @@ class NativeCustomerIOModule(
     fun initialize(
         configJson: ReadableMap,
         logLevel: String) {
+
+        logger = CustomerIOReactNativeLoggingWrapper.getInstance(reactContext, CioLogLevel.getLogLevel(logLevel))
         val packageConfig = configJson.toMap()
         val cdpApiKey = packageConfig[Keys.Config.CDP_API_KEY]
         try {
