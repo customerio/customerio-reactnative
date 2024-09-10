@@ -44,31 +44,23 @@ class CustomerIOReactNativeLoggingEmitter(
 }
 
 class CustomerIOReactNativeLoggingWrapper private constructor(
-    private var moduleRegistry: ReactApplicationContext,
+    private var reactContext: ReactApplicationContext,
     override var logLevel: CioLogLevel): Logger {
 
     private val emitter: CustomerIOReactNativeLoggingEmitter?
-        get() = moduleRegistry?.getNativeModule(CustomerIOReactNativeLoggingEmitter::class.java)
+        get() = reactContext?.getNativeModule(CustomerIOReactNativeLoggingEmitter::class.java)
 
     companion object {
-        fun getInstance(moduleRegistry: ReactApplicationContext, logLevel: CioLogLevel): CustomerIOReactNativeLoggingWrapper {
-            val instance = CustomerIOReactNativeLoggingWrapper(moduleRegistry, logLevel)
-            SDKComponent.overrideDependency<Logger>(instance)
-            return instance
+        fun getInstance(reactContext: ReactApplicationContext, logLevel: CioLogLevel): CustomerIOReactNativeLoggingWrapper {
+            return CustomerIOReactNativeLoggingWrapper(reactContext, logLevel).also {
+                SDKComponent.overrideDependency<Logger>(it)
+            }
         }
     }
 
-    override fun debug(message: String) {
-        emit(message, CioLogLevel.DEBUG)
-    }
-
-    override fun info(message: String) {
-        emit(message, CioLogLevel.INFO)
-    }
-
-    override fun error(message: String) {
-        emit(message, CioLogLevel.ERROR)
-    }
+    override fun debug(message: String) = emit(message, CioLogLevel.DEBUG)
+    override fun info(message: String) = emit(message, CioLogLevel.INFO)
+    override fun error(message: String) = emit(message, CioLogLevel.ERROR)
 
     private fun emit(message: String, level: CioLogLevel) {
         if (shouldEmit(level)) {
