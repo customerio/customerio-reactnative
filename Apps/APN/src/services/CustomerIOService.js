@@ -10,8 +10,9 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     }
  };
  if (sdkConfig.debugMode) {
-  config.logLevel = CioLogLevel.debug;
+  config.logLevel = CioLogLevel.Debug;
 }
+
 CustomerIO.initialize(config)
 };
 
