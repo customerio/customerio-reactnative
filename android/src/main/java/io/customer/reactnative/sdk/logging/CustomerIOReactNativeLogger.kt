@@ -3,11 +3,13 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.WritableMap
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.customer.sdk.core.util.CioLogLevel
-import io.customer.sdk.core.util.Logger
 import kotlin.collections.buildMap
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.core.util.Logger
 
 @ReactModule(name = CustomerIOReactNativeLoggingEmitter.NAME)
 class CustomerIOReactNativeLoggingEmitter(
@@ -34,9 +36,7 @@ class CustomerIOReactNativeLoggingEmitter(
         listenerCount -= count
     }
 
-    // Not in use currently, check if we need it or not
-    // If not then remove EVENT_NAME as well 
-    fun sendEvent(eventName: String, params: String) {
+    fun sendEvent(params: WritableMap) {
         println("I got control here")
         reactContext
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
@@ -48,10 +48,13 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
     private var moduleRegistry: ReactApplicationContext,
     override var logLevel: CioLogLevel): Logger {
 
+    private val emitter: CustomerIOReactNativeLoggingEmitter?
+        get() = moduleRegistry?.getNativeModule(CustomerIOReactNativeLoggingEmitter::class.java)
+
     companion object {
         fun getInstance(moduleRegistry: ReactApplicationContext, logLevel: CioLogLevel): CustomerIOReactNativeLoggingWrapper {
             val instance = CustomerIOReactNativeLoggingWrapper(moduleRegistry, logLevel)
-//            DIGraphShared.shared.override(instance, CioLogger::class.java)
+            SDKComponent.overrideDependency<Logger>(instance)
             return instance
         }
     }
@@ -79,10 +82,7 @@ class CustomerIOReactNativeLoggingWrapper private constructor(
                 put("logLevel", "info")
                 put("message", message)
             }
-
-            moduleRegistry
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                .emit("CioLogEvent", Arguments.makeNativeMap(data))
+            emitter?.sendEvent(Arguments.makeNativeMap(data))
         }
     }
 
