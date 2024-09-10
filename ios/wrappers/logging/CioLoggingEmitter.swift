@@ -36,7 +36,7 @@ class CioLoggingEmitter: RCTEventEmitter {
 
 class CioLoggerWrapper: CioLogger {
     private(set) var logLevel: CioLogLevel
-    private var moduleRegistry: RCTModuleRegistry
+    private weak var moduleRegistry: RCTModuleRegistry?
     
     static func getInstance (moduleRegistry: RCTModuleRegistry, logLevel: CioLogLevel) -> CioLogger {
         if let wrapper = DIGraphShared.shared.logger as? Self  {
@@ -90,7 +90,7 @@ class CioLoggerWrapper: CioLogger {
     }
     
     private var emitter: CioLoggingEmitter? {
-        moduleRegistry.module(forName: "CioLoggingEmitter") as? CioLoggingEmitter
+        moduleRegistry?.module(forName: "CioLoggingEmitter") as? CioLoggingEmitter
     }
     
 }
