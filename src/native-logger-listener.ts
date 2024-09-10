@@ -19,8 +19,10 @@ const CioLoggingEmitter = NativeModules.CioLoggingEmitter
     );
 
 export class NativeLoggerListener {
+  
   static initialize() {
     const bridge = new NativeEventEmitter(CioLoggingEmitter);
+    const loggerPrefix = "[CIO] ";
     bridge.addListener(
       'CioLogEvent',
       (event: { logLevel: CioLogLevel; message: string }) => {
@@ -31,16 +33,16 @@ export class NativeLoggerListener {
         async function log() {
           switch (event.logLevel) {
             case CioLogLevel.Debug:
-              console.debug("[CIO] " + event.message);
+              console.debug(loggerPrefix + event.message);
               break;
             case CioLogLevel.Info:
-              console.info("[CIO] " + event.message);
+              console.info(loggerPrefix + event.message);
               break;
             case CioLogLevel.Error:
-              console.error("[CIO] " + event.message);
+              console.error(loggerPrefix + event.message);
               break;
             default:
-              console.log("[CIO] " + event);
+              console.log(loggerPrefix + event);
               break;
           }
         }
