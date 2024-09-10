@@ -8,22 +8,21 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.logging.CustomerIOReactNativeLoggingWrapper
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
-import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.core.util.Logger
 import io.customer.sdk.data.model.Region
 
 
 class NativeCustomerIOModule(
-    reactContext: ReactApplicationContext,
+    private val reactContext: ReactApplicationContext,
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
-    private val logger: Logger
-        get() = SDKComponent.logger
+    private lateinit var logger: Logger
 
     // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
     private val customerIOInstance: CustomerIO?
@@ -45,6 +44,8 @@ class NativeCustomerIOModule(
     fun initialize(
         configJson: ReadableMap,
         logLevel: String) {
+
+        logger = CustomerIOReactNativeLoggingWrapper.getInstance(reactContext, CioLogLevel.getLogLevel(logLevel))
         val packageConfig = configJson.toMap()
         val cdpApiKey = packageConfig[Keys.Config.CDP_API_KEY]
         try {
