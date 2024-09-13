@@ -9,18 +9,18 @@ class CioRctWrapper: NSObject {
     
     @objc var moduleRegistry: RCTModuleRegistry!
     private var logger: CioLogger!
-        
+    
     @objc
     func initialize(_ configJson: AnyObject, logLevel: String) {
         do {
             logger = CioLoggerWrapper.getInstance(moduleRegistry: moduleRegistry, logLevel: CioLogLevel(rawValue: logLevel) ?? .none)
-
+            
             logger.debug("Initializing Customer.io SDK with config: \(configJson)")
             let rtcConfig = try RCTCioConfig.from(configJson)
             let cioInitConfig = cioInitializeConfig(from: rtcConfig, logLevel: logLevel)
             CustomerIO.initialize(withConfig: cioInitConfig.cdp)
             if let inAppConfig = cioInitConfig.inApp {
-                    // In app initializes UIView(s) which would crash if run from non-UI queues
+                // In app initializes UIView(s) which would crash if run from non-UI queues
                 DispatchQueue.main.async {
                     MessagingInApp.initialize(withConfig: inAppConfig)
                     MessagingInApp.shared.setEventListener(self)
@@ -67,6 +67,16 @@ class CioRctWrapper: NSObject {
     @objc
     func setDeviceAttributes(_ attrs: [String: Any]) {
         CustomerIO.shared.deviceAttributes = attrs
+    }
+    
+    @objc
+    func registerDeviceToken(_ token: String){
+        CustomerIO.shared.registerDeviceToken(token)
+    }
+    
+    @objc
+    func deleteDeviceToken(){
+        CustomerIO.shared.deleteDeviceToken()
     }
 }
 
