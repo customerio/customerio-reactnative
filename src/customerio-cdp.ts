@@ -81,6 +81,19 @@ export class CustomerIO {
   ) => {
     return NativeCustomerIO.setDeviceAttributes(attributes);
   };
+  
+  static readonly registerDeviceToken = async (
+    token: string
+  ) => {
+    if (token === null || token === undefined) {
+      throw new Error('You must provide a token to registerDeviceToken');
+    }
+    NativeCustomerIO.registerDeviceToken(token);
+  };
+
+  static readonly deleteDeviceToken = async () => {
+    NativeCustomerIO.deleteDeviceToken();
+  };
 
   static readonly isInitialized = () => CustomerIO.initialized;
 
