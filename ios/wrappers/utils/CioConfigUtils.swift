@@ -16,6 +16,7 @@ struct RCTCioConfig: Decodable {
     let siteId: String?
     let region: Region?
     let trackApplicationLifecycleEvents: Bool?
+    let autoTrackDeviceAttributes: Bool?
     let enableInApp: Bool?
     let qa: QASettings?
     
@@ -43,6 +44,7 @@ func cioInitializeConfig(from config: RCTCioConfig, logLevel: String?) -> CioCon
     let cioLogLevel = CioLogLevel(rawValue: logLevel ?? "no log level")
     ifNotNil(config.siteId, thenPassItTo: cdpConfigBuilder.migrationSiteId)
     ifNotNil(config.region, thenPassItTo: cdpConfigBuilder.region)
+    ifNotNil(config.autoTrackDeviceAttributes, thenPassItTo: cdpConfigBuilder.autoTrackDeviceAttributes)
     ifNotNil(config.trackApplicationLifecycleEvents, thenPassItTo: cdpConfigBuilder.trackApplicationLifecycleEvents)
     ifNotNil(cioLogLevel, thenPassItTo: cdpConfigBuilder.logLevel)
     ifNotNil(config.qa?.cdnHost, thenPassItTo: cdpConfigBuilder.cdnHost)
