@@ -5,6 +5,7 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     cdpApiKey: Env.cdpApiKey, // Mandatory
     migrationSiteId: Env.siteId, // For migration
     trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
+    autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
     inApp: {
 	    siteId: 'site_id',
     }
