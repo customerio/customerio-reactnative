@@ -86,7 +86,7 @@ export class CustomerIO {
     token: string
   ) => {
     if (token === null || token === undefined) {
-      throw new Error('You must provide a token to registerDeviceToken');
+      throw new Error('You must provide a valid token to register device token.');
     }
     NativeCustomerIO.registerDeviceToken(token);
   };
