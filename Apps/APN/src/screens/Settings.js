@@ -213,6 +213,13 @@ const Settings = ({ navigation, route }) => {
             contentDesc="App Lifecycle Events Tracking Toggle"
           />
         </View>
+        <SwitchField
+            style={settingsStyles.switchRow}
+            label="Auto track device attributes"
+            onValueChange={() => setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)}
+            value={isTrackDeviceAttributesEnabled}
+            contentDesc="Auto track device attributes Toggle"
+          />
         <View style={settingsStyles.section}>
         <Text style={settingsStyles.sectionLabel}>Development</Text>
           <SwitchField
