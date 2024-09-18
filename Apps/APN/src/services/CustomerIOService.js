@@ -4,16 +4,16 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
     cdpApiKey: Env.cdpApiKey, // Mandatory
     migrationSiteId: Env.siteId, // For migration
-    trackApplicationLifecycleEvents: true, // TODO: Update this to a configurable property based on settings
+    trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
     inApp: {
 	    siteId: 'site_id',
     }
  };
+
  if (sdkConfig.debugMode) {
   config.logLevel = CioLogLevel.Debug;
 }
-
 CustomerIO.initialize(config)
 };
 
