@@ -89,9 +89,6 @@ class CioRctPushMessaging: NSObject {
                 if let bagdeOption = ios[CustomerioConstants.badge] as? Bool, bagdeOption {
                     notificationOptions.insert(.badge)
                 }
-                if let bagdeOption = ios[CustomerioConstants.provisional] as? Bool, bagdeOption {
-                    notificationOptions.insert(.provisional)
-                }
             }
             current.requestAuthorization(options: notificationOptions) { isGranted, error in
                 if let error = error {
