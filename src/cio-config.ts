@@ -30,3 +30,17 @@ export type CioConfig = {
     siteId: string;
  }
 };
+
+export type CioPushPermissionOptions = {
+  ios?: {
+    badge: boolean;
+    sound: boolean;
+    provisional: boolean;
+  };
+}
+
+export enum CioPushPermissionStatus {
+  Granted = 'Granted',
+  Denied = 'Denied',
+  NotDetermined = 'NotDetermined',
+}
