@@ -205,7 +205,7 @@ class RNCIOPushMessaging(
         */
     }
 
-    override fun getName(): String = "CustomerioPushMessaging"
+    override fun getName(): String = "CioRctPushMessaging"
 
     /**
      * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
