@@ -70,7 +70,7 @@ class CioRctPushMessaging: NSObject {
         }
     }
     
-    @objc
+    @objc(getPushPermissionStatus:rejecter:)
     func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         getPushNotificationPermissionStatus { status in
             resolve(status.value)
