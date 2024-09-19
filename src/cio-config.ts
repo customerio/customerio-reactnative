@@ -35,7 +35,6 @@ export type CioPushPermissionOptions = {
   ios?: {
     badge: boolean;
     sound: boolean;
-    provisional: boolean;
   };
 }
 
