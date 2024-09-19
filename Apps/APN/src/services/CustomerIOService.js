@@ -54,12 +54,12 @@ export const trackProfileAttribute = (name, value) => {
   CustomerIO.setProfileAttributes(data);
 };
 
-export const getPushPermissionStatus = () => {
-  return CustomerIO.getPushPermissionStatus();
+export const getPushPermissionStatus = async() => {
+   return CustomerIO.pushMessaging.getPushPermissionStatus();
 };
 
 export const requestPushNotificationsPermission = (options) => {
-  return CustomerIO.showPromptForPushNotifications(options);
+  return CustomerIO.pushMessaging.showPromptForPushNotifications(options);
 };
 
 // TODO: Implement this method when inapp feature is added

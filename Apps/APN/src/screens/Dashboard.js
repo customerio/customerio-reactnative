@@ -1,4 +1,4 @@
-import { PushPermissionStatus } from 'customerio-reactnative';
+import { CioPushPermissionStatus } from 'customerio-reactnative';
 import React from 'react';
 import {
   Image,
@@ -68,15 +68,15 @@ const Dashboard = ({ navigation }) => {
   const handlePushPermissionCheck = () => {
     getPushPermissionStatus().then((status) => {
       switch (status) {
-        case PushPermissionStatus.Granted:
+        case CioPushPermissionStatus.Granted:
           Prompts.showAlert({
             title: pushPermissionAlertTitle,
             message: 'Push notifications are enabled on this device',
           });
           break;
 
-        case PushPermissionStatus.Denied:
-        case PushPermissionStatus.NotDetermined:
+        case CioPushPermissionStatus.Denied:
+        case CioPushPermissionStatus.NotDetermined:
           requestPushPermission();
           break;
       }
@@ -89,14 +89,14 @@ const Dashboard = ({ navigation }) => {
     requestPushNotificationsPermission(options)
       .then((status) => {
         switch (status) {
-          case PushPermissionStatus.Granted:
+          case CioPushPermissionStatus.Granted:
             Prompts.showSnackbar({
               text: 'Push notifications are now enabled on this device',
             });
             break;
 
-          case PushPermissionStatus.Denied:
-          case PushPermissionStatus.NotDetermined:
+          case CioPushPermissionStatus.Denied:
+          case CioPushPermissionStatus.NotDetermined:
             Prompts.showAlert({
               title: pushPermissionAlertTitle,
               message:
