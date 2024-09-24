@@ -81,8 +81,7 @@ const Settings = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    // TODO: Add this when push feature is implemented
-    /*CustomerIO.pushMessaging()
+    CustomerIO.pushMessaging()
       .getRegisteredDeviceToken()
       .then((token) => {
         setDeviceToken(token);
@@ -90,7 +89,6 @@ const Settings = ({ navigation, route }) => {
       .catch((error) => {
         console.log(error);
       });
-    */
     setSiteId(initialSiteId ?? initialConfig.siteId);
     setCdpApiKey(initialCdpApiKey ?? initialConfig.cdpApiKey);
     setTrackScreensEnabled(initialConfig.trackScreens);
