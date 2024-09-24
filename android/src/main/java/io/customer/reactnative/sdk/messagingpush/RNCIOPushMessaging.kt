@@ -36,7 +36,7 @@ class RNCIOPushMessaging(
 
     private val SDKComponent.pushModuleConfig: MessagingPushModuleConfig
         get() = newInstance {
-            modules["MessagingPushFCM"]?.moduleConfig as? MessagingPushModuleConfig ?: MessagingPushModuleConfig.default()
+            modules["MessagingPushFCM"]?.moduleConfig as MessagingPushModuleConfig
         }
     init {
         reactContext.addActivityEventListener(this)
@@ -182,7 +182,7 @@ class RNCIOPushMessaging(
     ) {
         // Nothing required here
     }
-    
+
     /**
      * If the app is in background and simple push is received, then FCM notification doesn't
      * start new intent apparently because of `singleTask` launchMode being used by React Native
