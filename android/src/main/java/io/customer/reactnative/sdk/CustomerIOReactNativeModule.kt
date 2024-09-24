@@ -15,6 +15,9 @@ import io.customer.sdk.CustomerIOBuilder
 import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.core.util.Logger
 import io.customer.sdk.data.model.Region
+import io.customer.messaginginapp.MessagingInAppModuleConfig
+import io.customer.messaginginapp.ModuleMessagingInApp
+import io.customer.messagingpush.ModuleMessagingPushFCM
 
 
 class NativeCustomerIOModule(
@@ -67,6 +70,9 @@ class NativeCustomerIOModule(
                 ?.let { flushInterval(it) }
                 (packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean)
                 ?.let { trackApplicationLifecycleEvents(it) }
+
+                addCustomerIOModule(ModuleMessagingPushFCM())
+
             // TODO: Implement pushClickBehaviorAndroid when initializing messagingModule
             }.build()
             logger.info("Customer.io instance initialized successfully from app")
