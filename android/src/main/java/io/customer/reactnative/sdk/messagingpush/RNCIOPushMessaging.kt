@@ -194,6 +194,8 @@ class RNCIOPushMessaging(
      */
     override fun onNewIntent(intent: Intent?) {
         val intentArguments = intent?.extras ?: return
+        //TODO: Implement pushMessaging later
+        /*
         kotlin.runCatching {
             if (SDKComponent.pushModuleConfig.autoTrackPushEvents) {
                 SDKComponent.pushTrackingUtil
@@ -202,7 +204,6 @@ class RNCIOPushMessaging(
         }.onFailure { ex ->
             logger.error("Unable to parse push notification intent, reason: ${ex.message}")
         }
-
     }
 
     override fun getName(): String = "CioRctPushMessaging"
