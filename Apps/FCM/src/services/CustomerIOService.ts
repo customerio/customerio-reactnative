@@ -1,47 +1,34 @@
 import {
   CioLogLevel,
-  CustomerIO,
-  CustomerIOEnv,
-  CustomerioConfig,
-  InAppMessageEvent,
-  InAppMessageEventType,
-  PushPermissionOptions,
+  CustomerIO
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
+import Env from '../../env';
 
 export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
-  const env = new CustomerIOEnv();
-  env.siteId = sdkConfig.siteId;
-  env.apiKey = sdkConfig.apiKey;
-
-  const config = new CustomerioConfig();
-  config.enableInApp = true;
-
-  if (sdkConfig.debugMode) {
-    config.logLevel = CioLogLevel.debug;
-  }
-  if (sdkConfig.trackingUrl) {
-    config.trackingApiUrl = sdkConfig.trackingUrl;
-  }
-  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  if (sdkConfig.trackDeviceAttributes !== undefined) {
-    config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  }
-  if (sdkConfig.bqMinNumberOfTasks !== undefined) {
-    config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  }
-  if (sdkConfig.bqSecondsDelay !== undefined) {
-    config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
-  }
-
-  CustomerIO.initialize(env, config);
+  const config = {
+    cdpApiKey: Env.cdpApiKey, // Mandatory
+    migrationSiteId: Env.siteId, // For migration
+    trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
+    autoTrackDeviceAttributes: sdkConfig.trackDeviceAttributes,
+    inApp: {
+      siteId: 'site_id',
+    },
+    logLevel: CioLogLevel.None, // Add logLevel property
+  };
+ if (sdkConfig.debugMode) {
+  config.logLevel = CioLogLevel.Debug;
+}
+CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user: User) => {
-  CustomerIO.identify(user.email, {
-    first_name: user.name,
-    email: user.email,
+  CustomerIO.identify({ id: user.email,
+    traits: {
+        first_name: user.name,
+        email: user.email,
+      }
   });
 };
 
@@ -73,17 +60,18 @@ export const trackProfileAttribute = (name: string, value: any) => {
 };
 
 export const getPushPermissionStatus = () => {
-  return CustomerIO.getPushPermissionStatus();
+  // return CustomerIO.getPushPermissionStatus();
 };
 
-export const requestPushNotificationsPermission = (
-  options: PushPermissionOptions,
-) => {
-  return CustomerIO.showPromptForPushNotifications(options);
-};
+// export const requestPushNotificationsPermission = (
+//   options: PushPermissionOptions,
+// ) => {
+//   return CustomerIO.showPromptForPushNotifications(options);
+// };
+
 
 export const registerInAppEventListener = () => {
-  const logInAppEvent = (name: string, params: InAppMessageEvent) => {
+  /*const logInAppEvent = (name: string, params: InAppMessageEvent) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -134,5 +122,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });
+  }); */
 };

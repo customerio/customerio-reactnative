@@ -4,7 +4,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '13.0'
+# React-logger requires higher minimum deployment target
+platform :ios, '14.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 require 'open-uri'

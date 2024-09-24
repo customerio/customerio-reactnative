@@ -13,10 +13,14 @@ import io.customer.reactnative.sdk.extension.*
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.data.store.Client
 
+// TODO: Remove this file or modify as required
+// Once confirmed that this class is no longer required
+// by any of the other files in this module.
 /**
  * Static property holder for ReactNative package to overcome SDK
  * initialization challenges
  */
+/*
 object CustomerIOReactNativeInstance {
     @Throws(IllegalArgumentException::class)
     internal fun initialize(
@@ -117,4 +121,4 @@ object CustomerIOReactNativeInstance {
             setEventListener(inAppEventListener)
         }.build(),
     )
-}
+}*/

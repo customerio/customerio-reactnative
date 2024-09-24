@@ -1,3 +1,8 @@
 # Include all of the bundle identifiers for your iOS app and for your rich push target. 
 # You find the bundle identifier of each app inside of Xcode - https://stackoverflow.com/a/59131511
-app_identifier(["io.customer.rn-sample.fcm", "io.customer.rn-sample.fcm.richpush"])
+app_identifier([
+  "io.customer.rn-sample.fcm",
+  "io.customer.rn-sample.fcm.richpush",
+])
+
+package_name("io.customer.rn_sample.fcm")

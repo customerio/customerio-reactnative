@@ -1,37 +1,28 @@
-import {
-  CioLogLevel,
-  CustomerIO,
-  CustomerIOEnv,
-  CustomerioConfig,
-  InAppMessageEventType,
-} from 'customerio-reactnative';
-
+import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
+import Env from '../../env';
 export const initializeCustomerIoSDK = (sdkConfig) => {
-  const env = new CustomerIOEnv();
-  env.siteId = sdkConfig.siteId;
-  env.apiKey = sdkConfig.apiKey;
+  const config = {
+    cdpApiKey: Env.cdpApiKey, // Mandatory
+    migrationSiteId: Env.siteId, // For migration
+    trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
+    autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
+    inApp: {
+	    siteId: 'site_id',
+    }
+ };
 
-  const config = new CustomerioConfig();
-  config.enableInApp = true;
-
-  if (sdkConfig.debugMode) {
-    config.logLevel = CioLogLevel.debug;
-  }
-  if (sdkConfig.trackingUrl) {
-    config.trackingApiUrl = sdkConfig.trackingUrl;
-  }
-  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
-
-  CustomerIO.initialize(env, config);
+ if (sdkConfig.debugMode) {
+  config.logLevel = CioLogLevel.Debug;
+}
+CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user) => {
-  CustomerIO.identify(user.email, {
-    first_name: user.name,
-    email: user.email,
+  CustomerIO.identify({ id: user.email,
+    traits: {
+        first_name: user.name,
+        email: user.email,
+      }
   });
 };
 
@@ -71,8 +62,9 @@ export const requestPushNotificationsPermission = (options) => {
   return CustomerIO.showPromptForPushNotifications(options);
 };
 
+// TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
-  const logInAppEvent = (name, params) => {
+  /*const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -121,5 +113,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });
+  });*/
 };
