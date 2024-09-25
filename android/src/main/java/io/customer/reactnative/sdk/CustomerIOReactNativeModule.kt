@@ -72,7 +72,7 @@ class NativeCustomerIOModule(
                 ?.let { flushInterval(it) }
                 (packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean)
                 ?.let { trackApplicationLifecycleEvents(it) }
-                (addCustomerIOModule(module = configureModuleMessagingPushFCM(packageConfig)))
+                addCustomerIOModule(module = configureModuleMessagingPushFCM(packageConfig))
             }.build()
             logger.info("Customer.io instance initialized successfully from app")
 
