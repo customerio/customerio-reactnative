@@ -58,11 +58,11 @@ class CioRctPushMessaging: NSObject {
             if status == .notDetermined {
                 self.requestPushAuthorization(options: options) { permissionStatus in
                     
-                    guard let status = permissionStatus as? Bool else {
+                    guard let isGranted = permissionStatus as? Bool else {
                         reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
                         return
                     }
-                    resolve(status ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
+                    resolve(isGranted ? PushPermissionStatus.granted.value : PushPermissionStatus.denied.value)
                 }
             } else {
                 resolve(status.value)
@@ -86,7 +86,7 @@ class CioRctPushMessaging: NSObject {
                 if let soundOption = ios[CustomerioConstants.sound] as? Bool, soundOption {
                     notificationOptions.insert(.sound)
                 }
-                if let bagdeOption = ios[CustomerioConstants.badge] as? Bool, bagdeOption {
+                if let badgeOption = ios[CustomerioConstants.badge] as? Bool, badgeOption {
                     notificationOptions.insert(.badge)
                 }
             }
