@@ -9,7 +9,7 @@ export default class CustomerIoSDKConfig {
     trackScreens,
     trackDeviceAttributes,
     debugMode,
-    trackAppLifecycleEvents 
+    trackAppLifecycleEvents,
   } = {}) {
     this.siteId = siteId;
     this.cdpApiKey = cdpApiKey;
@@ -41,7 +41,8 @@ export default class CustomerIoSDKConfig {
       trackDeviceAttributes:
         other?.trackDeviceAttributes ?? defaultConfig.trackDeviceAttributes,
       debugMode: other?.debugMode ?? defaultConfig.debugMode,
-      trackAppLifecycleEvents:  other?.trackAppLifecycleEvents ?? defaultConfig.trackAppLifecycleEvents,
+      trackAppLifecycleEvents:
+        other?.trackAppLifecycleEvents ?? defaultConfig.trackAppLifecycleEvents,
     });
   }
 }

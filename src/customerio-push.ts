@@ -1,5 +1,8 @@
 import { NativeModules, Platform } from 'react-native';
-import { type CioPushPermissionOptions, CioPushPermissionStatus } from './cio-config';
+import {
+  type CioPushPermissionOptions,
+  CioPushPermissionStatus,
+} from './cio-config';
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -101,7 +104,9 @@ class CustomerIOPushMessaging {
     return PushMessagingNative.getRegisteredDeviceToken();
   }
 
-  showPromptForPushNotifications(options: CioPushPermissionOptions = { ios: { badge: true, sound: true } }): Promise<CioPushPermissionStatus> {
+  showPromptForPushNotifications(
+    options: CioPushPermissionOptions = { ios: { badge: true, sound: true } }
+  ): Promise<CioPushPermissionStatus> {
     return PushMessagingNative.showPromptForPushNotifications(options);
   }
 

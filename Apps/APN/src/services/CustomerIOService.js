@@ -7,22 +7,23 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
     inApp: {
-	    siteId: 'site_id',
-    }
- };
+      siteId: 'site_id',
+    },
+  };
 
- if (sdkConfig.debugMode) {
-  config.logLevel = CioLogLevel.Debug;
-}
-CustomerIO.initialize(config)
+  if (sdkConfig.debugMode) {
+    config.logLevel = CioLogLevel.Debug;
+  }
+  CustomerIO.initialize(config);
 };
 
 export const onUserLoggedIn = (user) => {
-  CustomerIO.identify({ id: user.email,
+  CustomerIO.identify({
+    id: user.email,
     traits: {
-        first_name: user.name,
-        email: user.email,
-      }
+      first_name: user.name,
+      email: user.email,
+    },
   });
 };
 
@@ -54,8 +55,8 @@ export const trackProfileAttribute = (name, value) => {
   CustomerIO.setProfileAttributes(data);
 };
 
-export const getPushPermissionStatus = async() => {
-   return CustomerIO.pushMessaging.getPushPermissionStatus();
+export const getPushPermissionStatus = async () => {
+  return CustomerIO.pushMessaging.getPushPermissionStatus();
 };
 
 export const requestPushNotificationsPermission = (options) => {

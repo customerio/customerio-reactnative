@@ -39,9 +39,9 @@ const AppNavigator = () => {
 
       case Screen.SETTINGS:
         return Settings;
-      
+
       case Screen.INTERNAL_SETTINGS:
-          return InternalSettings;
+        return InternalSettings;
 
       case Screen.CUSTOM_EVENTS:
         return CustomEvent;
@@ -100,7 +100,7 @@ const AppNavigator = () => {
           },
         };
         break;
-      
+
       case Screen.INTERNAL_SETTINGS:
         props = {
           ...stackPropsDefault,
