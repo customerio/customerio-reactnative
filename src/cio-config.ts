@@ -36,10 +36,10 @@ export type CioPushPermissionOptions = {
     badge: boolean;
     sound: boolean;
   };
-};
+}
 
 export enum CioPushPermissionStatus {
-  Granted = 'Granted',
-  Denied = 'Denied',
-  NotDetermined = 'NotDetermined',
+  Granted = 'GRANTED',
+  Denied = 'DENIED',
+  NotDetermined = 'NOTDETERMINED',
 }

@@ -24,6 +24,7 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { CustomerIO } from 'customerio-reactnative';
 
 interface SettingsProps {
   navigation: NavigationProp<ParamListBase>;
@@ -89,8 +90,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       }
     };
     
-    // TODO: Add this when push feature is implemented
-    /*CustomerIO.pushMessaging()
+    CustomerIO.pushMessaging
       .getRegisteredDeviceToken()
       .then((token) => {
         setDeviceToken(token);
@@ -98,7 +98,7 @@ const Settings: React.FC<SettingsProps> = ({ navigation, route }) => {
       .catch((error) => {
         console.log(error);
       });
-    */
+    
     setValueIfPresent(initialSiteId ?? initialConfig?.siteId, setSiteId);
     setValueIfPresent(initialCdpApiKey ?? initialConfig?.cdpApiKey, setCdpApiKey);
     setValueIfPresent(initialConfig?.trackScreens, setTrackScreensEnabled);

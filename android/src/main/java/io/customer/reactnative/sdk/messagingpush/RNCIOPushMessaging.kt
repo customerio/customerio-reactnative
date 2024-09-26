@@ -10,6 +10,8 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
+import io.customer.messagingpush.MessagingPushModuleConfig
+import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.messagingpush.di.pushTrackingUtil
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
@@ -32,6 +34,10 @@ class RNCIOPushMessaging(
      */
     private var notificationRequestPromise: Promise? = null
 
+    private val SDKComponent.pushModuleConfig: MessagingPushModuleConfig
+        get() = newInstance {
+            modules["MessagingPushFCM"]?.moduleConfig as MessagingPushModuleConfig
+        }
     init {
         reactContext.addActivityEventListener(this)
     }
@@ -188,21 +194,14 @@ class RNCIOPushMessaging(
      */
     override fun onNewIntent(intent: Intent?) {
         val intentArguments = intent?.extras ?: return
-        //TODO: Implement pushMessaging later
-        /*
         kotlin.runCatching {
-            val sdkInstance = CustomerIO.instance()
-
-            val pushMessagingModuleConfig = sdkInstance.pushMessaging().moduleConfig
-
-            if (pushMessagingModuleConfig.autoTrackPushEvents) {
+            if (SDKComponent.pushModuleConfig.autoTrackPushEvents) {
                 SDKComponent.pushTrackingUtil
                     .parseLaunchedActivityForTracking(intentArguments)
             }
         }.onFailure { ex ->
             logger.error("Unable to parse push notification intent, reason: ${ex.message}")
         }
-        */
     }
 
     override fun getName(): String = "CioRctPushMessaging"
@@ -211,7 +210,7 @@ class RNCIOPushMessaging(
      * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
      */
     private val PermissionStatus.toReactNativeResult: Any
-        get() = this.name
+        get() = this.name.uppercase()
 
     companion object {
         /**
