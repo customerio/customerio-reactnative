@@ -1,10 +1,10 @@
 import { NativeModules, Platform } from 'react-native';
 import { CioLogLevel, type CioConfig } from './cio-config';
 import {type IdentifyParams } from './cio-params';
-// TODO: Import the CustomerIOInAppMessaging and CustomerIOPushMessaging classes from their respective files
+// TODO: Import the CustomerIOInAppMessaging class from their respective files
 // when they are implemented.
 // import { CustomerIOInAppMessaging } from './customerio-inapp';
-// import { CustomerIOPushMessaging } from './customerio-push';
+import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 
 const LINKING_ERROR =
@@ -99,7 +99,7 @@ export class CustomerIO {
 
   // TODO: Update when implemented.
   // static readonly inAppMessaging = new CustomerIOInAppMessaging();
-  // static readonly pushMessaging = new CustomerIOPushMessaging();
+  static readonly pushMessaging = new CustomerIOPushMessaging();
 
   private static readonly assrtInitialized = () => {
     if (!CustomerIO.initialized) {

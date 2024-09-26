@@ -3,4 +3,17 @@
     
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <application>
+        <!--
+        Provide source and version of Customer.io React Native SDK so user agent can be 
+        generated based on this information.
+        -->
+        <meta-data
+            android:name="io.customer.sdk.android.core.SDK_SOURCE"
+            android:value="@string/customer_io_react_native_sdk_client_source" />
+        <meta-data
+            android:name="io.customer.sdk.android.core.SDK_VERSION"
+            android:value="@string/customer_io_react_native_sdk_client_version" />
+    </application>
+
 </manifest>
