@@ -25,6 +25,7 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
+import { CustomerIO } from 'customerio-reactnative';
 
 const Settings = ({ navigation, route }) => {
   const { params } = route;
@@ -81,8 +82,7 @@ const Settings = ({ navigation, route }) => {
   );
 
   useEffect(() => {
-    // TODO: Add this when push feature is implemented
-    /*CustomerIO.pushMessaging()
+    CustomerIO.pushMessaging
       .getRegisteredDeviceToken()
       .then((token) => {
         setDeviceToken(token);
@@ -90,7 +90,6 @@ const Settings = ({ navigation, route }) => {
       .catch((error) => {
         console.log(error);
       });
-    */
     setSiteId(initialSiteId ?? initialConfig.siteId);
     setCdpApiKey(initialCdpApiKey ?? initialConfig.cdpApiKey);
     setTrackScreensEnabled(initialConfig.trackScreens);
@@ -161,7 +160,7 @@ const Settings = ({ navigation, route }) => {
           <TextField
             style={settingsStyles.textInputContainer}
             label="Device Token"
-            value={"deviceToken"}
+            value={deviceToken}
             contentDesc="Device Token Input"
             editable={false}
             leadingIconImageSource={require('../../assets/images/paper.png')}

@@ -33,7 +33,7 @@ class CioRctPushMessaging: NSObject {
     }
    
     // Get the currently registered device token for the app
-    @objc
+    @objc(getRegisteredDeviceToken:rejecter:)
     func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
         
          guard let token = CustomerIO.shared.registeredDeviceToken else {
