@@ -1,5 +1,5 @@
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
-import { PushPermissionStatus } from 'customerio-reactnative';
+import { CioPushPermissionStatus } from 'customerio-reactnative';
 import React from 'react';
 import {
   Image,
@@ -70,38 +70,36 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     Prompts.showSnackbar({ text: 'Event sent successfully' });
   };
 
-  const handlePushPermissionCheck = () => {
-    getPushPermissionStatus().then((status: PushPermissionStatus) => {
-      switch (status) {
-        case PushPermissionStatus.Granted:
-          Prompts.showAlert({
-            title: pushPermissionAlertTitle,
-            message: 'Push notifications are enabled on this device',
-          });
-          break;
-
-        case PushPermissionStatus.Denied:
-        case PushPermissionStatus.NotDetermined:
-          requestPushPermission();
-          break;
-      }
-    });
+  const handlePushPermissionCheck = async () => {
+    const status = await getPushPermissionStatus();
+    switch (status) {
+      case CioPushPermissionStatus.Granted:
+        Prompts.showAlert({
+          title: pushPermissionAlertTitle,
+          message: 'Push notifications are enabled on this device',
+        });
+        break;
+  
+      case CioPushPermissionStatus.Denied:
+      case CioPushPermissionStatus.NotDetermined:
+        requestPushPermission();
+        break;
+    }
   };
 
-  const requestPushPermission = () => {
+  const requestPushPermission = async () => {
     let options = { ios: { sound: true, badge: true } };
 
-    requestPushNotificationsPermission(options)
-      .then((status: PushPermissionStatus) => {
+    const status = await requestPushNotificationsPermission(options);
         switch (status) {
-          case PushPermissionStatus.Granted:
+          case CioPushPermissionStatus.Granted:
             Prompts.showSnackbar({
               text: 'Push notifications are now enabled on this device',
             });
             break;
 
-          case PushPermissionStatus.Denied:
-          case PushPermissionStatus.NotDetermined:
+          case CioPushPermissionStatus.Denied:
+          case CioPushPermissionStatus.NotDetermined:
             Prompts.showAlert({
               title: pushPermissionAlertTitle,
               message:
@@ -122,14 +120,6 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             });
             break;
         }
-      })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((error: any) => {
-        Prompts.showAlert({
-          title: pushPermissionAlertTitle,
-          message: 'Unable to request permission. Please try again later.',
-        });
-      });
   };
 
   const handleSettingsPress = () => {

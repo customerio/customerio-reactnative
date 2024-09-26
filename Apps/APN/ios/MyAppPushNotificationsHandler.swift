@@ -15,7 +15,7 @@ public class MyAppPushNotificationsHandler : NSObject {
 
   @objc(setupCustomerIOClickHandling)
   public func setupCustomerIOClickHandling() {
-    // Initialize MessagingPushFCM module to
+    // Initialize MessagingPushAPN module to
     // automatically handle your app’s push notifications that originate from Customer.io
     MessagingPushAPN.initialize(withConfig: MessagingPushConfigBuilder().build())
   }

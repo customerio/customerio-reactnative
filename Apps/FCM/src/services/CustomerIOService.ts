@@ -1,6 +1,7 @@
 import {
   CioLogLevel,
-  CustomerIO
+  CustomerIO,
+  CioPushPermissionOptions
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
@@ -60,14 +61,14 @@ export const trackProfileAttribute = (name: string, value: any) => {
 };
 
 export const getPushPermissionStatus = () => {
-  // return CustomerIO.getPushPermissionStatus();
+  return CustomerIO.pushMessaging.getPushPermissionStatus();
 };
 
-// export const requestPushNotificationsPermission = (
-//   options: PushPermissionOptions,
-// ) => {
-//   return CustomerIO.showPromptForPushNotifications(options);
-// };
+export const requestPushNotificationsPermission = (
+  options: typeof CioPushPermissionOptions,
+) => {
+  return CustomerIO.pushMessaging.showPromptForPushNotifications(options);
+};
 
 
 export const registerInAppEventListener = () => {

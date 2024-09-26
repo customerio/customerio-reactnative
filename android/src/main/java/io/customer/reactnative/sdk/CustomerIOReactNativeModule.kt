@@ -6,7 +6,12 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import io.customer.messagingpush.MessagingPushModuleConfig
+import io.customer.messagingpush.ModuleMessagingPushFCM
+import io.customer.messagingpush.config.PushClickBehavior
 import io.customer.reactnative.sdk.constant.Keys
+import io.customer.reactnative.sdk.extension.getProperty
+import io.customer.reactnative.sdk.extension.takeIfNotBlank
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.logging.CustomerIOReactNativeLoggingWrapper
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
@@ -67,7 +72,7 @@ class NativeCustomerIOModule(
                 ?.let { flushInterval(it) }
                 (packageConfig[Keys.Config.TRACK_APP_LIFECYCLE_EVENTS] as? Boolean)
                 ?.let { trackApplicationLifecycleEvents(it) }
-            // TODO: Implement pushClickBehaviorAndroid when initializing messagingModule
+                addCustomerIOModule(module = configureModuleMessagingPushFCM(packageConfig))
             }.build()
             logger.info("Customer.io instance initialized successfully from app")
 
@@ -133,6 +138,23 @@ class NativeCustomerIOModule(
     @ReactMethod
     fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
         pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
+    }
+
+    private fun configureModuleMessagingPushFCM(config: Map<String, Any?>?): ModuleMessagingPushFCM {
+        return ModuleMessagingPushFCM(
+            moduleConfig = MessagingPushModuleConfig.Builder().apply {
+                config?.getProperty<String>(Keys.Config.PUSH_CLICK_BEHAVIOR)
+                    ?.takeIfNotBlank()
+                    ?.let { value ->
+                        val behavior = kotlin.runCatching {
+                            enumValueOf<PushClickBehavior>(value)
+                        }.getOrNull()
+                        if (behavior != null) {
+                            setPushClickBehavior(pushClickBehavior = behavior)
+                        }
+                    }
+            }.build(),
+        )
     }
 
     companion object {
