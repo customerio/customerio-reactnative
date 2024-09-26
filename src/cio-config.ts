@@ -39,7 +39,7 @@ export type CioPushPermissionOptions = {
 }
 
 export enum CioPushPermissionStatus {
-  Granted = 'Granted',
-  Denied = 'Denied',
-  NotDetermined = 'NotDetermined',
+  Granted = 'GRANTED',
+  Denied = 'DENIED',
+  NotDetermined = 'NOTDETERMINED',
 }

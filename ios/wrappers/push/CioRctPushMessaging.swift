@@ -8,7 +8,7 @@ enum PushPermissionStatus: String, CaseIterable {
     case granted
     
     var value: String {
-        return rawValue.firstUppercased
+        return rawValue.uppercased()
     }
 }
 
