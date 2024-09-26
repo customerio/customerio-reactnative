@@ -22,6 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # If using sd on macos, "brew install" works great. for Linux, this is the recommended way.
+      - name: Install sd CLI to use later in the workflow
+        # uses: kenji-miyake/setup-sd@v1
+        uses: levibostian/setup-sd@add-file-extension # Using fork until upstream Action has bug fixed in it.
+
       - name: Deploy git tag via semantic release
         uses: cycjimmy/semantic-release-action@v4
         id: semantic-release
