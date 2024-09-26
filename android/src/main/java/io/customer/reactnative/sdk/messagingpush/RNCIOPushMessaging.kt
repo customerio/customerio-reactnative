@@ -210,7 +210,7 @@ class RNCIOPushMessaging(
      * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
      */
     private val PermissionStatus.toReactNativeResult: Any
-        get() = this.name
+        get() = this.name.uppercase()
 
     companion object {
         /**
