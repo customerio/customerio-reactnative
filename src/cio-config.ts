@@ -36,7 +36,7 @@ export type CioPushPermissionOptions = {
     badge: boolean;
     sound: boolean;
   };
-}
+};
 
 export enum CioPushPermissionStatus {
   Granted = 'GRANTED',
