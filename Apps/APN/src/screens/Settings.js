@@ -19,7 +19,7 @@ import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
 import { Caption, Text } from '../components/Text';
 import { TextField } from '../components/TextField';
-import {styles as settingsStyles} from '../styles/stylesheet';
+import { styles as settingsStyles } from '../styles/stylesheet';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
@@ -43,7 +43,10 @@ const Settings = ({ navigation, route }) => {
   const [isTrackDeviceAttributesEnabled, setTrackDeviceAttributesEnabled] =
     useState(false);
   const [isDebugModeEnabled, setDebugModeEnabled] = useState(false);
-  const [isAppLifecycleEventTrackingEnabled, setAppLifecycleEventTrackingEnabled] = useState(false);
+  const [
+    isAppLifecycleEventTrackingEnabled,
+    setAppLifecycleEventTrackingEnabled,
+  ] = useState(false);
 
   const handleOnBackPress = useCallback(() => {
     if (!navigation.canGoBack()) {
@@ -133,7 +136,7 @@ const Settings = ({ navigation, route }) => {
     config.trackScreens = isTrackScreensEnabled;
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
-    config.trackAppLifecycleEvents = isAppLifecycleEventTrackingEnabled
+    config.trackAppLifecycleEvents = isAppLifecycleEventTrackingEnabled;
     saveConfigurations(config);
     navigation.goBack();
   };
@@ -152,7 +155,7 @@ const Settings = ({ navigation, route }) => {
 
   const handleGoToInternalSettingsPress = async () => {
     navigation.navigate('InternalSettings');
-  }
+  };
   return (
     <View style={settingsStyles.container}>
       <ScrollView contentContainerStyle={settingsStyles.content}>
@@ -168,7 +171,7 @@ const Settings = ({ navigation, route }) => {
           />
         </View>
         <View style={settingsStyles.section}>
-        <Text style={settingsStyles.sectionLabel}>Config Settings</Text>
+          <Text style={settingsStyles.sectionLabel}>Config Settings</Text>
 
           <TextField
             style={settingsStyles.textInputContainer}
@@ -207,20 +210,26 @@ const Settings = ({ navigation, route }) => {
           <SwitchField
             style={settingsStyles.switchRow}
             label="App Lifecycle Events Tracking"
-            onValueChange={() => setAppLifecycleEventTrackingEnabled(!isAppLifecycleEventTrackingEnabled)}
+            onValueChange={() =>
+              setAppLifecycleEventTrackingEnabled(
+                !isAppLifecycleEventTrackingEnabled
+              )
+            }
             value={isAppLifecycleEventTrackingEnabled}
             contentDesc="App Lifecycle Events Tracking Toggle"
           />
         </View>
         <SwitchField
-            style={settingsStyles.switchRow}
-            label="Auto track device attributes"
-            onValueChange={() => setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)}
-            value={isTrackDeviceAttributesEnabled}
-            contentDesc="Auto track device attributes Toggle"
-          />
+          style={settingsStyles.switchRow}
+          label="Auto track device attributes"
+          onValueChange={() =>
+            setTrackDeviceAttributesEnabled(!isTrackDeviceAttributesEnabled)
+          }
+          value={isTrackDeviceAttributesEnabled}
+          contentDesc="Auto track device attributes Toggle"
+        />
         <View style={settingsStyles.section}>
-        <Text style={settingsStyles.sectionLabel}>Development</Text>
+          <Text style={settingsStyles.sectionLabel}>Development</Text>
           <SwitchField
             style={settingsStyles.switchRow}
             label="Debug Mode"
@@ -229,7 +238,7 @@ const Settings = ({ navigation, route }) => {
             contentDesc="Debug Mode Toggle"
           />
         </View>
-          <View style={settingsStyles.buttonContainer}>
+        <View style={settingsStyles.buttonContainer}>
           <FilledButton
             style={settingsStyles.saveButton}
             onPress={handleSavePress}

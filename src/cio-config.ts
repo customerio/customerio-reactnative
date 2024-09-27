@@ -22,13 +22,13 @@ export type CioConfig = {
   region?: CioRegion;
   logLevel?: CioLogLevel;
   flushAt?: number;
-  flushInterval?: number; 
+  flushInterval?: number;
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
   pushClickBehaviorAndroid?: PushClickBehaviorAndroid;
   inApp?: {
     siteId: string;
- }
+  };
 };
 
 export type CioPushPermissionOptions = {
@@ -36,7 +36,7 @@ export type CioPushPermissionOptions = {
     badge: boolean;
     sound: boolean;
   };
-}
+};
 
 export enum CioPushPermissionStatus {
   Granted = 'GRANTED',
