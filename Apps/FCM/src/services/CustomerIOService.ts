@@ -5,12 +5,11 @@ import {
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
-import Env from '../../env';
 
 export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
   const config = {
-    cdpApiKey: Env.cdpApiKey, // Mandatory
-    migrationSiteId: Env.siteId, // For migration
+    cdpApiKey: sdkConfig.cdpApiKey, // Mandatory
+    migrationSiteId: sdkConfig.siteId, // For migration
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.trackDeviceAttributes,
     inApp: {
