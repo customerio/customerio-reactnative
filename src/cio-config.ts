@@ -25,9 +25,14 @@ export type CioConfig = {
   flushInterval?: number;
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
-  pushClickBehaviorAndroid?: PushClickBehaviorAndroid;
   inApp?: {
     siteId: string;
+  };
+  push?: {
+    android?: {
+      autoTrackPushEvents?: boolean;
+      pushClickBehavior?: PushClickBehaviorAndroid;
+    };
   };
 };
 
