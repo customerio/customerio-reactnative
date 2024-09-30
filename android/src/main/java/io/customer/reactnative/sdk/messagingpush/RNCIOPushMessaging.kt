@@ -34,10 +34,6 @@ class RNCIOPushMessaging(
      */
     private var notificationRequestPromise: Promise? = null
 
-    private val SDKComponent.pushModuleConfig: MessagingPushModuleConfig
-        get() = newInstance {
-            modules["MessagingPushFCM"]?.moduleConfig as MessagingPushModuleConfig
-        }
     init {
         reactContext.addActivityEventListener(this)
     }
