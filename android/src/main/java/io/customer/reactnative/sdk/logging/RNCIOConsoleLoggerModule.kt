@@ -38,13 +38,20 @@ class RNCIOConsoleLoggerModule(
     }
 
     private fun emitLogEvent(level: CioLogLevel, message: String) {
+        val context = contextRef.get()
+        if (context == null) {
+            // If context is null, clear log dispatcher to stop listening to log events
+            SDKComponent.logger.setLogDispatcher(null)
+            return
+        }
+
         val data = buildMap {
             put("logLevel", level.name.lowercase())
             put("message", message)
         }
         val params = Arguments.makeNativeMap(data)
-        contextRef.get()
-            ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            ?.emit("CioLogEvent", params)
+        context
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("CioLogEvent", params)
     }
 }
