@@ -127,16 +127,16 @@ jobs:
             exit 1
           fi
           
-          # Update the apiKey in the environment file
+          # Update keys in the environment file
           sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app)] }}'" "$ENV_FILE"
-          sd "apiKey: '.*'" "apiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_API_KEY', matrix.sample-app)] }}'" "$ENV_FILE"
+          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app)] }}'" "$ENV_FILE"
 
       - name: Setup workspace credentials in iOS environment files
         working-directory: Apps/${{ matrix.sample-app }}/ios
         run: |
           cp "Env.swift.example" "Env.swift"
           sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app)] }}\"" "Env.swift"
-          sd 'apiKey: String = ".*"' "apiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_API_KEY', matrix.sample-app)] }}\"" "Env.swift"
+          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app)] }}\"" "Env.swift"
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
