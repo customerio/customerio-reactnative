@@ -1,3 +1,9 @@
+## [3.9.0](https://github.com/customerio/customerio-reactnative/compare/3.8.0...3.9.0) (2024-08-28)
+
+### Features
+
+* fetch in-app messages on new profile identification ([#307](https://github.com/customerio/customerio-reactnative/issues/307)) ([cb272c2](https://github.com/customerio/customerio-reactnative/commit/cb272c2ce0b406a58c6ddad951682cc21071fbd5))
+
 ## [3.8.0](https://github.com/customerio/customerio-reactnative/compare/3.7.2...3.8.0) (2024-07-02)
 
 ### Features
