@@ -7,11 +7,17 @@ import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.CioLogLevel
+import java.lang.ref.WeakReference
 
 class RNCIOConsoleLoggerModule(
-    private val reactContext: ReactApplicationContext,
+    reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
     override fun getName(): String = "CioLoggingEmitter"
+
+    // Hold weak reference to ReactContext to avoid memory leaks
+    // As loggers are long-lived objects, they might hold references to log dispatchers
+    // and can cause memory leaks by holding references to ReactContext even after it is destroyed
+    private val contextRef = WeakReference(reactContext)
 
     init {
         SDKComponent.logger.setLogDispatcher { level, message ->
@@ -37,8 +43,8 @@ class RNCIOConsoleLoggerModule(
             put("message", message)
         }
         val params = Arguments.makeNativeMap(data)
-        reactContext
-            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-            .emit("CioLogEvent", params)
+        contextRef.get()
+            ?.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            ?.emit("CioLogEvent", params)
     }
 }
