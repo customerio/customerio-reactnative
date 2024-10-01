@@ -30,7 +30,6 @@ export type CioConfig = {
   };
   push?: {
     android?: {
-      autoTrackPushEvents?: boolean;
       pushClickBehavior?: PushClickBehaviorAndroid;
     };
   };

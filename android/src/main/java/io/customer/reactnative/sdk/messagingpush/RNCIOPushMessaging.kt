@@ -63,15 +63,8 @@ class RNCIOPushMessaging(
         config: Map<String, Any>
     ) {
         val androidConfig = config.getTypedValue<Map<String, Any>>(key = "android") ?: emptyMap()
-        // Use android specific push configurations for only Android specific configurations
-        // For common configurations, use the default push module configurations
-
-        // Auto track push events is enabled by default
-        // Fallback to common config if not provided in android specific config as this is a common
-        // configuration available for both Android and iOS
-        val autoTrackPushEvents =
-            androidConfig.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_PUSH_EVENTS)
-                ?: config.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_PUSH_EVENTS)
+        // Prefer `android` object for push configurations as it's more specific to Android
+        // For common push configurations, use `config` object instead of `android`
 
         // Default push click behavior is to prevent restart of activity in React Native apps
         val pushClickBehavior = androidConfig.getTypedValue<String>(Keys.Config.PUSH_CLICK_BEHAVIOR)
@@ -82,7 +75,6 @@ class RNCIOPushMessaging(
 
         val module = ModuleMessagingPushFCM(
             moduleConfig = MessagingPushModuleConfig.Builder().apply {
-                autoTrackPushEvents?.let { setAutoTrackPushEvents(it) }
                 setPushClickBehavior(pushClickBehavior = pushClickBehavior)
             }.build(),
         )

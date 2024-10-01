@@ -11,7 +11,6 @@ internal object Keys {
         const val FLUSH_AT = "flushAt"
         const val FLUSH_INTERVAL = "flushInterval"
         // Push messaging
-        const val AUTO_TRACK_PUSH_EVENTS = "autoTrackPushEvents"
         const val PUSH_CLICK_BEHAVIOR = "pushClickBehavior"
     }
 }
