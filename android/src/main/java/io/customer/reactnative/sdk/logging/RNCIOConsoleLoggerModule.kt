@@ -14,7 +14,7 @@ class RNCIOConsoleLoggerModule(
     override fun getName(): String = "CioLoggingEmitter"
 
     init {
-        SDKComponent.logger.logDispatcher = { level, message ->
+        SDKComponent.logger.setLogDispatcher { level, message ->
             emitLogEvent(level, message)
         }
     }
