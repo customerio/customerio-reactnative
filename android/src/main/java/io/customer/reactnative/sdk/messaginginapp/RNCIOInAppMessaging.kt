@@ -1,15 +1,21 @@
-package io.customer.reactnative.sdk
+package io.customer.reactnative.sdk.messaginginapp
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
+import io.customer.messaginginapp.MessagingInAppModuleConfig
 import io.customer.messaginginapp.ModuleMessagingInApp
 import io.customer.messaginginapp.di.inAppMessaging
 import io.customer.messaginginapp.type.InAppEventListener
 import io.customer.messaginginapp.type.InAppMessage
+import io.customer.reactnative.sdk.constant.Keys
+import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.sdk.CustomerIO
+import io.customer.sdk.CustomerIOBuilder
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.data.model.Region
 
 /**
  * ReactNative module to hold in-app messages features in a single place to bridge with native code.
@@ -17,10 +23,39 @@ import io.customer.sdk.CustomerIO
 class RNCIOInAppMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), InAppEventListener {
+    override fun getName(): String = "CustomerioInAppMessaging"
+
+    private val inAppMessagingModule: ModuleMessagingInApp?
+        get() = kotlin.runCatching { CustomerIO.instance().inAppMessaging() }.getOrNull()
+
     private var listenerCount = 0
 
-    private val inAppMessagingModule: ModuleMessagingInApp
-        get() = CustomerIO.instance().inAppMessaging()
+    /**
+     * Adds InAppMessaging module to native Android SDK based on configuration provided by customer
+     * app.
+     *
+     * @param builder CustomerIOBuilder instance to add InAppMessaging module
+     * @param config Configuration provided by customer app for InAppMessaging module
+     * @param region Region to be used for InAppMessaging module
+     */
+    internal fun addNativeModuleFromConfig(
+        builder: CustomerIOBuilder,
+        config: Map<String, Any>,
+        region: Region
+    ) {
+        val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
+        if (siteId.isNullOrBlank()) {
+            SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
+            return
+        }
+
+        val module = ModuleMessagingInApp(
+            MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
+                setEventListener(eventListener = this@RNCIOInAppMessaging)
+            }.build(),
+        )
+        builder.addCustomerIOModule(module)
+    }
 
     @ReactMethod
     fun addListener(eventName: String) {
@@ -37,7 +72,7 @@ class RNCIOInAppMessaging(
      */
     @ReactMethod
     fun dismissMessage() {
-        inAppMessagingModule.dismissMessage()
+        inAppMessagingModule?.dismissMessage()
     }
 
     /**
@@ -87,6 +122,4 @@ class RNCIOInAppMessaging(
         eventType = "messageShown",
         message = message,
     )
-
-    override fun getName(): String = "CustomerioInAppMessaging"
 }

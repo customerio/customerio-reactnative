@@ -1,21 +1,8 @@
-package io.customer.reactnative.sdk.extension
+package io.customer.reactnative.sdk.messagingpush
 
 import com.facebook.react.bridge.ReadableMap
 import com.google.firebase.messaging.RemoteMessage
-import io.customer.sdk.core.util.CioLogLevel
-import io.customer.sdk.data.model.Region
-
-internal fun ReadableMap?.toMap(): Map<String, Any> {
-    return this?.toHashMap() ?: emptyMap()
-}
-
-internal fun String?.toRegion(fallback: Region = Region.US): Region {
-    return if (this.isNullOrBlank()) fallback
-    else listOf(
-        Region.US,
-        Region.EU,
-    ).find { value -> value.code.equals(this, ignoreCase = true) } ?: fallback
-}
+import io.customer.reactnative.sdk.extension.toMap
 
 /**
  * Safely transforms any value to string
