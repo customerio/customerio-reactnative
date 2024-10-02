@@ -1,4 +1,8 @@
-import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
+import {
+  CustomerIO,
+  CioLogLevel,
+  InAppMessageEventType,
+} from 'customerio-reactnative';
 
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
@@ -65,7 +69,7 @@ export const requestPushNotificationsPermission = (options) => {
 
 // TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
-  /*const logInAppEvent = (name, params) => {
+  const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -114,5 +118,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });*/
+  });
 };

@@ -32,8 +32,9 @@ export default function App() {
     prepare();
     const inAppEventListener = registerInAppEventListener();
 
-    // TODO: Add this when inapp feature is implemented
-    // inAppEventListener.remove();
+    return () => {
+      inAppEventListener.remove();
+    };
   }, [
     applyCustomerIoConfig,
     handleCustomerIoConfigChanged,

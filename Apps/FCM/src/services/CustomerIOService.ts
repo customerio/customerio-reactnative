@@ -1,7 +1,9 @@
 import {
   CioLogLevel,
   CustomerIO,
-  CioPushPermissionOptions
+  CioPushPermissionOptions,
+  InAppMessageEvent,
+  InAppMessageEventType,
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
@@ -17,18 +19,19 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
     },
     logLevel: CioLogLevel.None, // Add logLevel property
   };
- if (sdkConfig.debugMode) {
-  config.logLevel = CioLogLevel.Debug;
-}
-CustomerIO.initialize(config)
+  if (sdkConfig.debugMode) {
+    config.logLevel = CioLogLevel.Debug;
+  }
+  CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user: User) => {
-  CustomerIO.identify({ id: user.email,
+  CustomerIO.identify({
+    id: user.email,
     traits: {
-        first_name: user.name,
-        email: user.email,
-      }
+      first_name: user.name,
+      email: user.email,
+    }
   });
 };
 
@@ -71,7 +74,7 @@ export const requestPushNotificationsPermission = (
 
 
 export const registerInAppEventListener = () => {
-  /*const logInAppEvent = (name: string, params: InAppMessageEvent) => {
+  const logInAppEvent = (name: string, params: InAppMessageEvent) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -122,5 +125,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  }); */
+  });
 };

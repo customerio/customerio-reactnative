@@ -11,8 +11,8 @@
     "clean-install-ios": "./scripts/clean-run-ios.sh",
     "dev:update": "../../scripts/dev:update.sh",
     "postinstall": "pod update --project-directory=ios",
-    "preinstall": "npm run dev:update --legacy-peer-deps",
-    "ci:install": "npm run preinstall && npm ci --legacy-peer-deps && npm run bundle:ios"
+    "preinstall": "npm run dev:update",
+    "ci:install": "npm run preinstall && npm ci"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.19.1",
