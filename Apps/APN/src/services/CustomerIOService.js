@@ -92,7 +92,7 @@ export const registerInAppEventListener = () => {
     CustomerIO.track('in-app message action', data);
   };
 
-  const inAppMessaging = CustomerIO.inAppMessaging();
+  const inAppMessaging = CustomerIO.inAppMessaging;
   return inAppMessaging.registerEventsListener((event) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:

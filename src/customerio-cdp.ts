@@ -95,10 +95,8 @@ export class CustomerIO {
 
   static readonly isInitialized = () => CustomerIO.initialized;
 
-  // TODO: Update when implemented.
-  // static readonly inAppMessaging = new CustomerIOInAppMessaging();
-  static readonly pushMessaging = new CustomerIOPushMessaging();
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly pushMessaging = new CustomerIOPushMessaging();
 
   private static readonly assrtInitialized = () => {
     if (!CustomerIO.initialized) {
