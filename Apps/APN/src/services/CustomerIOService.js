@@ -1,4 +1,8 @@
-import { CustomerIO, CioLogLevel } from 'customerio-reactnative';
+import {
+  CustomerIO,
+  CioLogLevel,
+  InAppMessageEventType,
+} from 'customerio-reactnative';
 
 export const initializeCustomerIoSDK = (sdkConfig) => {
   const config = {
@@ -7,7 +11,7 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
     inApp: {
-      siteId: 'site_id',
+      siteId: sdkConfig.siteId,
     },
   };
 
@@ -65,7 +69,7 @@ export const requestPushNotificationsPermission = (options) => {
 
 // TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
-  /*const logInAppEvent = (name, params) => {
+  const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);
   };
 
@@ -88,7 +92,7 @@ export const registerInAppEventListener = () => {
     CustomerIO.track('in-app message action', data);
   };
 
-  const inAppMessaging = CustomerIO.inAppMessaging();
+  const inAppMessaging = CustomerIO.inAppMessaging;
   return inAppMessaging.registerEventsListener((event) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:
@@ -114,5 +118,5 @@ export const registerInAppEventListener = () => {
       default:
         onInAppEventReceived('unsupported event', event);
     }
-  });*/
+  });
 };

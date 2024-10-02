@@ -1,9 +1,7 @@
 import { NativeModules, Platform } from 'react-native';
 import { CioLogLevel, type CioConfig } from './cio-config';
 import { type IdentifyParams } from './cio-params';
-// TODO: Import the CustomerIOInAppMessaging class from their respective files
-// when they are implemented.
-// import { CustomerIOInAppMessaging } from './customerio-inapp';
+import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 
@@ -97,8 +95,7 @@ export class CustomerIO {
 
   static readonly isInitialized = () => CustomerIO.initialized;
 
-  // TODO: Update when implemented.
-  // static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly inAppMessaging = new CustomerIOInAppMessaging();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 
   private static readonly assrtInitialized = () => {
