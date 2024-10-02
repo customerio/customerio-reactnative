@@ -13,7 +13,7 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.trackDeviceAttributes,
     inApp: {
-      siteId: 'site_id',
+      siteId: sdkConfig.siteId,
     },
     logLevel: CioLogLevel.None, // Add logLevel property
   };

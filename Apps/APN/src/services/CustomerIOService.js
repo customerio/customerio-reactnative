@@ -7,7 +7,7 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
     inApp: {
-      siteId: 'site_id',
+      siteId: sdkConfig.siteId,
     },
   };
 
