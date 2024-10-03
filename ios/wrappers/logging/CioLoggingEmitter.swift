@@ -25,6 +25,11 @@ class CioLoggingEmitter: RCTEventEmitter {
         }
     }
     
+    deinit {
+        // Clear log dispatcher if the emitter has been deallocated
+        DIGraphShared.shared.logger.setLogDispatcher(nil)
+    }
+    
     override func startObserving() {
         hasObservers = true
     }
