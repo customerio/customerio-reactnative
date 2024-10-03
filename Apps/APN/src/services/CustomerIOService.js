@@ -67,7 +67,6 @@ export const requestPushNotificationsPermission = (options) => {
   return CustomerIO.pushMessaging.showPromptForPushNotifications(options);
 };
 
-// TODO: Implement this method when inapp feature is added
 export const registerInAppEventListener = () => {
   const logInAppEvent = (name, params) => {
     console.log(`in-app message: ${name}, params: `, params);

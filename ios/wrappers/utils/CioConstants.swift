@@ -22,9 +22,4 @@ struct CustomerioConstants {
     
     // Logging
     static let cioTag = "[CIO]"
-    
-    // DataPipelines
-    static let initializeWithConfigMessage = "Initializing Customer.io SDK with config:"
-    static let noIdOrTraitError = "Provide id or traits to identify a user profile."
-    static let initializationFailedError = "Initializing Customer.io SDK failed with error"
 }
