@@ -28,8 +28,8 @@ extension SDKConfigBuilder {
 
         let builder = SDKConfigBuilder(cdpApiKey: cdpApiKey)
         Config.migrationSiteId.ifNotNil(in: config, thenPassItTo: builder.migrationSiteId)
-        Config.region.ifNotNil(in: config, thenPassItTo: builder.region, transforming: Region.getRegion)
-        Config.logLevel.ifNotNil(in: config, thenPassItTo: builder.logLevel, transforming: CioLogLevel.getLogLevel)
+        Config.region.ifNotNil(in: config, thenPassItTo: builder.region, transformingBy: Region.getRegion)
+        Config.logLevel.ifNotNil(in: config, thenPassItTo: builder.logLevel, transformingBy: CioLogLevel.getLogLevel)
         Config.flushAt.ifNotNil(in: config, thenPassItTo: builder.flushAt) { (value: Double) in Int(value) }
         Config.flushInterval.ifNotNil(in: config, thenPassItTo: builder.flushInterval)
         Config.trackApplicationLifecycleEvents.ifNotNil(in: config, thenPassItTo: builder.trackApplicationLifecycleEvents)
@@ -54,7 +54,7 @@ extension RawRepresentable where RawValue == String {
     func ifNotNil<Raw, Transformed>(
         in config: [String: Any?]?,
         thenPassItTo handler: (Transformed) -> Any,
-        transforming transform: (Raw) -> Transformed?
+        transformingBy transform: (Raw) -> Transformed?
     ) {
         if let value = config?[self.rawValue] as? Raw, let result = transform(value) {
             _ = handler(result)
