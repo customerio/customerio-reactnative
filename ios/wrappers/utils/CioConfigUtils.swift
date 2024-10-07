@@ -1,119 +1,63 @@
-import CioInternalCommon
 import CioDataPipelines
+import CioInternalCommon
 import CioMessagingInApp
 
-extension Region: Decodable {}
-
-let logLevels = Set<String>(CioLogLevel.allCases.map(\.rawValue))
-
-struct QASettings: Decodable {
-    let cdnHost: String
-    let apiHost: String
+enum SDKConfigBuilderError: Error {
+    case missingCdpApiKey
 }
 
-struct RCTCioConfig: Decodable {
-    let cdpApiKey: String
-    let siteId: String?
-    let region: Region?
-    let trackApplicationLifecycleEvents: Bool?
-    let autoTrackDeviceAttributes: Bool?
-    let enableInApp: Bool?
-    let qa: QASettings?
-    
-    static func from(_ json: AnyObject) throws -> Self {
-        let data = try JSONSerialization.data(withJSONObject: json, options: [])
-        let instance = try JSONDecoder().decode(Self.self, from: data)
-        return instance
+extension SDKConfigBuilder {
+    private enum Config: String {
+        case migrationSiteId
+        case cdpApiKey
+        case region
+        case logLevel
+        case apiHost
+        case cdnHost
+        case flushAt
+        case flushInterval
+        case trackApplicationLifecycleEvents
+        case autoTrackDeviceAttributes
     }
-}
 
-struct CioConfig {
-    let cdp: SDKConfigBuilderResult
-    let inApp: MessagingInAppConfigOptions?
-}
-
-func ifNotNil<V, K>(_ value: V?, thenPassItTo: (V) -> K) {
-    if let value {
-        _ = thenPassItTo(value)
-    }
-}
-
-func cioInitializeConfig(from config: RCTCioConfig, logLevel: String?) -> CioConfig {
-    
-    let cdpConfigBuilder =  SDKConfigBuilder(cdpApiKey: config.cdpApiKey)
-    let cioLogLevel = CioLogLevel(rawValue: logLevel ?? "no log level")
-    ifNotNil(config.siteId, thenPassItTo: cdpConfigBuilder.migrationSiteId)
-    ifNotNil(config.region, thenPassItTo: cdpConfigBuilder.region)
-    ifNotNil(config.autoTrackDeviceAttributes, thenPassItTo: cdpConfigBuilder.autoTrackDeviceAttributes)
-    ifNotNil(config.trackApplicationLifecycleEvents, thenPassItTo: cdpConfigBuilder.trackApplicationLifecycleEvents)
-    ifNotNil(cioLogLevel, thenPassItTo: cdpConfigBuilder.logLevel)
-    ifNotNil(config.qa?.cdnHost, thenPassItTo: cdpConfigBuilder.cdnHost)
-    ifNotNil(config.qa?.apiHost, thenPassItTo: cdpConfigBuilder.apiHost)
-    
-    var inAppConfig: MessagingInAppConfigOptions? = nil
-    
-    if let siteId = config.siteId, let region = config.region, let enableInApp = config.enableInApp, enableInApp {
-        inAppConfig = MessagingInAppConfigBuilder(siteId: siteId, region: region).build()
-    }
-    
-    return CioConfig(cdp: cdpConfigBuilder.build(), inApp: inAppConfig)
-}
-
-// To convert dictionary to Codable
-struct AnyCodable: Codable {
-    let value: Any
-    
-    init(_ value: Any) {
-        self.value = value
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        
-        if let value = try? container.decode(String.self) {
-            self.value = value
-        } else if let value = try? container.decode(Double.self) {
-            self.value = value
-        } else if let value = try? container.decode(Int.self) {
-            self.value = value
-        } else if let value = try? container.decode(Bool.self) {
-            self.value = value
-        } else if let value = try? container.decode([String: AnyCodable].self) {
-            self.value = value.mapValues { $0.value }
-        } else if let value = try? container.decode([AnyCodable].self) {
-            self.value = value.map { $0.value }
-        } else if container.decodeNil() {
-            self.value = NSNull()
-        } else {
-            throw DecodingError.typeMismatch(AnyCodable.self, DecodingError.Context(
-                codingPath: decoder.codingPath,
-                debugDescription: "Unsupported type"
-            ))
+    @available(iOSApplicationExtension, unavailable)
+    static func create(from config: [String: Any?]) throws -> SDKConfigBuilder {
+        guard let cdpApiKey = config[Config.cdpApiKey.rawValue] as? String else {
+            throw SDKConfigBuilderError.missingCdpApiKey
         }
+
+        let builder = SDKConfigBuilder(cdpApiKey: cdpApiKey)
+        Config.migrationSiteId.ifNotNil(in: config, thenPassItTo: builder.migrationSiteId)
+        Config.region.ifNotNil(in: config, thenPassItTo: builder.region, transformingBy: Region.getRegion)
+        Config.logLevel.ifNotNil(in: config, thenPassItTo: builder.logLevel, transformingBy: CioLogLevel.getLogLevel)
+        Config.flushAt.ifNotNil(in: config, thenPassItTo: builder.flushAt) { (value: Double) in Int(value) }
+        Config.flushInterval.ifNotNil(in: config, thenPassItTo: builder.flushInterval)
+        Config.trackApplicationLifecycleEvents.ifNotNil(in: config, thenPassItTo: builder.trackApplicationLifecycleEvents)
+        Config.autoTrackDeviceAttributes.ifNotNil(in: config, thenPassItTo: builder.autoTrackDeviceAttributes)
+
+        let qaConfig = config["qa"] as? [String: Any?]
+        Config.apiHost.ifNotNil(in: qaConfig, thenPassItTo: builder.apiHost)
+        Config.cdnHost.ifNotNil(in: qaConfig, thenPassItTo: builder.cdnHost)
+
+        return builder
     }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        
-        if let value = value as? String {
-            try container.encode(value)
-        } else if let value = value as? Int {
-            try container.encode(value)
-        } else if let value = value as? Double {
-            try container.encode(value)
-        } else if let value = value as? Bool {
-            try container.encode(value)
-        } else if let value = value as? [String: Any] {
-            try container.encode(value.mapValues { AnyCodable($0) })
-        } else if let value = value as? [Any] {
-            try container.encode(value.map { AnyCodable($0) })
-        } else if value is NSNull {
-            try container.encodeNil()
-        } else {
-            throw EncodingError.invalidValue(value, EncodingError.Context(
-                codingPath: encoder.codingPath,
-                debugDescription: "Unsupported type"
-            ))
+}
+
+extension RawRepresentable where RawValue == String {
+    func ifNotNil<Raw>(
+        in config: [String: Any?]?,
+        thenPassItTo handler: (Raw) -> Any
+    ) {
+        ifNotNil(in: config, thenPassItTo: handler) { $0 }
+    }
+
+    func ifNotNil<Raw, Transformed>(
+        in config: [String: Any?]?,
+        thenPassItTo handler: (Transformed) -> Any,
+        transformingBy transform: (Raw) -> Transformed?
+    ) {
+        if let value = config?[self.rawValue] as? Raw, let result = transform(value) {
+            _ = handler(result)
         }
     }
 }

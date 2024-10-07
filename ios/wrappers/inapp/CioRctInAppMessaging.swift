@@ -2,10 +2,10 @@ import Foundation
 import React
 import CioMessagingInApp
 
-@objc(CustomerioInAppMessaging)
-class CustomerioInAppMessaging: RCTEventEmitter {
+@objc(CioRctInAppMessaging)
+class CioRctInAppMessaging: RCTEventEmitter {
     // React Native modules should be initialized late as they will be created and initialized automatically
-    public static var shared: CustomerioInAppMessaging?
+    public static var shared: CioRctInAppMessaging?
 
     @objc override static func requiresMainQueueSetup() -> Bool {
         false /// false because our native module's initialization does not require access to UIKit
@@ -13,7 +13,8 @@ class CustomerioInAppMessaging: RCTEventEmitter {
 
     override init() {
         super.init()
-        CustomerioInAppMessaging.shared = self
+
+        Self.shared = self
     }
 
     /**

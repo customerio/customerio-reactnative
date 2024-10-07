@@ -1,7 +1,7 @@
 # ------------- 
 # This code only used internally for Customer.io testing
 require 'open-uri'
-IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/v2/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
+IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
 load "/tmp/override_cio_sdk.rb"
 # end of internal Customer.io testing code
 # ------------- 
@@ -46,7 +46,9 @@ target 'FCMSampleApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
+  # TODO: Remove this once iOS Native SDK is released and revert to original code
+  install_non_production_ios_sdk_git_branch(branch_name: 'feature/react-native-cdp', is_app_extension: false, push_service: "fcm")
+  # pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: "fcm")
   # install_non_production_ios_sdk_git_branch(branch_name: 'levi/v2-multiple-push-handlers', is_app_extension: false, push_service: "fcm")
 
@@ -61,7 +63,9 @@ target 'FCMSampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+  # TODO: Remove this once iOS Native SDK is released and revert to original code
+  install_non_production_ios_sdk_git_branch(branch_name: 'feature/react-native-cdp', is_app_extension: true, push_service: "fcm")
+  # pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "fcm")
   # install_non_production_ios_sdk_git_branch(branch_name: 'levi/v2-multiple-push-handlers', is_app_extension: true, push_service: "fcm")
 end

@@ -9,8 +9,8 @@ const LINKING_ERROR =
 /**
  * Get CustomerioInAppMessaging native module
  */
-const InAppMessagingNative = NativeModules.CustomerioInAppMessaging
-  ? NativeModules.CustomerioInAppMessaging
+const InAppMessagingNative = NativeModules.CioRctInAppMessaging
+  ? NativeModules.CioRctInAppMessaging
   : new Proxy(
       {},
       {

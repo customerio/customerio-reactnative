@@ -5,43 +5,34 @@ PODS:
   - boost (1.83.0)
   - customerio-reactnative (3.9.0):
     - customerio-reactnative/nopush (= 3.9.0)
-    - CustomerIO/DataPipelines (= 3.3.3)
-    - CustomerIO/MessagingInApp (= 3.3.3)
-    - React-Core
-  - customerio-reactnative-richpush/fcm (3.9.0):
-    - CustomerIO/MessagingPushFCM (= 3.3.3)
-  - customerio-reactnative/fcm (3.9.0):
-    - CustomerIO/DataPipelines (= 3.3.3)
-    - CustomerIO/MessagingInApp (= 3.3.3)
-    - CustomerIO/MessagingPushFCM (= 3.3.3)
+    - CustomerIO/DataPipelines (= 3.4.1)
+    - CustomerIO/MessagingInApp (= 3.4.1)
     - React-Core
   - customerio-reactnative/nopush (3.9.0):
-    - CustomerIO/DataPipelines (= 3.3.3)
-    - CustomerIO/MessagingInApp (= 3.3.3)
-    - CustomerIO/MessagingPush (= 3.3.3)
+    - CustomerIO/DataPipelines (= 3.4.1)
+    - CustomerIO/MessagingInApp (= 3.4.1)
+    - CustomerIO/MessagingPush (= 3.4.1)
     - React-Core
-  - CustomerIO/DataPipelines (3.3.3):
-    - CustomerIODataPipelines (= 3.3.3)
-  - CustomerIO/MessagingInApp (3.3.3):
-    - CustomerIOMessagingInApp (= 3.3.3)
-  - CustomerIO/MessagingPush (3.3.3):
-    - CustomerIOMessagingPush (= 3.3.3)
-  - CustomerIO/MessagingPushFCM (3.3.3):
-    - CustomerIOMessagingPushFCM (= 3.3.3)
-  - CustomerIOCommon (3.3.3)
-  - CustomerIODataPipelines (3.3.3):
+  - CustomerIO/DataPipelines (3.4.1):
+    - CustomerIODataPipelines (= 3.4.1)
+  - CustomerIO/MessagingInApp (3.4.1):
+    - CustomerIOMessagingInApp (= 3.4.1)
+  - CustomerIO/MessagingPush (3.4.1):
+    - CustomerIOMessagingPush (= 3.4.1)
+  - CustomerIOCommon (3.4.1)
+  - CustomerIODataPipelines (3.4.1):
     - "AnalyticsSwiftCIO (= 1.5.14+cio.1)"
-    - CustomerIOCommon (= 3.3.3)
-    - CustomerIOTrackingMigration (= 3.3.3)
-  - CustomerIOMessagingInApp (3.3.3):
-    - CustomerIOCommon (= 3.3.3)
-  - CustomerIOMessagingPush (3.3.3):
-    - CustomerIOCommon (= 3.3.3)
-  - CustomerIOMessagingPushFCM (3.3.3):
-    - CustomerIOMessagingPush (= 3.3.3)
-    - FirebaseMessaging (< 11, >= 8.7.0)
-  - CustomerIOTrackingMigration (3.3.3):
-    - CustomerIOCommon (= 3.3.3)
+    - CustomerIOCommon (= 3.4.1)
+    - CustomerIOTrackingMigration (= 3.4.1)
+  - CustomerIOMessagingInApp (3.4.1):
+    - CustomerIOCommon (= 3.4.1)
+  - CustomerIOMessagingPush (3.4.1):
+    - CustomerIOCommon (= 3.4.1)
+  - CustomerIOMessagingPushFCM (3.4.1):
+    - CustomerIOMessagingPush (= 3.4.1)
+    - FirebaseMessaging (< 12, >= 8.7.0)
+  - CustomerIOTrackingMigration (3.4.1):
+    - CustomerIOCommon (= 3.4.1)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.73.9)
   - FBReactNativeSpec (0.73.9):
@@ -1194,8 +1185,11 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
-  - customerio-reactnative-richpush/fcm (from `../node_modules/customerio-reactnative`)
-  - customerio-reactnative/fcm (from `../node_modules/customerio-reactnative`)
+  - CustomerIOCommon (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
+  - CustomerIODataPipelines (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
+  - CustomerIOMessagingInApp (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
+  - CustomerIOMessagingPush (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
+  - CustomerIOMessagingPushFCM (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -1261,11 +1255,6 @@ SPEC REPOS:
   trunk:
     - AnalyticsSwiftCIO
     - CustomerIO
-    - CustomerIOCommon
-    - CustomerIODataPipelines
-    - CustomerIOMessagingInApp
-    - CustomerIOMessagingPush
-    - CustomerIOMessagingPushFCM
     - CustomerIOTrackingMigration
     - Firebase
     - FirebaseCore
@@ -1288,8 +1277,21 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   customerio-reactnative:
     :path: "../node_modules/customerio-reactnative"
-  customerio-reactnative-richpush:
-    :path: "../node_modules/customerio-reactnative"
+  CustomerIOCommon:
+    :branch: feature/react-native-cdp
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIODataPipelines:
+    :branch: feature/react-native-cdp
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingInApp:
+    :branch: feature/react-native-cdp
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPush:
+    :branch: feature/react-native-cdp
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPushFCM:
+    :branch: feature/react-native-cdp
+    :git: https://github.com/customerio/customerio-ios.git
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -1406,18 +1408,34 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  CustomerIOCommon:
+    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIODataPipelines:
+    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingInApp:
+    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPush:
+    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :git: https://github.com/customerio/customerio-ios.git
+  CustomerIOMessagingPushFCM:
+    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :git: https://github.com/customerio/customerio-ios.git
+
 SPEC CHECKSUMS:
   AnalyticsSwiftCIO: d03712b33e85baecc86f0d38a6d53c97f7bc5bd1
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  CustomerIO: 31577d6ea64c13a03b1d62eec5687cbadeaa92b1
-  customerio-reactnative: d0335bff63ba7721a49d07827482acd86827300a
-  customerio-reactnative-richpush: 74632ed49c22819fb4409508ee3a8a8aa54bab56
-  CustomerIOCommon: bafcdc80e34dc40fb4cdf6e44d9bab851e6e127d
-  CustomerIODataPipelines: 5be26a9236a075407ad01cdbb2a80118df3b1462
-  CustomerIOMessagingInApp: eb41cccba6cb2b114673e2ea795ef20cb376c89f
-  CustomerIOMessagingPush: 4d3a603215d469ed6362e5c9905ba0e06a33b9d8
-  CustomerIOMessagingPushFCM: 780683f02e8829d4f5748e7657523bb9a5b26e93
-  CustomerIOTrackingMigration: 1fa4c2464868009cff2bba1c0fa3512ad51742a5
+  CustomerIO: 7563a4e69cc71940e45285b509074a0929132c46
+  customerio-reactnative: 8443cefc6cfbbcace089683bfc5d733dfe94874f
+  CustomerIOCommon: 4918263730b3e7349e9ab8fdd5d11ff577d44ae6
+  CustomerIODataPipelines: da9bee0a16b177b610078b72173615f2b1ddfa46
+  CustomerIOMessagingInApp: 3b12a3bb8b08cd426594d34cb3042ba187ac5141
+  CustomerIOMessagingPush: 0b270e12d1b1915d38d8627c97a9b176f2c80e8f
+  CustomerIOMessagingPushFCM: 8d5f4ef94d152aa07ebd7ae77098bd0c47a274d8
+  CustomerIOTrackingMigration: 580086b225417687beb3106c5ac955c37b5507cd
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: 98c189b92292d4bfeac13ffa8df3ce3d84e2fc5b
   FBReactNativeSpec: 4fe1d8c2fadc7949344b197d933f76b40401aac5
@@ -1489,8 +1507,8 @@ SPEC CHECKSUMS:
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Sovran: f8212bb3855042a24689a73ea0219ca5295235da
-  Yoga: 6aaa3c45f0fda0c6929f855121622669dabe1aaf
+  Yoga: 57d2ffe418d024d56f8b0047f335c677e4c4d9ac
 
-PODFILE CHECKSUM: 856c598ef31ca9704d7f356fc3128c0680cd0c97
+PODFILE CHECKSUM: c227bce552cff188523da0e15b41af421f912768
 
 COCOAPODS: 1.15.2

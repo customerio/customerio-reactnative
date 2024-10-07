@@ -23,7 +23,7 @@ import io.customer.sdk.data.model.Region
 class RNCIOInAppMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), InAppEventListener {
-    override fun getName(): String = "CustomerioInAppMessaging"
+    override fun getName(): String = "CioRctInAppMessaging"
 
     private val inAppMessagingModule: ModuleMessagingInApp?
         get() = kotlin.runCatching { CustomerIO.instance().inAppMessaging() }.getOrNull()

@@ -1,46 +1,50 @@
+import CioInternalCommon
 import CioDataPipelines
 import CioMessagingInApp
 import CioMessagingPush
 import UserNotifications
 import React
+import CioAnalytics
 
 @objc(CioRctWrapper)
 class CioRctWrapper: NSObject {
     
     @objc var moduleRegistry: RCTModuleRegistry!
-    private var logger: CioLogger!
+    private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
     
     @objc
     func initialize(_ configJson: AnyObject, logLevel: String) {
         do {
-            logger = CioLoggerWrapper.getInstance(moduleRegistry: moduleRegistry, logLevel: CioLogLevel(rawValue: logLevel) ?? .none)
+            guard let sdkConfig = configJson as? [String: Any?] else {
+                logger.error("Initializing Customer.io SDK failed with error: Invalid config format")
+                return
+            }
+
+            logger.debug("Initializing Customer.io SDK with config: \(configJson)")
+            let sdkConfigBuilder = try SDKConfigBuilder.create(from: sdkConfig)
+            CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
             
-            logger.debug("\(CustomerioConstants.initializeWithConfigMessage)  \(configJson)")
-            let rtcConfig = try RCTCioConfig.from(configJson)
-            let cioInitConfig = cioInitializeConfig(from: rtcConfig, logLevel: logLevel)
-            CustomerIO.initialize(withConfig: cioInitConfig.cdp)
-            if let inAppConfig = cioInitConfig.inApp {
-                // In app initializes UIView(s) which would crash if run from non-UI queues
-                DispatchQueue.main.async {
-                    MessagingInApp.initialize(withConfig: inAppConfig)
-                    MessagingInApp.shared.setEventListener(self)
-                }
+            if let inAppConfig = try? MessagingInAppConfigBuilder.build(from: sdkConfig) {
+                MessagingInApp.initialize(withConfig: inAppConfig)
+                MessagingInApp.shared.setEventListener(self)
             }
         } catch {
-            logger.error("\(CustomerioConstants.initializationFailedError) \(error)")
+            logger.error("Initializing Customer.io SDK failed with error: \(error)")
         }
     }
     
     @objc
     func identify(_ userId: String? = nil, traits: [String: Any]? = nil) {
-        let codableTraits = traits?.mapValues { AnyCodable($0) }
-        
         if let userId = userId {
             CustomerIO.shared.identify(userId: userId, traits: traits)
-        } else if codableTraits != nil {
-            CustomerIO.shared.identify(traits: codableTraits!)
+        } else if traits != nil {
+            if let traitsJson = try? JSON(traits as Any) {
+                CustomerIO.shared.identify(traits: traitsJson)
+            } else {
+                logger.error("Unable to parse traits to JSON: \(traits)")
+            }
         } else {
-            logger.error(CustomerioConstants.noIdOrTraitError)
+            logger.error("Provide id or traits to identify a user profile.")
         }
     }
     
@@ -93,13 +97,10 @@ extension CioRctWrapper: InAppEventListener {
         if let actionName = actionName {
             body[CustomerioConstants.actionName] = actionName
         }
-        // TODO: Add when inapp feature is implemented
-        /*
-         CustomerioInAppMessaging.shared?.sendEvent(
+        CioRctInAppMessaging.shared?.sendEvent(
             withName: CustomerioConstants.inAppEventListener,
             body: body
         )
-        */
     }
     
     func messageShown(message: InAppMessage) {
