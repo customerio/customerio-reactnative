@@ -4,6 +4,7 @@ import CioMessagingInApp
 import CioMessagingPush
 import UserNotifications
 import React
+import CioAnalytics
 
 @objc(CioRctWrapper)
 class CioRctWrapper: NSObject {
@@ -34,12 +35,14 @@ class CioRctWrapper: NSObject {
     
     @objc
     func identify(_ userId: String? = nil, traits: [String: Any]? = nil) {
-        let codableTraits = traits?.mapValues { AnyCodable($0) }
-        
         if let userId = userId {
             CustomerIO.shared.identify(userId: userId, traits: traits)
-        } else if codableTraits != nil {
-            CustomerIO.shared.identify(traits: codableTraits!)
+        } else if traits != nil {
+            if let traitsJson = try? JSON(traits as Any) {
+                CustomerIO.shared.identify(traits: traitsJson)
+            } else {
+                logger.error("Unable to parse traits to JSON: \(traits)")
+            }
         } else {
             logger.error("Provide id or traits to identify a user profile.")
         }
