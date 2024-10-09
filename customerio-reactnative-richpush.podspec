@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "13.0" }
   s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.source_files = "ios/wrappers/**/*.{h,m,mm,swift}"
 
   # s.dependency "X", "X"
   # Careful when declaring dependencies here. All dependencies will be included in the App Extension target in Xcode, not the host iOS app.   
@@ -23,9 +23,15 @@ Pod::Spec.new do |s|
   # Subspecs allow customers to choose between multiple options of what type of version of this rich push package they would like to install. 
   s.subspec 'apn' do |ss|
     ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
+    ss.resource_bundles = {
+      'CustomerIO_Resources' => ['ios/resources/*']
+    }
   end
 
   s.subspec 'fcm' do |ss|
     ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+    ss.resource_bundles = {
+      'CustomerIO_Resources' => ['ios/resources/*']
+    }
   end
 end

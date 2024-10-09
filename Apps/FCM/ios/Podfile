@@ -47,7 +47,7 @@ target 'FCMSampleApp' do
   )
 
   # TODO: Remove this once iOS Native SDK is released and revert to original code
-  install_non_production_ios_sdk_git_branch(branch_name: 'feature/react-native-cdp', is_app_extension: false, push_service: "fcm")
+  install_non_production_ios_sdk_git_branch(branch_name: 'rehan/rn-ios-user-agent', is_app_extension: false, push_service: "fcm")
   # pod 'customerio-reactnative/fcm', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: "fcm")
   # install_non_production_ios_sdk_git_branch(branch_name: 'levi/v2-multiple-push-handlers', is_app_extension: false, push_service: "fcm")
@@ -63,9 +63,7 @@ target 'FCMSampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  # TODO: Remove this once iOS Native SDK is released and revert to original code
-  install_non_production_ios_sdk_git_branch(branch_name: 'feature/react-native-cdp', is_app_extension: true, push_service: "fcm")
-  # pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "fcm")
   # install_non_production_ios_sdk_git_branch(branch_name: 'levi/v2-multiple-push-handlers', is_app_extension: true, push_service: "fcm")
 end
