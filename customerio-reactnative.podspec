@@ -15,6 +15,9 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/wrappers/**/*.{h,m,mm,swift}"
+  s.resource_bundles = {
+    'CustomerIO_Resources' => ['ios/resources/*']
+  }
 
   s.dependency "React-Core"
 
