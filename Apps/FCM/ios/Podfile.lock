@@ -1437,7 +1437,7 @@ SPEC CHECKSUMS:
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: 7563a4e69cc71940e45285b509074a0929132c46
   customerio-reactnative: 7eed682503a3f0f95f783136b4f3dd74c7b0674b
-  customerio-reactnative-richpush: ae4b4b5cc8fc803c588b39c29a6c217ec71aef59
+  customerio-reactnative-richpush: 81af68bcc2a11247de6d74b13408073baf60bb2d
   CustomerIOCommon: 4918263730b3e7349e9ab8fdd5d11ff577d44ae6
   CustomerIODataPipelines: da9bee0a16b177b610078b72173615f2b1ddfa46
   CustomerIOMessagingInApp: 3b12a3bb8b08cd426594d34cb3042ba187ac5141
