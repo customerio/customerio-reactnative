@@ -41,7 +41,7 @@ jobs:
           IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
       - name: Notify team of successful deployment
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v1.27.0
         if: ${{ success() }}
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -76,7 +76,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v1.27.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
