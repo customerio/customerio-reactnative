@@ -34,12 +34,15 @@ export class CustomerIO {
     CustomerIO.initialized = true;
   };
 
-  static readonly identify = async ({ id, traits }: IdentifyParams = {}) => {
+  static readonly identify = async ({
+    userId,
+    traits,
+  }: IdentifyParams = {}) => {
     CustomerIO.assrtInitialized();
-    if (!id && !traits) {
+    if (!userId && !traits) {
       throw new Error('You must provide an id or traits to identify');
     }
-    return NativeCustomerIO.identify(id, traits);
+    return NativeCustomerIO.identify(userId, traits);
   };
 
   static readonly clearIdentify = async () => {

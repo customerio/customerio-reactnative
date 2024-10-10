@@ -1,4 +1,4 @@
 export interface IdentifyParams {
-  id?: string;
+  userId?: string;
   traits?: Record<string, any>;
 }
