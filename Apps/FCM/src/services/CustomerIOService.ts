@@ -27,7 +27,7 @@ export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
 
 export const onUserLoggedIn = (user: User) => {
   CustomerIO.identify({
-    id: user.email,
+    userId: user.email,
     traits: {
       first_name: user.name,
       email: user.email,
