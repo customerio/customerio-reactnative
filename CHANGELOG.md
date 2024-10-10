@@ -1,3 +1,9 @@
+## [3.9.1](https://github.com/customerio/customerio-reactnative/compare/3.9.0...3.9.1) (2024-10-10)
+
+### Bug Fixes
+
+* firebase version upgrade ([#344](https://github.com/customerio/customerio-reactnative/issues/344)) ([11d17e1](https://github.com/customerio/customerio-reactnative/commit/11d17e119f003593bc9a2dde7644bb2b3314bd45))
+
 ## [3.9.0](https://github.com/customerio/customerio-reactnative/compare/3.8.0...3.9.0) (2024-08-28)
 
 ### Features
