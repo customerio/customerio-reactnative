@@ -8,7 +8,7 @@
   "react-native": "src/index",
   "source": "src/index",
   "expoVersion": "",
-  "cioNativeiOSSdkVersion": "= 3.4.1",
+  "cioNativeiOSSdkVersion": "= 3.5.0",
   "files": [
     "src",
     "lib",
