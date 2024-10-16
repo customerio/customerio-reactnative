@@ -1,3 +1,13 @@
+## [4.0.0](https://github.com/customerio/customerio-reactnative/compare/3.9.1...4.0.0) (2024-10-16)
+
+### ⚠ BREAKING CHANGES
+
+* react native as a source for Data pipelines (#349)
+
+### Features
+
+* react native as a source for Data pipelines ([#349](https://github.com/customerio/customerio-reactnative/issues/349)) ([6665c9f](https://github.com/customerio/customerio-reactnative/commit/6665c9f9c4a8d4f175bae86f0e0294e0dc3b8bd1))
+
 ## [3.9.1](https://github.com/customerio/customerio-reactnative/compare/3.9.0...3.9.1) (2024-10-10)
 
 ### Bug Fixes
