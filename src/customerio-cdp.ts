@@ -5,6 +5,8 @@ import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 
+const packageJson = require('customerio-reactnative/package.json');
+
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: ` +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
@@ -29,8 +31,20 @@ export class CustomerIO {
     if (config.logLevel && config.logLevel !== CioLogLevel.None) {
       NativeLoggerListener.initialize();
     }
-    let logLevel = config.logLevel?.valueOf() ?? CioLogLevel.Error.valueOf();
-    NativeCustomerIO.initialize(config, logLevel);
+
+    const packageVersion = packageJson.version ?? '';
+    const args = {
+      packageSource: "ReactNative",
+      packageVersion: packageVersion
+    };
+
+    const expoVersion = packageJson.expoVersion ?? '';
+    if (expoVersion !== '') {
+      args.packageSource = "Expo";
+      args.packageVersion = expoVersion;
+    }
+
+    NativeCustomerIO.initialize(config, args);
     CustomerIO.initialized = true;
   };
 

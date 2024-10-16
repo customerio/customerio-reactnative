@@ -34,7 +34,7 @@ class CustomerIOReactNativeModule(
     }.getOrNull()
 
     @ReactMethod
-    fun initialize(configJson: ReadableMap, logLevelRawValue: String) {
+    fun initialize(configJson: ReadableMap, sdkArgs: ReadableMap) {
         try {
             val packageConfig = configJson.toMap()
             val cdpApiKey = packageConfig.getTypedValue<String>(
@@ -48,7 +48,7 @@ class CustomerIOReactNativeModule(
                 applicationContext = reactApplicationContext.applicationContext as Application,
                 cdpApiKey = cdpApiKey
             ).apply {
-                logLevel(CioLogLevel.getLogLevel(logLevelRawValue))
+                logLevel(CioLogLevel.getLogLevel(packageConfig.getTypedValue<String>(Keys.Config.LOG_LEVEL)))
                 regionRawValue?.let { region(region) }
 
                 packageConfig.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES)
