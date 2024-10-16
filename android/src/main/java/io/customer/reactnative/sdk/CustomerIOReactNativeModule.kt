@@ -41,6 +41,7 @@ class CustomerIOReactNativeModule(
                 Keys.Config.CDP_API_KEY
             ) ?: throw IllegalArgumentException("CDP API Key is required to initialize Customer.io")
 
+            val logLevelRawValue = packageConfig.getTypedValue<String>(Keys.Config.LOG_LEVEL)
             val regionRawValue = packageConfig.getTypedValue<String>(Keys.Config.REGION)
             val region = regionRawValue.let { Region.getRegion(it) }
 
@@ -48,7 +49,7 @@ class CustomerIOReactNativeModule(
                 applicationContext = reactApplicationContext.applicationContext as Application,
                 cdpApiKey = cdpApiKey
             ).apply {
-                logLevel(CioLogLevel.getLogLevel(packageConfig.getTypedValue<String>(Keys.Config.LOG_LEVEL)))
+                logLevelRawValue?.let { logLevel(CioLogLevel.getLogLevel(it)) }
                 regionRawValue?.let { region(region) }
 
                 packageConfig.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES)
