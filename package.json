@@ -8,7 +8,7 @@
   "react-native": "src/index",
   "source": "src/index",
   "expoVersion": "",
-  "cioNativeiOSSdkVersion": "= 2.14.2",
+  "cioNativeiOSSdkVersion": "= 3.5.0",
   "files": [
     "src",
     "lib",
@@ -68,7 +68,7 @@
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-builder-bob": "^0.18.0",
-    "typescript": "^4.1.3"
+    "typescript": "^5.1.6"
   },
   "peerDependencies": {
     "react": "*",

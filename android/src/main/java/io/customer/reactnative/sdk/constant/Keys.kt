@@ -1,26 +1,17 @@
 package io.customer.reactnative.sdk.constant
 
 internal object Keys {
-    object Environment {
-        const val SITE_ID = "siteId"
-        const val API_KEY = "apiKey"
-        const val REGION = "region"
-    }
-
     object Config {
-        const val ENABLE_IN_APP = "enableInApp"
-        const val TRACKING_API_URL = "trackingApiUrl"
-        const val AUTO_TRACK_DEVICE_ATTRIBUTES = "autoTrackDeviceAttributes"
         const val LOG_LEVEL = "logLevel"
-        const val AUTO_TRACK_PUSH_EVENTS = "autoTrackPushEvents"
-        const val BACKGROUND_QUEUE_MIN_NUMBER_OF_TASKS = "backgroundQueueMinNumberOfTasks"
-        const val BACKGROUND_QUEUE_SECONDS_DELAY = "backgroundQueueSecondsDelay"
-        const val PUSH_CLICK_BEHAVIOR = "pushClickBehaviorAndroid"
-    }
-
-    object PackageConfig {
-        const val SOURCE_SDK = "source"
-        const val SOURCE_SDK_VERSION = "version"
-        const val SOURCE_SDK_VERSION_COMPAT = "sdkVersion"
+        const val REGION = "region"
+        const val AUTO_TRACK_DEVICE_ATTRIBUTES = "autoTrackDeviceAttributes"
+        const val CDP_API_KEY = "cdpApiKey"
+        const val SITE_ID = "siteId"
+        const val MIGRATION_SITE_ID = "migrationSiteId"
+        const val TRACK_APP_LIFECYCLE_EVENTS = "trackApplicationLifecycleEvents"
+        const val FLUSH_AT = "flushAt"
+        const val FLUSH_INTERVAL = "flushInterval"
+        // Push messaging
+        const val PUSH_CLICK_BEHAVIOR = "pushClickBehavior"
     }
 }

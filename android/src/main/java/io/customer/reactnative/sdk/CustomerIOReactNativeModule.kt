@@ -1,82 +1,86 @@
 package io.customer.reactnative.sdk
 
+import android.app.Application
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import io.customer.reactnative.sdk.constant.Keys
+import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.CustomerIOShared
-import io.customer.sdk.util.Logger
+import io.customer.sdk.CustomerIOBuilder
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.core.util.CioLogLevel
+import io.customer.sdk.core.util.Logger
+import io.customer.sdk.data.model.Region
 
 class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
-    private val logger: Logger
-        get() = CustomerIOShared.instance().diStaticGraph.logger
+    override fun getName(): String = "NativeCustomerIO"
 
-    // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
-    private val customerIOInstance: CustomerIO?
-        get() = kotlin.runCatching { CustomerIO.instance() }.getOrNull()
+    private val logger: Logger = SDKComponent.logger
+    private fun customerIO(): CustomerIO? = runCatching {
+        // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
+        CustomerIO.instance()
+    }.onFailure {
+        logger.error("Customer.io instance not initialized")
+    }.getOrNull()
 
-    override fun getName(): String {
-        return MODULE_NAME
-    }
-
-    private fun customerIO(): CustomerIO? {
-        val sdkInstance = customerIOInstance
-        if (sdkInstance == null) {
-            logger.error("Customer.io instance not initialized")
-        }
-        return sdkInstance
-    }
-
-    @JvmOverloads
     @ReactMethod
-    fun initialize(
-        environment: ReadableMap,
-        configuration: ReadableMap? = null,
-        packageConfiguration: ReadableMap? = null,
-    ) {
-        val sdkInstance = customerIOInstance
-        // Checks if SDK was initialized before, which means lifecycle callbacks are already
-        // registered as well.
-        // SDK instance may only be initialized before when a notification was received while the
-        // app was in terminated state. Checking the instance earlier helps us prevent adding
-        // multiple listeners and request missed events.
-        val isLifecycleCallbacksRegistered = sdkInstance != null
-
-        if (sdkInstance != null) {
-            logger.info("Customer.io instance already initialized, reinitializing")
-        }
-
-        val env = environment.toMap()
-        val config = configuration?.toMap()
-        val packageConfig = packageConfiguration?.toMap()
-
+    fun initialize(configJson: ReadableMap, sdkArgs: ReadableMap) {
         try {
-            val newInstance = CustomerIOReactNativeInstance.initialize(
-                context = reactApplicationContext,
-                environment = env,
-                configuration = config,
-                packageConfig = packageConfig,
-                inAppEventListener = inAppMessagingModule,
-            )
-            logger.info("Customer.io instance initialized successfully from app")
-            // Request lifecycle events for first initialization only as relaunching app
-            // in wrapper SDKs may result in reinitialization of SDK and lifecycle listener
-            // will already be attached in this case as they are registered to application object.
-            if (!isLifecycleCallbacksRegistered) {
-                currentActivity?.let { activity ->
-                    logger.info("Requesting delayed activity lifecycle events")
-                    val lifecycleCallbacks = newInstance.diGraph.activityLifecycleCallbacks
-                    lifecycleCallbacks.postDelayedEventsForNonNativeActivity(activity)
+            val packageConfig = configJson.toMap()
+            val cdpApiKey = packageConfig.getTypedValue<String>(
+                Keys.Config.CDP_API_KEY
+            ) ?: throw IllegalArgumentException("CDP API Key is required to initialize Customer.io")
+
+            val logLevelRawValue = packageConfig.getTypedValue<String>(Keys.Config.LOG_LEVEL)
+            val regionRawValue = packageConfig.getTypedValue<String>(Keys.Config.REGION)
+            val region = regionRawValue.let { Region.getRegion(it) }
+
+            CustomerIOBuilder(
+                applicationContext = reactApplicationContext.applicationContext as Application,
+                cdpApiKey = cdpApiKey
+            ).apply {
+                logLevelRawValue?.let { logLevel(CioLogLevel.getLogLevel(it)) }
+                regionRawValue?.let { region(region) }
+
+                packageConfig.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES)
+                    ?.let { autoTrackDeviceAttributes(it) }
+                packageConfig.getTypedValue<String>(Keys.Config.MIGRATION_SITE_ID)
+                    ?.let { migrationSiteId(it) }
+                packageConfig.getTypedValue<Int>(Keys.Config.FLUSH_AT)
+                    ?.let { flushAt(it) }
+                packageConfig.getTypedValue<Int>(Keys.Config.FLUSH_INTERVAL)
+                    ?.let { flushInterval(it) }
+                packageConfig.getTypedValue<Boolean>(Keys.Config.TRACK_APP_LIFECYCLE_EVENTS)
+                    ?.let { trackApplicationLifecycleEvents(it) }
+
+                // Configure push messaging module based on config provided by customer app
+                packageConfig.getTypedValue<Map<String, Any>>(key = "push").let { pushConfig ->
+                    pushMessagingModule.addNativeModuleFromConfig(
+                        builder = this,
+                        config = pushConfig ?: emptyMap()
+                    )
                 }
-            }
+                // Configure in-app messaging module based on config provided by customer app
+                packageConfig.getTypedValue<Map<String, Any>>(key = "inApp")?.let { inAppConfig ->
+                    inAppMessagingModule.addNativeModuleFromConfig(
+                        builder = this,
+                        config = inAppConfig,
+                        region = region
+                    )
+                }
+            }.build()
+
+            logger.info("Customer.io instance initialized successfully from app")
         } catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
         }
@@ -88,8 +92,16 @@ class CustomerIOReactNativeModule(
     }
 
     @ReactMethod
-    fun identify(identifier: String, attributes: ReadableMap?) {
-        customerIO()?.identify(identifier, attributes.toMap())
+    fun identify(identifier: String?, attributes: ReadableMap?) {
+        if (identifier == null && attributes == null) {
+            logger.error("Please provide either an ID or traits to identify.")
+            return
+        }
+        identifier?.let {
+            customerIO()?.identify(identifier, attributes.toMap())
+        } ?: run {
+            customerIO()?.profileAttributes = attributes.toMap()
+        }
     }
 
     @ReactMethod
@@ -130,9 +142,5 @@ class CustomerIOReactNativeModule(
     @ReactMethod
     fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
         pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
-    }
-
-    companion object {
-        internal const val MODULE_NAME = "CustomerioReactnative"
     }
 }

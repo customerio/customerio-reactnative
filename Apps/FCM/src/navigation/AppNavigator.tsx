@@ -19,6 +19,7 @@ import {
   isPublicViewAllowed,
   isUnauthenticatedViewOnly,
 } from '../utils/navigation';
+import InternalSettings from '../screens/InternalSettings';
 
 const Stack = createNativeStackNavigator();
 
@@ -45,6 +46,9 @@ const AppNavigator: React.FC = () => {
 
       case Screen.SETTINGS:
         return Settings;
+      
+      case Screen.INTERNAL_SETTINGS:
+        return InternalSettings;
 
       case Screen.CUSTOM_EVENTS:
         return CustomEvent;
@@ -104,6 +108,15 @@ const AppNavigator: React.FC = () => {
         };
         break;
 
+      case Screen.INTERNAL_SETTINGS:
+        props = {
+          ...stackPropsDefault,
+          options: {
+            ...stackPropsDefault.options,
+            title: 'Internal Settings',
+          },
+        };
+        break;
       case Screen.DEVICE_ATTRIBUTES:
       case Screen.PROFILE_ATTRIBUTES:
         props = {

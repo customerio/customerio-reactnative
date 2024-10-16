@@ -1,37 +1,33 @@
 import {
-  CioLogLevel,
   CustomerIO,
-  CustomerIOEnv,
-  CustomerioConfig,
+  CioLogLevel,
   InAppMessageEventType,
 } from 'customerio-reactnative';
 
 export const initializeCustomerIoSDK = (sdkConfig) => {
-  const env = new CustomerIOEnv();
-  env.siteId = sdkConfig.siteId;
-  env.apiKey = sdkConfig.apiKey;
-
-  const config = new CustomerioConfig();
-  config.enableInApp = true;
+  const config = {
+    cdpApiKey: sdkConfig.cdpApiKey, // Mandatory
+    migrationSiteId: sdkConfig.siteId, // For migration
+    trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
+    autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
+    inApp: {
+      siteId: sdkConfig.siteId,
+    },
+  };
 
   if (sdkConfig.debugMode) {
-    config.logLevel = CioLogLevel.debug;
+    config.logLevel = CioLogLevel.Debug;
   }
-  if (sdkConfig.trackingUrl) {
-    config.trackingApiUrl = sdkConfig.trackingUrl;
-  }
-  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
-
-  CustomerIO.initialize(env, config);
+  CustomerIO.initialize(config);
 };
 
 export const onUserLoggedIn = (user) => {
-  CustomerIO.identify(user.email, {
-    first_name: user.name,
-    email: user.email,
+  CustomerIO.identify({
+    userId: user.email,
+    traits: {
+      first_name: user.name,
+      email: user.email,
+    },
   });
 };
 
@@ -63,12 +59,12 @@ export const trackProfileAttribute = (name, value) => {
   CustomerIO.setProfileAttributes(data);
 };
 
-export const getPushPermissionStatus = () => {
-  return CustomerIO.getPushPermissionStatus();
+export const getPushPermissionStatus = async () => {
+  return CustomerIO.pushMessaging.getPushPermissionStatus();
 };
 
 export const requestPushNotificationsPermission = (options) => {
-  return CustomerIO.showPromptForPushNotifications(options);
+  return CustomerIO.pushMessaging.showPromptForPushNotifications(options);
 };
 
 export const registerInAppEventListener = () => {
@@ -95,7 +91,7 @@ export const registerInAppEventListener = () => {
     CustomerIO.track('in-app message action', data);
   };
 
-  const inAppMessaging = CustomerIO.inAppMessaging();
+  const inAppMessaging = CustomerIO.inAppMessaging;
   return inAppMessaging.registerEventsListener((event) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:

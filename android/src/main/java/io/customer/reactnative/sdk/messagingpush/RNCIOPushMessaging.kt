@@ -6,18 +6,28 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import com.facebook.react.bridge.*
+import com.facebook.react.bridge.ActivityEventListener
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
 import io.customer.messagingpush.CustomerIOFirebaseMessagingService
-import io.customer.messagingpush.di.pushMessaging
+import io.customer.messagingpush.MessagingPushModuleConfig
+import io.customer.messagingpush.ModuleMessagingPushFCM
+import io.customer.messagingpush.config.PushClickBehavior
+import io.customer.messagingpush.di.pushModuleConfig
 import io.customer.messagingpush.di.pushTrackingUtil
+import io.customer.reactnative.sdk.constant.Keys
+import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
-import io.customer.reactnative.sdk.extension.toFCMRemoteMessage
 import io.customer.sdk.CustomerIO
-import io.customer.sdk.CustomerIOShared
-import io.customer.sdk.util.Logger
-import java.util.*
+import io.customer.sdk.CustomerIOBuilder
+import io.customer.sdk.core.di.SDKComponent
+import io.customer.sdk.core.util.Logger
+import java.util.UUID
 
 /**
  * ReactNative module to hold push messages features in a single place to bridge with native code.
@@ -25,8 +35,11 @@ import java.util.*
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
-    private val logger: Logger
-        get() = CustomerIOShared.instance().diStaticGraph.logger
+    override fun getName(): String = "CioRctPushMessaging"
+
+    private val logger: Logger = SDKComponent.logger
+    private val pushModuleConfig: MessagingPushModuleConfig
+        get() = SDKComponent.pushModuleConfig
 
     /**
      * Temporarily holds reference for notification request as the request is dependent on Android
@@ -36,6 +49,36 @@ class RNCIOPushMessaging(
 
     init {
         reactContext.addActivityEventListener(this)
+    }
+
+    /**
+     * Adds push messaging module to native Android SDK based on the configuration provided by
+     * customer app.
+     *
+     * @param builder instance of CustomerIOBuilder to add push messaging module.
+     * @param config configuration provided by customer app for push messaging module.
+     */
+    internal fun addNativeModuleFromConfig(
+        builder: CustomerIOBuilder,
+        config: Map<String, Any>
+    ) {
+        val androidConfig = config.getTypedValue<Map<String, Any>>(key = "android") ?: emptyMap()
+        // Prefer `android` object for push configurations as it's more specific to Android
+        // For common push configurations, use `config` object instead of `android`
+
+        // Default push click behavior is to prevent restart of activity in React Native apps
+        val pushClickBehavior = androidConfig.getTypedValue<String>(Keys.Config.PUSH_CLICK_BEHAVIOR)
+            ?.takeIfNotBlank()
+            ?.let { value ->
+                runCatching { enumValueOf<PushClickBehavior>(value) }.getOrNull()
+            } ?: PushClickBehavior.ACTIVITY_PREVENT_RESTART
+
+        val module = ModuleMessagingPushFCM(
+            moduleConfig = MessagingPushModuleConfig.Builder().apply {
+                setPushClickBehavior(pushClickBehavior = pushClickBehavior)
+            }.build(),
+        )
+        builder.addCustomerIOModule(module)
     }
 
     @ReactMethod
@@ -118,7 +161,7 @@ class RNCIOPushMessaging(
      * Get the registered device token for the app.
      * @returns Promise with device token as a string, or error if no token is
      * registered or the method fails to fetch token.
-    */
+     */
     @ReactMethod
     fun getRegisteredDeviceToken(promise: Promise) {
         try {
@@ -131,7 +174,11 @@ class RNCIOPushMessaging(
                 promise.reject("device_token_not_found", "The device token is not available.")
             }
         } catch (e: Exception) {
-            promise.reject("error_getting_device_token", "Error fetching registered device token.", e)
+            promise.reject(
+                "error_getting_device_token",
+                "Error fetching registered device token.",
+                e
+            )
         }
     }
 
@@ -191,25 +238,19 @@ class RNCIOPushMessaging(
     override fun onNewIntent(intent: Intent?) {
         val intentArguments = intent?.extras ?: return
         kotlin.runCatching {
-            val sdkInstance = CustomerIO.instance()
-            val pushMessagingModuleConfig = sdkInstance.pushMessaging().moduleConfig
-
-            if (pushMessagingModuleConfig.autoTrackPushEvents) {
-                sdkInstance.diGraph.pushTrackingUtil
-                    .parseLaunchedActivityForTracking(intentArguments)
+            if (pushModuleConfig.autoTrackPushEvents) {
+                SDKComponent.pushTrackingUtil.parseLaunchedActivityForTracking(intentArguments)
             }
         }.onFailure { ex ->
             logger.error("Unable to parse push notification intent, reason: ${ex.message}")
         }
     }
 
-    override fun getName(): String = "CustomerioPushMessaging"
-
     /**
      * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
      */
     private val PermissionStatus.toReactNativeResult: Any
-        get() = this.name
+        get() = this.name.uppercase()
 
     companion object {
         /**

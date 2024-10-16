@@ -1,6 +1,5 @@
 import Foundation
 import UserNotifications
-import CioTracking
 import CioMessagingPushAPN
 
 @objc
@@ -11,11 +10,11 @@ public class NotificationServicePushHandler : NSObject {
     @objc(didReceive:withContentHandler:)
     public func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
 
-      // TODO: Add Env.swift and fetch values from file, update values from CI secret keys
-      CustomerIO.initialize(siteId: Env.siteId, apiKey: Env.apiKey, region: .US) { config in
-        config.autoTrackDeviceAttributes = true
-        config.logLevel = .debug
-      }
+      MessagingPushAPN.initializeForExtension(
+            withConfig: MessagingPushConfigBuilder(cdpApiKey: Env.cdpApiKey)
+                  .logLevel(.debug)
+                  .build()
+          )
       MessagingPush.shared.didReceive(request, withContentHandler: contentHandler)
     }
 

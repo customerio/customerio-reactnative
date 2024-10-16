@@ -3,19 +3,19 @@ import Env from '../../../env';
 export default class CustomerIoSDKConfig {
   constructor({
     siteId,
-    apiKey,
-    trackingUrl,
-    bqSecondsDelay,
-    bqMinNumberOfTasks,
+    cdpApiKey,
+    flushInterval,
+    flushAt,
     trackScreens,
     trackDeviceAttributes,
     debugMode,
+    trackAppLifecycleEvents,
   } = {}) {
     this.siteId = siteId;
-    this.apiKey = apiKey;
-    this.trackingUrl = trackingUrl;
-    this.bqSecondsDelay = bqSecondsDelay;
-    this.bqMinNumberOfTasks = bqMinNumberOfTasks;
+    this.cdpApiKey = cdpApiKey;
+    this.flushInterval = flushInterval;
+    this.flushAt = flushAt;
+    this.trackAppLifecycleEvents = trackAppLifecycleEvents;
     this.trackScreens = trackScreens;
     this.trackDeviceAttributes = trackDeviceAttributes;
     this.debugMode = debugMode;
@@ -24,12 +24,10 @@ export default class CustomerIoSDKConfig {
   static createDefault() {
     return new CustomerIoSDKConfig({
       siteId: Env.siteId,
-      apiKey: Env.apiKey,
-      trackingUrl: 'https://track-sdk.customer.io/',
-      bqSecondsDelay: 30.0,
-      bqMinNumberOfTasks: 10,
+      cdpApiKey: Env.cdpApiKey,
       trackScreens: true,
       trackDeviceAttributes: true,
+      trackAppLifecycleEvents: true,
       debugMode: true,
     });
   }
@@ -38,15 +36,13 @@ export default class CustomerIoSDKConfig {
     const defaultConfig = this.createDefault();
     return new CustomerIoSDKConfig({
       siteId: other?.siteId ?? defaultConfig.siteId,
-      apiKey: other?.apiKey ?? defaultConfig.apiKey,
-      trackingUrl: other?.trackingUrl ?? defaultConfig.trackingUrl,
-      bqSecondsDelay: other?.bqSecondsDelay ?? defaultConfig.bqSecondsDelay,
-      bqMinNumberOfTasks:
-        other?.bqMinNumberOfTasks ?? defaultConfig.bqMinNumberOfTasks,
+      cdpApiKey: other?.cdpApiKey ?? defaultConfig.cdpApiKey,
       trackScreens: other?.trackScreens ?? defaultConfig.trackScreens,
       trackDeviceAttributes:
         other?.trackDeviceAttributes ?? defaultConfig.trackDeviceAttributes,
       debugMode: other?.debugMode ?? defaultConfig.debugMode,
+      trackAppLifecycleEvents:
+        other?.trackAppLifecycleEvents ?? defaultConfig.trackAppLifecycleEvents,
     });
   }
 }

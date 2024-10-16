@@ -1,40 +1,47 @@
 PODS:
+  - "AnalyticsSwiftCIO (1.5.14+cio.1)":
+    - JSONSafeEncoding (= 2.0.0)
+    - Sovran (= 1.1.1)
   - boost (1.83.0)
-  - customerio-reactnative (3.9.0):
-    - customerio-reactnative/nopush (= 3.9.0)
-    - CustomerIO/MessagingInApp (= 2.14.2)
-    - CustomerIO/Tracking (= 2.14.2)
+  - customerio-reactnative (3.9.1):
+    - customerio-reactnative/nopush (= 3.9.1)
+    - CustomerIO/DataPipelines (= 3.5.0)
+    - CustomerIO/MessagingInApp (= 3.5.0)
     - React-Core
-  - customerio-reactnative-richpush/fcm (3.9.0):
-    - CustomerIO/MessagingPushFCM (= 2.14.2)
-  - customerio-reactnative/fcm (3.9.0):
-    - CustomerIO/MessagingInApp (= 2.14.2)
-    - CustomerIO/MessagingPushFCM (= 2.14.2)
-    - CustomerIO/Tracking (= 2.14.2)
+  - customerio-reactnative-richpush/fcm (3.9.1):
+    - CustomerIO/MessagingPushFCM (= 3.5.0)
+  - customerio-reactnative/fcm (3.9.1):
+    - CustomerIO/DataPipelines (= 3.5.0)
+    - CustomerIO/MessagingInApp (= 3.5.0)
+    - CustomerIO/MessagingPushFCM (= 3.5.0)
     - React-Core
-  - customerio-reactnative/nopush (3.9.0):
-    - CustomerIO/MessagingInApp (= 2.14.2)
-    - CustomerIO/MessagingPush (= 2.14.2)
-    - CustomerIO/Tracking (= 2.14.2)
+  - customerio-reactnative/nopush (3.9.1):
+    - CustomerIO/DataPipelines (= 3.5.0)
+    - CustomerIO/MessagingInApp (= 3.5.0)
+    - CustomerIO/MessagingPush (= 3.5.0)
     - React-Core
-  - CustomerIO/MessagingInApp (2.14.2):
-    - CustomerIOMessagingInApp (= 2.14.2)
-  - CustomerIO/MessagingPush (2.14.2):
-    - CustomerIOMessagingPush (= 2.14.2)
-  - CustomerIO/MessagingPushFCM (2.14.2):
-    - CustomerIOMessagingPushFCM (= 2.14.2)
-  - CustomerIO/Tracking (2.14.2):
-    - CustomerIOTracking (= 2.14.2)
-  - CustomerIOCommon (2.14.2)
-  - CustomerIOMessagingInApp (2.14.2):
-    - CustomerIOTracking (= 2.14.2)
-  - CustomerIOMessagingPush (2.14.2):
-    - CustomerIOTracking (= 2.14.2)
-  - CustomerIOMessagingPushFCM (2.14.2):
-    - CustomerIOMessagingPush (= 2.14.2)
+  - CustomerIO/DataPipelines (3.5.0):
+    - CustomerIODataPipelines (= 3.5.0)
+  - CustomerIO/MessagingInApp (3.5.0):
+    - CustomerIOMessagingInApp (= 3.5.0)
+  - CustomerIO/MessagingPush (3.5.0):
+    - CustomerIOMessagingPush (= 3.5.0)
+  - CustomerIO/MessagingPushFCM (3.5.0):
+    - CustomerIOMessagingPushFCM (= 3.5.0)
+  - CustomerIOCommon (3.5.0)
+  - CustomerIODataPipelines (3.5.0):
+    - "AnalyticsSwiftCIO (= 1.5.14+cio.1)"
+    - CustomerIOCommon (= 3.5.0)
+    - CustomerIOTrackingMigration (= 3.5.0)
+  - CustomerIOMessagingInApp (3.5.0):
+    - CustomerIOCommon (= 3.5.0)
+  - CustomerIOMessagingPush (3.5.0):
+    - CustomerIOCommon (= 3.5.0)
+  - CustomerIOMessagingPushFCM (3.5.0):
+    - CustomerIOMessagingPush (= 3.5.0)
     - FirebaseMessaging (< 12, >= 8.7.0)
-  - CustomerIOTracking (2.14.2):
-    - CustomerIOCommon (= 2.14.2)
+  - CustomerIOTrackingMigration (3.5.0):
+    - CustomerIOCommon (= 3.5.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.73.10)
   - FBReactNativeSpec (0.73.10):
@@ -103,6 +110,7 @@ PODS:
   - hermes-engine (0.73.10):
     - hermes-engine/Pre-built (= 0.73.10)
   - hermes-engine/Pre-built (0.73.10)
+  - JSONSafeEncoding (2.0.0)
   - libevent (2.1.12)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
@@ -1178,6 +1186,7 @@ PODS:
   - RNSnackbar (2.8.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - Sovran (1.1.1)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -1248,12 +1257,14 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AnalyticsSwiftCIO
     - CustomerIO
     - CustomerIOCommon
+    - CustomerIODataPipelines
     - CustomerIOMessagingInApp
     - CustomerIOMessagingPush
     - CustomerIOMessagingPushFCM
-    - CustomerIOTracking
+    - CustomerIOTrackingMigration
     - Firebase
     - FirebaseCore
     - FirebaseCoreExtension
@@ -1263,10 +1274,12 @@ SPEC REPOS:
     - fmt
     - GoogleDataTransport
     - GoogleUtilities
+    - JSONSafeEncoding
     - libevent
     - nanopb
     - PromisesObjC
     - SocketRocket
+    - Sovran
 
 EXTERNAL SOURCES:
   boost:
@@ -1392,15 +1405,17 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  AnalyticsSwiftCIO: d03712b33e85baecc86f0d38a6d53c97f7bc5bd1
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  CustomerIO: 51eaaea8fd5a6f769ac93dd0ba0991effd1b78e1
-  customerio-reactnative: 79aa2fe0e49633196e60fb6ff0f034c0fa650aaa
-  customerio-reactnative-richpush: 443a9957ec73982110106d15bca6e432b4197c36
-  CustomerIOCommon: f21661da1b67b7c2ee420d424cffacad3bbb28f6
-  CustomerIOMessagingInApp: dc75d9c9e732a62739fd52a51e2c71eb278c006d
-  CustomerIOMessagingPush: 18ffa96dafa2ef3d2ebb1886ab972a56ad6f148e
-  CustomerIOMessagingPushFCM: 14747aa790192969a2b9d3c6a0a107efcfa9f5c3
-  CustomerIOTracking: 1be3d27b63026b2a5903b50174e06c4b30c940a0
+  CustomerIO: f4aad2ce56f15ee2259cdc4faa4083229d83fdb0
+  customerio-reactnative: 6f1c87a6d19727882d42e840f8273a55059b1945
+  customerio-reactnative-richpush: 2e178a1c37841f3d6e9c5470988c94dd1a6ee838
+  CustomerIOCommon: 3ff2525259494de5800a41594ceab845183b15b5
+  CustomerIODataPipelines: c0c0a23db3ae303bc26b05eeb2490b5d4926ba83
+  CustomerIOMessagingInApp: 1e344b4306f49697669c8a74ec56b6e602f982bf
+  CustomerIOMessagingPush: a7c260756260cebbaa6ea5c99d6401181c41f29b
+  CustomerIOMessagingPushFCM: 6255446a765d1878db75f78c8ca5b099873d8b0d
+  CustomerIOTrackingMigration: 75d9c06e891b36e6b2bf294b5cfb1d85ae625823
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: c039b29a5b130f817a6b07dd7bc33830a969ab27
   FBReactNativeSpec: 0368d296aba294bab9067f575175422a4754db27
@@ -1415,6 +1430,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
   hermes-engine: 42a7a4cbe3e20050fb031f64aaaffbe0c0b4a38f
+  JSONSafeEncoding: 54722ebc4fe1482e3e60a8450e1287481e32dd8b
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -1470,8 +1486,9 @@ SPEC CHECKSUMS:
   RNScreens: 29418ceffb585b8f0ebd363de304288c3dce8323
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  Yoga: 490c2ee2b0808472ab0877103fbdc0f557b797e1
+  Sovran: f8212bb3855042a24689a73ea0219ca5295235da
+  Yoga: 66a97477b94264cc4e49990c8fe6b153260d871d
 
-PODFILE CHECKSUM: 856c598ef31ca9704d7f356fc3128c0680cd0c97
+PODFILE CHECKSUM: 4c266b02aec68ff765838748180b9d08916925df
 
 COCOAPODS: 1.15.2

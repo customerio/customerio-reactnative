@@ -4,7 +4,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '13.0'
+# React-logger requires higher minimum deployment target
+platform :ios, '14.0'
 install! 'cocoapods', :deterministic_uuids => false
 
 require 'open-uri'
@@ -48,6 +49,8 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
+  # Ideally, installing non-production SDK to main target should be enough
+  # We should not need to install non-production SDK to app extension separately
   pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "apn")
   # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: true, push_service: "apn")

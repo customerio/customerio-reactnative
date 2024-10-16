@@ -1,47 +1,37 @@
 import {
   CioLogLevel,
   CustomerIO,
-  CustomerIOEnv,
-  CustomerioConfig,
+  CioPushPermissionOptions,
   InAppMessageEvent,
   InAppMessageEventType,
-  PushPermissionOptions,
 } from 'customerio-reactnative';
 import User from '../data/models/user';
 import CustomerIoSDKConfig from '../data/sdk/CustomerIoSDKConfig';
 
 export const initializeCustomerIoSDK = (sdkConfig: CustomerIoSDKConfig) => {
-  const env = new CustomerIOEnv();
-  env.siteId = sdkConfig.siteId;
-  env.apiKey = sdkConfig.apiKey;
-
-  const config = new CustomerioConfig();
-  config.enableInApp = true;
-
+  const config = {
+    cdpApiKey: sdkConfig.cdpApiKey, // Mandatory
+    migrationSiteId: sdkConfig.siteId, // For migration
+    trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
+    autoTrackDeviceAttributes: sdkConfig.trackDeviceAttributes,
+    inApp: {
+      siteId: sdkConfig.siteId,
+    },
+    logLevel: CioLogLevel.None, // Add logLevel property
+  };
   if (sdkConfig.debugMode) {
-    config.logLevel = CioLogLevel.debug;
+    config.logLevel = CioLogLevel.Debug;
   }
-  if (sdkConfig.trackingUrl) {
-    config.trackingApiUrl = sdkConfig.trackingUrl;
-  }
-  // Advanced SDK configurations only required by sample app, may not be required by most customer apps
-  if (sdkConfig.trackDeviceAttributes !== undefined) {
-    config.autoTrackDeviceAttributes = sdkConfig.trackDeviceAttributes;
-  }
-  if (sdkConfig.bqMinNumberOfTasks !== undefined) {
-    config.backgroundQueueMinNumberOfTasks = sdkConfig.bqMinNumberOfTasks;
-  }
-  if (sdkConfig.bqSecondsDelay !== undefined) {
-    config.backgroundQueueSecondsDelay = sdkConfig.bqSecondsDelay;
-  }
-
-  CustomerIO.initialize(env, config);
+  CustomerIO.initialize(config)
 };
 
 export const onUserLoggedIn = (user: User) => {
-  CustomerIO.identify(user.email, {
-    first_name: user.name,
-    email: user.email,
+  CustomerIO.identify({
+    userId: user.email,
+    traits: {
+      first_name: user.name,
+      email: user.email,
+    }
   });
 };
 
@@ -73,14 +63,15 @@ export const trackProfileAttribute = (name: string, value: any) => {
 };
 
 export const getPushPermissionStatus = () => {
-  return CustomerIO.getPushPermissionStatus();
+  return CustomerIO.pushMessaging.getPushPermissionStatus();
 };
 
 export const requestPushNotificationsPermission = (
-  options: PushPermissionOptions,
+  options: typeof CioPushPermissionOptions,
 ) => {
-  return CustomerIO.showPromptForPushNotifications(options);
+  return CustomerIO.pushMessaging.showPromptForPushNotifications(options);
 };
+
 
 export const registerInAppEventListener = () => {
   const logInAppEvent = (name: string, params: InAppMessageEvent) => {
@@ -108,7 +99,7 @@ export const registerInAppEventListener = () => {
     CustomerIO.track('in-app message action', data);
   };
 
-  const inAppMessaging = CustomerIO.inAppMessaging();
+  const inAppMessaging = CustomerIO.inAppMessaging;
   return inAppMessaging.registerEventsListener((event: InAppMessageEvent) => {
     switch (event.eventType) {
       case InAppMessageEventType.messageShown:
