@@ -23,7 +23,6 @@ class CioRctWrapper: NSObject {
             let packageSource = sdkParams?["packageSource"] as? String
             let packageVersion = sdkParams?["packageVersion"] as? String
             
-            logger.debug("Initializing Customer.io SDK (\(String(describing: packageSource)) \(String(describing: packageVersion))) with config: \(configJson)")
             if let source = packageSource, let sdkVersion = packageVersion {
                 DIGraphShared.shared.override(value: CustomerIOSdkClient(source: source, sdkVersion: sdkVersion), forType: SdkClient.self)
             }
@@ -35,6 +34,7 @@ class CioRctWrapper: NSObject {
                 MessagingInApp.initialize(withConfig: inAppConfig)
                 MessagingInApp.shared.setEventListener(self)
             }
+            logger.debug("Customer.io SDK (\(packageSource ?? "nil") \(packageVersion ?? "nil")) initialized with config: \(configJson)")
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
         }
