@@ -34,13 +34,13 @@ export class CustomerIO {
 
     const packageVersion = packageJson.version ?? '';
     const args = {
-      packageSource: "ReactNative",
-      packageVersion: packageVersion
+      packageSource: 'ReactNative',
+      packageVersion: packageVersion,
     };
 
     const expoVersion = packageJson.expoVersion ?? '';
     if (expoVersion !== '') {
-      args.packageSource = "Expo";
+      args.packageSource = 'Expo';
       args.packageVersion = expoVersion;
     }
 
