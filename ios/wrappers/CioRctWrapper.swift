@@ -12,15 +12,21 @@ class CioRctWrapper: NSObject {
     @objc var moduleRegistry: RCTModuleRegistry!
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
     
-    @objc
-    func initialize(_ configJson: AnyObject, logLevel: String) {
+    @objc(initialize:args:)
+    func initialize(_ configJson: AnyObject, _ sdkArgs: AnyObject?) {
         do {
             guard let sdkConfig = configJson as? [String: Any?] else {
                 logger.error("Initializing Customer.io SDK failed with error: Invalid config format")
                 return
             }
+            let sdkParams = sdkArgs as? [String: Any?]
+            let packageSource = sdkParams?["packageSource"] as? String
+            let packageVersion = sdkParams?["packageVersion"] as? String
+            
+            if let source = packageSource, let sdkVersion = packageVersion {
+                DIGraphShared.shared.override(value: CustomerIOSdkClient(source: source, sdkVersion: sdkVersion), forType: SdkClient.self)
+            }
 
-            logger.debug("Initializing Customer.io SDK with config: \(configJson)")
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: sdkConfig)
             CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
             
@@ -28,6 +34,7 @@ class CioRctWrapper: NSObject {
                 MessagingInApp.initialize(withConfig: inAppConfig)
                 MessagingInApp.shared.setEventListener(self)
             }
+            logger.debug("Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(configJson)")
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
         }
@@ -41,7 +48,7 @@ class CioRctWrapper: NSObject {
             if let traitsJson = try? JSON(traits as Any) {
                 CustomerIO.shared.identify(traits: traitsJson)
             } else {
-                logger.error("Unable to parse traits to JSON: \(traits)")
+                logger.error("Unable to parse traits to JSON: \(String(describing: traits))")
             }
         } else {
             logger.error("Provide id or traits to identify a user profile.")

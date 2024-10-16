@@ -3,7 +3,7 @@
 
 @interface RCT_EXTERN_REMAP_MODULE(NativeCustomerIO, CioRctWrapper, NSObject)
 
-RCT_EXTERN_METHOD(initialize:(id)config logLevel:(NSString *)logLevel)
+RCT_EXTERN_METHOD(initialize:(id)config args:(id)args)
 RCT_EXTERN_METHOD(identify:(NSString *)identify traits:(NSDictionary *)traits)
 RCT_EXTERN_METHOD(clearIdentify)
 RCT_EXTERN_METHOD(track:(NSString *)name properties:(NSDictionary *)properties)

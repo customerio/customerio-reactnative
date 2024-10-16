@@ -51,9 +51,9 @@ target 'SampleApp' do
 end
 
 target 'NotificationServiceExtension' do
-  # TODO: Remove this once iOS Native SDK is released and revert to original code
-  install_non_production_ios_sdk_git_branch(branch_name: 'feature/react-native-cdp', is_app_extension: true, push_service: "apn")
-  # pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
+  # Ideally, installing non-production SDK to main target should be enough
+  # We should not need to install non-production SDK to app extension separately
+  pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: "apn")
   # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: true, push_service: "apn")
 end

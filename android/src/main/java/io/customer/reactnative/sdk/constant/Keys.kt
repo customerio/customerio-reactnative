@@ -2,6 +2,7 @@ package io.customer.reactnative.sdk.constant
 
 internal object Keys {
     object Config {
+        const val LOG_LEVEL = "logLevel"
         const val REGION = "region"
         const val AUTO_TRACK_DEVICE_ATTRIBUTES = "autoTrackDeviceAttributes"
         const val CDP_API_KEY = "cdpApiKey"

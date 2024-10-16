@@ -3,12 +3,14 @@ PODS:
     - JSONSafeEncoding (= 2.0.0)
     - Sovran (= 1.1.1)
   - boost (1.83.0)
-  - customerio-reactnative (3.9.0):
-    - customerio-reactnative/nopush (= 3.9.0)
+  - customerio-reactnative (3.9.1):
+    - customerio-reactnative/nopush (= 3.9.1)
     - CustomerIO/DataPipelines (= 3.4.1)
     - CustomerIO/MessagingInApp (= 3.4.1)
     - React-Core
-  - customerio-reactnative/nopush (3.9.0):
+  - customerio-reactnative-richpush/apn (3.9.1):
+    - CustomerIO/MessagingPushAPN (= 3.4.1)
+  - customerio-reactnative/nopush (3.9.1):
     - CustomerIO/DataPipelines (= 3.4.1)
     - CustomerIO/MessagingInApp (= 3.4.1)
     - CustomerIO/MessagingPush (= 3.4.1)
@@ -19,6 +21,8 @@ PODS:
     - CustomerIOMessagingInApp (= 3.4.1)
   - CustomerIO/MessagingPush (3.4.1):
     - CustomerIOMessagingPush (= 3.4.1)
+  - CustomerIO/MessagingPushAPN (3.4.1):
+    - CustomerIOMessagingPushAPN (= 3.4.1)
   - CustomerIOCommon (3.4.1)
   - CustomerIODataPipelines (3.4.1):
     - "AnalyticsSwiftCIO (= 1.5.14+cio.1)"
@@ -1116,6 +1120,7 @@ PODS:
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
   - customerio-reactnative (from `../node_modules/customerio-reactnative`)
+  - customerio-reactnative-richpush/apn (from `../node_modules/customerio-reactnative`)
   - CustomerIOCommon (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
   - CustomerIODataPipelines (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
   - CustomerIOMessagingInApp (from `https://github.com/customerio/customerio-ios.git`, branch `feature/react-native-cdp`)
@@ -1196,6 +1201,8 @@ EXTERNAL SOURCES:
   boost:
     :podspec: "../node_modules/react-native/third-party-podspecs/boost.podspec"
   customerio-reactnative:
+    :path: "../node_modules/customerio-reactnative"
+  customerio-reactnative-richpush:
     :path: "../node_modules/customerio-reactnative"
   CustomerIOCommon:
     :branch: feature/react-native-cdp
@@ -1328,26 +1335,27 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   CustomerIOCommon:
-    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :commit: bbd3c38364d591f4c78486eb23769a03fdf7d876
     :git: https://github.com/customerio/customerio-ios.git
   CustomerIODataPipelines:
-    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :commit: bbd3c38364d591f4c78486eb23769a03fdf7d876
     :git: https://github.com/customerio/customerio-ios.git
   CustomerIOMessagingInApp:
-    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :commit: bbd3c38364d591f4c78486eb23769a03fdf7d876
     :git: https://github.com/customerio/customerio-ios.git
   CustomerIOMessagingPush:
-    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :commit: bbd3c38364d591f4c78486eb23769a03fdf7d876
     :git: https://github.com/customerio/customerio-ios.git
   CustomerIOMessagingPushAPN:
-    :commit: f5176708f3875388a901338490ff8d64a1a930ae
+    :commit: bbd3c38364d591f4c78486eb23769a03fdf7d876
     :git: https://github.com/customerio/customerio-ios.git
 
 SPEC CHECKSUMS:
   AnalyticsSwiftCIO: d03712b33e85baecc86f0d38a6d53c97f7bc5bd1
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: 7563a4e69cc71940e45285b509074a0929132c46
-  customerio-reactnative: 8443cefc6cfbbcace089683bfc5d733dfe94874f
+  customerio-reactnative: d558f269e5307fff3cf179b7d199a256b761a6d5
+  customerio-reactnative-richpush: 21f18246de845dbcceb7f7ce3cd29edea5fcf752
   CustomerIOCommon: 4918263730b3e7349e9ab8fdd5d11ff577d44ae6
   CustomerIODataPipelines: da9bee0a16b177b610078b72173615f2b1ddfa46
   CustomerIOMessagingInApp: 3b12a3bb8b08cd426594d34cb3042ba187ac5141
@@ -1416,6 +1424,6 @@ SPEC CHECKSUMS:
   Sovran: f8212bb3855042a24689a73ea0219ca5295235da
   Yoga: 805bf71192903b20fc14babe48080582fee65a80
 
-PODFILE CHECKSUM: f0db3d59efb5635626ea907f3b6a400ebe778048
+PODFILE CHECKSUM: c03f64c9abb4eb8f680b6d2ac5d9dc51e057a6d7
 
 COCOAPODS: 1.15.2

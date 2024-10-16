@@ -366,14 +366,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/AnalyticsSwiftCIO/Segment_Privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIODataPipelines/CustomerIODataPipelines_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/CustomerIOMessagingPushAPN/CustomerIOMessagingPushAPN_Privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Segment_Privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIODataPipelines_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/CustomerIOMessagingPushAPN_Privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
