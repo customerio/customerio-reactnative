@@ -1,3 +1,9 @@
+## [4.0.1](https://github.com/customerio/customerio-reactnative/compare/4.0.0...4.0.1) (2024-10-16)
+
+### Bug Fixes
+
+* ci workflow for updating android version automatically ([b477fbc](https://github.com/customerio/customerio-reactnative/commit/b477fbc8e4f742a521289e63d4aafe297a88cde0))
+
 ## [4.0.0](https://github.com/customerio/customerio-reactnative/compare/3.9.1...4.0.0) (2024-10-16)
 
 ### ⚠ BREAKING CHANGES
