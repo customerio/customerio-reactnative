@@ -34,7 +34,7 @@ class CioRctWrapper: NSObject {
                 MessagingInApp.initialize(withConfig: inAppConfig)
                 MessagingInApp.shared.setEventListener(self)
             }
-            logger.debug("Customer.io SDK (\(packageSource ?? "nil") \(packageVersion ?? "nil")) initialized with config: \(configJson)")
+            logger.debug("Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(configJson)")
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
         }
