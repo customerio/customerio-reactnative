@@ -1,3 +1,9 @@
+## [4.0.2](https://github.com/customerio/customerio-reactnative/compare/4.0.1...4.0.2) (2024-10-25)
+
+### Bug Fixes
+
+* dismisses keyboard when an in-app message appears ([#350](https://github.com/customerio/customerio-reactnative/issues/350)) ([74b2379](https://github.com/customerio/customerio-reactnative/commit/74b2379fb435e450b05321bf80ee18bff1d4a1ab))
+
 ## [4.0.1](https://github.com/customerio/customerio-reactnative/compare/4.0.0...4.0.1) (2024-10-16)
 
 ### Bug Fixes
