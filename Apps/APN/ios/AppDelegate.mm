@@ -13,7 +13,9 @@
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
+#ifdef REACT_NATIVE_FABRIC_ENABLED
 #import <React/RCTFabricSurfaceHostingProxyRootView.h>
+#endif
 #import <React/RCTSurfacePresenter.h>
 #import <React/RCTSurfacePresenterBridgeAdapter.h>
 #import <ReactCommon/RCTTurboModuleManager.h>
@@ -124,7 +126,7 @@ MyAppPushNotificationsHandler* pnHandlerObj = [[MyAppPushNotificationsHandler al
   _turboModuleManager = [[RCTTurboModuleManager alloc] initWithBridge:bridge
                                                              delegate:self
                                                             jsInvoker:bridge.jsCallInvoker];
-  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager);
+  return RCTAppSetupDefaultJsExecutorFactory(bridge, _turboModuleManager, nil);
 }
 
 #pragma mark RCTTurboModuleManagerDelegate
