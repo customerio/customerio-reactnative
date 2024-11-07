@@ -123,22 +123,19 @@ lane :get_build_notes do
   build_notes # return value
 end
 
-lane :get_build_test_groups do 
-  test_groups = ['all-builds'] # send all builds to group 'all-builds'. Therefore, set it here and we will not remove it. 
-  test_groups.append("feature-branch") # Feature branch will be used when a PR is merged into a feature branch. We will need to add a check for this.
+lane :get_build_test_groups do
+  test_groups = ['all-builds'] # send all builds to group 'all-builds'. Therefore, set it here and we will not remove it.
   github = GitHub.new()
-    
-  # To avoid giving potentially unstable builds of our sample apps to certain members of the organization, we only send builds to "stable" group uncertain certain situations. 
-  # If a commit is merged into main, it's considered stable because we deploy to production on merges to main. 
+
+  # To avoid giving potentially unstable builds of our sample apps to certain members of the organization, we only send builds to "stable" group uncertain certain situations.
+  # If a commit is merged into main, it's considered stable because we deploy to production on merges to main.
   if github.is_commit_pushed && github.push_branch == "main"
-    test_groups.append("stable-builds") 
-    test_groups.append("next") # Next group will depricate the 'stable` builds group'.
-    test_groups.append("public") # Temp send to public group until we actually build from the deployed SDK.
+    test_groups.append("stable-builds")
   end
 
   test_groups = test_groups.join(", ")
 
   UI.important("Test group names that will be added to this build: #{test_groups}")
 
-  test_groups # return value 
-end 
+  test_groups # return value
+end
