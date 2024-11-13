@@ -12,7 +12,7 @@ assignees: ''
 **SDK version:** <!--The SDK version that you're currently using.-->
 
 **Are logs available?** 
-<!-- Enable logs by using `data.logLevel = CioLogLevel.debug` when initializing the CustomerIO SDK. Attach the logs to this issue (make sure to sanitize any keys before attaching) or send them to win@customer.io to help with troubleshooting (with a link to this issue for easy reference).-->
+<!-- Enable logs by using `CustomerIO.config {$0.logLevel = .debug}` when initializing the CustomerIO SDK. Attach the logs to this issue (make sure to sanitize any keys before attaching) or send them to win@customer.io to help with troubleshooting (with a link to this issue for easy reference).-->
 
 **Describe the issue**
 <!-- A clear and concise description of the issue. -->

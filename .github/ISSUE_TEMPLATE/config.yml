@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Support Requests (for customers with support plans)
+    url: https://fly.customer.io/?support=true
+    about: Our Technical Support team is staffed with experts who have deep knowledge of our platform, ensuring you get quick, accurate answers. They’re equipped to resolve most issues directly, and for specialized SDK questions, we have a streamlined escalation process to connect with the engineers who built it. Use the button to the righ to open the dashboard and request help or simply email win@customer.io, and our team will be ready to help.
+  - name: Community Forum (for general questions and peer support)
+    url: https://community.customer.io/
+    about: Our Community Forum is a great place for general questions, advice, and tips from other developers and Customer.io experts. You can tap into our active community and share insights or learn new ways to optimize your implementation.
+  - name: Propose a Fix (for developers with a solution)
+    url: https://github.com/customerio/customerio-reactnative/pulls
+    about: If you’ve found a bug or have a feature request and have a proposed solution, we encourage you to submit a Pull Request (PR) with your proposed changes. Our team will review and collaborate with you, making it easy to contribute improvements to our SDK directly.
