@@ -1,3 +1,9 @@
+## [4.1.0](https://github.com/customerio/customerio-reactnative/compare/4.0.2...4.1.0) (2024-11-14)
+
+### Features
+
+* support for large in-app messages ([#356](https://github.com/customerio/customerio-reactnative/issues/356)) ([72bda17](https://github.com/customerio/customerio-reactnative/commit/72bda17c434a41e72a4fa8a53d43fb2ff5dd0256))
+
 ## [4.0.2](https://github.com/customerio/customerio-reactnative/compare/4.0.1...4.0.2) (2024-10-25)
 
 ### Bug Fixes
