@@ -1,6 +1,6 @@
+import CioMessagingInApp
 import Foundation
 import React
-import CioMessagingInApp
 
 @objc(CioRctInAppMessaging)
 class CioRctInAppMessaging: RCTEventEmitter {
@@ -21,8 +21,8 @@ class CioRctInAppMessaging: RCTEventEmitter {
      * Overriding supportedEvents method to return an array of supported event names.
      * We are combining in-app events against single name so only one event is added.
      */
-    open override func supportedEvents() -> [String]! {
-        return [CustomerioConstants.inAppEventListener]
+    override open func supportedEvents() -> [String]! {
+        [CustomerioConstants.inAppEventListener]
     }
 
     /**

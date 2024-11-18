@@ -56,7 +56,7 @@ extension RawRepresentable where RawValue == String {
         thenPassItTo handler: (Transformed) -> Any,
         transformingBy transform: (Raw) -> Transformed?
     ) {
-        if let value = config?[self.rawValue] as? Raw, let result = transform(value) {
+        if let value = config?[rawValue] as? Raw, let result = transform(value) {
             _ = handler(result)
         }
     }
