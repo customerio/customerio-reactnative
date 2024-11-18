@@ -3,19 +3,19 @@ PODS:
     - JSONSafeEncoding (= 2.0.0)
     - Sovran (= 1.1.1)
   - boost (1.83.0)
-  - customerio-reactnative (4.0.2):
-    - customerio-reactnative/nopush (= 4.0.2)
+  - customerio-reactnative (4.1.0):
+    - customerio-reactnative/nopush (= 4.1.0)
     - CustomerIO/DataPipelines (= 3.6.0)
     - CustomerIO/MessagingInApp (= 3.6.0)
     - React-Core
-  - customerio-reactnative-richpush/apn (4.0.2):
+  - customerio-reactnative-richpush/apn (4.1.0):
     - CustomerIO/MessagingPushAPN (= 3.6.0)
-  - customerio-reactnative/apn (4.0.2):
+  - customerio-reactnative/apn (4.1.0):
     - CustomerIO/DataPipelines (= 3.6.0)
     - CustomerIO/MessagingInApp (= 3.6.0)
     - CustomerIO/MessagingPushAPN (= 3.6.0)
     - React-Core
-  - customerio-reactnative/nopush (4.0.2):
+  - customerio-reactnative/nopush (4.1.0):
     - CustomerIO/DataPipelines (= 3.6.0)
     - CustomerIO/MessagingInApp (= 3.6.0)
     - CustomerIO/MessagingPush (= 3.6.0)
@@ -930,7 +930,7 @@ PODS:
     - React-debug
   - react-native-notifications (5.1.0):
     - React-Core
-  - react-native-safe-area-context (4.11.0):
+  - react-native-safe-area-context (4.14.0):
     - React-Core
   - React-nativeconfig (0.73.6)
   - React-NativeModulesApple (0.73.6):
@@ -1101,17 +1101,17 @@ PODS:
     - React-perflogger (= 0.73.6)
   - RNCAsyncStorage (1.24.0):
     - React-Core
-  - RNCClipboard (1.14.2):
+  - RNCClipboard (1.15.0):
     - React-Core
   - RNCPushNotificationIOS (1.11.0):
     - React-Core
   - RNDeviceInfo (10.14.0):
     - React-Core
-  - RNGestureHandler (2.20.0):
+  - RNGestureHandler (2.21.1):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
-  - RNScreens (3.34.0):
+  - RNScreens (3.35.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1328,8 +1328,8 @@ SPEC CHECKSUMS:
   AnalyticsSwiftCIO: d03712b33e85baecc86f0d38a6d53c97f7bc5bd1
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: 6b1af81928a0302d884f116295b7e8610636e809
-  customerio-reactnative: 457c5d4ad93b44dc3abcb018baff0669e9855898
-  customerio-reactnative-richpush: 47ab4ca5fe4c72c417a9b9df6a7b9170cc7c674d
+  customerio-reactnative: dce3adb93dea0dfb775e1c6682b141e02fefcb77
+  customerio-reactnative-richpush: e55473741f992fb56f42d41128b26f82c4ec4f91
   CustomerIOCommon: b33c69e670c2a9295750e20fe1c70282fc0a223f
   CustomerIODataPipelines: 2de3237d302176d282d0d9dbc208410921bda351
   CustomerIOMessagingInApp: d53ad8cc06551cc1a4e65be038470c061597c22a
@@ -1366,7 +1366,7 @@ SPEC CHECKSUMS:
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: 84ea43c6c6232049135b1550b8c60b2faac19fab
   react-native-notifications: 4601a5a8db4ced6ae7cfc43b44d35fe437ac50c4
-  react-native-safe-area-context: 851c62c48dce80ccaa5637b6aa5991a1bc36eca9
+  react-native-safe-area-context: 4532f1a0c5d34a46b9324ccaaedcb5582a302b7d
   React-nativeconfig: b4d4e9901d4cabb57be63053fd2aa6086eb3c85f
   React-NativeModulesApple: cd26e56d56350e123da0c1e3e4c76cb58a05e1ee
   React-perflogger: 5f49905de275bac07ac7ea7f575a70611fa988f2
@@ -1388,11 +1388,11 @@ SPEC CHECKSUMS:
   React-utils: d16c1d2251c088ad817996621947d0ac8167b46c
   ReactCommon: 2aa35648354bd4c4665b9a5084a7d37097b89c10
   RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
-  RNCClipboard: 5e503962f0719ace8f7fdfe9c60282b526305c85
+  RNCClipboard: 69ab8e51324d5b351f6ba72bbdb72478087a2c64
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDeviceInfo: 59344c19152c4b2b32283005f9737c5c64b42fba
-  RNGestureHandler: bb81850add626ddd265294323310fec6e861c96b
-  RNScreens: 29418ceffb585b8f0ebd363de304288c3dce8323
+  RNGestureHandler: 61436ff36e771935850001e439bf3d060fa1e2ed
+  RNScreens: 69850d4519d95b9359cec15a67bb5f9d0bd75262
   RNSnackbar: 37ce6daf19c8bd35cf6133db5797aa298c8782ac
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Sovran: f8212bb3855042a24689a73ea0219ca5295235da
@@ -1400,4 +1400,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4fd33e739b5364991c8ac49c0c56e7b4a80e4c02
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
