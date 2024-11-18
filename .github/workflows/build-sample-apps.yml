@@ -205,7 +205,7 @@ jobs:
 
       - name: Update sample builds PR comment with build information
         if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -216,7 +216,7 @@ jobs:
 
       - name: Update sample builds PR comment with build failure message
         if: ${{ github.event_name == 'pull_request' && failure() }}
-        uses: peter-evans/create-or-update-comment@v3
+        uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
