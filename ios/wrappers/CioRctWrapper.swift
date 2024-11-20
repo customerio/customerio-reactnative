@@ -39,7 +39,7 @@ class CioRctWrapper: NSObject {
         }
     }
 
-    @objc(identify:traits:)
+    @objc
     func identify(_ userId: String?, _ traits: [String: Any]?) {
         if let userId = userId {
             CustomerIO.shared.identify(userId: userId, traits: traits)
@@ -54,37 +54,37 @@ class CioRctWrapper: NSObject {
         }
     }
 
-    @objc(clearIdentify)
+    @objc
     func clearIdentify() {
         CustomerIO.shared.clearIdentify()
     }
 
-    @objc(track:properties:)
+    @objc
     func track(_ name: String, _ properties: [String: Any]?) {
         CustomerIO.shared.track(name: name, properties: properties)
     }
 
-    @objc(screen:properties:)
+    @objc
     func screen(_ title: String, _ properties: [String: Any]?) {
         CustomerIO.shared.screen(title: title, properties: properties)
     }
 
-    @objc(setProfileAttributes:)
+    @objc
     func setProfileAttributes(_ attrs: [String: Any]) {
         CustomerIO.shared.profileAttributes = attrs
     }
 
-    @objc(setDeviceAttributes:)
+    @objc
     func setDeviceAttributes(_ attrs: [String: Any]) {
         CustomerIO.shared.deviceAttributes = attrs
     }
 
-    @objc(registerDeviceToken:)
+    @objc
     func registerDeviceToken(_ token: String) {
         CustomerIO.shared.registerDeviceToken(token)
     }
 
-    @objc(deleteDeviceToken)
+    @objc
     func deleteDeviceToken() {
         CustomerIO.shared.deleteDeviceToken()
     }

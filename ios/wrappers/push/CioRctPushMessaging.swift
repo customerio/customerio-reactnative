@@ -19,19 +19,19 @@ class CioRctPushMessaging: NSObject {
     }
 
     // Tracks `opened` push metrics when a push notification is interacted with.
-    @objc(trackNotificationResponseReceived:)
+    @objc
     func trackNotificationResponseReceived(_ payload: NSDictionary) {
         trackPushMetrics(payload: payload, event: .opened)
     }
 
     // Tracks `delivered` push metrics when a push notification is received.
-    @objc(trackNotificationReceived:)
+    @objc
     func trackNotificationReceived(_ payload: NSDictionary) {
         trackPushMetrics(payload: payload, event: .delivered)
     }
 
     // Get the currently registered device token for the app
-    @objc(getRegisteredDeviceToken:rejecter:)
+    @objc
     func getRegisteredDeviceToken(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
         guard let token = CustomerIO.shared.registeredDeviceToken else {
             reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, nil)
@@ -47,7 +47,7 @@ class CioRctPushMessaging: NSObject {
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
 
-    @objc(showPromptForPushNotifications:resolver:rejecter:)
+    @objc
     func showPromptForPushNotifications(options: [String: AnyHashable], resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
@@ -66,7 +66,7 @@ class CioRctPushMessaging: NSObject {
         }
     }
 
-    @objc(getPushPermissionStatus:rejecter:)
+    @objc
     func getPushPermissionStatus(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter _: @escaping (RCTPromiseRejectBlock)) {
         getPushNotificationPermissionStatus { status in
             resolve(status.value)
