@@ -40,7 +40,7 @@ class CioRctWrapper: NSObject {
     }
 
     @objc
-    func identify(_ userId: String?, _ traits: [String: Any]?) {
+    func identify(_ userId: String?, traits: [String: Any]?) {
         if let userId = userId {
             CustomerIO.shared.identify(userId: userId, traits: traits)
         } else if traits != nil {
@@ -60,12 +60,12 @@ class CioRctWrapper: NSObject {
     }
 
     @objc
-    func track(_ name: String, _ properties: [String: Any]?) {
+    func track(_ name: String, properties: [String: Any]?) {
         CustomerIO.shared.track(name: name, properties: properties)
     }
 
     @objc
-    func screen(_ title: String, _ properties: [String: Any]?) {
+    func screen(_ title: String, properties: [String: Any]?) {
         CustomerIO.shared.screen(title: title, properties: properties)
     }
 
