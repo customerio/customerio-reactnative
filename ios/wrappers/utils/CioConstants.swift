@@ -1,4 +1,4 @@
-struct CustomerioConstants {
+enum CustomerioConstants {
     // InApp Messaging
     static let inAppEventListener = "InAppEventListener"
     static let eventType = "eventType"
@@ -10,7 +10,7 @@ struct CustomerioConstants {
     static let messageDismissed = "messageDismissed"
     static let errorWithMessage = "errorWithMessage"
     static let messageActionTaken = "messageActionTaken"
-    
+
     // Push Messaging
     static let CioDeliveryId = "CIO-Delivery-ID"
     static let CioDeliveryToken = "CIO-Delivery-Token"
@@ -19,7 +19,7 @@ struct CustomerioConstants {
     static let platformiOS = "ios"
     static let sound = "sound"
     static let badge = "badge"
-    
+
     // Logging
     static let cioTag = "[CIO]"
 }

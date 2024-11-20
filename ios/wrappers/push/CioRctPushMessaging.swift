@@ -1,6 +1,6 @@
-import Foundation
 import CioInternalCommon
 import CioMessagingPush
+import Foundation
 
 enum PushPermissionStatus: String, CaseIterable {
     case denied
@@ -8,13 +8,12 @@ enum PushPermissionStatus: String, CaseIterable {
     case granted
 
     var value: String {
-        return rawValue.uppercased()
+        rawValue.uppercased()
     }
 }
 
 @objc(CioRctPushMessaging)
 class CioRctPushMessaging: NSObject {
-
     @objc static func requiresMainQueueSetup() -> Bool {
         false /// false because our native module's initialization does not require access to UIKit
     }
@@ -28,31 +27,28 @@ class CioRctPushMessaging: NSObject {
     // Tracks `delivered` push metrics when a push notification is received.
     @objc
     func trackNotificationReceived(_ payload: NSDictionary) {
-
         trackPushMetrics(payload: payload, event: .delivered)
     }
 
     // Get the currently registered device token for the app
     @objc(getRegisteredDeviceToken:rejecter:)
-    func getRegisteredDeviceToken(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
-
-         guard let token = CustomerIO.shared.registeredDeviceToken else {
+    func getRegisteredDeviceToken(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
+        guard let token = CustomerIO.shared.registeredDeviceToken else {
             reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, nil)
-             return
+            return
         }
         resolve(token)
     }
 
-    private func trackPushMetrics(payload: NSDictionary, event : Metric) {
-        guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String, let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String else
-        {return}
+    private func trackPushMetrics(payload: NSDictionary, event: Metric) {
+        guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String, let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String
+        else { return }
 
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
 
     @objc(showPromptForPushNotifications:resolver:rejecter:)
-    func showPromptForPushNotifications(options : Dictionary<String, AnyHashable>, resolver resolve: @escaping(RCTPromiseResolveBlock),  rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
-
+    func showPromptForPushNotifications(options: [String: AnyHashable], resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
             if status == .notDetermined {
@@ -71,39 +67,37 @@ class CioRctPushMessaging: NSObject {
     }
 
     @objc(getPushPermissionStatus:rejecter:)
-    func getPushPermissionStatus(resolver resolve: @escaping(RCTPromiseResolveBlock), rejecter reject: @escaping(RCTPromiseRejectBlock)) -> Void {
+    func getPushPermissionStatus(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter _: @escaping (RCTPromiseRejectBlock)) {
         getPushNotificationPermissionStatus { status in
             resolve(status.value)
         }
     }
 
-    private func requestPushAuthorization(options: [String: Any], onComplete : @escaping(Any) -> Void
-        ) {
-            let current = UNUserNotificationCenter.current()
-            var notificationOptions : UNAuthorizationOptions = [.alert]
-            if let ios = options[CustomerioConstants.platformiOS] as? [String: Any] {
-
-                if let soundOption = ios[CustomerioConstants.sound] as? Bool, soundOption {
-                    notificationOptions.insert(.sound)
-                }
-                if let badgeOption = ios[CustomerioConstants.badge] as? Bool, badgeOption {
-                    notificationOptions.insert(.badge)
-                }
+    private func requestPushAuthorization(options: [String: Any], onComplete: @escaping (Any) -> Void) {
+        let current = UNUserNotificationCenter.current()
+        var notificationOptions: UNAuthorizationOptions = [.alert]
+        if let ios = options[CustomerioConstants.platformiOS] as? [String: Any] {
+            if let soundOption = ios[CustomerioConstants.sound] as? Bool, soundOption {
+                notificationOptions.insert(.sound)
             }
-            current.requestAuthorization(options: notificationOptions) { isGranted, error in
-                if let error = error {
-                    onComplete(error)
-                    return
-                }
-                onComplete(isGranted)
+            if let badgeOption = ios[CustomerioConstants.badge] as? Bool, badgeOption {
+                notificationOptions.insert(.badge)
             }
         }
+        current.requestAuthorization(options: notificationOptions) { isGranted, error in
+            if let error = error {
+                onComplete(error)
+                return
+            }
+            onComplete(isGranted)
+        }
+    }
 
-    private func getPushNotificationPermissionStatus(completionHandler: @escaping(PushPermissionStatus) -> Void) {
+    private func getPushNotificationPermissionStatus(completionHandler: @escaping (PushPermissionStatus) -> Void) {
         var status = PushPermissionStatus.notDetermined
         let current = UNUserNotificationCenter.current()
         current.getNotificationSettings(completionHandler: { permission in
-            switch permission.authorizationStatus  {
+            switch permission.authorizationStatus {
             case .authorized, .provisional, .ephemeral:
                 status = .granted
             case .denied:
