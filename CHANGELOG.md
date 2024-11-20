@@ -1,3 +1,9 @@
+## [4.1.1](https://github.com/customerio/customerio-reactnative/compare/4.1.0...4.1.1) (2024-11-20)
+
+### Bug Fixes
+
+* compatibility with react native 0.76 ([#359](https://github.com/customerio/customerio-reactnative/issues/359)) ([6fcdd91](https://github.com/customerio/customerio-reactnative/commit/6fcdd91403fea14344d2d293c9184447f516aadf))
+
 ## [4.1.0](https://github.com/customerio/customerio-reactnative/compare/4.0.2...4.1.0) (2024-11-14)
 
 ### Features
