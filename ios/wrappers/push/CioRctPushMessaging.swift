@@ -47,7 +47,7 @@ class CioRctPushMessaging: NSObject {
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
 
-    @objc
+    @objc(showPromptForPushNotifications:resolver:rejecter:)
     func showPromptForPushNotifications(options: [String: AnyHashable], resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
