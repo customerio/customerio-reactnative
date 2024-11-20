@@ -28,7 +28,7 @@ class CioRctInAppMessaging: RCTEventEmitter {
     /**
      * Dismisses any currently displayed in-app message
      */
-    @objc
+    @objc(dismissMessage)
     func dismissMessage() {
         MessagingInApp.shared.dismissMessage()
     }
