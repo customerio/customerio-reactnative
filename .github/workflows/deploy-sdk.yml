@@ -41,7 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify team of git tag being created
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.0.0
         if: steps.semantic-release.outputs.new_release_published == 'true'
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -84,7 +84,7 @@ jobs:
           environment: production
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.0.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -142,7 +142,7 @@ jobs:
           IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
       - name: Notify team of successful deployment
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.0.0
         if: ${{ success() }}
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -177,7 +177,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.0.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
