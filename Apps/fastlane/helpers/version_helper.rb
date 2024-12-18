@@ -42,9 +42,9 @@ lane :generate_new_version do |options|
   app_version_code = (current_time.to_f / 60).to_i
 
   UI.message("Generated new versions => SDK: #{sdk_version_name}, App: #{app_version_name} (#{app_version_code})")
-  sh("echo SDK_VERSION_NAME=#{sdk_version_name} >> $GITHUB_ENV")
-  sh("echo APP_VERSION_NAME=#{app_version_name} >> $GITHUB_ENV")
-  sh("echo APP_VERSION_CODE=#{app_version_code} >> $GITHUB_ENV")
+  sh("echo SDK_VERSION_NAME=#{"5.4.0"} >> $GITHUB_ENV")
+  sh("echo APP_VERSION_NAME=#{"5.4.0"} >> $GITHUB_ENV")
+  sh("echo APP_VERSION_CODE=#{"5.4.0"} >> $GITHUB_ENV")
 end
 
 # Helper method to update Android version
