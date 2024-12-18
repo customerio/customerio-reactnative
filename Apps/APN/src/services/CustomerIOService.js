@@ -13,6 +13,11 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
     inApp: {
       siteId: sdkConfig.siteId,
     },
+    push: {
+      android: {
+        pushClickBehavior: PushClickBehaviorAndroid.ResetTaskStack,
+      },
+    }
   };
 
   if (sdkConfig.debugMode) {
