@@ -2,6 +2,7 @@ import {
   CustomerIO,
   CioLogLevel,
   InAppMessageEventType,
+  PushClickBehaviorAndroid,
 } from 'customerio-reactnative';
 
 export const initializeCustomerIoSDK = (sdkConfig) => {
