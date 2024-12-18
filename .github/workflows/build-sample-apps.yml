@@ -3,7 +3,6 @@ name: Build sample apps
 on:
   pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
   push:
-    branches: [ test-push-flag ]
 
 concurrency: # cancel previous workflow run if one exists.
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -175,7 +174,7 @@ jobs:
         env:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
         continue-on-error: true # continue to build iOS app even if Android build fails
-        
+
       # Update PR comment with build information
 
       - name: Update sample builds PR comment with build information
