@@ -17,7 +17,7 @@ export const initializeCustomerIoSDK = (sdkConfig) => {
       android: {
         pushClickBehavior: PushClickBehaviorAndroid.ResetTaskStack,
       },
-    }
+    },
   };
 
   if (sdkConfig.debugMode) {
