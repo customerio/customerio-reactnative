@@ -11,6 +11,7 @@ internal object Keys {
         const val TRACK_APP_LIFECYCLE_EVENTS = "trackApplicationLifecycleEvents"
         const val FLUSH_AT = "flushAt"
         const val FLUSH_INTERVAL = "flushInterval"
+        const val SCREEN_VIEW_USE = "screenViewUse"
         // Push messaging
         const val PUSH_CLICK_BEHAVIOR = "pushClickBehavior"
     }

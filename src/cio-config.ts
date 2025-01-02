@@ -3,6 +3,16 @@ export enum CioRegion {
   EU = 'EU',
 }
 
+/**
+ * Enum to define how CustomerIO SDK should handle screen view events.
+ * - all: Send screen events to destinations for analytics purposes and to display in-app messages
+ * - inApp: Only display in-app messages and not send screen events to destinations
+ */
+export enum ScreenView {
+  All = 'all',
+  InApp = 'inApp'
+}
+
 export enum CioLogLevel {
   None = 'none',
   Error = 'error',
@@ -23,6 +33,7 @@ export type CioConfig = {
   logLevel?: CioLogLevel;
   flushAt?: number;
   flushInterval?: number;
+  screenViewUse?: ScreenView;
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
   inApp?: {

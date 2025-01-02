@@ -16,6 +16,7 @@ extension SDKConfigBuilder {
         case cdnHost
         case flushAt
         case flushInterval
+        case screenViewUse
         case trackApplicationLifecycleEvents
         case autoTrackDeviceAttributes
     }

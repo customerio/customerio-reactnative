@@ -11,6 +11,7 @@ import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
+import io.customer.datapipelines.config.ScreenView
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
 import io.customer.sdk.core.di.SDKComponent
@@ -44,6 +45,7 @@ class CustomerIOReactNativeModule(
             val logLevelRawValue = packageConfig.getTypedValue<String>(Keys.Config.LOG_LEVEL)
             val regionRawValue = packageConfig.getTypedValue<String>(Keys.Config.REGION)
             val region = regionRawValue.let { Region.getRegion(it) }
+            val screenViewRawValue = packageConfig.getTypedValue<String>(Keys.Config.SCREEN_VIEW_USE)
 
             CustomerIOBuilder(
                 applicationContext = reactApplicationContext.applicationContext as Application,
@@ -51,6 +53,7 @@ class CustomerIOReactNativeModule(
             ).apply {
                 logLevelRawValue?.let { logLevel(CioLogLevel.getLogLevel(it)) }
                 regionRawValue?.let { region(region) }
+                screenViewRawValue?.let { screenViewUse(ScreenView.getScreenView(it)) }
 
                 packageConfig.getTypedValue<Boolean>(Keys.Config.AUTO_TRACK_DEVICE_ATTRIBUTES)
                     ?.let { autoTrackDeviceAttributes(it) }
