@@ -14,6 +14,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import { FilledButton, TextButton } from '../components/Button';
 import { SwitchField } from '../components/SwitchField';
@@ -25,7 +26,7 @@ import { useCustomerIoSdkContext } from '../state/customerIoSdkState';
 import { useUserStateContext } from '../state/userState';
 import { resetRoute } from '../utils/navigation';
 import Prompts from '../utils/prompts';
-import { CustomerIO } from 'customerio-reactnative';
+import { CustomerIO, ScreenView } from 'customerio-reactnative';
 
 const Settings = ({ navigation, route }) => {
   const { params } = route;
@@ -56,6 +57,8 @@ const Settings = ({ navigation, route }) => {
 
     return false;
   }, [navigation, user]);
+
+  const [screenView, setScreenView] = useState(ScreenView.All.toString());
 
   useLayoutEffect(() => {
     if (!navigation.canGoBack()) {
@@ -98,6 +101,7 @@ const Settings = ({ navigation, route }) => {
     setTrackScreensEnabled(initialConfig.trackScreens);
     setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
     setDebugModeEnabled(initialConfig.debugMode);
+    setScreenView(initialConfig.screenViewUse); 
     setAppLifecycleEventTrackingEnabled(initialConfig?.trackAppLifecycleEvents);
   }, [initialCdpApiKey, initialConfig, initialSiteId]);
 
@@ -137,6 +141,7 @@ const Settings = ({ navigation, route }) => {
     config.trackDeviceAttributes = isTrackDeviceAttributesEnabled;
     config.debugMode = isDebugModeEnabled;
     config.trackAppLifecycleEvents = isAppLifecycleEventTrackingEnabled;
+    config.screenViewUse = screenView;
     saveConfigurations(config);
     navigation.goBack();
   };
@@ -237,6 +242,37 @@ const Settings = ({ navigation, route }) => {
             value={isDebugModeEnabled}
             contentDesc="Debug Mode Toggle"
           />
+        </View>
+        <View style={settingsStyles.section}>
+          <Text style={settingsStyles.sectionLabel}>ScreenView Use</Text>
+          <View style={[settingsStyles.buttonGroup, { backgroundColor: '#F0F0F5', borderRadius: 8 }]}>
+            <TouchableOpacity
+              style={[
+                settingsStyles.segmentButton,
+                { flex: 1 },
+                screenView === ScreenView.All.toString() && { backgroundColor: '#4B48C9' }
+              ]}
+              onPress={() => setScreenView(ScreenView.All.toString())}
+            >
+              <Text style={[
+                settingsStyles.segmentButtonText,
+                screenView === ScreenView.All.toString() && { color: 'white' }
+              ]}>All</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                settingsStyles.segmentButton,
+                { flex: 1 },
+                screenView === ScreenView.InApp.toString() && { backgroundColor: '#4B48C9' }
+              ]}
+              onPress={() => setScreenView(ScreenView.InApp.toString())}
+            >
+              <Text style={[
+                settingsStyles.segmentButtonText,
+                screenView === ScreenView.InApp.toString() && { color: 'white' }
+              ]}>InApp</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={settingsStyles.buttonContainer}>
           <FilledButton

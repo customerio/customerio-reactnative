@@ -1,3 +1,4 @@
+import { ScreenView } from 'customerio-reactnative';
 import Env from '../../../env';
 
 export default class CustomerIoSDKConfig {
@@ -6,6 +7,7 @@ export default class CustomerIoSDKConfig {
     cdpApiKey,
     flushInterval,
     flushAt,
+    screenViewUse,
     trackScreens,
     trackDeviceAttributes,
     debugMode,
@@ -15,6 +17,7 @@ export default class CustomerIoSDKConfig {
     this.cdpApiKey = cdpApiKey;
     this.flushInterval = flushInterval;
     this.flushAt = flushAt;
+    this.screenViewUse = screenViewUse;
     this.trackAppLifecycleEvents = trackAppLifecycleEvents;
     this.trackScreens = trackScreens;
     this.trackDeviceAttributes = trackDeviceAttributes;
@@ -29,6 +32,7 @@ export default class CustomerIoSDKConfig {
       trackDeviceAttributes: true,
       trackAppLifecycleEvents: true,
       debugMode: true,
+      screenViewUse: ScreenView.All.toString(),
     });
   }
 
@@ -43,6 +47,7 @@ export default class CustomerIoSDKConfig {
       debugMode: other?.debugMode ?? defaultConfig.debugMode,
       trackAppLifecycleEvents:
         other?.trackAppLifecycleEvents ?? defaultConfig.trackAppLifecycleEvents,
+      screenViewUse: other?.screenViewUse ?? defaultConfig.screenViewUse,
     });
   }
 }

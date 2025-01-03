@@ -51,4 +51,21 @@ export const styles = StyleSheet.create({
   note: {
     marginTop: 8,
   },
+  buttonGroup: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    padding: 4,
+  },
+  segmentButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  segmentButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#666666',
+  },
 });
