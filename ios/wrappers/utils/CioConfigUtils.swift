@@ -33,6 +33,7 @@ extension SDKConfigBuilder {
         Config.logLevel.ifNotNil(in: config, thenPassItTo: builder.logLevel, transformingBy: CioLogLevel.getLogLevel)
         Config.flushAt.ifNotNil(in: config, thenPassItTo: builder.flushAt) { (value: Double) in Int(value) }
         Config.flushInterval.ifNotNil(in: config, thenPassItTo: builder.flushInterval)
+        Config.screenViewUse.ifNotNil(in: config, thenPassItTo: builder.screenViewUse) { ScreenView.getScreenView($0) }
         Config.trackApplicationLifecycleEvents.ifNotNil(in: config, thenPassItTo: builder.trackApplicationLifecycleEvents)
         Config.autoTrackDeviceAttributes.ifNotNil(in: config, thenPassItTo: builder.autoTrackDeviceAttributes)
 

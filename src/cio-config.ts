@@ -10,7 +10,7 @@ export enum CioRegion {
  */
 export enum ScreenView {
   All = 'all',
-  InApp = 'inApp'
+  InApp = 'inApp',
 }
 
 export enum CioLogLevel {
