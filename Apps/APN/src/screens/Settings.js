@@ -101,7 +101,7 @@ const Settings = ({ navigation, route }) => {
     setTrackScreensEnabled(initialConfig.trackScreens);
     setTrackDeviceAttributesEnabled(initialConfig.trackDeviceAttributes);
     setDebugModeEnabled(initialConfig.debugMode);
-    setScreenView(initialConfig.screenViewUse); 
+    setScreenView(initialConfig.screenViewUse);
     setAppLifecycleEventTrackingEnabled(initialConfig?.trackAppLifecycleEvents);
   }, [initialCdpApiKey, initialConfig, initialSiteId]);
 
@@ -245,32 +245,53 @@ const Settings = ({ navigation, route }) => {
         </View>
         <View style={settingsStyles.section}>
           <Text style={settingsStyles.sectionLabel}>ScreenView Use</Text>
-          <View style={[settingsStyles.buttonGroup, { backgroundColor: '#F0F0F5', borderRadius: 8 }]}>
+          <View
+            style={[
+              settingsStyles.buttonGroup,
+              { backgroundColor: '#F0F0F5', borderRadius: 8 },
+            ]}
+          >
             <TouchableOpacity
               style={[
                 settingsStyles.segmentButton,
                 { flex: 1 },
-                screenView === ScreenView.All.toString() && { backgroundColor: '#4B48C9' }
+                screenView === ScreenView.All.toString() && {
+                  backgroundColor: '#4B48C9',
+                },
               ]}
               onPress={() => setScreenView(ScreenView.All.toString())}
             >
-              <Text style={[
-                settingsStyles.segmentButtonText,
-                screenView === ScreenView.All.toString() && { color: 'white' }
-              ]}>All</Text>
+              <Text
+                style={[
+                  settingsStyles.segmentButtonText,
+                  screenView === ScreenView.All.toString() && {
+                    color: 'white',
+                  },
+                ]}
+              >
+                All
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 settingsStyles.segmentButton,
                 { flex: 1 },
-                screenView === ScreenView.InApp.toString() && { backgroundColor: '#4B48C9' }
+                screenView === ScreenView.InApp.toString() && {
+                  backgroundColor: '#4B48C9',
+                },
               ]}
               onPress={() => setScreenView(ScreenView.InApp.toString())}
             >
-              <Text style={[
-                settingsStyles.segmentButtonText,
-                screenView === ScreenView.InApp.toString() && { color: 'white' }
-              ]}>InApp</Text>
+              <Text
+                style={[
+                  settingsStyles.segmentButtonText,
+                  screenView === ScreenView.InApp.toString() && {
+                    color: 'white',
+                  },
+                ]}
+              >
+                InApp
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

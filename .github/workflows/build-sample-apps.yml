@@ -3,6 +3,7 @@ name: Build sample apps
 on:
   pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
   push:
+    branches: [ main, feature/* ]
 
 concurrency: # cancel previous workflow run if one exists.
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -58,6 +59,7 @@ jobs:
           # List all sample apps you want to have compiled.
           # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
           - "APN"
+          - "FCM"
     defaults:
       run:
         working-directory: apps/${{ matrix.sample-app }}
