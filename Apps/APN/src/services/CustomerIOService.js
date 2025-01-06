@@ -2,14 +2,24 @@ import {
   CustomerIO,
   CioLogLevel,
   InAppMessageEventType,
+  ScreenView,
 } from 'customerio-reactnative';
 
+const stringToScreenView = (str) => {
+  if (str.toLowerCase() === ScreenView.InApp.toString().toLowerCase()) {
+    return ScreenView.InApp;
+  }
+  return ScreenView.All;
+};
+
 export const initializeCustomerIoSDK = (sdkConfig) => {
+  let screenViewUse = stringToScreenView(sdkConfig.screenViewUse);
   const config = {
     cdpApiKey: sdkConfig.cdpApiKey, // Mandatory
     migrationSiteId: sdkConfig.siteId, // For migration
     trackApplicationLifecycleEvents: sdkConfig.trackAppLifecycleEvents,
     autoTrackDeviceAttributes: sdkConfig.autoTrackDeviceAttributes,
+    screenViewUse: screenViewUse,
     inApp: {
       siteId: sdkConfig.siteId,
     },
