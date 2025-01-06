@@ -1,3 +1,9 @@
+## [4.2.0](https://github.com/customerio/customerio-reactnative/compare/4.1.1...4.2.0) (2025-01-06)
+
+### Features
+
+* add option to disable screen view usage ([#369](https://github.com/customerio/customerio-reactnative/issues/369)) ([055835e](https://github.com/customerio/customerio-reactnative/commit/055835ebdbb4147152e50d5ed6f1ae5ac18e6fdc))
+
 ## [4.1.1](https://github.com/customerio/customerio-reactnative/compare/4.1.0...4.1.1) (2024-11-20)
 
 ### Bug Fixes
