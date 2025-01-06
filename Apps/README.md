@@ -12,9 +12,10 @@ npm install
 
 ## Connect the app to a workspace in Customer.io
 
-Make a copy of `env.sample.js` by running `cp env.sample.js env.js` at sample app root directory
-
-Update env.js with your `siteId` and `cdpApiKey`
+- Depending on which sample app you want to test, navigate to the directory of that sample app using either of these commands: `cd Apps/APN/` or `cd Apps/FCM`
+- Make a copy of `env.sample.js` by running `cp env.sample.js env.js` at sample app root directory
+- Make a copy of `Env.swift.example` by running `cp Env.swift.example Env.swift` at sample app `ios` directory (`Apps/APN/ios` or `Apps/FCM/ios`)
+- Update env.js with your `siteId` and `cdpApiKey`
 
 ## Build one of the sample apps
 
