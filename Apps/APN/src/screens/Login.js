@@ -73,7 +73,7 @@ const Login = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>React Native APN Ami App</Text>
+        <Text style={styles.title}>React Native (APN)</Text>
 
         <View style={styles.spaceTop} />
 
