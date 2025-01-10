@@ -70,6 +70,29 @@ jobs:
       - uses: actions/checkout@v4
 
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
+      
+      - name: Set Default Firebase Distribution Groups
+        run: |
+          # Define all the possible distribution groups
+          ALL_BUILDS_GROUP="all-builds"
+          FEATURE_BUILDS_GROUP="feature-branch"
+          STABLE_BUILDS_GROUP="next"
+          
+          # Initialize with the default distribution group
+          distribution_groups=("$ALL_BUILDS_GROUP")
+          
+          # Determine current app type and Git context
+          is_primary_app=$([[ "${{ matrix.sample-app }}" == "APN" ]] && echo "true" || echo "false")
+          current_branch="${GITHUB_REF}"
+          
+          # Append distribution groups based on branch and context if the app is primary
+          if [[ "$is_primary_app" == "true" ]]; then
+            [[ "$current_branch" == "refs/heads/feature/"* ]] && distribution_groups+=("$FEATURE_BUILDS_GROUP")
+            [[ "$current_branch" == "refs/heads/main" ]] && distribution_groups+=("$STABLE_BUILDS_GROUP")
+          fi
+          
+          # Export the groups as an environment variable
+          echo "firebase_distribution_groups=$(IFS=','; echo "${distribution_groups[*]}")" >> $GITHUB_ENV
 
       - name: Install CLI tools used in CI script
         shell: bash
@@ -173,6 +196,7 @@ jobs:
         with:
           subdirectory: Apps/${{ matrix.sample-app }}
           lane: 'android build'
+          options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
         continue-on-error: true # continue to build iOS app even if Android build fails
@@ -190,6 +214,7 @@ jobs:
         with:
           subdirectory: Apps/${{ matrix.sample-app }}
           lane: "ios build"
+          options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
           GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64: ${{ secrets.GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64 }}
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}

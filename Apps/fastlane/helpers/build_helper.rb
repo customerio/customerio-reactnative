@@ -41,7 +41,7 @@ platform :android do
       apk_path: distribution_apk_path,
       app: firebase_app_id, # Firebase app id is required. Get it from google-services.json file
       service_credentials_file: service_credentials_file_path,
-      groups: get_build_test_groups(),
+      groups: get_build_test_groups(distribution_groups: values[:distribution_groups]),
       release_notes: get_build_notes()
     )
   end
@@ -83,7 +83,7 @@ platform :ios do
 
       firebase_app_distribution(
         service_credentials_file: service_credentials_file_path,
-        groups: get_build_test_groups(),
+        groups: get_build_test_groups(distribution_groups: arguments[:distribution_groups]),
         release_notes: get_build_notes()
       )
     end
@@ -123,22 +123,13 @@ lane :get_build_notes do
   build_notes # return value
 end
 
-lane :get_build_test_groups do 
-  test_groups = ['all-builds'] # send all builds to group 'all-builds'. Therefore, set it here and we will not remove it. 
-  test_groups.append("feature-branch") # Feature branch will be used when a PR is merged into a feature branch. We will need to add a check for this.
-  github = GitHub.new()
-    
-  # To avoid giving potentially unstable builds of our sample apps to certain members of the organization, we only send builds to "stable" group uncertain certain situations. 
-  # If a commit is merged into main, it's considered stable because we deploy to production on merges to main. 
-  if github.is_commit_pushed && github.push_branch == "main"
-    test_groups.append("stable-builds") 
-    test_groups.append("next") # Next group will depricate the 'stable` builds group'.
-    test_groups.append("public") # Temp send to public group until we actually build from the deployed SDK.
-  end
-
-  test_groups = test_groups.join(", ")
+lane :get_build_test_groups do |arguments|
+  # Firebase App Distribution expects a comma separated string of test group names.
+  # If no groups are passed in, then set test groups to an empty string.
+  test_groups = arguments[:distribution_groups] || ""
 
   UI.important("Test group names that will be added to this build: #{test_groups}")
 
-  test_groups # return value 
-end 
+  test_groups # return value
+end
+
