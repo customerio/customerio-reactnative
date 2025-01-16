@@ -1,5 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import BuildInfoText from '../components/BuildInfoText';
 import { FilledButton, TextButton } from '../components/Button';
@@ -73,7 +79,9 @@ const Login = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>React Native (APN)</Text>
+        <Text style={styles.title}>
+          {Platform.OS === 'ios' ? 'React Native (APN)' : 'React Native'}
+        </Text>
 
         <View style={styles.spaceTop} />
 
