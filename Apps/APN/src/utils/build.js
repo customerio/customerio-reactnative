@@ -60,9 +60,8 @@ function getSdkVersion() {
     const isPathDependency =
       sdkPackage.resolved && sdkPackage.resolved.startsWith('file:');
     if (isPathDependency) {
-      const commitsAheadCount = Env.commitsAheadCount;
       return `${version}-${resolveValidOrElse(
-        commitsAheadCount,
+        Env.commitsAheadCount,
         () => 'as-source'
       )}`;
     }
