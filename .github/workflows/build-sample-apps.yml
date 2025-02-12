@@ -69,9 +69,10 @@ jobs:
     name: Building sample app ${{ matrix.sample-app.name }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out code with conditional fetch-depth
+        uses: actions/checkout@v4
         with:
-          fetch-tags: true
+          fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
 
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
       
