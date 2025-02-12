@@ -70,8 +70,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch Latest Tag
-        run: git fetch --depth=1 --tags
+        with:
+          fetch-tags: true
 
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
       
