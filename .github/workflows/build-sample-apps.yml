@@ -167,7 +167,9 @@ jobs:
           sd "workspaceName: '.*'" "workspaceName: '${{ matrix.sample-app.cio-workspace-name }}'" "$ENV_FILE"
           sd "branchName: '.*'" "branchName: '$BRANCH_NAME'" "$ENV_FILE"
           sd "commitHash: '.*'" "commitHash: '${COMMIT_HASH:0:7}'" "$ENV_FILE"
-          sd "commitsAheadCount: '.*'" "commitsAheadCount: '$(git rev-list $(git describe --tags --abbrev=0)..HEAD --count)'" "$ENV_FILE"
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "untagged")
+          COMMITS_AHEAD=$(git rev-list $LAST_TAG..HEAD --count 2>/dev/null || echo "untracked")
+          sd "commitsAheadCount: '.*'" "commitsAheadCount: '$COMMITS_AHEAD'" "$ENV_FILE"
 
       - name: Setup workspace credentials in iOS environment files
         working-directory: Apps/${{ matrix.sample-app.name }}/ios
