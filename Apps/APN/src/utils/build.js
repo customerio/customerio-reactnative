@@ -45,14 +45,14 @@ function formatBuildDateWithRelativeTime(timestamp) {
 }
 
 function getSdkVersion() {
+  const sdkPackageName = 'customerio-reactnative';
   try {
-    const sdkPackageName = 'customerio-reactnative';
     const sdkPackage = getSdkMetadataFromPackageLock(sdkPackageName);
 
     if (!sdkPackage) {
       console.warn(`${sdkPackageName} not found in package-lock.json`);
 
-      const sdkPackageJson = require('customerio-reactnative/package.json');
+      const sdkPackageJson = require(`${sdkPackageName}/package.json`);
       return sdkPackageJson.version;
     }
 
@@ -69,7 +69,7 @@ function getSdkVersion() {
     return version;
   } catch (error) {
     console.warn(
-      `Failed to read customerio-reactnative sdk version: ${error.message}`
+      `Failed to read ${sdkPackageName} sdk version: ${error.message}`
     );
     return undefined;
   }
