@@ -58,13 +58,15 @@ jobs:
         sample-app:
           # List all sample apps you want to have compiled.
           # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
-          - "APN"
-          - "FCM"
+          - name: "APN"
+            cio-workspace-name: "Mobile: React Native"
+          - name: "FCM"
+            cio-workspace-name: "Mobile: xReact Native FCM workspace"
     defaults:
       run:
-        working-directory: apps/${{ matrix.sample-app }}
+        working-directory: apps/${{ matrix.sample-app.name }}
     runs-on: macos-14
-    name: Building sample app ${{ matrix.sample-app }}
+    name: Building sample app ${{ matrix.sample-app.name }}
 
     steps:
       - uses: actions/checkout@v4
@@ -80,7 +82,7 @@ jobs:
           NEXT_BUILDS_GROUP: next
           PUBLIC_BUILDS_GROUP: public
           # Input variables
-          IS_PRIMARY_APP: ${{ matrix.sample-app == 'APN' }}
+          IS_PRIMARY_APP: ${{ matrix.sample-app.name == 'APN' }}
           CURRENT_BRANCH: ${{ github.ref }}
         run: |
           # Initialize with the default distribution group
@@ -107,21 +109,21 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true # cache tools to make builds faster in future
-          working-directory: apps/${{ matrix.sample-app }}
+          working-directory: apps/${{ matrix.sample-app.name }}
 
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app }}
+          subdirectory: Apps/${{ matrix.sample-app.name }}
           lane: "generate_new_version"
           options: '{"branch_name":"${{ github.ref_name }}", "pull_request_number":"${{ github.event.pull_request.number }}"}'
 
       - name: Update React Native SDK Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app }}
+          subdirectory: Apps/${{ matrix.sample-app.name }}
           lane: "update_react_native_sdk_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
@@ -131,7 +133,7 @@ jobs:
       - name: Update Sample App Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app }}
+          subdirectory: Apps/${{ matrix.sample-app.name }}
           lane: "update_react_native_app_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
@@ -139,6 +141,9 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Setup workspace credentials in React Native environment files
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          COMMIT_HASH: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           # Determine the correct file extension (.js or .ts)
           if [ -f "env.sample.js" ]; then
@@ -153,15 +158,20 @@ jobs:
           fi
           
           # Update keys in the environment file
-          sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app)] }}'" "$ENV_FILE"
-          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app)] }}'" "$ENV_FILE"
+          sd "buildTimestamp: .*" "buildTimestamp: $(date +%s)," "$ENV_FILE"
+          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app.name)] }}'" "$ENV_FILE"
+          sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app.name)] }}'" "$ENV_FILE"
+          sd "workspaceName: '.*'" "workspaceName: '${{ matrix.sample-app.cio-workspace-name }}'" "$ENV_FILE"
+          sd "branchName: '.*'" "branchName: '$BRANCH_NAME'" "$ENV_FILE"
+          sd "commitHash: '.*'" "commitHash: '${COMMIT_HASH:0:7}'" "$ENV_FILE"
+          sd "commitsAheadCount: '.*'" "commitsAheadCount: '$(git rev-list $(git describe --tags --abbrev=0)..HEAD --count)'" "$ENV_FILE"
 
       - name: Setup workspace credentials in iOS environment files
-        working-directory: Apps/${{ matrix.sample-app }}/ios
+        working-directory: Apps/${{ matrix.sample-app.name }}/ios
         run: |
           cp "Env.swift.example" "Env.swift"
-          sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app)] }}\"" "Env.swift"
-          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app)] }}\"" "Env.swift"
+          sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app.name)] }}\"" "Env.swift"
+          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app.name)] }}\"" "Env.swift"
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
@@ -175,10 +185,10 @@ jobs:
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
         uses: actions/cache@v4
         with:
-          path: Apps/${{ matrix.sample-app }}/Pods
-          key: ${{ runner.os }}-${{ matrix.sample-app }}-Pods-${{ github.ref }}
+          path: Apps/${{ matrix.sample-app.name }}/Pods
+          key: ${{ runner.os }}-${{ matrix.sample-app.name }}-Pods-${{ github.ref }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.sample-app }}-Pods
+            ${{ runner.os }}-${{ matrix.sample-app.name }}-Pods
 
       - name: Install dependencies to build SDK
         run: npm ci
@@ -196,7 +206,7 @@ jobs:
         id: android_build
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app }}
+          subdirectory: Apps/${{ matrix.sample-app.name }}
           lane: 'android build'
           options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
@@ -214,7 +224,7 @@ jobs:
         id: ios_build
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app }}
+          subdirectory: Apps/${{ matrix.sample-app.name }}
           lane: "ios build"
           options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
@@ -238,7 +248,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           # the variables APP_VERSION_NAME, APP_VERSION_CODE are generated above in generate_new_version lane
           body: |
-            * ${{ matrix.sample-app }}: `${{ env.APP_VERSION_NAME }} (${{ env.APP_VERSION_CODE }})`
+            * ${{ matrix.sample-app.name }}: `${{ env.APP_VERSION_NAME }} (${{ env.APP_VERSION_CODE }})`
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
 
       - name: Update sample builds PR comment with build failure message
@@ -248,5 +258,5 @@ jobs:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            * ${{ matrix.sample-app }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
+            * ${{ matrix.sample-app.name }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
