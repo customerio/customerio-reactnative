@@ -48,12 +48,9 @@ function getSdkVersion() {
   const sdkPackageName = 'customerio-reactnative';
   try {
     const sdkPackage = getSdkMetadataFromPackageLock(sdkPackageName);
-
     if (!sdkPackage) {
       console.warn(`${sdkPackageName} not found in package-lock.json`);
-
-      const sdkPackageJson = require(`${sdkPackageName}/package.json`);
-      return sdkPackageJson.version;
+      return undefined;
     }
 
     const version = resolveValidOrElse(sdkPackage.version);
