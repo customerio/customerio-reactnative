@@ -4,9 +4,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "dev:update": "../../scripts/dev:update.sh",
+    "install-sdk-deps": "CIO_PACKAGE_VERSION=$npm_config_cio_rn_sdk ../../scripts/install-sdk-deps.sh",
+    "preinstall": "npm run install-sdk-deps",
     "postinstall": "pod update --project-directory=ios",
-    "preinstall": "npm run dev:update",
     "ci:install": "npm run preinstall && npm ci"
   },
   "dependencies": {
