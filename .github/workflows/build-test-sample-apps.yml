@@ -1,0 +1,97 @@
+name: Publish Test Sample Apps
+
+on:
+  pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
+  push:
+    branches: [ main, feature/* ]
+
+concurrency: # cancel previous workflow run if one exists.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update-pr-comment:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # to be able to comment on PR
+    outputs:
+      comment-id: ${{ steps.create-comment.outputs.comment-id }}
+    steps:
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
+        id: existing-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: <!-- sample app builds -->
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        id: create-comment
+        with:
+          comment-id: ${{ steps.existing-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <!-- sample app builds --> 
+            # Sample app builds 📱
+
+            Below you will find the list of the latest versions of the sample apps. It's recommended to always download the latest builds of the sample apps to accurately test the pull request. 
+
+            ---
+            ${{ steps.build.outputs.build-log }}
+          edit-mode: replace # replace the existing comment with new content since we are creating new builds
+
+  build-sample-apps:
+    if: ${{ always() }} # do not skip running this step if update-pr-comment does not run
+    needs: [update-pr-comment] # wait for PR comment to be created saying new builds are being made.
+    strategy:
+      fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them.
+      matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build!
+        sample-app:
+          # List all sample apps you want to have compiled.
+          # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
+          - name: "APN"
+            cio-workspace-name: "Mobile: React Native"
+          - name: "FCM"
+            cio-workspace-name: "Mobile: xReact Native FCM workspace"
+    name: Building sample app ${{ matrix.sample-app.name }}
+    uses: ./.github/workflows/build-sample-app.yml
+    with:
+      app_name: ${{ matrix.sample-app.name }}
+      cio-workspace-name: ${{ matrix.sample-app.cio-workspace-name }}
+    secrets: inherit
+
+  # Update PR comment with build information
+  update-pr-comment-with-status:
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: [build-sample-apps, update-pr-comment]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # to be able to comment on PR
+    strategy:
+      matrix:
+        sample-app:
+          - name: "APN"
+          - name: "FCM"
+    steps:
+      - name: Update sample builds PR comment with build information
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          # the variables APP_VERSION_NAME, APP_VERSION_CODE are generated above in generate_new_version lane
+          body: |
+            * ${{ matrix.sample-app.name }}: `${{ needs.build-sample-apps.outputs.app_version_name }} (${{ needs.build-sample-apps.outputs.app_version_code }})`
+          edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
+
+      - name: Update sample builds PR comment with build failure message
+        if: ${{ github.event_name == 'pull_request' && failure() }}
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            * ${{ matrix.sample-app.name }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
+          edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.

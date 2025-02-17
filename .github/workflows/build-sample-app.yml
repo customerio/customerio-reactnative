@@ -1,13 +1,31 @@
-name: Build sample apps
+name: Build Sample App
 
 on:
-  pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
-  push:
-    branches: [ main, feature/* ]
-
-concurrency: # cancel previous workflow run if one exists.
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      app_name:
+        description: "Name of the sample app to build"
+        required: true
+        type: string
+      cio-workspace-name:
+        description: "Name of the Customer.io workspace to use"
+        required: true
+        type: string
+      sdk_version:
+        default: ""
+        description: "SDK version to use (optional, defaults to local dependency)"
+        required: false
+        type: string
+    outputs:
+      sdk_version_name:
+        description: "SDK version used in the build"
+        value: ${{ jobs.build-sample-app.outputs.sdk_version_name }}
+      app_version_name:
+        description: "Generated app version name"
+        value: ${{ jobs.build-sample-app.outputs.app_version_name }}
+      app_version_code:
+        description: "Generated app version code"
+        value: ${{ jobs.build-sample-app.outputs.app_version_code }}
 
 env:
   XCODE_VERSION: "15.3"
@@ -15,58 +33,16 @@ env:
   NODE_VERSION: "18"
 
 jobs:
-  update-pr-comment:
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write # to be able to comment on PR
-    outputs:
-      comment-id: ${{ steps.create-comment.outputs.comment-id }}
-    steps:
-      - name: Find Comment
-        uses: peter-evans/find-comment@v3
-        id: existing-comment
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
-          body-includes: <!-- sample app builds -->
-
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v4
-        id: create-comment
-        with:
-          comment-id: ${{ steps.existing-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            <!-- sample app builds --> 
-            # Sample app builds 📱
-
-            Below you will find the list of the latest versions of the sample apps. It's recommended to always download the latest builds of the sample apps to accurately test the pull request. 
-
-            ---
-            ${{ steps.build.outputs.build-log }}
-          edit-mode: replace # replace the existing comment with new content since we are creating new builds
-
-  build-sample-apps:
-    if: ${{ always() }} # do not skip running this step if update-pr-comment does not run
-    needs: [update-pr-comment] # wait for PR comment to be created saying new builds are being made.
-    permissions:
-      pull-requests: write # comment on pull request with build information
-    strategy:
-      fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them.
-      matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build!
-        sample-app:
-          # List all sample apps you want to have compiled.
-          # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
-          - name: "APN"
-            cio-workspace-name: "Mobile: React Native"
-          - name: "FCM"
-            cio-workspace-name: "Mobile: xReact Native FCM workspace"
+  build-sample-app:
+    name: Building sample app ${{ inputs.app_name }} with SDK version ${{ inputs.sdk_version }}
+    runs-on: macos-14
     defaults:
       run:
-        working-directory: apps/${{ matrix.sample-app.name }}
-    runs-on: macos-14
-    name: Building sample app ${{ matrix.sample-app.name }}
+        working-directory: Apps/${{ inputs.app_name }} # sets working directory for all steps in this job
+    outputs:
+      sdk_version_name: ${{ steps.export-vars.outputs.sdk_version_name }}
+      app_version_name: ${{ steps.export-vars.outputs.app_version_name }}
+      app_version_code: ${{ steps.export-vars.outputs.app_version_code }}
 
     steps:
       - name: Check out code with conditional fetch-depth
@@ -85,7 +61,7 @@ jobs:
           NEXT_BUILDS_GROUP: next
           PUBLIC_BUILDS_GROUP: public
           # Input variables
-          IS_PRIMARY_APP: ${{ matrix.sample-app.name == 'APN' }}
+          IS_PRIMARY_APP: ${{ inputs.app_name == 'APN' }}
           CURRENT_BRANCH: ${{ github.ref }}
         run: |
           # Initialize with the default distribution group
@@ -95,7 +71,7 @@ jobs:
           if [[ "$IS_PRIMARY_APP" == "true" ]]; then
             [[ "$CURRENT_BRANCH" == "refs/heads/feature/"* ]] && distribution_groups+=("$FEATURE_BUILDS_GROUP")
             [[ "$CURRENT_BRANCH" == "refs/heads/main" ]] && distribution_groups+=("$NEXT_BUILDS_GROUP")
-            [[ "$CURRENT_BRANCH" == "refs/heads/main" ]] && distribution_groups+=("$PUBLIC_BUILDS_GROUP")
+            [[ -n "${{ inputs.sdk_version }}" ]] && distribution_groups+=("$PUBLIC_BUILDS_GROUP")
           fi
 
           # Export the groups as an environment variable
@@ -112,21 +88,33 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true # cache tools to make builds faster in future
-          working-directory: apps/${{ matrix.sample-app.name }}
+          working-directory: Apps/${{ inputs.app_name }}
 
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app.name }}
+          subdirectory: Apps/${{ inputs.app_name }}
           lane: "generate_new_version"
-          options: '{"branch_name":"${{ github.ref_name }}", "pull_request_number":"${{ github.event.pull_request.number }}"}'
+          options: '{"branch_name":"${{ github.ref_name }}", "pull_request_number":"${{ github.event.pull_request.number }}", "sdk_version":"${{ inputs.sdk_version }}"}'
+
+      - name: Export App and SDK Version Info
+        id: export-vars
+        run: |
+          echo "Exporting SDK and App Version..."
+          echo "sdk_version_name=${SDK_VERSION_NAME}" >> $GITHUB_OUTPUT
+          echo "app_version_name=${APP_VERSION_NAME}" >> $GITHUB_OUTPUT
+          echo "app_version_code=${APP_VERSION_CODE}" >> $GITHUB_OUTPUT
+        env:
+          SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
+          APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
+          APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update React Native SDK Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app.name }}
+          subdirectory: Apps/${{ inputs.app_name }}
           lane: "update_react_native_sdk_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
@@ -136,7 +124,7 @@ jobs:
       - name: Update Sample App Version
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app.name }}
+          subdirectory: Apps/${{ inputs.app_name }}
           lane: "update_react_native_app_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
@@ -162,9 +150,9 @@ jobs:
           
           # Update keys in the environment file
           sd "buildTimestamp: .*" "buildTimestamp: $(date +%s)," "$ENV_FILE"
-          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app.name)] }}'" "$ENV_FILE"
-          sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app.name)] }}'" "$ENV_FILE"
-          sd "workspaceName: '.*'" "workspaceName: '${{ matrix.sample-app.cio-workspace-name }}'" "$ENV_FILE"
+          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}'" "$ENV_FILE"
+          sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}'" "$ENV_FILE"
+          sd "workspaceName: '.*'" "workspaceName: '${{ inputs.cio-workspace-name }}'" "$ENV_FILE"
           sd "branchName: '.*'" "branchName: '$BRANCH_NAME'" "$ENV_FILE"
           sd "commitHash: '.*'" "commitHash: '${COMMIT_HASH:0:7}'" "$ENV_FILE"
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "untagged")
@@ -172,11 +160,12 @@ jobs:
           sd "commitsAheadCount: '.*'" "commitsAheadCount: '$COMMITS_AHEAD'" "$ENV_FILE"
 
       - name: Setup workspace credentials in iOS environment files
-        working-directory: Apps/${{ matrix.sample-app.name }}/ios
+        working-directory: Apps/${{ inputs.app_name }}/ios
         run: |
-          cp "Env.swift.example" "Env.swift"
-          sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', matrix.sample-app.name)] }}\"" "Env.swift"
-          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', matrix.sample-app.name)] }}\"" "Env.swift"
+          ENV_FILE="Env.swift"
+          cp "$ENV_FILE.example" "$ENV_FILE"
+          sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}\"" "$ENV_FILE"
+          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}\"" "$ENV_FILE"
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
@@ -190,18 +179,24 @@ jobs:
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
         uses: actions/cache@v4
         with:
-          path: Apps/${{ matrix.sample-app.name }}/Pods
-          key: ${{ runner.os }}-${{ matrix.sample-app.name }}-Pods-${{ github.ref }}
+          path: Apps/${{ inputs.app_name }}/Pods
+          key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.sample-app.name }}-Pods
+            ${{ runner.os }}-${{ inputs.app_name }}-Pods
 
       - name: Install dependencies to build SDK
         run: npm ci
         working-directory: .
 
       - name: Install dependencies for sample app
-        run: npm run ci:install
-      
+        run: |
+          SDK_VERSION="${{ inputs.sdk_version }}" 
+          if [[ -n "$SDK_VERSION" ]]; then
+            npm run ci:install -- --cio-rn-sdk=$SDK_VERSION
+          else
+            npm run ci:install
+          fi
+
       # Android setup
 
       - name: Setup Android environment for sample app
@@ -211,7 +206,7 @@ jobs:
         id: android_build
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app.name }}
+          subdirectory: Apps/${{ inputs.app_name }}
           lane: 'android build'
           options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
@@ -229,7 +224,7 @@ jobs:
         id: ios_build
         uses: maierj/fastlane-action@v3.1.0
         with:
-          subdirectory: Apps/${{ matrix.sample-app.name }}
+          subdirectory: Apps/${{ inputs.app_name }}
           lane: "ios build"
           options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
@@ -238,30 +233,11 @@ jobs:
 
       - name: Check build statuses and mark failure
         run: |
-          if [ "${{ steps.android_build.outcome }}" != "success" ] || [ "${{ steps.ios_build.outcome }}" != "success" ]; then
-            echo "One or more builds failed."
+          FAILED_BUILDS=()
+          [ "${{ steps.android_build.outcome }}" != "success" ] && FAILED_BUILDS+=("Android")
+          [ "${{ steps.ios_build.outcome }}" != "success" ] && FAILED_BUILDS+=("iOS")
+
+          if [ ${#FAILED_BUILDS[@]} -ne 0 ]; then
+            echo "Build failed for: ${FAILED_BUILDS[*]}"
             exit 1
           fi
-
-      # Update PR comment with build information
-
-      - name: Update sample builds PR comment with build information
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          # the variables APP_VERSION_NAME, APP_VERSION_CODE are generated above in generate_new_version lane
-          body: |
-            * ${{ matrix.sample-app.name }}: `${{ env.APP_VERSION_NAME }} (${{ env.APP_VERSION_CODE }})`
-          edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
-
-      - name: Update sample builds PR comment with build failure message
-        if: ${{ github.event_name == 'pull_request' && failure() }}
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            * ${{ matrix.sample-app.name }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
-          edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.

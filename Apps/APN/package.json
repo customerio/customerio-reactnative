@@ -9,9 +9,9 @@
     "clean-install": "./scripts/clean-install-dependencies.sh",
     "clean-install-android": "./scripts/clean-run-android.sh",
     "clean-install-ios": "./scripts/clean-run-ios.sh",
-    "dev:update": "../../scripts/dev:update.sh",
+    "install-sdk-deps": "CIO_PACKAGE_VERSION=$npm_config_cio_rn_sdk ../../scripts/install-sdk-deps.sh",
+    "preinstall": "npm run install-sdk-deps",
     "postinstall": "pod update --project-directory=ios",
-    "preinstall": "npm run dev:update",
     "ci:install": "npm run preinstall && npm ci"
   },
   "dependencies": {
