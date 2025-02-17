@@ -70,7 +70,7 @@ jobs:
     permissions:
       pull-requests: write # to be able to comment on PR
     strategy:
-      matrix:
+      matrix: # Have a matrix make it easier to update the PR comment with the build information for each sample app.
         sample-app:
           - name: "APN"
           - name: "FCM"
@@ -81,7 +81,6 @@ jobs:
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          # the variables APP_VERSION_NAME, APP_VERSION_CODE are generated above in generate_new_version lane
           body: |
             * ${{ matrix.sample-app.name }}: `${{ needs.build-sample-apps.outputs.app_version_name }} (${{ needs.build-sample-apps.outputs.app_version_code }})`
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
