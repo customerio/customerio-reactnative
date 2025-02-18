@@ -4,11 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       sdk_version:
-        description: "SDK version to build sample apps with (optional, defaults to latest)"
+        description: "SDK version to build sample app with (optional, e.g., 4.1.0, defaults to latest)"
         required: false
         type: string
 
 jobs:
+  determine-branch:
+    runs-on: ubuntu-latest
+    outputs:
+      branch_name: ${{ steps.get_branch.outputs.branch }}
+    steps:
+      - name: Extract Branch Name
+        id: get_branch
+        run: echo "branch=$(echo $GITHUB_REF_NAME)" >> $GITHUB_OUTPUT
+
   determine-sdk-version:
     runs-on: ubuntu-latest
     outputs:
@@ -26,10 +35,11 @@ jobs:
           fi
 
   build-sample-app:
-    needs: determine-sdk-version
+    needs: [determine-branch, determine-sdk-version]
     uses: ./.github/workflows/build-sample-app.yml
     with:
       app_name: "APN"
+      branch_name: ${{ needs.determine-branch.outputs.branch_name }}
       cio-workspace-name: "Mobile: React Native"
       sdk_version: ${{ needs.determine-sdk-version.outputs.resolved_version }}
     secrets: inherit

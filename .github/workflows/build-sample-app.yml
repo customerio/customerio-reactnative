@@ -7,6 +7,10 @@ on:
         description: "Name of the sample app to build"
         required: true
         type: string
+      branch_name:
+        description: "Branch name for versioning"
+        required: false
+        type: string
       cio-workspace-name:
         description: "Name of the Customer.io workspace to use"
         required: true
@@ -97,7 +101,12 @@ jobs:
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: "generate_new_version"
-          options: '{"branch_name":"${{ github.ref_name }}", "pull_request_number":"${{ github.event.pull_request.number }}", "sdk_version":"${{ inputs.sdk_version }}"}'
+          options: > 
+            {
+              "branch_name": "${{ inputs.branch_name || github.ref_name }}",
+              "pull_request_number": "${{ github.event.pull_request.number }}",
+              "sdk_version": "${{ inputs.sdk_version }}"
+            }
 
       - name: Export App and SDK Version Info
         id: export-vars
