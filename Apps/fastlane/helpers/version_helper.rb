@@ -10,6 +10,8 @@ lane :generate_new_version do |options|
     branch_name = github.pr_source_branch
   elsif github.is_commit_pushed
     branch_name = github.push_branch
+  else
+    branch_name = options[:branch_name] || "manual-release"
   end
 
   # Replace '/' with '-' to avoid issues with unsupported characters in version name
