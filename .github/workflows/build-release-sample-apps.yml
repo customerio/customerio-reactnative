@@ -1,0 +1,35 @@
+name: Publish Release Sample App
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk_version:
+        description: "SDK version to build sample apps with (optional, defaults to latest)"
+        required: false
+        type: string
+
+jobs:
+  determine-sdk-version:
+    runs-on: ubuntu-latest
+    outputs:
+      resolved_version: ${{ steps.get_version.outputs.sdk_version }}
+    steps:
+      - name: Get Latest SDK Version (if not provided)
+        id: get_version
+        run: |
+          if [[ -z "${{ inputs.sdk_version }}" ]]; then
+            LATEST_VERSION=$(npm show customerio-reactnative version)
+            echo "Using latest SDK version: $LATEST_VERSION"
+            echo "sdk_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "sdk_version=${{ inputs.sdk_version }}" >> $GITHUB_OUTPUT
+          fi
+
+  build-sample-app:
+    needs: determine-sdk-version
+    uses: ./.github/workflows/build-sample-app.yml
+    with:
+      app_name: "APN"
+      cio-workspace-name: "Mobile: React Native"
+      sdk_version: ${{ needs.determine-sdk-version.outputs.resolved_version }}
+    secrets: inherit

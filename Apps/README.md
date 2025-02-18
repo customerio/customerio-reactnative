@@ -30,6 +30,16 @@ npm run preinstall
 npm install
 ```
 
+#### Using a Specific SDK Version with NPM
+
+To install a specific SDK version in the sample app, run:
+
+```bash
+npm install --cio-rn-sdk=<SDK_VERSION>
+```
+
+If no version is provided, the SDK will default to the local dependency.
+
 ## Run the sample app
 
 After you have built the app you can then now run it on Android or iOS using any of these commands:

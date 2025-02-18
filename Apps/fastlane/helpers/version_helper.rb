@@ -31,8 +31,10 @@ lane :generate_new_version do |options|
   major = "#{year}#{month}#{day}"
   minor = "#{hour}#{minute}#{second}"
   patch = ticket_number_in_branch_name.to_s
+  generated_sdk_version = "#{major}.#{minor}.#{patch}"
 
-  sdk_version_name = "#{major}.#{minor}.#{patch}"
+  # Use provided SDK version if available, otherwise use generated one
+  sdk_version_name = options[:sdk_version].to_s.strip.empty? ? generated_sdk_version : options[:sdk_version]
 
   if github.is_pull_request
     app_version_name = "#{github.pr_number}.#{github.pr_commits}.0"
