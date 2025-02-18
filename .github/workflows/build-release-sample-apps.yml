@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       sdk_version:
-        description: "SDK version to build sample apps with (optional, defaults to latest)"
+        description: "SDK version to build sample app with (optional, e.g., 4.1.0, defaults to latest)"
         required: false
         type: string
 
