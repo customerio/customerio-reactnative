@@ -1,3 +1,9 @@
+## [4.2.2](https://github.com/customerio/customerio-reactnative/compare/4.2.1...4.2.2) (2025-02-19)
+
+### Bug Fixes
+
+* improve push delivery tracking for Android 14 and above ([#386](https://github.com/customerio/customerio-reactnative/issues/386)) ([e8a08a5](https://github.com/customerio/customerio-reactnative/commit/e8a08a511063bc236a7f411de0cabffeb1158907))
+
 ## [4.2.1](https://github.com/customerio/customerio-reactnative/compare/4.2.0...4.2.1) (2025-01-09)
 
 ### Bug Fixes
