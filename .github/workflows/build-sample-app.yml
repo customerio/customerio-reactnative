@@ -55,7 +55,15 @@ jobs:
           fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
 
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
-      
+
+      - name: Set IS_PRIMARY_APP
+        run: |
+          if [[ "${{ inputs.app_name }}" == "APN" ]]; then
+            echo "IS_PRIMARY_APP=true" >> $GITHUB_ENV
+          else
+            echo "IS_PRIMARY_APP=false" >> $GITHUB_ENV
+          fi
+
       - name: Set Default Firebase Distribution Groups
         shell: bash
         env:
@@ -65,7 +73,6 @@ jobs:
           NEXT_BUILDS_GROUP: next
           PUBLIC_BUILDS_GROUP: public
           # Input variables
-          IS_PRIMARY_APP: ${{ inputs.app_name == 'APN' }}
           CURRENT_BRANCH: ${{ github.ref }}
         run: |
           # Initialize with the default distribution group
@@ -140,10 +147,13 @@ jobs:
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
+      - name: Set Git Context Variables
+        run: |
+          echo "BRANCH_NAME=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+          COMMIT_HASH="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          echo "COMMIT_HASH=${COMMIT_HASH:0:7}" >> $GITHUB_ENV
+
       - name: Setup workspace credentials in React Native environment files
-        env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          COMMIT_HASH: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           # Determine the correct file extension (.js or .ts)
           if [ -f "env.sample.js" ]; then
@@ -162,8 +172,8 @@ jobs:
           sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}'" "$ENV_FILE"
           sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}'" "$ENV_FILE"
           sd "workspaceName: '.*'" "workspaceName: '${{ inputs.cio-workspace-name }}'" "$ENV_FILE"
-          sd "branchName: '.*'" "branchName: '$BRANCH_NAME'" "$ENV_FILE"
-          sd "commitHash: '.*'" "commitHash: '${COMMIT_HASH:0:7}'" "$ENV_FILE"
+          sd "branchName: '.*'" "branchName: '${{ env.BRANCH_NAME }}'" "$ENV_FILE"
+          sd "commitHash: '.*'" "commitHash: '${{ env.COMMIT_HASH }}'" "$ENV_FILE"
           LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "untagged")
           COMMITS_AHEAD=$(git rev-list $LAST_TAG..HEAD --count 2>/dev/null || echo "untracked")
           sd "commitsAheadCount: '.*'" "commitsAheadCount: '$COMMITS_AHEAD'" "$ENV_FILE"
@@ -222,6 +232,23 @@ jobs:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
         continue-on-error: true # continue to build iOS app even if Android build fails
 
+      - name: Send Slack Notification for Sample App Builds (Android)
+        if: always() && env.IS_PRIMARY_APP == 'true'
+        uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1
+        with:
+          build_status: ${{ steps.android_build.outcome }}
+          app_icon_emoji: ":react:"
+          app_name: "React Native"
+          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_ANDROID', inputs.app_name)] }}
+          firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
+          git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
+          icon_url: "https://vectorified.com/images/icon-react-native-24.png"
+          instructions_guide_link: ${{ secrets.SAMPLE_APPS_INSTRUCTIONS_GUIDE_LINK }}
+          platform: "android"
+          sdk_name: "React Native SDK"
+          sdk_version: ${{ env.SDK_VERSION_NAME }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
       # iOS setup
 
       - name: Setup iOS environment for sample app
@@ -239,6 +266,23 @@ jobs:
         env:
           GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64: ${{ secrets.GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64 }}
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
+
+      - name: Send Slack Notification for Sample App Builds (iOS)
+        if: always() && env.IS_PRIMARY_APP == 'true'
+        uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1
+        with:
+          build_status: ${{ steps.ios_build.outcome }}
+          app_icon_emoji: ":react:"
+          app_name: "React Native"
+          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_IOS', inputs.app_name)] }}
+          firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
+          git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
+          icon_url: "https://vectorified.com/images/icon-react-native-24.png"
+          instructions_guide_link: ${{ secrets.SAMPLE_APPS_INSTRUCTIONS_GUIDE_LINK }}
+          platform: "ios"
+          sdk_name: "React Native SDK"
+          sdk_version: ${{ env.SDK_VERSION_NAME }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check build statuses and mark failure
         run: |
