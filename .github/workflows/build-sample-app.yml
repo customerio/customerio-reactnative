@@ -233,7 +233,7 @@ jobs:
         continue-on-error: true # continue to build iOS app even if Android build fails
 
       - name: Send Slack Notification for Sample App Builds (Android)
-        if: always() && env.IS_PRIMARY_APP == 'true'
+        if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
         uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1
         with:
           build_status: ${{ steps.android_build.outcome }}
@@ -268,7 +268,7 @@ jobs:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
 
       - name: Send Slack Notification for Sample App Builds (iOS)
-        if: always() && env.IS_PRIMARY_APP == 'true'
+        if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
         uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1
         with:
           build_status: ${{ steps.ios_build.outcome }}
