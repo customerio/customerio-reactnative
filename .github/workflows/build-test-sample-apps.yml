@@ -2,8 +2,7 @@ name: Publish Test Sample Apps
 
 on:
   pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
-  push:
-    branches: [ main, feature/* ]
+  push: 
 
 concurrency: # cancel previous workflow run if one exists.
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -73,7 +72,6 @@ jobs:
       matrix: # Have a matrix make it easier to update the PR comment with the build information for each sample app.
         sample-app:
           - name: "APN"
-          - name: "FCM"
     steps:
       - name: Update sample builds PR comment with build information
         if: ${{ github.event_name == 'pull_request' }}

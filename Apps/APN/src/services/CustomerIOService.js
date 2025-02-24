@@ -55,6 +55,22 @@ export const trackEvent = (eventName, propertyName, propertyValue) => {
     data[propertyName] = propertyValue;
   }
   CustomerIO.track(eventName, data);
+
+  const message = `
+  {
+  "data": {
+      "body": "Hope your are having a good day 🏖️",
+      "image": "https://thumbs.dreamstime.com/b/bee-flower-27533578.jpg",
+      "link": "amiapp-reactnative-apns://settings?site_id=sitid&api_key=apikey",
+      "title": "Hello Rich 👋"
+    }
+  }    
+  `
+  CustomerIO.pushMessaging.onMessageReceived(message).then(handled => {
+    // If true, the push was a Customer.io notification and handled by our SDK 
+    // Otherwise, `handled` is false
+    console.log('Push message handled: ', handled);
+  });
 };
 
 export const trackDeviceAttribute = (name, value) => {

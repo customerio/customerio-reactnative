@@ -3,19 +3,19 @@ PODS:
     - JSONSafeEncoding (= 2.0.0)
     - Sovran (= 1.1.1)
   - boost (1.83.0)
-  - customerio-reactnative (4.2.1):
-    - customerio-reactnative/nopush (= 4.2.1)
+  - customerio-reactnative (4.2.2):
+    - customerio-reactnative/nopush (= 4.2.2)
     - CustomerIO/DataPipelines (= 3.7.2)
     - CustomerIO/MessagingInApp (= 3.7.2)
     - React-Core
-  - customerio-reactnative-richpush/apn (4.2.1):
+  - customerio-reactnative-richpush/apn (4.2.2):
     - CustomerIO/MessagingPushAPN (= 3.7.2)
-  - customerio-reactnative/apn (4.2.1):
+  - customerio-reactnative/apn (4.2.2):
     - CustomerIO/DataPipelines (= 3.7.2)
     - CustomerIO/MessagingInApp (= 3.7.2)
     - CustomerIO/MessagingPushAPN (= 3.7.2)
     - React-Core
-  - customerio-reactnative/nopush (4.2.1):
+  - customerio-reactnative/nopush (4.2.2):
     - CustomerIO/DataPipelines (= 3.7.2)
     - CustomerIO/MessagingInApp (= 3.7.2)
     - CustomerIO/MessagingPush (= 3.7.2)
@@ -1328,8 +1328,8 @@ SPEC CHECKSUMS:
   AnalyticsSwiftCIO: d03712b33e85baecc86f0d38a6d53c97f7bc5bd1
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
   CustomerIO: f5a28a9b9ee82d785ad0debf63ea7bcf68f373c1
-  customerio-reactnative: 18de45846329d1e2ea6baf0b4ff30b3177ec9bcc
-  customerio-reactnative-richpush: 6114de8942b8ae8202460570f7281a4a0caab824
+  customerio-reactnative: 2894d7d2fdfe16d77631e5127f92a68f8bc35a82
+  customerio-reactnative-richpush: d0974c4ab31016af98cbb8ed0967670e747d5c5b
   CustomerIOCommon: 35be8270b80617a401653387ad6197bc468392ff
   CustomerIODataPipelines: 3c66df9f1d1cdf6fc10ef7a6fc8bfdc561e30dcf
   CustomerIOMessagingInApp: d31b5b0d2324ee1191d6f59e915e5d5218787b0c
