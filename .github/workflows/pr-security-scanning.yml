@@ -1,0 +1,27 @@
+name: "[pr] Report: Scan for Security Vulnerabilities"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  run-security-scan:
+    runs-on: 
+      - self-hosted
+      - ephemeral
+      - linux
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run composite security scanning
+        id: security-scanning
+        uses: customerio/cio-actions/security-scanning@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on pull request
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: ${{ steps.security-scanning.outputs.semgrep_report_path }}
