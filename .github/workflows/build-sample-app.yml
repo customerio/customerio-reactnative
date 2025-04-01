@@ -95,7 +95,7 @@ jobs:
           brew install xcbeautify # used by fastlane for output
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@354a1ad156761f5ee2b7b13fa8e09943a5e8d252 # v1.229.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true # cache tools to make builds faster in future
@@ -104,7 +104,7 @@ jobs:
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: "generate_new_version"
@@ -128,7 +128,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update React Native SDK Version
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: "update_react_native_sdk_version"
@@ -138,7 +138,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update Sample App Version
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: "update_react_native_app_version"
@@ -223,7 +223,7 @@ jobs:
 
       - name: Build and upload Android app via Fastlane
         id: android_build
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: 'android build'
@@ -258,7 +258,7 @@ jobs:
 
       - name: Build and upload iOS app via Fastlane
         id: ios_build
-        uses: maierj/fastlane-action@v3.1.0
+        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
           subdirectory: Apps/${{ inputs.app_name }}
           lane: "ios build"

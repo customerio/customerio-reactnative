@@ -10,4 +10,4 @@ jobs:
     permissions:
       pull-requests: write # to comment on PRs
     steps:    
-    - uses: levibostian/action-conventional-pr-linter@v4
+    - uses: levibostian/action-conventional-pr-linter@acd7e6035a4c70ae2e6aab469c791cc5ca2a989d # v4.0.1
