@@ -1,3 +1,9 @@
+## [4.2.3](https://github.com/customerio/customerio-reactnative/compare/4.2.2...4.2.3) (2025-04-03)
+
+### Bug Fixes
+
+* Updated version of native SDKs ([#397](https://github.com/customerio/customerio-reactnative/issues/397)) ([9fd0bde](https://github.com/customerio/customerio-reactnative/commit/9fd0bde55d52c4f347f8f500d5f97ec1b84d860d))
+
 ## [4.2.2](https://github.com/customerio/customerio-reactnative/compare/4.2.1...4.2.2) (2025-02-19)
 
 ### Bug Fixes

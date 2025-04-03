@@ -9,5 +9,5 @@
     This will be updated by update-version script with React Native package version
     whenever new version of React Native package is released
     -->
-    <string name="customer_io_react_native_sdk_client_version">4.2.2</string>
+    <string name="customer_io_react_native_sdk_client_version">4.2.3</string>
 </resources>
