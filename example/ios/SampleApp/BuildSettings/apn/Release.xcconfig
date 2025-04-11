@@ -1,0 +1,5 @@
+#include "Pods/Target Support Files/Pods-SampleApp/Pods-SampleApp.release.xcconfig"
+
+#include "apn/Common.xcconfig"
+
+PROVISIONING_PROFILE_SPECIFIER=match AdHoc io.customer.ami

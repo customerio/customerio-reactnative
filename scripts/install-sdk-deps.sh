@@ -24,7 +24,7 @@ set -e
 
 # Define constants
 PACKAGE_NAME="customerio-reactnative"
-PACKAGE_PATH_RELATIVE=${1:-../..} # Default package path to `../..` if no argument is provided
+PACKAGE_PATH_RELATIVE=${1:-..} # Default package path to `..` if no argument is provided
 TARBALL_NAME=$PACKAGE_NAME.tgz
 TARBALL_PATTERN=$PACKAGE_NAME-*.tgz
 START_DIR=$(pwd) # Save the current directory (starting directory)

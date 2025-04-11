@@ -25,7 +25,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
-  namespace 'io.customer.reactnative.sdk'
+  namespace = 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
@@ -90,16 +90,16 @@ repositories {
 
       if (androidPrebuiltBinaryDir.exists()) {
         maven {
-          url androidPrebuiltBinaryDir.toString()
-          name androidSourcesName
+          url = androidPrebuiltBinaryDir.toString()
+          name = androidSourcesName
         }
 
         logger.info(":${project.name}:reactNativeAndroidRoot ${androidPrebuiltBinaryDir.canonicalPath}")
         found = true
       } else if (androidSourcesDir.exists()) {
         maven {
-          url androidSourcesDir.toString()
-          name androidSourcesName
+          url = androidSourcesDir.toString()
+          name = androidSourcesName
         }
 
         logger.info(":${project.name}:reactNativeAndroidRoot ${androidSourcesDir.canonicalPath}")

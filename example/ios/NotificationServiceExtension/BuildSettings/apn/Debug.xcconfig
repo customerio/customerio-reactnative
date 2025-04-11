@@ -1,0 +1,4 @@
+#include "Pods/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"
+
+#include "apn/Common.xcconfig"
+PROVISIONING_PROFILE_SPECIFIER=match Development io.customer.ami.richpush
