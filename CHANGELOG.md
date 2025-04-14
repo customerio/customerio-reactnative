@@ -1,3 +1,9 @@
+## [4.2.4](https://github.com/customerio/customerio-reactnative/compare/4.2.3...4.2.4) (2025-04-14)
+
+### Bug Fixes
+
+* support null handling in nested structures ([#402](https://github.com/customerio/customerio-reactnative/issues/402)) ([c9d1baf](https://github.com/customerio/customerio-reactnative/commit/c9d1bafd33edca87d70f6384aeeb92fef9752022))
+
 ## [4.2.3](https://github.com/customerio/customerio-reactnative/compare/4.2.2...4.2.3) (2025-04-03)
 
 ### Bug Fixes
