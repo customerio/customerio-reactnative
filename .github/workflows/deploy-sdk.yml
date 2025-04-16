@@ -205,9 +205,5 @@ jobs:
 
   publish-sample-apps-public-builds:
     needs: deploy-npm
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger sample apps public builds
-        uses: ./.github/workflows/build-release-sample-apps.yml
-
-        
+    uses: ./.github/workflows/build-release-sample-apps.yml
+    secrets: inherit
