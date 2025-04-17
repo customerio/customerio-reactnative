@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "rootDir": ".",
+    "moduleResolution": "bundler",
+    "module": "Preserve",
+    "paths": {
+      "@assets/*": ["./src/assets/*"],
+      "@components": ["./src/components"],
+      "@screens": ["./src/screens"],
+      "@screens-context": ["./src/screens/context"],
+      "@services": ["./src/services"],
+      "@colors": ["./src/colors"],
+      "@utils": ["./src/utils"],
+      "@navigation": ["./src/navigation"]
+    }
+  }
+}
