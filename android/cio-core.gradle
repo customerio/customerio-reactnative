@@ -1,5 +1,0 @@
-dependencies {
-    implementation "io.customer.android:datapipelines:$cioAndroidSDKVersion"
-    implementation "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
-    implementation "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
-}

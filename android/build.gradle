@@ -24,6 +24,9 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['customerio.reactnative.' + name]).toInteger()
 }
 
+// Double negative to include by default
+def shouldExcludePushMessaging = getExtOrDefault("excludePushMessaging")
+
 android {
   namespace 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
@@ -43,6 +46,16 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
+  }
+
+  sourceSets {
+    main {
+      if (shouldExcludePushMessaging) {
+        java.srcDirs += ['src/push-noop']
+      } else {
+        java.srcDirs += ['src/push']
+      }
+    }
   }
 }
 
@@ -137,10 +150,14 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-apply from: "./cio-core.gradle"
-
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+  implementation "io.customer.android:datapipelines:$cioAndroidSDKVersion"
+  implementation "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
+  if (!shouldExcludePushMessaging) {
+    implementation "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
+  }
 }
