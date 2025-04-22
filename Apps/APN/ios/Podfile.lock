@@ -3,44 +3,44 @@ PODS:
     - JSONSafeEncoding (= 2.0.0)
     - Sovran (= 1.1.2)
   - boost (1.83.0)
-  - customerio-reactnative (4.2.3):
-    - customerio-reactnative/nopush (= 4.2.3)
-    - CustomerIO/DataPipelines (= 3.8.1)
-    - CustomerIO/MessagingInApp (= 3.8.1)
+  - customerio-reactnative (4.2.4):
+    - customerio-reactnative/nopush (= 4.2.4)
+    - CustomerIO/DataPipelines (= 3.8.2)
+    - CustomerIO/MessagingInApp (= 3.8.2)
     - React-Core
-  - customerio-reactnative-richpush/apn (4.2.3):
-    - CustomerIO/MessagingPushAPN (= 3.8.1)
-  - customerio-reactnative/apn (4.2.3):
-    - CustomerIO/DataPipelines (= 3.8.1)
-    - CustomerIO/MessagingInApp (= 3.8.1)
-    - CustomerIO/MessagingPushAPN (= 3.8.1)
+  - customerio-reactnative-richpush/apn (4.2.4):
+    - CustomerIO/MessagingPushAPN (= 3.8.2)
+  - customerio-reactnative/apn (4.2.4):
+    - CustomerIO/DataPipelines (= 3.8.2)
+    - CustomerIO/MessagingInApp (= 3.8.2)
+    - CustomerIO/MessagingPushAPN (= 3.8.2)
     - React-Core
-  - customerio-reactnative/nopush (4.2.3):
-    - CustomerIO/DataPipelines (= 3.8.1)
-    - CustomerIO/MessagingInApp (= 3.8.1)
-    - CustomerIO/MessagingPush (= 3.8.1)
+  - customerio-reactnative/nopush (4.2.4):
+    - CustomerIO/DataPipelines (= 3.8.2)
+    - CustomerIO/MessagingInApp (= 3.8.2)
+    - CustomerIO/MessagingPush (= 3.8.2)
     - React-Core
-  - CustomerIO/DataPipelines (3.8.1):
-    - CustomerIODataPipelines (= 3.8.1)
-  - CustomerIO/MessagingInApp (3.8.1):
-    - CustomerIOMessagingInApp (= 3.8.1)
-  - CustomerIO/MessagingPush (3.8.1):
-    - CustomerIOMessagingPush (= 3.8.1)
-  - CustomerIO/MessagingPushAPN (3.8.1):
-    - CustomerIOMessagingPushAPN (= 3.8.1)
-  - CustomerIOCommon (3.8.1)
-  - CustomerIODataPipelines (3.8.1):
+  - CustomerIO/DataPipelines (3.8.2):
+    - CustomerIODataPipelines (= 3.8.2)
+  - CustomerIO/MessagingInApp (3.8.2):
+    - CustomerIOMessagingInApp (= 3.8.2)
+  - CustomerIO/MessagingPush (3.8.2):
+    - CustomerIOMessagingPush (= 3.8.2)
+  - CustomerIO/MessagingPushAPN (3.8.2):
+    - CustomerIOMessagingPushAPN (= 3.8.2)
+  - CustomerIOCommon (3.8.2)
+  - CustomerIODataPipelines (3.8.2):
     - "AnalyticsSwiftCIO (= 1.7.3+cio.1)"
-    - CustomerIOCommon (= 3.8.1)
-    - CustomerIOTrackingMigration (= 3.8.1)
-  - CustomerIOMessagingInApp (3.8.1):
-    - CustomerIOCommon (= 3.8.1)
-  - CustomerIOMessagingPush (3.8.1):
-    - CustomerIOCommon (= 3.8.1)
-  - CustomerIOMessagingPushAPN (3.8.1):
-    - CustomerIOMessagingPush (= 3.8.1)
-  - CustomerIOTrackingMigration (3.8.1):
-    - CustomerIOCommon (= 3.8.1)
+    - CustomerIOCommon (= 3.8.2)
+    - CustomerIOTrackingMigration (= 3.8.2)
+  - CustomerIOMessagingInApp (3.8.2):
+    - CustomerIOCommon (= 3.8.2)
+  - CustomerIOMessagingPush (3.8.2):
+    - CustomerIOCommon (= 3.8.2)
+  - CustomerIOMessagingPushAPN (3.8.2):
+    - CustomerIOMessagingPush (= 3.8.2)
+  - CustomerIOTrackingMigration (3.8.2):
+    - CustomerIOCommon (= 3.8.2)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.73.6)
   - FBReactNativeSpec (0.73.6):
@@ -1327,15 +1327,15 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AnalyticsSwiftCIO: cbded90bbfe53072cb1fa1bc091d249e99ef7c56
   boost: d3f49c53809116a5d38da093a8aa78bf551aed09
-  CustomerIO: 442b51c7969fcfde8c8c5de9c81fa1a6cfbf251e
-  customerio-reactnative: d46921419d957d295302cd6c35de4e6ed0d5fc79
-  customerio-reactnative-richpush: 74fd45b71366f9cc3821f6cdf9fffc9b3a06789c
-  CustomerIOCommon: 53d7b9d363e82555d445d9ecf7938e5ed792ec6f
-  CustomerIODataPipelines: ea81fb2a6e17c1f34620226e27ef2556cb070459
-  CustomerIOMessagingInApp: 73190d2207c717b4574383c024451a817519dc72
-  CustomerIOMessagingPush: bee7193f95aab1aff415b2d123f50bd338c48d0d
-  CustomerIOMessagingPushAPN: 672a086691945fe6eadb28632f915448a8021c5e
-  CustomerIOTrackingMigration: b7518761f23b3ba416df8b3ee207869edc8dea43
+  CustomerIO: 7bddedea7908d134720c94fb3ca3e0df4bf177ed
+  customerio-reactnative: e8476e3e8db7db9488540b9d216e62af6a50d555
+  customerio-reactnative-richpush: b2bd42f5b5e05a3c8532221201cd4140e0e6a939
+  CustomerIOCommon: 536f4f7a530b32da91aa4514e5399cd302361166
+  CustomerIODataPipelines: 1b24dc005e8d49f8a6f43a7ec4aa1e97c242d926
+  CustomerIOMessagingInApp: 5810884af66867420d6c8375e47e15a4b91617bb
+  CustomerIOMessagingPush: 4b4323e29e50ac773244466528b36484d119b8c0
+  CustomerIOMessagingPushAPN: 8a9c5dbdb209896f2640c7d7c23934fe7f73a938
+  CustomerIOTrackingMigration: 565aed6d73ad8eac9dca64fb966feedf4d00b99e
   DoubleConversion: fea03f2699887d960129cc54bba7e52542b6f953
   FBLazyVector: f64d1e2ea739b4d8f7e4740cde18089cd97fe864
   FBReactNativeSpec: 9f2b8b243131565335437dba74923a8d3015e780
