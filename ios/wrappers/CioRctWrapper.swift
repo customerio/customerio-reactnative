@@ -29,9 +29,13 @@ class CioRctWrapper: NSObject {
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: sdkConfig)
             CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
 
-            if let inAppConfig = try? MessagingInAppConfigBuilder.build(from: sdkConfig) {
-                MessagingInApp.initialize(withConfig: inAppConfig)
-                MessagingInApp.shared.setEventListener(self)
+            do {
+                if let inAppConfig = try MessagingInAppConfigBuilder.build(from: sdkConfig) {
+                    MessagingInApp.initialize(withConfig: inAppConfig)
+                    MessagingInApp.shared.setEventListener(self)
+                }
+            } catch {
+                logger.error("[InApp] Failed to initialize module with error: \(error)")
             }
             logger.debug("Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(configJson)")
         } catch {
