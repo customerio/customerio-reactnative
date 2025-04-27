@@ -1,0 +1,76 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+
+  <application
+    android:name=".MainApplication"
+    android:label="@string/app_name"
+    android:icon="@mipmap/ic_launcher"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:allowBackup="false"
+    android:theme="@style/AppTheme"
+    android:supportsRtl="true"
+    android:usesCleartextTraffic="true">
+
+
+    <activity
+      android:name=".MainActivity"
+      android:label="@string/app_name"
+      android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+      android:launchMode="singleTask"
+      android:windowSoftInputMode="adjustResize"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter android:label="@string/filter_view_app_link">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- Accepts URIs beginning with "amiapp-reactnative-fcm://*" -->
+        <data android:scheme="amiapp-reactnative-fcm" />
+      </intent-filter>
+      <intent-filter android:autoVerify="true" android:label="@string/filter_view_universal_link">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- Accepts URIs beginning with "http://*" -->
+        <data android:scheme="http" />
+        <!-- Accepts URIs beginning with "https://*" -->
+        <data android:scheme="https" />
+        <!-- Accepts URIs beginning with "*://www.amiapp-reactnative-fcm.com" -->
+        <data android:host="www.amiapp-reactnative-fcm.com" />
+        <!-- Accepts URIs with path "*://*/settings/*" -->
+        <data android:pathPrefix="/settings" />
+        <!-- Accepts URIs with path "*://*/login/*" -->
+        <data android:pathPrefix="/login" />
+        <!-- Accepts URIs with path "*://*/dashboard/*" -->
+        <data android:pathPrefix="/dashboard" />
+      </intent-filter>
+    </activity>
+
+    <!-- Register Customer.io Firebase Messaging Service as we want our SDK to handle all push
+             notifications. This is not required. However, if you have multiple services added for
+             handling push notifications, you might need to add this service to ensure all
+             notifications are handled by Customer.io. Read more:
+             https://www.customer.io/docs/sdk/react-native/push-notifications/multiple-push-providers/ -->
+    <service
+      android:name="io.customer.messagingpush.CustomerIOFirebaseMessagingService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
+
+    <meta-data
+      android:name="com.google.firebase.messaging.default_notification_icon"
+      android:resource="@drawable/ic_notification" />
+    <meta-data
+      android:name="com.google.firebase.messaging.default_notification_color"
+      android:resource="@color/notification_icon" />
+
+  </application>
+</manifest>
