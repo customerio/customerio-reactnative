@@ -80,3 +80,7 @@ ios/SampleApp.xcodeproj
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+
+# GoogleService-Info.plist symlink
+ios/SampleApp/GoogleService-Info.plist

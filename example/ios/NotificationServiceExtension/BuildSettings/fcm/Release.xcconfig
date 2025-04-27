@@ -2,4 +2,4 @@
 
 #include "fcm/Common.xcconfig"
 
-PROVISIONING_PROFILE_SPECIFIER=match Development io.customer.rn-sample.fcm.richpush
+PROVISIONING_PROFILE_SPECIFIER=match AdHoc io.customer.rn-sample.fcm.richpush

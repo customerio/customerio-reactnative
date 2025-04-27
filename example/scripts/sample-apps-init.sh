@@ -11,8 +11,8 @@ set -e
 
 # We need to check if the a first argument was passed to the script.
 if [ -z "$1" ]; then
-  echo "Since no argument is passed, this script will setup the Android app and iOS with APN configurations."
-  echo "If you want to setup the iOS app with FCM configurations, please pass \"fcm\" as an argument."
+  echo "Since no argument is passed, this script will initialize the sample app for Android and iOS with APN configurations."
+  echo "If you want to initialize the iOS app with FCM configurations, please pass \"fcm\" as an argument."
 else
   # The argument passed must be either "apn" or "fcm".
   if [ "$1" != "apn" ] && [ "$1" != "fcm" ]; then

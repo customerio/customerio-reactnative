@@ -4,6 +4,13 @@
 # The symlinks point to the xcconfig files that contain the app name, app id, provisioning profile, etc.
 
 def update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
+
+  # Create a symlink to the GoogleService-Info.plist file in the root of the project
+  # This file contains the configs for Firebase app distribution
+  src_google_service_info = "#{installation_root}/#{app_target_name}/GoogleService-Info_#{push_provider}.plist"
+  dest_google_service_info = "#{installation_root}/#{app_target_name}/GoogleService-Info.plist"
+  system("ln -f #{src_google_service_info} #{dest_google_service_info}")
+
   [app_target_name, nse_target_name].each do |target|
     ["Debug", "Release"].each do |config|
       # This will create a symlink to the xcconfig file in the build settings folder
