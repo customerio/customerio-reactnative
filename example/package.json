@@ -1,0 +1,53 @@
+{
+  "name": "example_app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "ios-simulator": "react-native run-ios --simulator 'iPhone 16 Pro'",
+    "pods": "sh -c 'PUSH_PROVIDER=$1 bundle exec pod install --project-directory=ios' _",
+    "lint": "eslint .",
+    "start": "react-native start",
+    "test": "jest",
+    "prepare": "CIO_PACKAGE_VERSION=$npm_config_cio_rn_sdk ../scripts/install-sdk-deps.sh",
+    "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "preinstall": "npm run prepare"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-clipboard/clipboard": "^1.16.2",
+    "@react-navigation/native": "^7.1.6",
+    "@react-navigation/native-stack": "^7.3.10",
+    "customerio-reactnative": "file:../customerio-reactnative.tgz",
+    "react": "19.1.0",
+    "react-native": "0.79.1",
+    "react-native-device-info": "^14.0.4",
+    "react-native-flash-message": "^0.4.2",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-screens": "^4.10.0",
+    "react-native-snackbar": "^2.9.0",
+    "react-native-typography": "^1.4.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/runtime": "^7.27.0",
+    "@react-native-community/cli": "^18.0.0",
+    "@react-native-community/cli-platform-android": "^18.0.0",
+    "@react-native-community/cli-platform-apple": "^18.0.0",
+    "@react-native-community/cli-platform-ios": "18.0.0",
+    "@react-native/babel-preset": "^0.79.1",
+    "@react-native/metro-config": "0.79.1",
+    "@react-native/typescript-config": "0.79.1",
+    "@types/react": "^19.1.2",
+    "@types/uuid": "^10.0.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "react-native-builder-bob": "^0.40.6"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
