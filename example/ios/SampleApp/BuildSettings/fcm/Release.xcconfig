@@ -1,0 +1,6 @@
+
+#include "Pods/Target Support Files/Pods-SampleApp/Pods-SampleApp.release.xcconfig"
+
+#include "fcm/Common.xcconfig"
+
+PROVISIONING_PROFILE_SPECIFIER=match AdHoc io.customer.rn-sample.fcm

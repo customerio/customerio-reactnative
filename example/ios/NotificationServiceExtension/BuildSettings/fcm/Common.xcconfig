@@ -1,0 +1,3 @@
+OTHER_SWIFT_FLAGS=$(inherited) -DUSE_FIREBASE
+PRODUCT_BUNDLE_IDENTIFIER=io.customer.rn-sample.fcm.richpush
+INFOPLIST_KEY_CFBundleIdentifier=io.customer.rn-sample.fcm.richpush
