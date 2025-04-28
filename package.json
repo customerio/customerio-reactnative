@@ -43,7 +43,7 @@
     "android"
   ],
   "repository": "https://github.com/customerio/customerio-reactnative",
-  "author": "ami-aman <aman@customer.io> (https://customer.io/)",
+  "author": "Customer.io Mobile Dev Team (https://customer.io/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/customerio/customerio-reactnative/issues"
