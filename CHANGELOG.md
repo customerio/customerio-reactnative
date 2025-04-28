@@ -1,3 +1,9 @@
+## [4.2.5](https://github.com/customerio/customerio-reactnative/compare/4.2.4...4.2.5) (2025-04-28)
+
+### Bug Fixes
+
+* package author ([88e4da6](https://github.com/customerio/customerio-reactnative/commit/88e4da65ed117dee221c28779ba02b6958083526))
+
 ## [4.2.4](https://github.com/customerio/customerio-reactnative/compare/4.2.3...4.2.4) (2025-04-14)
 
 ### Bug Fixes
