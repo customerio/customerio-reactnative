@@ -1,0 +1,7 @@
+
+INFOPLIST_KEY_CFBundleDisplayName=APN
+
+PRODUCT_BUNDLE_IDENTIFIER=io.customer.ami
+INFOPLIST_KEY_CFBundleIdentifier=io.customer.ami
+
+OTHER_SWIFT_FLAGS=$(inherited) -DUSE_APN
