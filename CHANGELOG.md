@@ -1,3 +1,9 @@
+## [4.2.6](https://github.com/customerio/customerio-reactnative/compare/4.2.5...4.2.6) (2025-04-29)
+
+### Bug Fixes
+
+* update the package for RN 0.79 ([7c74c4d](https://github.com/customerio/customerio-reactnative/commit/7c74c4d76c63e671eccc1bc5e24df89243a974f9))
+
 ## [4.2.5](https://github.com/customerio/customerio-reactnative/compare/4.2.4...4.2.5) (2025-04-28)
 
 ### Bug Fixes
