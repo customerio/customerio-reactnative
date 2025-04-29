@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Android FCM</string>
+    <string name="filter_view_app_link">React Native Sample App Scheme Links</string>
+    <string name="filter_view_universal_link">React Native Sample Universal Scheme Links</string>
+</resources>

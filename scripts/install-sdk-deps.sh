@@ -1,8 +1,8 @@
 set -e
 
 # Installs Customer.IO React Native SDK either from npm (if version is provided) or from a local tarball (default).
-# Usage: 
-# cd apps/APN/ # make sure you run this script from the root directory of the sample app. 
+# Usage:
+# cd apps/APN/ # make sure you run this script from the root directory of the sample app.
 # It's recommended to add this to the package.json of the sample app:
 # "scripts": {
 #   "install-sdk-deps": "CIO_PACKAGE_VERSION=$npm_config_cio_rn_sdk ../../scripts/install-sdk-deps.sh",
@@ -16,15 +16,15 @@ set -e
 #    npm install                     # Installs from local tarball (default)
 #    npm install --cio-rn-sdk=X.Y.Z  # Installs version X.Y.Z from npm
 #
-# Note: 
-# This script assumes the sample app is using npm, not yarn. yarn has a caching 
-# mechanism that makes it difficult to update the SDK from a local install. 
-# https://github.com/yarnpkg/yarn/issues/5357 
+# Note:
+# This script assumes the sample app is using npm, not yarn. yarn has a caching
+# mechanism that makes it difficult to update the SDK from a local install.
+# https://github.com/yarnpkg/yarn/issues/5357
 #
 
 # Define constants
 PACKAGE_NAME="customerio-reactnative"
-PACKAGE_PATH_RELATIVE=${1:-../..} # Default package path to `../..` if no argument is provided
+PACKAGE_PATH_RELATIVE=${1:-..} # Default package path to `..` if no argument is provided
 TARBALL_NAME=$PACKAGE_NAME.tgz
 TARBALL_PATTERN=$PACKAGE_NAME-*.tgz
 START_DIR=$(pwd) # Save the current directory (starting directory)
