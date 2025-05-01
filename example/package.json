@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "ios-simulator": "react-native run-ios --simulator 'iPhone 16 Pro'",
+    "ios": "sh -c 'react-native run-ios $1' _",
     "pods": "sh -c 'PUSH_PROVIDER=$1 bundle exec pod install --project-directory=ios' _",
     "lint": "eslint .",
     "start": "react-native start",

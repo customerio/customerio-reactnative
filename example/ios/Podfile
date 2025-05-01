@@ -1,0 +1,60 @@
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command("node", ["-p",
+                                                 'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+require_relative "../scripts/ios_project_setup_utils.rb"
+
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
+
+push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
+
+app_target_name = "SampleApp"
+nse_target_name = "NotificationServiceExtension"
+installation_root = Pod::Config.instance.installation_root
+
+# This function is very specific to the sample app setup
+# and is not part of the SDK or its usage.
+create_project_file_if_not_exists(installation_root, app_target_name)
+update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
+
+
+if push_provider == "fcm"
+  linkage = "dynamic"
+else
+  linkage = ENV["USE_FRAMEWORKS"]
+end
+
+if linkage != nil
+  Pod::UI.puts "Configuring the app for #{push_provider.upcase} setup with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+cio_package_path = "../node_modules/customerio-reactnative"
+
+target app_target_name do
+  config = use_native_modules!
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :app_path => "#{installation_root}/..",
+  )
+  pod "customerio-reactnative/#{push_provider}", :path => cio_package_path
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+
+  end
+  
+end
+
+target nse_target_name do
+  inherit! :none
+  pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
+end

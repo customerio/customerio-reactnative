@@ -1,0 +1,5 @@
+#include "Pods/Target Support Files/Pods-NotificationServiceExtension/Pods-NotificationServiceExtension.debug.xcconfig"
+
+#include "fcm/Common.xcconfig"
+
+PROVISIONING_PROFILE_SPECIFIER=match Development io.customer.rn-sample.fcm.richpush

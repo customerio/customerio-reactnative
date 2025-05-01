@@ -12,10 +12,11 @@ import { AppEnvValues } from './env';
 
 export default function App({ appName }: { appName: string }) {
   const env =
-    AppEnvValues[appName.toLocaleLowerCase() as keyof typeof AppEnvValues];
+    AppEnvValues[appName.toLocaleLowerCase() as keyof typeof AppEnvValues] ??
+    AppEnvValues['default'];
   if (!env) {
     console.error(
-      `No environment defaults for the app: ${appName}. The env.ts contains environment values for case-insenetive app names: ${Object.keys(
+      `No default preset environment variables found nor environment variables for the app: ${appName}. The env.ts contains environment values for case-insenetive app names: ${Object.keys(
         AppEnvValues
       ).join(', ')}`
     );

@@ -55,9 +55,11 @@ vendor
 # Cocoapods
 #
 example/ios/Pods
+Podfile.lock
 
 # Ruby
-example/vendor/
+vendor
+Gemfile.lock
 
 # node.js
 #
