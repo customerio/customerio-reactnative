@@ -42,5 +42,8 @@ jobs:
       app_name: "APN"
       branch_name: ${{ needs.determine-branch.outputs.branch_name }}
       cio-workspace-name: "Mobile: React Native"
+      platform: "ios"
+      platform_name: "iOS"
+      platform_name_upper: "IOS"
       sdk_version: ${{ needs.determine-sdk-version.outputs.resolved_version }}
     secrets: inherit

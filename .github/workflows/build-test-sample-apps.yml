@@ -2,8 +2,9 @@ name: Publish Test Sample Apps
 
 on:
   pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
+  workflow_dispatch:
   push:
-    branches: [ main, feature/* ]
+    branches: [main, feature/*]
 
 concurrency: # cancel previous workflow run if one exists.
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,7 +24,7 @@ jobs:
         id: existing-comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: "github-actions[bot]"
+          comment-author: 'github-actions[bot]'
           body-includes: <!-- sample app builds -->
 
       - name: Create or update comment
@@ -51,15 +52,31 @@ jobs:
         sample-app:
           # List all sample apps you want to have compiled.
           # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
-          - name: "APN"
-            cio-workspace-name: "Mobile: React Native"
-          - name: "FCM"
-            cio-workspace-name: "Mobile: xReact Native FCM workspace"
-    name: Building sample app ${{ matrix.sample-app.name }}
+          - name: 'APN'
+            cio-workspace-name: 'Mobile: React Native'
+            platform: 'ios'
+            platform_name: 'iOS'
+            platform_name_upper: 'IOS'
+          - name: 'FCM'
+            cio-workspace-name: 'Mobile: xReact Native FCM workspace'
+            platform: 'ios'
+            platform_name: 'iOS'
+            platform_name_upper: 'IOS'
+          - name: 'FCM'
+            cio-workspace-name: 'Mobile: React Native'
+            platform: 'android'
+            platform_name: 'Android'
+            platform_name_upper: 'ANDROID'
+
+    name: Building the ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }} sample app
     uses: ./.github/workflows/build-sample-app.yml
     with:
       app_name: ${{ matrix.sample-app.name }}
       cio-workspace-name: ${{ matrix.sample-app.cio-workspace-name }}
+      platform: ${{ matrix.sample-app.platform }}
+      platform_name: ${{ matrix.sample-app.platform_name }}
+      platform_name_upper: ${{ matrix.sample-app.platform_name_upper }}
+
     secrets: inherit
 
   # Update PR comment with build information
@@ -72,8 +89,12 @@ jobs:
     strategy:
       matrix: # Have a matrix make it easier to update the PR comment with the build information for each sample app.
         sample-app:
-          - name: "APN"
-          - name: "FCM"
+          - name: 'APN'
+            platform_name: 'iOS'
+          - name: 'APN'
+            platform_name: 'Android'
+          - name: 'FCM'
+            platform_name: 'iOS'
     steps:
       - name: Update sample builds PR comment with build information
         if: ${{ github.event_name == 'pull_request' }}
@@ -82,7 +103,7 @@ jobs:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            * ${{ matrix.sample-app.name }}: `${{ needs.build-sample-apps.outputs.app_version_name }} (${{ needs.build-sample-apps.outputs.app_version_code }})`
+            * ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }}: `${{ needs.build-sample-apps.outputs.app_version_name }} (${{ needs.build-sample-apps.outputs.app_version_code }})`
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
 
       - name: Update sample builds PR comment with build failure message
@@ -92,5 +113,5 @@ jobs:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            * ${{ matrix.sample-app.name }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
+            * ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }}: Build failed. See [CI job logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}) to determine the issue and try re-building.
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.

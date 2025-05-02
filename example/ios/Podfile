@@ -33,7 +33,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-cio_package_path = "../node_modules/customerio-reactnative"
+cio_package_path = "../.."
 
 target app_target_name do
   config = use_native_modules!

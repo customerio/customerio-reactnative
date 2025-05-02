@@ -20,6 +20,19 @@ on:
         description: "SDK version to use (optional, defaults to local dependency)"
         required: false
         type: string
+      platform:
+          description: "Platform to build for (ios or android)"
+          required: true
+          type: string
+      platform_name:
+          description: "Name of the platform (iOS or Android)"
+          required: true
+          type: string
+      platform_name_upper:
+          description: "Name of the platform in all upper case (IOS or ANDROID)"
+          required: true
+          type: string
+    
     outputs:
       sdk_version_name:
         description: "SDK version used in the build"
@@ -30,19 +43,19 @@ on:
       app_version_code:
         description: "Generated app version code"
         value: ${{ jobs.build-sample-app.outputs.app_version_code }}
+        
 
 env:
-  XCODE_VERSION: "15.3"
-  RUBY_VERSION: "3.0"
-  NODE_VERSION: "18"
+  RUBY_VERSION: '3.1'
+  NODE_VERSION: '20'
 
 jobs:
   build-sample-app:
-    name: Building sample app ${{ inputs.app_name }} with SDK version ${{ inputs.sdk_version }}
+    name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
     runs-on: macos-14
     defaults:
       run:
-        working-directory: Apps/${{ inputs.app_name }} # sets working directory for all steps in this job
+        working-directory: example # sets working directory for all steps in this job
     outputs:
       sdk_version_name: ${{ steps.export-vars.outputs.sdk_version_name }}
       app_version_name: ${{ steps.export-vars.outputs.app_version_name }}
@@ -54,14 +67,23 @@ jobs:
         with:
           fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
 
-      # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
+      # This file is untracked and needs to be created dynamically
+      - name: Create SampleApp.xcodeproj file
+        shell: bash
+        working-directory: example/ios
+        run: |
+          # Copy the tracked project file to the root of the repository
+          cp -R SampleApp.xcodeproj.tracked SampleApp.xcodeproj
 
+      # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
       - name: Set IS_PRIMARY_APP
         run: |
           if [[ "${{ inputs.app_name }}" == "APN" ]]; then
             echo "IS_PRIMARY_APP=true" >> $GITHUB_ENV
+            echo "PUSH_PROVIDER=apn" >> $GITHUB_ENV
           else
             echo "IS_PRIMARY_APP=false" >> $GITHUB_ENV
+            echo "PUSH_PROVIDER=fcm" >> $GITHUB_ENV
           fi
 
       - name: Set Default Firebase Distribution Groups
@@ -77,7 +99,7 @@ jobs:
         run: |
           # Initialize with the default distribution group
           distribution_groups=("$ALL_BUILDS_GROUP")
-          
+
           # Append distribution groups based on branch and context if the app is primary
           if [[ "$IS_PRIMARY_APP" == "true" ]]; then
             [[ "$CURRENT_BRANCH" == "refs/heads/feature/"* ]] && distribution_groups+=("$FEATURE_BUILDS_GROUP")
@@ -99,16 +121,16 @@ jobs:
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true # cache tools to make builds faster in future
-          working-directory: Apps/${{ inputs.app_name }}
+          working-directory: example
 
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
-          subdirectory: Apps/${{ inputs.app_name }}
-          lane: "generate_new_version"
-          options: > 
+          subdirectory: example
+          lane: 'generate_new_version'
+          options: >
             {
               "branch_name": "${{ inputs.branch_name || github.ref_name }}",
               "pull_request_number": "${{ github.event.pull_request.number }}",
@@ -130,17 +152,17 @@ jobs:
       - name: Update React Native SDK Version
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
-          subdirectory: Apps/${{ inputs.app_name }}
+          subdirectory: example
           lane: "update_react_native_sdk_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
-      - name: Update Sample App Version
+      - name: Update ${{ inputs.platform_name }} ${{ inputs.app_name }} Sample App Version
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
-          subdirectory: Apps/${{ inputs.app_name }}
+          subdirectory: example
           lane: "update_react_native_app_version"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
@@ -156,35 +178,26 @@ jobs:
       - name: Setup workspace credentials in React Native environment files
         run: |
           # Determine the correct file extension (.js or .ts)
-          if [ -f "env.sample.js" ]; then
-            ENV_FILE="env.js"
-            cp "env.sample.js" "$ENV_FILE"
-          elif [ -f "env.sample.ts" ]; then
-            ENV_FILE="env.ts"
-            cp "env.sample.ts" "$ENV_FILE"
+          if [ -f "src/env.ts.sample" ]; then
+            ENV_FILE="src/env.ts"
+            cp "src/env.ts.sample" "$ENV_FILE"
           else
-            echo "No env.sample.js or env.sample.ts file found."
+            echo "No src/env.ts.sample file found."
             exit 1
           fi
-          
+
           # Update keys in the environment file
           sd "buildTimestamp: .*" "buildTimestamp: $(date +%s)," "$ENV_FILE"
-          sd "cdpApiKey: '.*'" "cdpApiKey: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}'" "$ENV_FILE"
-          sd "siteId: '.*'" "siteId: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}'" "$ENV_FILE"
-          sd "workspaceName: '.*'" "workspaceName: '${{ inputs.cio-workspace-name }}'" "$ENV_FILE"
-          sd "branchName: '.*'" "branchName: '${{ env.BRANCH_NAME }}'" "$ENV_FILE"
-          sd "commitHash: '.*'" "commitHash: '${{ env.COMMIT_HASH }}'" "$ENV_FILE"
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "untagged")
-          COMMITS_AHEAD=$(git rev-list $LAST_TAG..HEAD --count 2>/dev/null || echo "untracked")
-          sd "commitsAheadCount: '.*'" "commitsAheadCount: '$COMMITS_AHEAD'" "$ENV_FILE"
+          sd "API_KEY: '.*'" "API_KEY: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}'" "$ENV_FILE"
+          sd "SITE_ID: '.*'" "SITE_ID: '${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}'" "$ENV_FILE"
 
-      - name: Setup workspace credentials in iOS environment files
-        working-directory: Apps/${{ inputs.app_name }}/ios
+      - name: Setup workspace credentials for the iOS NSE environment files
+        if: ${{ inputs.platform == 'ios' }}
+        working-directory: example/ios/NotificationServiceExtension
         run: |
           ENV_FILE="Env.swift"
-          cp "$ENV_FILE.example" "$ENV_FILE"
-          sd 'siteId: String = ".*"' "siteId: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_SITE_ID', inputs.app_name)] }}\"" "$ENV_FILE"
-          sd 'cdpApiKey: String = ".*"' "cdpApiKey: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}\"" "$ENV_FILE"
+          cp "$ENV_FILE.sample" "$ENV_FILE"
+          sd 'CDP_API_KEY: String = ".*"' "CDP_API_KEY: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}\"" "$ENV_FILE"
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
@@ -198,7 +211,7 @@ jobs:
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
         uses: actions/cache@v4
         with:
-          path: Apps/${{ inputs.app_name }}/Pods
+          path: example/Pods
           key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
           restore-keys: |
             ${{ runner.os }}-${{ inputs.app_name }}-Pods
@@ -211,75 +224,50 @@ jobs:
         run: |
           SDK_VERSION="${{ inputs.sdk_version }}" 
           if [[ -n "$SDK_VERSION" ]]; then
-            npm run ci:install -- --cio-rn-sdk=$SDK_VERSION
+            npm run ci:install_${{ inputs.platform }} -- --cio-rn-sdk=$SDK_VERSION
           else
-            npm run ci:install
+            npm run ci:install_${{ inputs.platform }}
           fi
+        working-directory: example
 
-      # Android setup
+      # Build the app and upload to Firebase App Distribution
 
-      - name: Setup Android environment for sample app
+      - name: Setup Android environment for Android sample app
+        if: ${{ inputs.platform == 'android' }}
         uses: customerio/customerio-android/.github/actions/setup-android@main
 
-      - name: Build and upload Android app via Fastlane
-        id: android_build
+      - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
+        if: ${{ inputs.platform == 'ios' }}
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
+        id: build_app
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
-          subdirectory: Apps/${{ inputs.app_name }}
-          lane: 'android build'
+          subdirectory: example
+          lane: '${{ inputs.platform }} build'
           options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
         env:
-          FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
-        continue-on-error: true # continue to build iOS app even if Android build fails
-
-      - name: Send Slack Notification for Sample App Builds (Android)
-        if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
-        uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1@main
-        with:
-          build_status: ${{ steps.android_build.outcome }}
-          app_icon_emoji: ":react:"
-          app_name: "React Native"
-          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_ANDROID', inputs.app_name)] }}
-          firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
-          git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
-          icon_url: "https://vectorified.com/images/icon-react-native-24.png"
-          instructions_guide_link: ${{ secrets.SAMPLE_APPS_INSTRUCTIONS_GUIDE_LINK }}
-          platform: "android"
-          sdk_name: "React Native SDK"
-          sdk_version: ${{ env.SDK_VERSION_NAME }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # iOS setup
-
-      - name: Setup iOS environment for sample app
-        uses: customerio/customerio-ios/.github/actions/setup-ios@main
-        with:
-          xcode-version: ${{ env.XCODE_VERSION }}
-
-      - name: Build and upload iOS app via Fastlane
-        id: ios_build
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
-        with:
-          subdirectory: Apps/${{ inputs.app_name }}
-          lane: "ios build"
-          options: '{"distribution_groups": "${{ env.firebase_distribution_groups }}"}'
-        env:
+         
           GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64: ${{ secrets.GOOGLE_CLOUD_MATCH_READONLY_SERVICE_ACCOUNT_B64 }}
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
+        continue-on-error: true
 
-      - name: Send Slack Notification for Sample App Builds (iOS)
+      - name: Send slack notification for ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app builds
         if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
         uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1@main
         with:
-          build_status: ${{ steps.ios_build.outcome }}
+          build_status: ${{ steps.build_app.outcome }}
           app_icon_emoji: ":react:"
           app_name: "React Native"
-          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_IOS', inputs.app_name)] }}
+          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_{1}', inputs.app_name, inputs.platform_upper_name )] }}
           firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
           git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
           icon_url: "https://vectorified.com/images/icon-react-native-24.png"
           instructions_guide_link: ${{ secrets.SAMPLE_APPS_INSTRUCTIONS_GUIDE_LINK }}
-          platform: "ios"
+          platform: ${{ inputs.platform }}
           sdk_name: "React Native SDK"
           sdk_version: ${{ env.SDK_VERSION_NAME }}
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -287,8 +275,7 @@ jobs:
       - name: Check build statuses and mark failure
         run: |
           FAILED_BUILDS=()
-          [ "${{ steps.android_build.outcome }}" != "success" ] && FAILED_BUILDS+=("Android")
-          [ "${{ steps.ios_build.outcome }}" != "success" ] && FAILED_BUILDS+=("iOS")
+          [ "${{ steps.build_app.outcome }}" != "success" ] && FAILED_BUILDS+=("(${{ inputs.platform_name }})")
 
           if [ ${#FAILED_BUILDS[@]} -ne 0 ]; then
             echo "Build failed for: ${FAILED_BUILDS[*]}"

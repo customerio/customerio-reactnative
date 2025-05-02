@@ -1,0 +1,10 @@
+# Include all of the bundle identifiers for your iOS app and for your rich push target. 
+
+app_identifier([
+  "io.customer.ami",
+  "io.customer.ami.richpush",
+  "io.customer.rn-sample.fcm",
+  "io.customer.rn-sample.fcm.richpush"
+])
+
+package_name("io.customer.rn_sample.fcm")

@@ -59,7 +59,6 @@ Podfile.lock
 
 # Ruby
 vendor
-Gemfile.lock
 
 # node.js
 #

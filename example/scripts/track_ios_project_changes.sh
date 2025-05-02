@@ -24,7 +24,7 @@ bundle exec pod deintegrate
 echo "✅ De-integrated cocoapods"
 
 # Replace the tracked xcode project file with the untracked one
-rm -rf ios/SampleApp.xcodeproj.tracked
-cp -R ios/SampleApp.xcodeproj ios/SampleApp.xcodeproj.tracked
+rm -rf SampleApp.xcodeproj.tracked
+cp -R SampleApp.xcodeproj SampleApp.xcodeproj.tracked
 echo "✅ Copied untracked xcode project file to tracked one"
 echo "Please review the changes in ios/SampleApp.xcodeproj.tracked"
