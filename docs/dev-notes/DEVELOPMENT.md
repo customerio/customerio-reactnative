@@ -18,7 +18,7 @@ When you install dependencies via yarn/npm in react native app, you can install 
 
 ### Android
 
-Android SDK can be tested locally by following [instructions from native SDK](https://github.com/customerio/customerio-android/blob/develop/docs/dev-notes/DEVELOPMENT.md#work-on-remote-habits-locally). Once SDK release is installed locally, it can be included in Ami App using any of the following options:
+Android SDK can be tested locally by following [instructions from native SDK](https://github.com/customerio/customerio-android/blob/develop/docs/dev-notes/DEVELOPMENT.md#publish-sdk-locally). Once SDK release is installed locally, it can be included in Ami App using any of the following options:
 
 ### Option 1: Updating in SDK
 
