@@ -1,2 +1,0 @@
-# imports shared Fastfile from "Apps/fastlane/Fastfile"
-import "../../fastlane/Fastfile"
