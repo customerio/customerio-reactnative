@@ -1,24 +1,12 @@
-import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
+import { NativeEventEmitter } from 'react-native';
 
-const LINKING_ERROR =
-  `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+// Import the architecture adapter to handle both old and new architectures
+const { getInAppMessagingModule } = require('./architecture-adapter');
 
 /**
  * Get CustomerioInAppMessaging native module
  */
-const InAppMessagingNative = NativeModules.CioRctInAppMessaging
-  ? NativeModules.CioRctInAppMessaging
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const InAppMessagingNative = getInAppMessagingModule();
 
 // Constant value used for emitting all events for in-app from native modules
 const InAppEventListenerEventName = 'InAppEventListener';
@@ -91,4 +79,4 @@ class InAppMessageEvent {
   }
 }
 
-export { CustomerIOInAppMessaging, InAppMessageEventType, InAppMessageEvent };
+export { CustomerIOInAppMessaging, InAppMessageEvent, InAppMessageEventType };

@@ -57,6 +57,17 @@
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "codegenConfig": {
+    "name": "CustomerIOSpecs",
+    "type": "modules",
+    "jsSrcsDir": "src/specs",
+    "android": {
+      "javaPackageName": "io.customer.reactnative.sdk"
+    },
+    "ios": {
+      "modulesProvider": "RCTCustomerIOTurboModuleProvider"
+    }
+  },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.8.0",
     "@eslint/compat": "^1.2.8",

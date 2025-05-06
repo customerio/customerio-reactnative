@@ -1,28 +1,16 @@
-import { NativeModules, Platform } from 'react-native';
 import { CioLogLevel, type CioConfig } from './cio-config';
 import { type IdentifyParams } from './cio-params';
 import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 
+// Import the architecture adapter to handle both old and new architectures
+const { getCustomerIOModule } = require('./architecture-adapter');
+
 const packageJson = require('customerio-reactnative/package.json');
 
-const LINKING_ERROR =
-  `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: ` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
-
-const NativeCustomerIO = NativeModules.NativeCustomerIO
-  ? NativeModules.NativeCustomerIO
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+// Get the appropriate native module based on the architecture
+const NativeCustomerIO = getCustomerIOModule();
 
 export class CustomerIO {
   private static initialized = false;
