@@ -96,3 +96,8 @@ android/generated
 
 # Tarball
 *.tgz
+
+## iOS Example app
+## This file will be auto linked based
+## on the target app
+ios/Google-Service-Info.plist

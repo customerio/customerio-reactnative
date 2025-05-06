@@ -1,5 +1,5 @@
 
-INFOPLIST_KEY_CFBundleDisplayName=APN
+INFOPLIST_KEY_CFBundleDisplayName=React Native APN
 
 PRODUCT_BUNDLE_IDENTIFIER=io.customer.ami
 INFOPLIST_KEY_CFBundleIdentifier=io.customer.ami
