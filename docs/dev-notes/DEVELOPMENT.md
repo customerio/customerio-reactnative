@@ -7,8 +7,6 @@ Since this SDK is npm package, it does not need to be compiled separately.
 
 ## Work on Ami App locally
 
-We use the [Ami App](https://github.com/customerio/amiapp-reactnative) to test the SDK in a real-world environment.
-
 When you install dependencies via yarn/npm in react native app, you can install it from your local machine directly. You need to follow the following steps to use local version of the SDK
 
 1. Go to `package.json` of your react native app
@@ -40,8 +38,26 @@ cioSDKVersionAndroid=local
 
 ### iOS
 
-iOS SDK cannot be tested locally at this time. You must instead refer to a version of the iOS SDK already released to production. 
+To test the ReactNative sample apps using local Native iOS SDK, you should follow the following steps:
 
-If you make changes to native code, it sometimes may not be reflected in the app. View the [Ami App docs](https://github.com/customerio/amiapp-reactnative/blob/HEAD/docs/dev-notes/DEVELOPMENT.md#work-on-sdk-locally) for next steps on getting Ami App to install the SDK from your local directory.  
+#### 1. Find the app Podfile
 
-> Please note that currently there is no script or automation that helps you make the changes, so you should revert the changes in `package.json` and `yarn.lock` for local version of `customerio-reactnative` before pushing any changes to git.
+Depending on the app you are working on you need to navigate to either of these pods files:
+
+- Apps/APN/ios/Podfile
+- Apps/FCM/ios/Podfile
+
+#### 2. Replace iOS pod declaration
+
+Replace the pods declared for native iOS SDK:
+- `pod 'customerio-reactnative/apn', :path => '../node_modules/customerio-reactnative'`
+- `pod 'customerio-reactnative-richpush/apn', :path => '../node_modules/customerio-reactnative'`
+
+With either of these:
+
+- To use local checked code use: `install_non_production_ios_sdk_local_path`
+- To use changes on a Git branch: `install_non_production_ios_sdk_git_branch`
+
+You will find values in `Podfile`s that are commented, simply comment the one pointing to `node_modules/customerio-reactnative` and replace it with the option you desire.
+
+Do not forget to update the local path on your machine if you are using `install_non_production_ios_sdk_local_path`
