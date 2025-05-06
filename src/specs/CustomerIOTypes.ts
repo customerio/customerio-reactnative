@@ -91,9 +91,16 @@ interface InAppMessageEvent {
 // Export all types and interfaces
 export type {
   CioConfig,
-  CioPushPermissionOptions, InAppMessageEvent, PackageInfo
+  CioPushPermissionOptions,
+  InAppMessageEvent,
+  PackageInfo,
 };
 
-  export {
-    CioLogLevel, CioPushPermissionStatus, CioRegion, InAppMessageEventType, PushClickBehaviorAndroid, ScreenView
-  };
+export {
+  CioLogLevel,
+  CioPushPermissionStatus,
+  CioRegion,
+  InAppMessageEventType,
+  PushClickBehaviorAndroid,
+  ScreenView,
+};

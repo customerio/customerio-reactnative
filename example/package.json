@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "ios": "sh -c 'react-native run-ios $1' _",
     "pods": "bundle exec pod install --project-directory=ios",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "start": "react-native start",
     "test": "jest",
     "install_sdk_tarball": "CIO_PACKAGE_VERSION=$npm_config_cio_rn_sdk ../scripts/install-sdk-deps.sh",

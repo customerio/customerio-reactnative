@@ -1,28 +1,16 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import {
   type CioPushPermissionOptions,
   CioPushPermissionStatus,
 } from './cio-config';
 
-const LINKING_ERROR =
-  `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+// Import the architecture adapter to handle both old and new architectures
+const { getPushMessagingModule } = require('./architecture-adapter');
 
 /**
  * Get CustomerIOPushMessaging native module
  */
-const PushMessagingNative = NativeModules.CioRctPushMessaging
-  ? NativeModules.CioRctPushMessaging
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+const PushMessagingNative = getPushMessagingModule();
 
 class CustomerIOPushMessaging {
   /**
