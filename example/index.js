@@ -1,6 +1,6 @@
-import { AppRegistry } from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './src/App';
 
-AppRegistry.registerComponent('FCM', () => App);
-AppRegistry.registerComponent('APN', () => App);
-AppRegistry.registerComponent('Android FCM', () => App);
+AppRegistry.registerComponent('React Native FCM', () => App);
+AppRegistry.registerComponent('React Native APN', () => App);
+AppRegistry.registerComponent('React Native Android', () => App);

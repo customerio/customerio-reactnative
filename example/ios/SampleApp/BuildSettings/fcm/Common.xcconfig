@@ -1,4 +1,4 @@
-INFOPLIST_KEY_CFBundleDisplayName=FCM
+INFOPLIST_KEY_CFBundleDisplayName=React Native FCM
 PRODUCT_BUNDLE_IDENTIFIER=io.customer.rn-sample.fcm
 INFOPLIST_KEY_CFBundleIdentifier=io.customer.rn-sample.fcm
 OTHER_SWIFT_FLAGS=$(inherited) -DUSE_FCM
