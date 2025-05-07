@@ -17,10 +17,17 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
 
-  # s.dependency "X", "X"
   # Careful when declaring dependencies here. All dependencies will be included in the App Extension target in Xcode, not the host iOS app.   
 
-  # Subspecs allow customers to choose between multiple options of what type of version of this rich push package they would like to install. 
+  # Subspecs allow customers to choose between multiple options of what type of version of this rich push package they would like to install.
+  # Set default subspec to 'apn' to prevent both APN and FCM dependencies from being installed by default.
+  # Because attempting to install both will break due to the different linkage requirements of the two different push dependencies.
+  # 
+  # To override the default subspec, specify the desired subspec in your Podfile. For example:
+  # pod 'customerio-reactnative-richpush/fcm'
+  
+  s.default_subspec = 'apn'
+  
   s.subspec 'apn' do |ss|
     ss.dependency "CustomerIO/MessagingPushAPN", package["cioNativeiOSSdkVersion"]
   end
