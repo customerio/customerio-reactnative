@@ -33,11 +33,7 @@
 
 "@babel/compat-data@^7.22.6", "@babel/compat-data@^7.27.2":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.27.2.tgz#4183f9e642fd84e74e3eea7ffa93a412e3b102c9"
-=======
   resolved "https://registry.npmjs.org/@babel/compat-data/-/compat-data-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-TUtMJYRPyUb/9aU8f3K0mjmjf6M9N5Woshn2CS6nqJSeJtTtQcpLUXjGt9vbF8ZGff0El99sWkLgzwW3VXnxZQ==
 
 "@babel/core@*", "@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.0.0-0 || ^8.0.0-0 <8.0.0", "@babel/core@^7.11.0", "@babel/core@^7.11.6", "@babel/core@^7.12.0", "@babel/core@^7.12.3", "@babel/core@^7.13.0", "@babel/core@^7.20.0", "@babel/core@^7.25.2", "@babel/core@^7.4.0 || ^8.0.0-0 <8.0.0", "@babel/core@^7.8.0":
@@ -90,11 +86,7 @@
 
 "@babel/helper-compilation-targets@^7.22.6", "@babel/helper-compilation-targets@^7.27.1", "@babel/helper-compilation-targets@^7.27.2":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.27.2.tgz#46a0f6efab808d51d29ce96858dd10ce8732733d"
-=======
   resolved "https://registry.npmjs.org/@babel/helper-compilation-targets/-/helper-compilation-targets-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-2+1thGUUWWjLTYTHZWK1n8Yga0ijBz1XAhUXcKy81rd5g6yh7hGqMp45v7cadSbEHc9G3OTv45SyneRN3ps4DQ==
   dependencies:
     "@babel/compat-data" "^7.27.2"
@@ -233,11 +225,7 @@
 
 "@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.0", "@babel/parser@^7.20.7", "@babel/parser@^7.25.3", "@babel/parser@^7.27.1", "@babel/parser@^7.27.2":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.27.2.tgz#577518bedb17a2ce4212afd052e01f7df0941127"
-=======
   resolved "https://registry.npmjs.org/@babel/parser/-/parser-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-QYLs8299NA7WM/bZAdp+CviYYkVoYXlDW2rzliy3chxd1PQjej7JORuMJDJXJUb9g0TT+B99EwaVLKmX+sPXWw==
   dependencies:
     "@babel/types" "^7.27.1"
@@ -692,11 +680,7 @@
 
 "@babel/plugin-transform-object-rest-spread@^7.24.7", "@babel/plugin-transform-object-rest-spread@^7.27.2":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-object-rest-spread/-/plugin-transform-object-rest-spread-7.27.2.tgz#67f9ab822347aa2bcee91e8996763da79bdea973"
-=======
   resolved "https://registry.npmjs.org/@babel/plugin-transform-object-rest-spread/-/plugin-transform-object-rest-spread-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-AIUHD7xJ1mCrj3uPozvtngY3s0xpv7Nu7DoUSnzNY6Xam1Cy4rUznR//pvMHOhQ4AvbCexhbqXCtpxGHOGOO6g==
   dependencies:
     "@babel/helper-compilation-targets" "^7.27.2"
@@ -926,11 +910,7 @@
 
 "@babel/preset-env@^7.25.2":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/preset-env/-/preset-env-7.27.2.tgz#106e6bfad92b591b1f6f76fd4cf13b7725a7bf9a"
-=======
   resolved "https://registry.npmjs.org/@babel/preset-env/-/preset-env-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-Ma4zSuYSlGNRlCLO+EAzLnCmJK2vdstgv+n7aUP+/IKZrOfWHOJVdSJtuub8RzHTj3ahD37k5OKJWvzf16TQyQ==
   dependencies:
     "@babel/compat-data" "^7.27.2"
@@ -1042,11 +1022,7 @@
 
 "@babel/template@^7.0.0", "@babel/template@^7.25.0", "@babel/template@^7.27.1", "@babel/template@^7.3.3":
   version "7.27.2"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.27.2.tgz#fa78ceed3c4e7b63ebf6cb39e5852fca45f6809d"
-=======
   resolved "https://registry.npmjs.org/@babel/template/-/template-7.27.2.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==
   dependencies:
     "@babel/code-frame" "^7.27.1"
@@ -1156,23 +1132,15 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-<<<<<<< HEAD
-=======
 "@eslint/js@^9.25.1":
   version "9.26.0"
   resolved "https://registry.npmjs.org/@eslint/js/-/js-9.26.0.tgz"
   integrity sha512-I9XlJawFdSMvWjDt6wksMCrgns5ggLNfFwFvnShsleWruvXM514Qxk8V246efTw+eo9JABvVz+u3q2RiAowKxQ==
 
->>>>>>> 699d830 (Define default pod for the rich push pod)
 "@eslint/js@9.25.1":
   version "9.25.1"
   resolved "https://registry.npmjs.org/@eslint/js/-/js-9.25.1.tgz"
   integrity sha512-dEIwmjntEx8u3Uvv+kr3PDeeArL8Hw07H9kyYxCjnM9pBjfEhk6uLXSchxxzgiwtRhhzVzqmUSDFBOi1TuZ7qg==
-
-"@eslint/js@^9.25.1":
-  version "9.26.0"
-  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.26.0.tgz#1e13126b67a3db15111d2dcc61f69a2acff70bd5"
-  integrity sha512-I9XlJawFdSMvWjDt6wksMCrgns5ggLNfFwFvnShsleWruvXM514Qxk8V246efTw+eo9JABvVz+u3q2RiAowKxQ==
 
 "@eslint/object-schema@^2.1.6":
   version "2.1.6"
@@ -1641,17 +1609,6 @@
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
 "@types/node@*":
-<<<<<<< HEAD
-  version "22.15.13"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.15.13.tgz#24e87acca89afcb44bb9ff25666baa98dee9480f"
-  integrity sha512-mkmz+UBGCF/ssSObTp1McwQEvIjO2hUnVvZzck61l0su7btUill8OSvzA4N62+AtkJgMhiniyD+wEL5kocZaEA==
-  dependencies:
-    undici-types "~6.21.0"
-
-"@types/react@^19.1.2":
-  version "19.1.3"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-19.1.3.tgz#c75a24b775a63280b02c66a55a3cfa04f4022cf7"
-=======
   version "22.15.12"
   resolved "https://registry.npmjs.org/@types/node/-/node-22.15.12.tgz"
   integrity sha512-K0fpC/ZVeb8G9rm7bH7vI0KAec4XHEhBam616nVJCV51bKzJ6oA3luG4WdKoaztxe70QaNjS/xBmcDLmr4PiGw==
@@ -1661,7 +1618,6 @@
 "@types/react@^19.0.0", "@types/react@^19.1.2":
   version "19.1.3"
   resolved "https://registry.npmjs.org/@types/react/-/react-19.1.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-dLWQ+Z0CkIvK1J8+wrDPwGxEYFA4RAyHoZPxHVGspYmFVnwGSNT24cGIhFJrtfRnWVuW8X7NO52gCXmhkVUWGQ==
   dependencies:
     csstype "^3.0.2"
@@ -1688,26 +1644,7 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-<<<<<<< HEAD
-"@typescript-eslint/eslint-plugin@8.32.0", "@typescript-eslint/eslint-plugin@^8.31.1":
-  version "8.32.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.32.0.tgz#86630dd3084f9d6c4239bbcd6a7ee1a7ee844f7f"
-  integrity sha512-/jU9ettcntkBFmWUzzGgsClEi2ZFiikMX5eEQsmxIAWMOn4H3D4rvHssstmAHGVvrYnaMqdWWWg0b5M6IN/MTQ==
-  dependencies:
-    "@eslint-community/regexpp" "^4.10.0"
-    "@typescript-eslint/scope-manager" "8.32.0"
-    "@typescript-eslint/type-utils" "8.32.0"
-    "@typescript-eslint/utils" "8.32.0"
-    "@typescript-eslint/visitor-keys" "8.32.0"
-    graphemer "^1.4.0"
-    ignore "^5.3.1"
-    natural-compare "^1.4.0"
-    ts-api-utils "^2.1.0"
-
-"@typescript-eslint/eslint-plugin@^7.1.1":
-=======
 "@typescript-eslint/eslint-plugin@^5.0.0 || ^6.0.0 || ^7.0.0", "@typescript-eslint/eslint-plugin@^7.1.1":
->>>>>>> 699d830 (Define default pod for the rich push pod)
   version "7.18.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-7.18.0.tgz"
   integrity sha512-94EQTWZ40mzBc42ATNIBimBEDltSJ9RQHCC8vc/PDbxi4k8dVwUAv4o98dk50M1zB+JGFxp43FP7f8+FP8R6Sw==
@@ -1722,18 +1659,6 @@
     natural-compare "^1.4.0"
     ts-api-utils "^1.3.0"
 
-<<<<<<< HEAD
-"@typescript-eslint/parser@8.32.0", "@typescript-eslint/parser@^8.31.1":
-  version "8.32.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.32.0.tgz#fe840ecb2726a82fa9f5562837ec40503ae71caf"
-  integrity sha512-B2MdzyWxCE2+SqiZHAjPphft+/2x2FlO9YBx7eKE1BCb+rqBlQdhtAEhzIEdozHd55DXPmxBdpMygFJjfjjA9A==
-  dependencies:
-    "@typescript-eslint/scope-manager" "8.32.0"
-    "@typescript-eslint/types" "8.32.0"
-    "@typescript-eslint/typescript-estree" "8.32.0"
-    "@typescript-eslint/visitor-keys" "8.32.0"
-    debug "^4.3.4"
-=======
 "@typescript-eslint/eslint-plugin@^6.0.0 || ^7.0.0 || ^8.0.0", "@typescript-eslint/eslint-plugin@^8.31.1", "@typescript-eslint/eslint-plugin@8.32.0":
   version "8.32.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.32.0.tgz"
@@ -1748,7 +1673,6 @@
     ignore "^5.3.1"
     natural-compare "^1.4.0"
     ts-api-utils "^2.1.0"
->>>>>>> 699d830 (Define default pod for the rich push pod)
 
 "@typescript-eslint/parser@^7.0.0", "@typescript-eslint/parser@^7.1.1":
   version "7.18.0"
@@ -1790,11 +1714,7 @@
 
 "@typescript-eslint/scope-manager@8.32.0":
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-8.32.0.tgz#6be89f652780f0d3d19d58dc0ee107b1a9e3282c"
-=======
   resolved "https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-jc/4IxGNedXkmG4mx4nJTILb6TMjL66D41vyeaPWvDUmeYQzF3lKtN15WsAeTr65ce4mPxwopPSo1yUUAWw0hQ==
   dependencies:
     "@typescript-eslint/types" "8.32.0"
@@ -1812,11 +1732,7 @@
 
 "@typescript-eslint/type-utils@8.32.0":
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-8.32.0.tgz#5e0882393e801963f749bea38888e716045fe895"
-=======
   resolved "https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-t2vouuYQKEKSLtJaa5bB4jHeha2HJczQ6E5IXPDPgIty9EqcJxpr1QHQ86YyIPwDwxvUmLfP2YADQ5ZY4qddZg==
   dependencies:
     "@typescript-eslint/typescript-estree" "8.32.0"
@@ -1836,11 +1752,7 @@
 
 "@typescript-eslint/types@8.32.0":
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.32.0.tgz#a4a66b8876b8391970cf069b49572e43f1fc957a"
-=======
   resolved "https://registry.npmjs.org/@typescript-eslint/types/-/types-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-O5Id6tGadAZEMThM6L9HmVf5hQUXNSxLVKeGJYWNhhVseps/0LddMkp7//VDkzwJ69lPL0UmZdcZwggj9akJaA==
 
 "@typescript-eslint/typescript-estree@5.62.0":
@@ -1872,11 +1784,7 @@
 
 "@typescript-eslint/typescript-estree@8.32.0":
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-8.32.0.tgz#11d45f47bfabb141206a3da6c7b91a9d869ff32d"
-=======
   resolved "https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-pU9VD7anSCOIoBFnhTGfOzlVFQIA1XXiQpH/CezqOBaDppRwTglJzCC6fUQGpfwey4T183NKhF1/mfatYmjRqQ==
   dependencies:
     "@typescript-eslint/types" "8.32.0"
@@ -1887,29 +1795,6 @@
     minimatch "^9.0.4"
     semver "^7.6.0"
     ts-api-utils "^2.1.0"
-<<<<<<< HEAD
-
-"@typescript-eslint/utils@7.18.0":
-  version "7.18.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-7.18.0.tgz#bca01cde77f95fc6a8d5b0dbcbfb3d6ca4be451f"
-  integrity sha512-kK0/rNa2j74XuHVcoCZxdFBMF+aq/vH83CXAOHieC+2Gis4mF8jJXT5eAfyD3K0sAxtPuwxaIOIOvhwzVDt/kw==
-  dependencies:
-    "@eslint-community/eslint-utils" "^4.4.0"
-    "@typescript-eslint/scope-manager" "7.18.0"
-    "@typescript-eslint/types" "7.18.0"
-    "@typescript-eslint/typescript-estree" "7.18.0"
-
-"@typescript-eslint/utils@8.32.0", "@typescript-eslint/utils@^6.0.0 || ^7.0.0 || ^8.0.0":
-  version "8.32.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-8.32.0.tgz#24570f68cf845d198b73a7f94ca88d8c2505ba47"
-  integrity sha512-8S9hXau6nQ/sYVtC3D6ISIDoJzS1NsCK+gluVhLN2YkBPX+/1wkwyUiDKnxRh15579WoOIyVWnoyIf3yGI9REw==
-  dependencies:
-    "@eslint-community/eslint-utils" "^4.7.0"
-    "@typescript-eslint/scope-manager" "8.32.0"
-    "@typescript-eslint/types" "8.32.0"
-    "@typescript-eslint/typescript-estree" "8.32.0"
-=======
->>>>>>> 699d830 (Define default pod for the rich push pod)
 
 "@typescript-eslint/utils@^5.10.0":
   version "5.62.0"
@@ -1963,11 +1848,7 @@
 
 "@typescript-eslint/visitor-keys@8.32.0":
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-8.32.0.tgz#0cca2cac046bc71cc40ce8214bac2850d6ecf4a6"
-=======
   resolved "https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-1rYQTCLFFzOI5Nl0c8LUpJT8HxpwVRn9E4CkMsYfuN6ctmQqExjSTzzSk0Tz2apmXy7WU6/6fyaZVVA/thPN+w==
   dependencies:
     "@typescript-eslint/types" "8.32.0"
@@ -2403,11 +2284,7 @@ camelcase@^6.2.0:
 
 caniuse-lite@^1.0.30001716:
   version "1.0.30001717"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001717.tgz#5d9fec5ce09796a1893013825510678928aca129"
-=======
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001717.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-auPpttCq6BDEG8ZAuHJIplGw6GODhjw+/11e7IjpnYCxZcW/ONgPs0KVBJ0d1bY3e2+7PRe5RCLyP+PfwVgkYw==
 
 chalk@^4.0.0:
@@ -2711,11 +2588,7 @@ ee-first@1.1.1:
 
 electron-to-chromium@^1.5.149:
   version "1.5.150"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.150.tgz#3120bf34453a7a82cb4d9335df20680b2bb40649"
-=======
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.150.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-rOOkP2ZUMx1yL4fCxXQKDHQ8ZXwisb2OycOQVKHgvB3ZI4CvehOd4y2tfnnLDieJ3Zs1RL1Dlp3cMkyIn7nnXA==
 
 emoji-regex@^8.0.0:
@@ -2903,18 +2776,8 @@ escape-string-regexp@^4.0.0:
 
 escape-string-regexp@^5.0.0:
   version "5.0.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-5.0.0.tgz#4683126b500b61762f2dbebace1806e8be31b1c8"
-  integrity sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==
-
-eslint-config-prettier@10.1.2:
-  version "10.1.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-10.1.2.tgz#31a4b393c40c4180202c27e829af43323bf85276"
-  integrity sha512-Epgp/EofAUeEpIdZkW60MHKvPyru1ruQJxPL+WIycnaPApuseK0Zpkrh/FwL9oIpQvIhJwV7ptOy0DWUjTlCiA==
-=======
   resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-5.0.0.tgz"
   integrity sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==
->>>>>>> 699d830 (Define default pod for the rich push pod)
 
 eslint-config-prettier@^8.5.0:
   version "8.10.0"
@@ -2966,11 +2829,7 @@ eslint-plugin-jest@^28.11.0:
 
 eslint-plugin-prettier@^5.2.6:
   version "5.4.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.4.0.tgz#54d4748904e58eaf1ffe26c4bffa4986ca7f952b"
-=======
   resolved "https://registry.npmjs.org/eslint-plugin-prettier/-/eslint-plugin-prettier-5.4.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-BvQOvUhkVQM1i63iMETK9Hjud9QhqBnbtT1Zc642p9ynzBuCe5pybkOnvqZIBypXmMlsGcnU4HZ8sCTPfpAexA==
   dependencies:
     prettier-linter-helpers "^1.0.0"
@@ -4267,11 +4126,7 @@ metro-babel-transformer@0.80.12:
 
 metro-babel-transformer@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-babel-transformer/-/metro-babel-transformer-0.82.3.tgz#e3b8102d165f4ce769e3d2f22ab0b0ad2d941dcc"
-=======
   resolved "https://registry.npmjs.org/metro-babel-transformer/-/metro-babel-transformer-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-eC0f1MSA8rg7VoNDCYMIAIe5AEgYBskh5W8rIa4RGRdmEOsGlXbAV0AWMYoA7NlIALW/S9b10AcdIwD3n1e50w==
   dependencies:
     "@babel/core" "^7.25.2"
@@ -4288,11 +4143,7 @@ metro-cache-key@0.80.12:
 
 metro-cache-key@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-cache-key/-/metro-cache-key-0.82.3.tgz#71b5d6b682515026ac09dfbae223ebe8d4fd3a7b"
-=======
   resolved "https://registry.npmjs.org/metro-cache-key/-/metro-cache-key-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-dDLTUOJ7YYqGog9kR55InchwnkkHuxBXD765J3hQVWWPCy6xO9uZXZYGX1Y/tIMV8U7Ho1Sve0V13n5rFajrRQ==
   dependencies:
     flow-enums-runtime "^0.0.6"
@@ -4308,11 +4159,7 @@ metro-cache@0.80.12:
 
 metro-cache@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-cache/-/metro-cache-0.82.3.tgz#4ba5010cb0e9b033b907ba829cf596c0c70f579c"
-=======
   resolved "https://registry.npmjs.org/metro-cache/-/metro-cache-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-9zKhicA5GENROeP+iXku1NrI8FegtwEg3iPXHGixkm1Yppkbwsy/3lSHSiJZoT6GkZmxUDjN6sQ5QQ+/p72Msw==
   dependencies:
     exponential-backoff "^3.1.1"
@@ -4334,15 +4181,9 @@ metro-config@^0.80.9, metro-config@0.80.12:
     metro-core "0.80.12"
     metro-runtime "0.80.12"
 
-<<<<<<< HEAD
-metro-config@0.82.3, metro-config@^0.82.0:
-  version "0.82.3"
-  resolved "https://registry.yarnpkg.com/metro-config/-/metro-config-0.82.3.tgz#29d74425ebe255b4da46f2886d82191f88af1c49"
-=======
 metro-config@^0.82.0, metro-config@0.82.3:
   version "0.82.3"
   resolved "https://registry.npmjs.org/metro-config/-/metro-config-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-GRG9sBkPvrGXD/Wu3RdEDuWg5NDixF9t0c6Zz9kZ9Aa/aQY+m85JgaCI5HYEV+UzVC/IUFFSpJiMfzQRicppLw==
   dependencies:
     connect "^3.6.5"
@@ -4353,8 +4194,6 @@ metro-config@^0.82.0, metro-config@0.82.3:
     metro-cache "0.82.3"
     metro-core "0.82.3"
     metro-runtime "0.82.3"
-<<<<<<< HEAD
-=======
 
 metro-core@^0.82.0, metro-core@0.82.3:
   version "0.82.3"
@@ -4364,7 +4203,6 @@ metro-core@^0.82.0, metro-core@0.82.3:
     flow-enums-runtime "^0.0.6"
     lodash.throttle "^4.1.1"
     metro-resolver "0.82.3"
->>>>>>> 699d830 (Define default pod for the rich push pod)
 
 metro-core@0.80.12:
   version "0.80.12"
@@ -4375,18 +4213,6 @@ metro-core@0.80.12:
     lodash.throttle "^4.1.1"
     metro-resolver "0.80.12"
 
-<<<<<<< HEAD
-metro-core@0.82.3, metro-core@^0.82.0:
-  version "0.82.3"
-  resolved "https://registry.yarnpkg.com/metro-core/-/metro-core-0.82.3.tgz#749b0916c60f164f05c99e7382917665fe01b287"
-  integrity sha512-JQZDdXo3hyLl1pqVT4IKEwcBK+3f11qFXeCjQ1hjVpjMwQLOqSM02J7NC/4DNSBt+qWBxWj6R5Jphcc7+9AEWw==
-  dependencies:
-    flow-enums-runtime "^0.0.6"
-    lodash.throttle "^4.1.1"
-    metro-resolver "0.82.3"
-
-=======
->>>>>>> 699d830 (Define default pod for the rich push pod)
 metro-file-map@0.80.12:
   version "0.80.12"
   resolved "https://registry.npmjs.org/metro-file-map/-/metro-file-map-0.80.12.tgz"
@@ -4408,11 +4234,7 @@ metro-file-map@0.80.12:
 
 metro-file-map@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-file-map/-/metro-file-map-0.82.3.tgz#868677ea55df2cf6491d9de34416e1498bd8f80a"
-=======
   resolved "https://registry.npmjs.org/metro-file-map/-/metro-file-map-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-o4wtloAge85MZl85F87FT59R/4tn5GvCvLfYcnzzDB20o2YX9AMxZqswrGMaei/GbD/Win5FrLF/Iq8oetcByA==
   dependencies:
     debug "^4.4.0"
@@ -4435,11 +4257,7 @@ metro-minify-terser@0.80.12:
 
 metro-minify-terser@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-minify-terser/-/metro-minify-terser-0.82.3.tgz#7b90f892ef0abccc58c69ae480d3032c6f0bbe86"
-=======
   resolved "https://registry.npmjs.org/metro-minify-terser/-/metro-minify-terser-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-/3FasOULfHq1P0KPNFy5y28Th5oknPSwEbt9JELVBMAPhUnLqQkCLr4M+RQzKG3aEQN1/mEqenWApFCkk6Nm/Q==
   dependencies:
     flow-enums-runtime "^0.0.6"
@@ -4454,11 +4272,7 @@ metro-resolver@0.80.12:
 
 metro-resolver@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-resolver/-/metro-resolver-0.82.3.tgz#6ba7dfe9b8c57b1332a3747bb6d013006d8968f6"
-=======
   resolved "https://registry.npmjs.org/metro-resolver/-/metro-resolver-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-pdib7UrOM04j/RjWmaqmjjWRiuCbpA8BdUSuXzvBaK0QlNzHkRRDv6kiOGxgQ+UgG+KdbPcJktsW9olqiDhf9w==
   dependencies:
     flow-enums-runtime "^0.0.6"
@@ -4479,17 +4293,10 @@ metro-runtime@0.80.12:
     "@babel/runtime" "^7.25.0"
     flow-enums-runtime "^0.0.6"
 
-<<<<<<< HEAD
-metro-runtime@0.82.3, metro-runtime@^0.82.0:
-  version "0.82.3"
-  resolved "https://registry.yarnpkg.com/metro-runtime/-/metro-runtime-0.82.3.tgz#fe793cf9e976256bd450f3da7845fd704f5254bf"
-  integrity sha512-J4SrUUsBy9ire8I2sFuXN5MzPmuBHlx1bjvAjdoo1ecpH2mtS3ubRqVnMotBxuK5+GhrbW0mtg5/46PVXy26cw==
-=======
 metro-source-map@^0.82.0, metro-source-map@0.82.3:
   version "0.82.3"
   resolved "https://registry.npmjs.org/metro-source-map/-/metro-source-map-0.82.3.tgz"
   integrity sha512-gz7wfjz23rit6ePQ7NKE9x+VOWGKm54vli4wbphR9W+3y0bh6Ad7T0BGH9DUzRAnOnOorewrVEqFmT24mia5sg==
->>>>>>> 699d830 (Define default pod for the rich push pod)
   dependencies:
     "@babel/traverse" "^7.25.3"
     "@babel/traverse--for-generate-function-map" "npm:@babel/traverse@^7.25.3"
@@ -4517,25 +4324,6 @@ metro-source-map@0.80.12:
     source-map "^0.5.6"
     vlq "^1.0.0"
 
-<<<<<<< HEAD
-metro-source-map@0.82.3, metro-source-map@^0.82.0:
-  version "0.82.3"
-  resolved "https://registry.yarnpkg.com/metro-source-map/-/metro-source-map-0.82.3.tgz#e5d243473b057f70e1090ce9cc769cd72deec40c"
-  integrity sha512-gz7wfjz23rit6ePQ7NKE9x+VOWGKm54vli4wbphR9W+3y0bh6Ad7T0BGH9DUzRAnOnOorewrVEqFmT24mia5sg==
-  dependencies:
-    "@babel/traverse" "^7.25.3"
-    "@babel/traverse--for-generate-function-map" "npm:@babel/traverse@^7.25.3"
-    "@babel/types" "^7.25.2"
-    flow-enums-runtime "^0.0.6"
-    invariant "^2.2.4"
-    metro-symbolicate "0.82.3"
-    nullthrows "^1.1.1"
-    ob1 "0.82.3"
-    source-map "^0.5.6"
-    vlq "^1.0.0"
-
-=======
->>>>>>> 699d830 (Define default pod for the rich push pod)
 metro-symbolicate@0.80.12:
   version "0.80.12"
   resolved "https://registry.npmjs.org/metro-symbolicate/-/metro-symbolicate-0.80.12.tgz"
@@ -4551,11 +4339,7 @@ metro-symbolicate@0.80.12:
 
 metro-symbolicate@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-symbolicate/-/metro-symbolicate-0.82.3.tgz#50c5a645727fad9f0eaef1856298ddf267d35a0b"
-=======
   resolved "https://registry.npmjs.org/metro-symbolicate/-/metro-symbolicate-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-WZKhR+QGbwkOLWP1z58Y7BFWUqLVDEEPsSQ5UI5+OWQDAwdtsPU9+sSNoJtD5qRU9qrB2XewQE3lJ2EQRRFJew==
   dependencies:
     flow-enums-runtime "^0.0.6"
@@ -4579,11 +4363,7 @@ metro-transform-plugins@0.80.12:
 
 metro-transform-plugins@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-transform-plugins/-/metro-transform-plugins-0.82.3.tgz#41379fabc036c95229e948fbf68abc7f757adfa2"
-=======
   resolved "https://registry.npmjs.org/metro-transform-plugins/-/metro-transform-plugins-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-s1gVrkhczwMbxZLRSLCJ16K/4Sqx5IhO4sWlL6j0jlIEs1/Drn3JrkUUdQTtgmJS8SBpxmmB66cw7wnz751dVg==
   dependencies:
     "@babel/core" "^7.25.2"
@@ -4614,11 +4394,7 @@ metro-transform-worker@0.80.12:
 
 metro-transform-worker@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/metro-transform-worker/-/metro-transform-worker-0.82.3.tgz#fadb4ff2694079dadd19e449dda4b8ff47545c78"
-=======
   resolved "https://registry.npmjs.org/metro-transform-worker/-/metro-transform-worker-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-z5Y7nYlSlLAEhjFi73uEJh69G5IC6HFZmXFcrxnY+JNlsjT2r0GgsDF4WaQGtarAIt5NP88V8983/PedwNfEcw==
   dependencies:
     "@babel/core" "^7.25.2"
@@ -4729,55 +4505,6 @@ metro@0.80.12:
     ws "^7.5.10"
     yargs "^17.6.2"
 
-<<<<<<< HEAD
-metro@0.82.3, metro@^0.82.0:
-  version "0.82.3"
-  resolved "https://registry.yarnpkg.com/metro/-/metro-0.82.3.tgz#d25137f05faceb32783b41bbe3698d4903e74792"
-  integrity sha512-EfSLtuUmfsGk3znJ+zoN8cRLniQo3W1wyA+nJMfpTLdENfbbPnGRTwmKhzRcJIUh9jgkrrF4oRQ5shLtQ2DsUw==
-  dependencies:
-    "@babel/code-frame" "^7.24.7"
-    "@babel/core" "^7.25.2"
-    "@babel/generator" "^7.25.0"
-    "@babel/parser" "^7.25.3"
-    "@babel/template" "^7.25.0"
-    "@babel/traverse" "^7.25.3"
-    "@babel/types" "^7.25.2"
-    accepts "^1.3.7"
-    chalk "^4.0.0"
-    ci-info "^2.0.0"
-    connect "^3.6.5"
-    debug "^4.4.0"
-    error-stack-parser "^2.0.6"
-    flow-enums-runtime "^0.0.6"
-    graceful-fs "^4.2.4"
-    hermes-parser "0.28.1"
-    image-size "^1.0.2"
-    invariant "^2.2.4"
-    jest-worker "^29.7.0"
-    jsc-safe-url "^0.2.2"
-    lodash.throttle "^4.1.1"
-    metro-babel-transformer "0.82.3"
-    metro-cache "0.82.3"
-    metro-cache-key "0.82.3"
-    metro-config "0.82.3"
-    metro-core "0.82.3"
-    metro-file-map "0.82.3"
-    metro-resolver "0.82.3"
-    metro-runtime "0.82.3"
-    metro-source-map "0.82.3"
-    metro-symbolicate "0.82.3"
-    metro-transform-plugins "0.82.3"
-    metro-transform-worker "0.82.3"
-    mime-types "^2.1.27"
-    nullthrows "^1.1.1"
-    serialize-error "^2.1.0"
-    source-map "^0.5.6"
-    throat "^5.0.0"
-    ws "^7.5.10"
-    yargs "^17.6.2"
-
-=======
->>>>>>> 699d830 (Define default pod for the rich push pod)
 micromatch@^4.0.4, micromatch@^4.0.8:
   version "4.0.8"
   resolved "https://registry.npmjs.org/micromatch/-/micromatch-4.0.8.tgz"
@@ -4895,11 +4622,7 @@ ob1@0.80.12:
 
 ob1@0.82.3:
   version "0.82.3"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/ob1/-/ob1-0.82.3.tgz#89ed7314eaaf1578f128cd56adc7d5653bb4792a"
-=======
   resolved "https://registry.npmjs.org/ob1/-/ob1-0.82.3.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-8/SeymYlPMVODpCATHqm+X8eiuvD1GsKVa11n688V4GGgjrM3CRvrbtrYBs4t89LJDkv5CwGYPdqayuY0DmTTA==
   dependencies:
     flow-enums-runtime "^0.0.6"
@@ -5228,11 +4951,7 @@ react-is@^18.0.0:
 
 react-native-builder-bob@^0.40.7:
   version "0.40.10"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/react-native-builder-bob/-/react-native-builder-bob-0.40.10.tgz#671ccbef740ac915d2d96d2be069bad77c5c3c0e"
-=======
   resolved "https://registry.npmjs.org/react-native-builder-bob/-/react-native-builder-bob-0.40.10.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-CEkR4ww4jY0e+g//VCJuuypFbarxa8R/nza6UpZadR4i3g86cob8fNoGBp5jaerm2Oiw8XiOKmNe7LW2gSV+kw==
   dependencies:
     "@babel/core" "^7.25.2"
@@ -5261,21 +4980,13 @@ react-native-builder-bob@^0.40.7:
 
 react-native-monorepo-config@^0.1.8:
   version "0.1.8"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/react-native-monorepo-config/-/react-native-monorepo-config-0.1.8.tgz#2d9e99edbde7993a384201c657c8564e9cad7747"
-=======
   resolved "https://registry.npmjs.org/react-native-monorepo-config/-/react-native-monorepo-config-0.1.8.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-PHF4CJpth+Lza7XZDUEmsdnSkPttDn6uSmm6DNfbeXXtKIxSAuJxmvjjn0nt1TZImvJk/DbJNIFvcSr7fN1J3g==
   dependencies:
     escape-string-regexp "^5.0.0"
     fast-glob "^3.3.3"
 
-<<<<<<< HEAD
-react-native@^0.79.2:
-=======
 react-native@*, react-native@^0.79.2:
->>>>>>> 699d830 (Define default pod for the rich push pod)
   version "0.79.2"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.79.2.tgz"
   integrity sha512-AnGzb56JvU5YCL7cAwg10+ewDquzvmgrMddiBM0GAWLwQM/6DJfGd2ZKrMuKKehHerpDDZgG+EY64gk3x3dEkw==
@@ -5512,12 +5223,7 @@ semver@^7.1.3:
   resolved "https://registry.npmjs.org/semver/-/semver-7.7.1.tgz"
   integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
 
-semver@^7.3.7:
-  version "7.7.1"
-  resolved "https://registry.npmjs.org/semver/-/semver-7.7.1.tgz"
-  integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
-
-semver@^7.6.0:
+semver@^7.3.7, semver@^7.6.0:
   version "7.7.1"
   resolved "https://registry.npmjs.org/semver/-/semver-7.7.1.tgz"
   integrity sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==
@@ -5980,11 +5686,7 @@ typed-array-length@^1.0.7:
 
 typescript-eslint@^8.31.1:
   version "8.32.0"
-<<<<<<< HEAD
-  resolved "https://registry.yarnpkg.com/typescript-eslint/-/typescript-eslint-8.32.0.tgz#032cf9176d987caff291990ea6313bf4c0b63b4e"
-=======
   resolved "https://registry.npmjs.org/typescript-eslint/-/typescript-eslint-8.32.0.tgz"
->>>>>>> 699d830 (Define default pod for the rich push pod)
   integrity sha512-UMq2kxdXCzinFFPsXc9o2ozIpYCCOiEC46MG3yEh5Vipq6BO27otTtEBZA1fQ66DulEUgE97ucQ/3YY66CPg0A==
   dependencies:
     "@typescript-eslint/eslint-plugin" "8.32.0"
