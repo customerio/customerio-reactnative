@@ -1,3 +1,10 @@
+# [4.3.0](https://github.com/customerio/customerio-reactnative/compare/4.2.7...4.3.0) (2025-05-09)
+
+
+### Features
+
+* introducing dump function ([b332153](https://github.com/customerio/customerio-reactnative/commit/b3321534fd3070d90430c8a815004b0530a30719))
+
 ## [4.2.7](https://github.com/customerio/customerio-reactnative/compare/4.2.6...4.2.7) (2025-05-09)
 
 ### Bug Fixes
