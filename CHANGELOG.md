@@ -1,3 +1,10 @@
+## [4.2.7](https://github.com/customerio/customerio-reactnative/compare/4.2.6...4.2.7) (2025-05-09)
+
+### Bug Fixes
+
+* default to commonjs ([#426](https://github.com/customerio/customerio-reactnative/issues/426)) ([0468ddd](https://github.com/customerio/customerio-reactnative/commit/0468ddd96d7d376dc8980c8f1172635f8759bded))
+* define default pod for the rich push pod ([#423](https://github.com/customerio/customerio-reactnative/issues/423)) ([bbd434c](https://github.com/customerio/customerio-reactnative/commit/bbd434c610f0eea17455d9cc806a4faf77c8951d))
+
 ## [4.2.6](https://github.com/customerio/customerio-reactnative/compare/4.2.5...4.2.6) (2025-04-29)
 
 ### Bug Fixes
