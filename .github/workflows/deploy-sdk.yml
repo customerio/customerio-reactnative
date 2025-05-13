@@ -20,6 +20,14 @@ jobs:
       new_release_published: ${{ steps.semantic-release.outputs.new_release_published }}
       new_release_version: ${{ steps.semantic-release.outputs.new_release_version }}
     steps:
+      
+      - name: 'Generate token'
+        id: generate_token
+        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
+        with:
+          app_id: ${{ secrets.CIO_APP_ID }}
+          private_key: ${{ secrets.CIO_APP_SECRET }}
+
       - uses: actions/checkout@v4
 
       # If using sd on macos, "brew install" works great. for Linux, this is the recommended way.
@@ -38,7 +46,7 @@ jobs:
             @semantic-release/exec
         env:
           # Needs to push git commits to repo. Needs write access.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
       - name: Notify team of git tag being created
         uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
