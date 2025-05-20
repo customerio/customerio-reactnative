@@ -23,6 +23,8 @@ let UNIVERSAL_LINK_URL = URL(string: "http://www.amiapp-reactnative-apns.com")!
 #endif
 
 @main
+class AppDelegateWithCioIntegration: CioAppDelegateWrapper<AppDelegate> {}
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
 

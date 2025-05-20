@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { BodyText } from '@components';
 import { NavigationCallbackContext } from '@navigation';
@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
 import { appTheme } from '@utils';
-import { CioPushPermissionStatus, CustomerIO } from 'customerio-reactnative';
+import { CioConfig, CioPushPermissionStatus, CustomerIO } from 'customerio-reactnative';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { AppEnvValues } from './env';
 
@@ -41,6 +41,9 @@ export default function App({ appName }: { appName: string }) {
       await storage.loadAll();
       setIsLoading(false);
 
+      if (!storage.getCioConfig()) {
+        storage.setCioConfig(storage.getDefaultCioConfig() as CioConfig);
+      }
       const cioConfig = storage.getCioConfig();
       if (cioConfig) {
         console.log(

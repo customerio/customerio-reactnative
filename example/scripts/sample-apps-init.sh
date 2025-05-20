@@ -13,6 +13,8 @@ set -e
 if [ -z "$1" ]; then
   echo "Since no argument is passed, this script will setup the Android app and iOS with APN configurations."
   echo "If you want to setup the iOS app with FCM configurations, please pass \"fcm\" as an argument."
+
+  PUSH_PROVIDER="apn"
 else
   # The argument passed must be either "apn" or "fcm".
   if [ "$1" != "apn" ] && [ "$1" != "fcm" ]; then
@@ -23,6 +25,8 @@ else
   TARGET_APP=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   PUSH_PROVIDER="$1"
 fi
+
+echo "Push provider is $PUSH_PROVIDER"
 
 # Get reference directories
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
