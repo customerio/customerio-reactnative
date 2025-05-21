@@ -112,11 +112,13 @@ extension AppDelegate: MessagingDelegate {
 #else
 extension AppDelegate {
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
   
   func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
-    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
   }
 }
 

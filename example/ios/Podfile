@@ -47,16 +47,16 @@ target app_target_name do
   )
   pod "customerio-reactnative/#{push_provider}", :path => cio_package_path
   
+  # Uncomment lines below to test development pods
 #  pod "CustomerIOCommon", :path => '~/Development/customerio-ios/'
-  pod "CustomerIODataPipelines", :path => '~/Development/customerio-ios/'
-  pod "CustomerIOMessagingPush", :path => '~/Development/customerio-ios/'
-#  pod "CustomerIOMessagingPushAPN", :path => '~/Development/customerio-ios/'
-  pod "CustomerIOMessagingInApp", :path => '~/Development/customerio-ios/'
-  if push_provider == "apn"
-    pods_for_all_targets.push('CustomerIOMessagingPushAPN')
-  else
-    pods_for_all_targets.push('CustomerIOMessagingPushFCM')
-  end
+#  pod "CustomerIODataPipelines", :path => '~/Development/customerio-ios/'
+#  pod "CustomerIOMessagingPush", :path => '~/Development/customerio-ios/'
+#  pod "CustomerIOMessagingInApp", :path => '~/Development/customerio-ios/'
+#  if push_provider == "apn"
+#    pod "CustomerIOMessagingPushAPN", :path => '~/Development/customerio-ios/'
+#  else
+#    pod "CustomerIOMessagingPushFCM", :path => '~/Development/customerio-ios/'
+#  end
 
 #  install_non_production_ios_sdk_local_path(local_path: '~/Development/customerio-ios/', is_app_extension: false, push_service: "apn)
   # install_non_production_ios_sdk_git_branch(branch_name: 'main', is_app_extension: false, push_service: "apn")
