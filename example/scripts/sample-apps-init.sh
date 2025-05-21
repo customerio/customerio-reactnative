@@ -26,8 +26,6 @@ else
   PUSH_PROVIDER="$1"
 fi
 
-echo "Push provider is $PUSH_PROVIDER"
-
 # Get reference directories
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 EXAMPLES_DIR="$(cd "$SCRIPTS_DIR/.." &>/dev/null && pwd)"
@@ -79,6 +77,8 @@ install_ios_pods() {
   PUSH_PROVIDER=$PUSH_PROVIDER bundle exec pod install --project-directory=ios
   echo "✅ Pods installed for iOS with the needed dependencies for the PUSH_PROVIDER push provider"
 }
+
+PUSH_PROVIDER=apn bundle exec pod install --project-directory=ios
 
 setup_ios_project_if_needed() {
   echo "Setting up the iOS example app project"
