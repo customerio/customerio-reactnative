@@ -105,7 +105,8 @@ extension AppDelegate {
 
 extension AppDelegate: MessagingDelegate {
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
   }
 }
 
