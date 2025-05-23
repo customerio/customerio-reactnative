@@ -78,8 +78,6 @@ install_ios_pods() {
   echo "✅ Pods installed for iOS with the needed dependencies for the PUSH_PROVIDER push provider"
 }
 
-PUSH_PROVIDER=apn bundle exec pod install --project-directory=ios
-
 setup_ios_project_if_needed() {
   echo "Setting up the iOS example app project"
   cd "$EXAMPLES_DIR"
