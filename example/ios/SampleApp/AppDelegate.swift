@@ -23,6 +23,8 @@ let UNIVERSAL_LINK_URL = URL(string: "http://www.amiapp-reactnative-apns.com")!
 #endif
 
 @main
+class AppDelegateWithCioIntegration: CioAppDelegateWrapper<AppDelegate> {}
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
 
@@ -103,18 +105,21 @@ extension AppDelegate {
 
 extension AppDelegate: MessagingDelegate {
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.messaging(messaging, didReceiveRegistrationToken: fcmToken)
   }
 }
 
 #else
 extension AppDelegate {
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
   
   func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
-    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+      // Not needed when CioAppDelegateWrapper is used
+//    MessagingPush.shared.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
   }
 }
 

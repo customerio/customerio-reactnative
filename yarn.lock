@@ -2439,6 +2439,11 @@ csstype@^3.0.2:
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
 
+customerio-reactnative@^4.2.7:
+  version "4.2.7"
+  resolved "https://registry.yarnpkg.com/customerio-reactnative/-/customerio-reactnative-4.2.7.tgz#98266807041998db6e92418e5257703d3403ed7f"
+  integrity sha512-Zh8uE/BVOLg0AfvstlXlL4Jmrfcp2X2/QKh+xBGnunqr8KpNTAlyhVypM81kZim4Olg17XdRliPhwZJj2nJ9gw==
+
 data-view-buffer@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/data-view-buffer/-/data-view-buffer-1.0.2.tgz"
