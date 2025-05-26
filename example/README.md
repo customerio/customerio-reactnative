@@ -110,7 +110,7 @@ If it’s a simulator issue:
 ```bash
 cd customerio-reactnative/example # Navigate to the example folder
 
-npm run ios --simulator "iPhone 16 Pro (18.0)"
+npm run ios -- --simulator "iPhone 16 Pro (18.0)"
 ```
 
 Replace with your simulator’s actual name and iOS version.  

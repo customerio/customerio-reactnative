@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "sh -c 'react-native run-ios $1' _",
+    "ios": "sh -c 'args=\"$*\"; sim=${args#*--simulator }; react-native run-ios --simulator=\"$sim\"' _",
     "pods": "bundle exec pod install --project-directory=ios",
     "lint": "eslint .",
     "start": "react-native start",
