@@ -67,6 +67,6 @@ end
 target nse_target_name do
   inherit! :none
   pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
-#  installsl_non_production_ios_sdk_local_path(local_path: '~/Development/customerio-ios/', is_app_extension: false, push_service: "apn")
+#  install_non_production_ios_sdk_local_path(local_path: '~/Development/customerio-ios/', is_app_extension: false, push_service: "apn")
 #  install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: false, push_service: "fcm")
 end
