@@ -1,3 +1,9 @@
+## [4.3.0](https://github.com/customerio/customerio-reactnative/compare/4.2.7...4.3.0) (2025-05-30)
+
+### Features
+
+* Version updated to include no-Swizzling system from iOS SDK ([#434](https://github.com/customerio/customerio-reactnative/issues/434)) ([f864e89](https://github.com/customerio/customerio-reactnative/commit/f864e892d2d150161567cb5e62c6b912618dc680))
+
 ## [4.2.7](https://github.com/customerio/customerio-reactnative/compare/4.2.6...4.2.7) (2025-05-09)
 
 ### Bug Fixes
