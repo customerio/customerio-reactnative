@@ -36,4 +36,9 @@ class MainActivity : ReactActivity() {
    */
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       ReactDelegate(this, mainComponentName, fabricEnabled)
+
+  //react-native-screens override
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null);
+  }
 }
