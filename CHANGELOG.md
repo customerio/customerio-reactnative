@@ -1,3 +1,9 @@
+## [4.3.1](https://github.com/customerio/customerio-reactnative/compare/4.3.0...4.3.1) (2025-06-02)
+
+### Bug Fixes
+
+* FCM version bounds ([#437](https://github.com/customerio/customerio-reactnative/issues/437)) ([e513bfb](https://github.com/customerio/customerio-reactnative/commit/e513bfb62696bff879c1773f14e73e552f0d0161))
+
 ## [4.3.0](https://github.com/customerio/customerio-reactnative/compare/4.2.7...4.3.0) (2025-05-30)
 
 ### Features
