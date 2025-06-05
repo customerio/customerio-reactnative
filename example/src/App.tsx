@@ -11,17 +11,28 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { AppEnvValues } from './env';
 
 export default function App({ appName }: { appName: string }) {
+  const appNameKey = appName.toLocaleLowerCase();
   const env =
-    AppEnvValues[appName.toLocaleLowerCase() as keyof typeof AppEnvValues] ??
+    AppEnvValues[appNameKey as keyof typeof AppEnvValues] ??
     AppEnvValues['default'];
+  
   if (!env) {
     console.error(
-      `No default preset environment variables found nor environment variables for the app: ${appName}. The env.ts contains environment values for case-insenetive app names: ${Object.keys(
+      `No environment variables found for app: "${appName}" (key: "${appNameKey}"). Available environments: ${Object.keys(
         AppEnvValues
-      ).join(', ')}`
+      ).join(', ')}. Falling back to default environment.`
     );
+    // Ensure we always have an environment, even if it's the default
+    const fallbackEnv = AppEnvValues['default'] || {
+      API_KEY: 'fallback_api_key',
+      SITE_ID: 'fallback_site_id',
+      buildTimestamp: 0,
+    };
+    Storage.setEnv(fallbackEnv);
+  } else {
+    console.log(`Using environment for "${appNameKey}":`, env);
+    Storage.setEnv(env);
   }
-  Storage.setEnv(env);
 
   const [isLoading, setIsLoading] = React.useState(true);
 
