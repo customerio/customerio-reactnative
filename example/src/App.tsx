@@ -16,22 +16,20 @@ export default function App({ appName }: { appName: string }) {
     AppEnvValues[appNameKey as keyof typeof AppEnvValues] ??
     AppEnvValues['default'];
   
+  // For debugging - this will be visible in the app
+  const [debugInfo, setDebugInfo] = useState(`App: "${appName}" -> Key: "${appNameKey}"`);
+  
   if (!env) {
-    console.error(
-      `No environment variables found for app: "${appName}" (key: "${appNameKey}"). Available environments: ${Object.keys(
-        AppEnvValues
-      ).join(', ')}. Falling back to default environment.`
-    );
-    // Ensure we always have an environment, even if it's the default
     const fallbackEnv = AppEnvValues['default'] || {
       API_KEY: 'fallback_api_key',
       SITE_ID: 'fallback_site_id',
       buildTimestamp: 0,
     };
     Storage.setEnv(fallbackEnv);
+    setDebugInfo(`❌ No env found for "${appNameKey}". Using fallback.`);
   } else {
-    console.log(`Using environment for "${appNameKey}":`, env);
     Storage.setEnv(env);
+    setDebugInfo(`✅ Found env for "${appNameKey}". API_KEY: ${env.API_KEY.substring(0, 10)}...`);
   }
 
   const [isLoading, setIsLoading] = React.useState(true);
@@ -61,7 +59,15 @@ export default function App({ appName }: { appName: string }) {
           'Initializing CustomerIO on app start with config',
           cioConfig
         );
-        CustomerIO.initialize(cioConfig);
+        try {
+          CustomerIO.initialize(cioConfig);
+          console.log('CustomerIO initialized successfully');
+        } catch (error) {
+          console.error('Failed to initialize CustomerIO:', error);
+          // Don't throw - let the app continue to run
+        }
+      } else {
+        console.error('No CustomerIO config found in storage');
       }
     };
     loadFromStorage();
@@ -70,6 +76,12 @@ export default function App({ appName }: { appName: string }) {
   return (
     <>
       {isLoading && <BodyText>Loading....</BodyText>}
+      {/* Debug info - remove this after fixing the issue */}
+      {!isLoading && (
+        <BodyText style={{fontSize: 10, backgroundColor: 'yellow', padding: 4}}>
+          {debugInfo}
+        </BodyText>
+      )}
       {!isLoading && (
         <NavigationCallbackContext.Provider
           value={{
