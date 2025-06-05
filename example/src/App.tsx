@@ -8,29 +8,28 @@ import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO } from 'customerio-reactnative';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
-import { AppEnvValues } from './env';
+
+
+// Define minimal type inline since we're bypassing env.ts
+type SimpleEnv = {
+  API_KEY: string;
+  SITE_ID: string;
+  buildTimestamp?: number;
+};
 
 export default function App({ appName }: { appName: string }) {
-  const appNameKey = appName.toLocaleLowerCase();
-  const env =
-    AppEnvValues[appNameKey as keyof typeof AppEnvValues] ??
-    AppEnvValues['default'];
+  // BYPASS ENVIRONMENT FILE COMPLETELY - USE HARDCODED VALUES
+  const hardcodedEnv: SimpleEnv = {
+    API_KEY: 'hardcoded_dummy_api_key_12345',
+    SITE_ID: 'hardcoded_dummy_site_id_67890',
+    buildTimestamp: 1699999999,
+  };
   
-  // For debugging - this will be visible in the app
-  const [debugInfo, setDebugInfo] = useState(`App: "${appName}" -> Key: "${appNameKey}"`);
+  // Simple debug string
+  const debugInfo = `App="${appName}" 🔧HARDCODED_ENV 🔑${hardcodedEnv.API_KEY.substring(0, 10)}...`;
   
-  if (!env) {
-    const fallbackEnv = AppEnvValues['default'] || {
-      API_KEY: 'fallback_api_key',
-      SITE_ID: 'fallback_site_id',
-      buildTimestamp: 0,
-    };
-    Storage.setEnv(fallbackEnv);
-    setDebugInfo(`❌ No env found for "${appNameKey}". Using fallback.`);
-  } else {
-    Storage.setEnv(env);
-    setDebugInfo(`✅ Found env for "${appNameKey}". API_KEY: ${env.API_KEY.substring(0, 10)}...`);
-  }
+  // Set the hardcoded environment
+  Storage.setEnv(hardcodedEnv);
 
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -78,7 +77,7 @@ export default function App({ appName }: { appName: string }) {
       {isLoading && <BodyText>Loading....</BodyText>}
       {/* Debug info - remove this after fixing the issue */}
       {!isLoading && (
-        <BodyText style={{fontSize: 10, backgroundColor: 'yellow', padding: 4}}>
+        <BodyText style={{fontSize: 10, backgroundColor: 'yellow'}}>
           {debugInfo}
         </BodyText>
       )}
