@@ -1,17 +1,17 @@
 package io.customer.reactnative.sdk
 
 import android.app.Application
+import com.facebook.fbreact.specs.NativeNativeCustomerIOSpec
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
-import io.customer.datapipelines.config.ScreenView
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
 import io.customer.sdk.core.di.SDKComponent
@@ -23,8 +23,7 @@ class CustomerIOReactNativeModule(
     reactContext: ReactApplicationContext,
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
-) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName(): String = "NativeCustomerIO"
+) : NativeNativeCustomerIOSpec(reactContext) {
 
     private val logger: Logger = SDKComponent.logger
     private fun customerIO(): CustomerIO? = runCatching {
@@ -35,7 +34,7 @@ class CustomerIOReactNativeModule(
     }.getOrNull()
 
     @ReactMethod
-    fun initialize(configJson: ReadableMap, sdkArgs: ReadableMap) {
+    override fun initialize(configJson: ReadableMap, sdkArgs: ReadableMap) {
         try {
             val packageConfig = configJson.toMap()
             val cdpApiKey = packageConfig.getTypedValue<String>(
@@ -90,12 +89,12 @@ class CustomerIOReactNativeModule(
     }
 
     @ReactMethod
-    fun clearIdentify() {
+    override fun clearIdentify() {
         customerIO()?.clearIdentify()
     }
 
     @ReactMethod
-    fun identify(identifier: String?, attributes: ReadableMap?) {
+    override fun identify(identifier: String?, attributes: ReadableMap?) {
         if (identifier == null && attributes == null) {
             logger.error("Please provide either an ID or traits to identify.")
             return
@@ -108,42 +107,46 @@ class CustomerIOReactNativeModule(
     }
 
     @ReactMethod
-    fun track(name: String, attributes: ReadableMap?) {
+    override fun track(name: String, attributes: ReadableMap?) {
         customerIO()?.track(name, attributes.toMap())
     }
 
     @ReactMethod
-    fun setDeviceAttributes(attributes: ReadableMap?) {
+    override fun setDeviceAttributes(attributes: ReadableMap?) {
         customerIO()?.deviceAttributes = attributes.toMap()
     }
 
     @ReactMethod
-    fun setProfileAttributes(attributes: ReadableMap?) {
+    override fun setProfileAttributes(attributes: ReadableMap?) {
         customerIO()?.profileAttributes = attributes.toMap()
     }
 
     @ReactMethod
-    fun screen(name: String, attributes: ReadableMap?) {
+    override fun screen(name: String, attributes: ReadableMap?) {
         customerIO()?.screen(name, attributes.toMap())
     }
 
     @ReactMethod
-    fun registerDeviceToken(token: String) {
+    override fun registerDeviceToken(token: String) {
         customerIO()?.registerDeviceToken(token)
     }
 
     @ReactMethod
-    fun deleteDeviceToken() {
+    override fun deleteDeviceToken() {
         customerIO()?.deleteDeviceToken()
     }
 
     @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
+    override fun getPushPermissionStatus(promise: Promise) {
         pushMessagingModule.getPushPermissionStatus(promise)
     }
 
     @ReactMethod
-    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+    override fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
         pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
+    }
+
+    companion object {
+        const val NAME = "NativeCustomerIO"
     }
 }

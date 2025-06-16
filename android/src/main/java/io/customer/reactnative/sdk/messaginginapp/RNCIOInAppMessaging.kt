@@ -2,7 +2,7 @@ package io.customer.reactnative.sdk.messaginginapp
 
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.fbreact.specs.NativeCioRctInAppMessagingSpec
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.customer.messaginginapp.MessagingInAppModuleConfig
@@ -22,8 +22,7 @@ import io.customer.sdk.data.model.Region
  */
 class RNCIOInAppMessaging(
     private val reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(reactContext), InAppEventListener {
-    override fun getName(): String = "CioRctInAppMessaging"
+) : NativeCioRctInAppMessagingSpec(reactContext), InAppEventListener {
 
     private val inAppMessagingModule: ModuleMessagingInApp?
         get() = kotlin.runCatching { CustomerIO.instance().inAppMessaging() }.getOrNull()
@@ -58,20 +57,20 @@ class RNCIOInAppMessaging(
     }
 
     @ReactMethod
-    fun addListener(eventName: String) {
+    override fun addListener(eventName: String) {
         listenerCount++
     }
 
     @ReactMethod
-    fun removeListeners(count: Int) {
-        listenerCount -= count
+    override fun removeListeners(count: Double) {
+        listenerCount -= count.toInt()
     }
 
     /**
      * Dismisses any currently displayed in-app message
      */
     @ReactMethod
-    fun dismissMessage() {
+    override fun dismissMessage() {
         inAppMessagingModule?.dismissMessage()
     }
 
@@ -122,4 +121,8 @@ class RNCIOInAppMessaging(
         eventType = "messageShown",
         message = message,
     )
+
+    companion object {
+        const val NAME = "CioRctInAppMessaging"
+    }
 }

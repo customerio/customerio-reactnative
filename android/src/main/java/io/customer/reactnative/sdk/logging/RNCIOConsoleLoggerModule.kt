@@ -1,8 +1,8 @@
 package io.customer.reactnative.sdk.logging
 
+import com.facebook.fbreact.specs.NativeCioLoggingEmitterSpec
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import io.customer.sdk.core.di.SDKComponent
@@ -11,9 +11,7 @@ import java.lang.ref.WeakReference
 
 class RNCIOConsoleLoggerModule(
     reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName(): String = "CioLoggingEmitter"
-
+) : NativeCioLoggingEmitterSpec(reactContext) {
     // Hold weak reference to ReactContext to avoid memory leaks
     // As loggers are long-lived objects, they might hold references to log dispatchers
     // and can cause memory leaks by holding references to ReactContext even after it is destroyed
@@ -28,13 +26,12 @@ class RNCIOConsoleLoggerModule(
     private var listenerCount = 0
 
     @ReactMethod
-    fun addListener(eventName: String) {
+    override fun addListener(eventName: String?) {
         listenerCount++
     }
 
-    @ReactMethod
-    fun removeListeners(count: Int) {
-        listenerCount -= count
+    override fun removeListeners(count: Double) {
+        listenerCount -= count.toInt()
     }
 
     private fun emitLogEvent(level: CioLogLevel, message: String) {
@@ -53,5 +50,9 @@ class RNCIOConsoleLoggerModule(
         context
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("CioLogEvent", params)
+    }
+
+    companion object {
+        const val NAME = "CioLoggingEmitter"
     }
 }

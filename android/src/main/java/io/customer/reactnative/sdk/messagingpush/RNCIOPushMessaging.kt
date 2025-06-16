@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.fbreact.specs.NativeCioRctPushMessagingSpec
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.PermissionAwareActivity
@@ -34,8 +34,7 @@ import java.util.UUID
  */
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
-    override fun getName(): String = "CioRctPushMessaging"
+) : NativeCioRctPushMessagingSpec(reactContext), PermissionListener, ActivityEventListener {
 
     private val logger: Logger = SDKComponent.logger
     private val pushModuleConfig: MessagingPushModuleConfig
@@ -81,8 +80,26 @@ class RNCIOPushMessaging(
         builder.addCustomerIOModule(module)
     }
 
+    /**
+     * Track push notification response (user tapped notification).
+     * On Android, this is handled automatically through Google Services API.
+     */
     @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
+    override fun trackNotificationResponseReceived(payload: ReadableMap) {
+        // No-op on Android - handled automatically by Google Services API
+    }
+
+    /**
+     * Track push notification received.
+     * On Android, this is handled automatically through Google Services API.
+     */
+    @ReactMethod
+    override fun trackNotificationReceived(payload: ReadableMap) {
+        // No-op on Android - handled automatically by Google Services API
+    }
+
+    @ReactMethod
+    override fun getPushPermissionStatus(promise: Promise) {
         promise.resolve(checkPushPermissionStatus().toReactNativeResult)
     }
 
@@ -97,7 +114,7 @@ class RNCIOPushMessaging(
      * @param promise to resolve and return the results.
      */
     @ReactMethod
-    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+    override fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
         // Skip requesting permissions when already granted
         if (checkPushPermissionStatus() == PermissionStatus.Granted) {
             promise.resolve(PermissionStatus.Granted.toReactNativeResult)
@@ -135,12 +152,8 @@ class RNCIOPushMessaging(
      * @param handleNotificationTrigger indicating if the local notification should be triggered.
      */
     @ReactMethod
-    fun handleMessage(message: ReadableMap?, handleNotificationTrigger: Boolean, promise: Promise) {
+    override fun handleMessage(message: ReadableMap, handleNotificationTrigger: Boolean, promise: Promise) {
         try {
-            if (message == null) {
-                promise.reject(IllegalArgumentException("Remote message cannot be null"))
-                return
-            }
 
             // Generate destination string, see docs on receiver method for more details
             val destination =
@@ -163,7 +176,7 @@ class RNCIOPushMessaging(
      * registered or the method fails to fetch token.
      */
     @ReactMethod
-    fun getRegisteredDeviceToken(promise: Promise) {
+    override fun getRegisteredDeviceToken(promise: Promise) {
         try {
             // Get the device token from SDK
             val deviceToken: String? = CustomerIO.instance().registeredDeviceToken
@@ -253,6 +266,7 @@ class RNCIOPushMessaging(
         get() = this.name.uppercase()
 
     companion object {
+        const val NAME = "CioRctPushMessaging"
         /**
          * Copying value os [Manifest.permission.POST_NOTIFICATIONS] as constant so we don't have to
          * force newer compile sdk versions

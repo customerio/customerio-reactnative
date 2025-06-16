@@ -6,6 +6,7 @@ import {
   NavigationScreenProps,
 } from '@navigation';
 import { Storage } from '@services';
+import { InlineInAppMessageView } from 'customerio-reactnative';
 import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
@@ -48,6 +49,13 @@ export const HomeScreen = ({
             title="Request Push Notification Permission"
             onPress={() => {
               onPushNotificationRequestPermisionButtonPress();
+            }}
+          />
+          <InlineInAppMessageView
+            elementId="sticky-header"
+            onLayout={(event) => {
+              const { width, height } = event.nativeEvent.layout;
+              console.log('[DEBUG] JS onLayout:', width, height);
             }}
           />
         </View>
