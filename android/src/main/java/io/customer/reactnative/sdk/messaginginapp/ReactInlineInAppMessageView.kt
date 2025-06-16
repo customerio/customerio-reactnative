@@ -21,6 +21,11 @@ class ReactInlineInAppMessageView @JvmOverloads constructor(
         configureView()
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        onViewDetached()
+    }
+
     override fun onLoadingStarted() {
         platformDelegate.sendLoadingStateEvent(InlineInAppMessageStateEvent.LoadingStarted)
     }
