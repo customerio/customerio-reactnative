@@ -1,5 +1,5 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
-import InlineInAppMessageView from './components/InlineInAppMessageView';
+import { InlineInAppMessageView } from './components';
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
@@ -92,12 +92,11 @@ class InAppMessageEvent {
   }
 }
 
+// Export in-app messaging types and components for simplified imports
+export type { InlineInAppMessageViewProps } from './components';
 export {
   CustomerIOInAppMessaging,
-  InAppMessageEventType,
   InAppMessageEvent,
+  InAppMessageEventType,
   InlineInAppMessageView,
 };
-
-// Re-export component types
-export type { InlineInAppMessageViewProps } from './components';

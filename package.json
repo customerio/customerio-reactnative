@@ -46,12 +46,12 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
-    "prepare": "bob build",
-    "postinstall": "node src/postInstall.js",
-    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)",
+    "prepare": "npm run codegen && bob build",
     "codegen:android": "npx react-native codegen --outputPath android/generated --platform android",
     "codegen:ios": "npx react-native codegen --outputPath ios/generated --platform ios",
-    "codegen": "npm run codegen:android && npm run codegen:ios"
+    "codegen": "npm run codegen:android && npm run codegen:ios",
+    "postinstall": "node src/postInstall.js",
+    "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
   "keywords": [
     "react-native",
@@ -153,7 +153,7 @@
     },
     "ios": {
       "componentProvider": {
-        "InlineInAppMessageView": "RCTInlineMessageUIView"
+        "InlineMessageNative": "RCTInlineMessageUIView"
       }
     }
   },

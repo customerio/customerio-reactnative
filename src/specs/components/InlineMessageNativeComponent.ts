@@ -28,5 +28,5 @@ export interface NativeProps extends ViewProps {
 }
 
 export default codegenNativeComponent<NativeProps>(
-  'InlineInAppMessageView'
+  'InlineMessageNative'
 ) as HostComponent<NativeProps>;

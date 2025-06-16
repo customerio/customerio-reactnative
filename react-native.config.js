@@ -3,7 +3,6 @@ module.exports = {
   dependency: {
     platforms: {
       android: {
-        componentDescriptors: ['InlineInAppMessageViewComponentDescriptor'],
         cmakeListsPath: 'generated/jni/CMakeLists.txt',
       },
     },

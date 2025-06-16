@@ -46,7 +46,7 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return listOf(InlineInAppMessageViewManager(reactContext))
+        return listOf(InlineInAppMessageViewManager())
     }
 
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {

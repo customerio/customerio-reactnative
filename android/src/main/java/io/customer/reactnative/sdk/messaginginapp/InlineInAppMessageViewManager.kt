@@ -1,21 +1,17 @@
 package io.customer.reactnative.sdk.messaginginapp
 
-import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
-import com.facebook.react.viewmanagers.InlineInAppMessageViewManagerDelegate
-import com.facebook.react.viewmanagers.InlineInAppMessageViewManagerInterface
+import com.facebook.react.viewmanagers.InlineMessageNativeManagerDelegate
+import com.facebook.react.viewmanagers.InlineMessageNativeManagerInterface
 
 @ReactModule(name = InlineInAppMessageViewManager.REACT_CLASS)
-class InlineInAppMessageViewManager(
-    context: ReactApplicationContext
-) : SimpleViewManager<ReactInlineInAppMessageView>(),
-    InlineInAppMessageViewManagerInterface<ReactInlineInAppMessageView> {
-
-    private val delegate = InlineInAppMessageViewManagerDelegate(this)
+class InlineInAppMessageViewManager : SimpleViewManager<ReactInlineInAppMessageView>(),
+    InlineMessageNativeManagerInterface<ReactInlineInAppMessageView> {
+    private val delegate = InlineMessageNativeManagerDelegate(this)
 
     override fun getDelegate(): ViewManagerDelegate<ReactInlineInAppMessageView> = delegate
     override fun getName(): String = REACT_CLASS
@@ -30,6 +26,6 @@ class InlineInAppMessageViewManager(
     }
 
     companion object {
-        const val REACT_CLASS = "InlineInAppMessageView"
+        const val REACT_CLASS = "InlineMessageNative"
     }
 }
