@@ -17,7 +17,8 @@
         "default": "./lib/commonjs/index.js"
       }
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./react-native.config.js": "./react-native.config.js"
   },
   "cioNativeiOSSdkVersion": "= 3.10.4",
   "files": [
@@ -45,7 +46,13 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
-    "prepare": "bob build",
+    "prepare": "npm run codegen && bob build",
+    "codegen:android": "npx react-native codegen --outputPath android/generated --platform android && node scripts/codegen-sync.js --platform=android",
+    "codegen:ios": "npx react-native codegen --outputPath ios/generated --platform ios",
+    "codegen": "npm run codegen:android && npm run codegen:ios",
+    "codegen-sync": "node scripts/codegen-sync.js",
+    "codegen-sync:android": "node scripts/codegen-sync.js --platform=android",
+    "codegen-sync:ios": "node scripts/codegen-sync.js --platform=ios",
     "postinstall": "node src/postInstall.js",
     "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
@@ -70,6 +77,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.25.1",
     "@evilmartians/lefthook": "^1.11.12",
+    "@react-native-community/cli": "^18.0.0",
     "@react-native/babel-preset": "^0.79.2",
     "@react-native/eslint-config": "^0.79.2",
     "@react-native/typescript-config": "^0.79.2",
@@ -134,6 +142,22 @@
     "node": ">=20.0.0"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "codegenConfig": {
+    "name": "RNCustomerIOSpec",
+    "type": "all",
+    "jsSrcsDir": "./src/specs",
+    "outputDir": {
+      "ios": "ios/generated",
+      "android": "android/generated"
+    },
+    "android": {
+      "javaPackageName": "io.customer.reactnative.sdk"
+    },
+    "ios": {
+      "componentProvider": {
+      }
+    }
+  },
   "dependencies": {
     "customerio-reactnative": "^4.2.7"
   }
