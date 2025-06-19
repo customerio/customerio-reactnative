@@ -12,7 +12,7 @@ import java.lang.ref.WeakReference
 class RNCIOConsoleLoggerModule(
     reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName(): String = "CioLoggingEmitter"
+    override fun getName(): String = NAME
 
     // Hold weak reference to ReactContext to avoid memory leaks
     // As loggers are long-lived objects, they might hold references to log dispatchers
@@ -53,5 +53,9 @@ class RNCIOConsoleLoggerModule(
         context
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
             .emit("CioLogEvent", params)
+    }
+
+    companion object {
+        const val NAME = "CioLoggingEmitter"
     }
 }
