@@ -42,7 +42,7 @@ export const screenStylingOptions = {
     fontFamily: systemWeights.bold.fontFamily,
     fontSize: systemWeights.bold.fontSize,
   },
-  contentStyle: { backgroundColor: Colors.bodyBg, padding: 16 },
+  contentStyle: { backgroundColor: Colors.bodyBg, padding: 0 },
   fullScreenGestureEnabled: true,
   headerBackVisible: false,
 } satisfies NativeStackNavigationOptions;
