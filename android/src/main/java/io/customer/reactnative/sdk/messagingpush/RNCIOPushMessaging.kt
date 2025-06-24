@@ -35,7 +35,7 @@ import java.util.UUID
 class RNCIOPushMessaging(
     private val reactContext: ReactApplicationContext,
 ) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
-    override fun getName(): String = "CioRctPushMessaging"
+    override fun getName(): String = NAME
 
     private val logger: Logger = SDKComponent.logger
     private val pushModuleConfig: MessagingPushModuleConfig
@@ -253,6 +253,7 @@ class RNCIOPushMessaging(
         get() = this.name.uppercase()
 
     companion object {
+        const val NAME = "CioRctPushMessaging"
         /**
          * Copying value os [Manifest.permission.POST_NOTIFICATIONS] as constant so we don't have to
          * force newer compile sdk versions
