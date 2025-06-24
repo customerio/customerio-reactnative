@@ -20,7 +20,7 @@
     "./package.json": "./package.json",
     "./react-native.config.js": "./react-native.config.js"
   },
-  "cioNativeiOSSdkVersion": "= 3.10.4",
+  "cioNativeiOSSdkVersion": "= 3.10.5",
   "files": [
     "src",
     "lib",
@@ -48,7 +48,7 @@
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
     "prepare": "npm run codegen && bob build",
     "codegen:android": "npx react-native codegen --outputPath android/generated --platform android && node scripts/codegen-sync.js --platform=android",
-    "codegen:ios": "npx react-native codegen --outputPath ios/generated --platform ios",
+    "codegen:ios": "npx react-native codegen --outputPath ios/generated --platform ios && node scripts/codegen-sync.js --platform=ios",
     "codegen": "npm run codegen:android && npm run codegen:ios",
     "codegen-sync": "node scripts/codegen-sync.js",
     "codegen-sync:android": "node scripts/codegen-sync.js --platform=android",
@@ -155,6 +155,7 @@
     },
     "ios": {
       "componentProvider": {
+        "InlineMessageNative": "RCTInlineMessageNative"
       }
     }
   },
