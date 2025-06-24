@@ -10,6 +10,7 @@ export const TrackScreenName = 'Track' as const;
 export const CustomProfileAttrScreenName = 'Profile Attributes' as const;
 export const CustomDeviceAttrScreenName = 'Device Attributes' as const;
 export const InternalSettingsScreenName = 'Internal Settings' as const;
+export const InlineExamplesScreenName = 'Inline Examples' as const;
 
 export type NavigationStackParamList = {
   [SettingsScreenName]: undefined;
@@ -20,6 +21,7 @@ export type NavigationStackParamList = {
   [CustomProfileAttrScreenName]: undefined;
   [CustomDeviceAttrScreenName]: undefined;
   [InternalSettingsScreenName]: undefined;
+  [InlineExamplesScreenName]: undefined;
 };
 
 export type NavigationProps = NavigationProp<NavigationStackParamList>;

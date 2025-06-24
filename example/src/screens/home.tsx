@@ -2,6 +2,7 @@ import { BuildInfoText, Button, Profile } from '@components';
 import {
   CustomDeviceAttrScreenName,
   CustomProfileAttrScreenName,
+  InlineExamplesScreenName,
   NavigationCallbackContext,
   NavigationScreenProps,
 } from '@navigation';
@@ -50,6 +51,12 @@ export const HomeScreen = ({
               onPushNotificationRequestPermisionButtonPress();
             }}
           />
+          <Button
+            title="Inline Examples"
+            onPress={() => {
+              navigation.navigate(InlineExamplesScreenName);
+            }}
+          />
         </View>
       </ScrollView>
       <View style={styles.spacer}>
@@ -65,6 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     gap: 16,
+    padding: 16,
   },
   spacer: { flex: 1, justifyContent: 'flex-end' },
 });

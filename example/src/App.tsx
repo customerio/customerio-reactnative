@@ -68,7 +68,7 @@ export default function App({ appName }: { appName: string }) {
             },
             onLogin: (user) => {
               console.log('Identifying user', user);
-              CustomerIO.identify({ userId: user.id, traits: user.traits });
+              CustomerIO.identify({ userId: user.traits.email ?? user.id, traits: user.traits });
             },
             onLogout: async () => {
               console.log('Clearing CustomerIO identify');
