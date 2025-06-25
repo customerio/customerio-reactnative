@@ -3,6 +3,7 @@ package io.customer.reactnative.sdk.messaginginapp
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.annotations.ReactProp
+import io.customer.messaginginapp.ui.bridge.WrapperPlatformDelegate
 
 /**
  * Base view manager for inline in-app message components.
@@ -29,8 +30,8 @@ abstract class BaseInlineInAppMessageViewManager :
         val registerCustomEvent = { eventName: String ->
             customEvents.put(eventName, mapOf("registrationName" to eventName))
         }
-        registerCustomEvent("onSizeChange")
-        registerCustomEvent("onStateChange")
+        registerCustomEvent(WrapperPlatformDelegate.ON_SIZE_CHANGE)
+        registerCustomEvent(WrapperPlatformDelegate.ON_STATE_CHANGE)
         return customEvents
     }
 
