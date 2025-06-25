@@ -20,7 +20,7 @@
     "./package.json": "./package.json",
     "./react-native.config.js": "./react-native.config.js"
   },
-  "cioNativeiOSSdkVersion": "= 3.10.4",
+  "cioNativeiOSSdkVersion": "= 3.10.5",
   "files": [
     "src",
     "lib",
