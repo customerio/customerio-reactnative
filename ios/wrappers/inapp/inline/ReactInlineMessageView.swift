@@ -2,10 +2,14 @@ import CioMessagingInApp
 import Foundation
 import UIKit
 
-/// React Native wrapper for inline message display with content view lifecycle management
+/// React Native wrapper for inline message display with content view lifecycle management.
+///
+/// This Swift class provides the actual functionality while allowing Objective-C/C++ files to
+/// import only the header for compile-time safety across different linking configurations.
+/// Methods are called dynamically from Objective-C using runtime resolution.
 @objc(ReactInlineMessageView)
-class ReactInlineMessageView: NSObject, ReactInlineMessageViewProtocol {
-    private weak var eventEmitter: ReactInlineMessageEventEmitterProtocol?
+class ReactInlineMessageView: NSObject {
+    private weak var eventEmitter: AnyObject?
     private let contentView: InlineMessageBridgeView = .init()
 
     @objc
@@ -15,7 +19,7 @@ class ReactInlineMessageView: NSObject, ReactInlineMessageViewProtocol {
     }
 
     @objc
-    func setEventEmitter(_ eventEmitter: ReactInlineMessageEventEmitterProtocol?) {
+    func setEventEmitter(_ eventEmitter: AnyObject?) {
         self.eventEmitter = eventEmitter
     }
 
@@ -44,8 +48,25 @@ class ReactInlineMessageView: NSObject, ReactInlineMessageViewProtocol {
         contentView.layoutIfNeeded()
     }
 
+    // MARK: - Event Emission Helper
+
+    private func emitEvent(_ selectorName: String, payload: [String: Any]) {
+        guard let emitter = eventEmitter else {
+            assertionFailure("Event emitter is nil when trying to emit \(selectorName)")
+            return
+        }
+
+        let selector = Selector((selectorName))
+        guard emitter.responds(to: selector) else {
+            assertionFailure("Event emitter does not respond to selector: \(selectorName)")
+            return
+        }
+
+        _ = emitter.perform(selector, with: payload as NSDictionary)
+    }
+
     private func sendOnSizeChangeEvent(width: Double = 0, height: Double) {
-        let duration = 300.0
+        let duration = 200.0
         var payload: [String: Any] = [
             "height": height,
             "duration": duration
@@ -56,7 +77,7 @@ class ReactInlineMessageView: NSObject, ReactInlineMessageViewProtocol {
             payload["width"] = width
         }
 
-        eventEmitter?.emitOnSizeChangeEvent(payload as NSDictionary)
+        emitEvent("emitOnSizeChangeEvent:", payload: payload)
     }
 
     private func sendOnStateChangeEvent(state: InlineInAppMessageStateEvent) {
@@ -64,7 +85,7 @@ class ReactInlineMessageView: NSObject, ReactInlineMessageViewProtocol {
             "state": state.stringValue
         ]
 
-        eventEmitter?.emitOnStateChangeEvent(payload as NSDictionary)
+        emitEvent("emitOnStateChangeEvent:", payload: payload)
     }
 }
 

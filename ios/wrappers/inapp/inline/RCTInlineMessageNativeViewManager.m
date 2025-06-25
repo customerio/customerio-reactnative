@@ -1,14 +1,15 @@
 #ifndef RCT_NEW_ARCH_ENABLED
 
-#import "customerio_reactnative-Swift.h"
+#import "ReactInlineMessageView.h"
 
 #import <React/RCTUIManager.h>
 #import <React/RCTViewManager.h>
+#import <UIKit/UIKit.h>
 
 /// Old architecture React Native view for inline messages
-@interface RCTInlineMessageNativeView : UIView <ReactInlineMessageEventEmitterProtocol>
+@interface RCTInlineMessageNativeView : UIView
 /// Bridge to Swift ReactInlineMessageView for platform-agnostic implementation
-@property(nonatomic, strong) id<ReactInlineMessageViewProtocol> bridge;
+@property(nonatomic, strong) id bridge;
 @property(nonatomic, copy) NSString *elementId;
 @property(nonatomic, copy) RCTDirectEventBlock onSizeChange;
 @property(nonatomic, copy) RCTDirectEventBlock onStateChange;
@@ -22,24 +23,12 @@
 
 - (instancetype)init {
   if (self = [super init]) {
-    // Create Swift bridge using runtime class resolution due to Swift-ObjC interop limitations
+    // Create Swift bridge using runtime class resolution
     Class bridgeClass = NSClassFromString(@"ReactInlineMessageView");
-    NSAssert(bridgeClass != nil, @"ReactInlineMessageView class not found - check Swift bridging header");
-
     if (bridgeClass) {
-      SEL initSelector = NSSelectorFromString(@"initWithContainerView:");
-      NSAssert([bridgeClass instancesRespondToSelector:initSelector],
-               @"ReactInlineMessageView does not respond to initWithContainerView:");
-
-      if ([bridgeClass instancesRespondToSelector:initSelector]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        self.bridge = [[bridgeClass alloc] performSelector:initSelector withObject:self];
-#pragma clang diagnostic pop
-        // Set up event emitter for old architecture only if bridge was created successfully
-        [self assertBridgeAvailable:@"creating ReactInlineMessageView bridge instance"];
-        [self.bridge setEventEmitter:self];
-      }
+      self.bridge = [[bridgeClass alloc] initWithContainerView:self];
+      [self assertBridgeAvailable:@"creating ReactInlineMessageView bridge instance"];
+      [self.bridge setEventEmitter:self];
     }
   }
   return self;
@@ -59,7 +48,7 @@
   _onStateChange = onStateChange;
 }
 
-// MARK: - ReactInlineMessageEventEmitterProtocol
+// MARK: - Event Emitter Methods
 - (void)emitOnSizeChangeEvent:(NSDictionary *)event {
   if (self.onSizeChange) {
     self.onSizeChange(event);
