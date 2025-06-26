@@ -17,8 +17,7 @@
         "default": "./lib/commonjs/index.js"
       }
     },
-    "./package.json": "./package.json",
-    "./react-native.config.js": "./react-native.config.js"
+    "./package.json": "./package.json"
   },
   "cioNativeiOSSdkVersion": "= 3.10.5",
   "files": [
@@ -46,13 +45,7 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
-    "prepare": "npm run codegen && bob build",
-    "codegen:android": "npx react-native codegen --outputPath android/generated --platform android && node scripts/codegen-sync.js --platform=android",
-    "codegen:ios": "npx react-native codegen --outputPath ios/generated --platform ios",
-    "codegen": "npm run codegen:android && npm run codegen:ios",
-    "codegen-sync": "node scripts/codegen-sync.js",
-    "codegen-sync:android": "node scripts/codegen-sync.js --platform=android",
-    "codegen-sync:ios": "node scripts/codegen-sync.js --platform=ios",
+    "prepare": "bob build",
     "postinstall": "node src/postInstall.js",
     "format": "npx prettier --write \"src/**/*.tsx\" && (npm run lint || true)"
   },
@@ -146,10 +139,6 @@
     "name": "RNCustomerIOSpec",
     "type": "all",
     "jsSrcsDir": "./src/specs",
-    "outputDir": {
-      "ios": "ios/generated",
-      "android": "android/generated"
-    },
     "android": {
       "javaPackageName": "io.customer.reactnative.sdk"
     },

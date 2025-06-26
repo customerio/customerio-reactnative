@@ -43,18 +43,19 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
 
     /**
      * Creates a map entry for React module registration with the given configuration.
+     * Using positional arguments instead of named arguments as named args break on RN 0.76.
      */
     private fun createReactModuleInfoEntry(
         name: String,
         className: String = name,
         isTurboModule: Boolean = false
     ) = name to ReactModuleInfo(
-        name = name,
-        className = className,
-        canOverrideExistingModule = false,
-        needsEagerInit = false,
-        isCxxModule = false,
-        isTurboModule = isTurboModule,
+        name, // name
+        className, // className
+        false, // canOverrideExistingModule
+        false, // needsEagerInit
+        false, // isCxxModule
+        isTurboModule, // isTurboModule
     )
 
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
