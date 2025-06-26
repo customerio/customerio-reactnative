@@ -38,6 +38,10 @@ def isNewArchitectureEnabled() {
   return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
 }
 
+if (isNewArchitectureEnabled()) {
+  apply plugin: "com.facebook.react"
+}
+
 android {
   namespace = 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
@@ -64,7 +68,7 @@ android {
     main {
       if (isNewArchitectureEnabled()) {
         // Include both new architecture source directories and codegen generated files
-        java.srcDirs += ['src/newarch', 'generated/java']
+        java.srcDirs += ['src/newarch']
       } else {
         java.srcDirs += ['src/oldarch']
       }
