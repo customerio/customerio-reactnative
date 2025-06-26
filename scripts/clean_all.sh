@@ -33,6 +33,9 @@ clean_up() {
   # Clean up the tarball file
   rm -f customerio-reactnative.tgz
 
+  # Clean up codegen generated files
+  rm -rf android/build
+
   cd "$EXAMPLES_DIR"
   # Clean up the example ios app
   rm -rf ios/Pods

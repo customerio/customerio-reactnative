@@ -24,7 +24,7 @@ class CustomerIOReactNativeModule(
     private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName(): String = "NativeCustomerIO"
+    override fun getName(): String = NAME
 
     private val logger: Logger = SDKComponent.logger
     private fun customerIO(): CustomerIO? = runCatching {
@@ -145,5 +145,9 @@ class CustomerIOReactNativeModule(
     @ReactMethod
     fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
         pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
+    }
+
+    companion object {
+        const val NAME = "NativeCustomerIO"
     }
 }
