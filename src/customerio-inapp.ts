@@ -94,6 +94,7 @@ class InAppMessageEvent {
 
 // Export in-app messaging types and components for simplified imports
 export type { InlineInAppMessageViewProps } from './components';
+export type { InAppMessage } from './types';
 export {
   CustomerIOInAppMessaging,
   InAppMessageEvent,

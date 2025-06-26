@@ -1,13 +1,30 @@
-import { InlineInAppMessageView } from 'customerio-reactnative';
-import React from 'react';
+import { InlineInAppMessageView, type InAppMessage } from 'customerio-reactnative';
+import React, { useContext } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { NavigationCallbackContext } from '@navigation';
 
 export const InlineExamplesScreen = () => {
+  const { onTrackEvent } = useContext(NavigationCallbackContext);
+
+  const handleActionClick = (message: InAppMessage, actionValue: string, actionName: string) => {
+    onTrackEvent({
+      name: 'example_app_inline_message_action_clicked',
+      properties: {
+        messageId: message.messageId,
+        deliveryId: message.deliveryId,
+        elementId: message.elementId,
+        actionName,
+        actionValue,
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <InlineInAppMessageView
         elementId="sticky-header"
         style={[styles.inlineMessage, { marginTop: 0 }]}
+        onActionClick={handleActionClick}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -31,6 +48,7 @@ export const InlineExamplesScreen = () => {
         <InlineInAppMessageView
           elementId="inline"
           style={[styles.inlineMessage]}
+          onActionClick={handleActionClick}
         />
 
         <View style={styles.row}>
@@ -53,6 +71,7 @@ export const InlineExamplesScreen = () => {
         <InlineInAppMessageView
           elementId="below-fold"
           style={[styles.inlineMessage]}
+          onActionClick={handleActionClick}
         />
       </ScrollView>
     </View>

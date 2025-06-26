@@ -32,6 +32,7 @@ abstract class BaseInlineInAppMessageViewManager :
         }
         registerCustomEvent(WrapperPlatformDelegate.ON_SIZE_CHANGE)
         registerCustomEvent(WrapperPlatformDelegate.ON_STATE_CHANGE)
+        registerCustomEvent(ReactInAppPlatformDelegate.ON_ACTION_CLICK)
         return customEvents
     }
 

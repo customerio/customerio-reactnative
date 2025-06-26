@@ -13,6 +13,7 @@
 @property(nonatomic, copy) NSString *elementId;
 @property(nonatomic, copy) RCTDirectEventBlock onSizeChange;
 @property(nonatomic, copy) RCTDirectEventBlock onStateChange;
+@property(nonatomic, copy) RCTDirectEventBlock onActionClick;
 @end
 
 @implementation RCTInlineMessageNativeView
@@ -48,6 +49,10 @@
   _onStateChange = onStateChange;
 }
 
+- (void)setOnActionClick:(RCTDirectEventBlock)onActionClick {
+  _onActionClick = onActionClick;
+}
+
 // MARK: - Event Emitter Methods
 - (void)emitOnSizeChangeEvent:(NSDictionary *)event {
   if (self.onSizeChange) {
@@ -58,6 +63,12 @@
 - (void)emitOnStateChangeEvent:(NSDictionary *)event {
   if (self.onStateChange) {
     self.onStateChange(event);
+  }
+}
+
+- (void)emitOnActionClickEvent:(NSDictionary *)event {
+  if (self.onActionClick) {
+    self.onActionClick(event);
   }
 }
 
@@ -78,6 +89,7 @@ RCT_EXPORT_MODULE(InlineMessageNative)
 RCT_EXPORT_VIEW_PROPERTY(elementId, NSString)
 RCT_EXPORT_VIEW_PROPERTY(onSizeChange, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onStateChange, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onActionClick, RCTDirectEventBlock)
 
 @end
 
