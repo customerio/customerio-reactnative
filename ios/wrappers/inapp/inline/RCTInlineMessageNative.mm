@@ -73,6 +73,10 @@ using namespace facebook::react;
   [self handleOnStateChangeEvent:event];
 }
 
+- (void)emitOnActionClickEvent:(NSDictionary *)event {
+  [self handleOnActionClickEvent:event];
+}
+
 - (void)handleOnSizeChangeEvent:(NSDictionary *)event {
   if (_eventEmitter) {
     InlineMessageNativeEventEmitter::OnSizeChange result = InlineMessageNativeEventEmitter::OnSizeChange{};
@@ -100,6 +104,39 @@ using namespace facebook::react;
     }
 
     self.eventEmitter.onStateChange(result);
+  }
+}
+
+- (void)handleOnActionClickEvent:(NSDictionary *)event {
+  if (_eventEmitter) {
+    InlineMessageNativeEventEmitter::OnActionClick result = InlineMessageNativeEventEmitter::OnActionClick{};
+
+    if (event[@"message"]) {
+      NSDictionary *message = event[@"message"];
+      InlineMessageNativeEventEmitter::OnActionClickMessage messageStruct =
+          InlineMessageNativeEventEmitter::OnActionClickMessage{};
+
+      if (message[@"messageId"]) {
+        messageStruct.messageId = std::string([[message[@"messageId"] description] UTF8String]);
+      }
+      if (message[@"deliveryId"] && message[@"deliveryId"] != [NSNull null]) {
+        messageStruct.deliveryId = std::string([[message[@"deliveryId"] description] UTF8String]);
+      }
+      if (message[@"elementId"] && message[@"elementId"] != [NSNull null]) {
+        messageStruct.elementId = std::string([[message[@"elementId"] description] UTF8String]);
+      }
+
+      result.message = messageStruct;
+    }
+
+    if (event[@"actionValue"]) {
+      result.actionValue = std::string([[event[@"actionValue"] description] UTF8String]);
+    }
+    if (event[@"actionName"]) {
+      result.actionName = std::string([[event[@"actionName"] description] UTF8String]);
+    }
+
+    self.eventEmitter.onActionClick(result);
   }
 }
 

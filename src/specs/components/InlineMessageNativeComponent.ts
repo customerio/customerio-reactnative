@@ -24,12 +24,25 @@ export interface StateChangeEvent {
   state: string;
 }
 
+/** Event data for inline message action clicks. */
+export interface ActionClickEvent {
+  /** Message data structure - defined inline for codegen compatibility (cannot import types) */
+  message: {
+    messageId: string;
+    deliveryId?: string;
+    elementId?: string;
+  };
+  actionValue: string;
+  actionName: string;
+}
+
 /** Props for the native inline message component. */
 export interface NativeProps extends ViewProps {
   /** Required element ID for retrieving inline message content. */
   elementId: string;
   onSizeChange: DirectEventHandler<SizeChangeEvent>;
   onStateChange?: DirectEventHandler<StateChangeEvent>;
+  onActionClick?: DirectEventHandler<ActionClickEvent>;
 }
 
 // React Native Codegen automatically generates the native component bridge based on the NativeProps interface

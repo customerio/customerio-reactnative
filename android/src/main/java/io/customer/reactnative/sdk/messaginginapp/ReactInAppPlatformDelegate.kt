@@ -24,4 +24,14 @@ class ReactInAppPlatformDelegate(
             payload = Arguments.makeNativeMap(payload),
         )
     }
+
+    // Internal helper method for dispatching events within the SDK.
+    internal fun dispatchEventInternal(eventName: String, payload: Map<String, Any?>) {
+        dispatchEvent(eventName, payload)
+    }
+
+    companion object {
+        // Event name constant for in-app message action clicks
+        const val ON_ACTION_CLICK = "onActionClick"
+    }
 }

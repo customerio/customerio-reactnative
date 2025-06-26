@@ -9,16 +9,21 @@ import {
 } from 'react-native';
 import InlineMessageNativeComponent, {
   InlineMessageState,
+  type ActionClickEvent,
   type NativeProps,
   type SizeChangeEvent,
   type StateChangeEvent,
 } from '../specs/components/InlineMessageNativeComponent';
+import type { InAppMessage } from '../types';
 
 /**
  * Props for the InlineInAppMessageView component.
  */
-interface InlineInAppMessageViewProps
-  extends Omit<NativeProps, 'onSizeChange' | 'onStateChange'> {
+export interface InlineInAppMessageViewProps
+  extends Omit<
+    NativeProps,
+    'onSizeChange' | 'onStateChange' | 'onActionClick'
+  > {
   /** Custom loading component to display while message is loading */
   loadingComponent?: React.ReactNode;
   /** Props for the default ActivityIndicator with optional minimum height */
@@ -28,6 +33,12 @@ interface InlineInAppMessageViewProps
   };
   /** Custom styles for the loading container */
   loadingContainerStyle?: ViewStyle;
+  /** Callback triggered when a user clicks an action button in the inline message */
+  onActionClick?: (
+    message: InAppMessage,
+    actionValue: string,
+    actionName: string
+  ) => void;
 }
 
 /**
@@ -40,6 +51,9 @@ interface InlineInAppMessageViewProps
  *   elementId="my-message"
  *   loadingIndicatorProps={{ minimumHeight: 50 }}
  *   style={{ width: '100%' }}
+ *   onActionClick={(message, actionValue, actionName) => {
+ *     console.log('Action clicked:', { message, actionValue, actionName });
+ *   }}
  * />
  * ```
  */
@@ -48,6 +62,7 @@ const InlineInAppMessageView: React.FC<InlineInAppMessageViewProps> = ({
   loadingComponent,
   loadingIndicatorProps,
   loadingContainerStyle,
+  onActionClick,
   ...props
 }) => {
   // Animation values for dynamic sizing
@@ -106,7 +121,7 @@ const InlineInAppMessageView: React.FC<InlineInAppMessageViewProps> = ({
         setIsLoading(true);
         createAnimation(
           animatedHeight,
-          loadingIndicatorProps?.minimumHeight ?? 36, // Default: ActivityIndicator + padding
+          loadingIndicatorProps?.minimumHeight ?? 48, // Default: ActivityIndicator + padding
           0 // Immediate height change for loading state
         ).start();
         break;
@@ -115,6 +130,11 @@ const InlineInAppMessageView: React.FC<InlineInAppMessageViewProps> = ({
         setIsLoading(false);
         break;
     }
+  };
+
+  const handleActionClick = (event: { nativeEvent: ActionClickEvent }) => {
+    const { message, actionValue, actionName } = event.nativeEvent;
+    onActionClick?.(message, actionValue, actionName);
   };
 
   const renderLoadingComponent = () => {
@@ -144,6 +164,7 @@ const InlineInAppMessageView: React.FC<InlineInAppMessageViewProps> = ({
         style={styles.nativeComponent}
         onSizeChange={handleSizeChange}
         onStateChange={handleStateChange}
+        onActionClick={handleActionClick}
       />
       {isLoading && renderLoadingComponent()}
     </Animated.View>

@@ -50,7 +50,7 @@ class ReactInlineMessageView: NSObject {
 
     // MARK: - Event Emission Helper
 
-    private func emitEvent(_ selectorName: String, payload: [String: Any]) {
+    private func emitEvent(_ selectorName: String, payload: [String: Any?]) {
         guard let emitter = eventEmitter else {
             assertionFailure("Event emitter is nil when trying to emit \(selectorName)")
             return
@@ -90,9 +90,19 @@ class ReactInlineMessageView: NSObject {
 }
 
 extension ReactInlineMessageView: InlineMessageBridgeViewDelegate {
-    func onActionClick(message: CioMessagingInApp.InAppMessage, actionValue: String, actionName: String) -> Bool {
-        // TODO: Implement later
-        false
+    func onActionClick(message: InAppMessage, actionValue: String, actionName: String) -> Bool {
+        let payload: [String: Any?] = [
+            "message": [
+                "messageId": message.messageId,
+                "deliveryId": message.deliveryId,
+                "elementId": message.elementId
+            ],
+            "actionValue": actionValue,
+            "actionName": actionName
+        ]
+
+        emitEvent("emitOnActionClickEvent:", payload: payload)
+        return true
     }
 
     func onMessageSizeChanged(width: CGFloat, height: CGFloat) {
