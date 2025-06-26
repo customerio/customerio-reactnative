@@ -155,6 +155,7 @@
     },
     "ios": {
       "componentProvider": {
+        "InlineMessageNative": "RCTInlineMessageNative"
       }
     }
   },
