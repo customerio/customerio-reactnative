@@ -1,3 +1,9 @@
+## [4.4.0](https://github.com/customerio/customerio-reactnative/compare/4.3.1...4.4.0) (2025-06-26)
+
+### Features
+
+* inline in-app messages ([#453](https://github.com/customerio/customerio-reactnative/issues/453)) ([d11041b](https://github.com/customerio/customerio-reactnative/commit/d11041b08f173ec00a718d5f3892ff1000bebb30))
+
 ## [4.3.1](https://github.com/customerio/customerio-reactnative/compare/4.3.0...4.3.1) (2025-06-02)
 
 ### Bug Fixes
