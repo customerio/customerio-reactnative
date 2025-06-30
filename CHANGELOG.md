@@ -1,3 +1,9 @@
+## [4.4.1](https://github.com/customerio/customerio-reactnative/compare/4.4.0...4.4.1) (2025-06-30)
+
+### Bug Fixes
+
+* add RCTFabricComponentsPlugins import for new arch ([#454](https://github.com/customerio/customerio-reactnative/issues/454)) ([557aa0e](https://github.com/customerio/customerio-reactnative/commit/557aa0e9238174e07e497a1a7ec7b77d2a03e9de))
+
 ## [4.4.0](https://github.com/customerio/customerio-reactnative/compare/4.3.1...4.4.0) (2025-06-26)
 
 ### Features
