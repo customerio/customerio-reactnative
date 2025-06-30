@@ -4,6 +4,7 @@
 #import "ReactInlineMessageView.h"
 
 #import <React/RCTConversions.h>
+#import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/RNCustomerIOSpec/ComponentDescriptors.h>
 #import <react/renderer/components/RNCustomerIOSpec/EventEmitters.h>
 #import <react/renderer/components/RNCustomerIOSpec/Props.h>
@@ -150,5 +151,9 @@ using namespace facebook::react;
 }
 
 @end
+
+Class<RCTComponentViewProtocol> InlineMessageNativeCls(void) {
+  return RCTInlineMessageNative.class;
+}
 
 #endif
