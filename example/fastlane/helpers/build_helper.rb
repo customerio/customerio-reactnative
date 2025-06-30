@@ -10,6 +10,8 @@ platform :android do
     firebase_app_id = find_firebase_app_id(app_identifier: app_package_name)
     UI.important(firebase_app_id)
 
+    sh("npx react-native build-android --mode release")
+
     # Build release APK using Fastlane's Gradle tool
     gradle(
       project_dir: "./android",
