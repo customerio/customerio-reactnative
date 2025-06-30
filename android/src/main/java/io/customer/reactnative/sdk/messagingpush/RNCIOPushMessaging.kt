@@ -105,7 +105,7 @@ class RNCIOPushMessaging(
         }
 
         try {
-            val activity = currentActivity
+            val activity = reactApplicationContext.currentActivity
             val permissionAwareActivity = activity as? PermissionAwareActivity
             if (permissionAwareActivity == null) {
                 promise.reject(
@@ -218,10 +218,10 @@ class RNCIOPushMessaging(
     }
 
     override fun onActivityResult(
-        activity: Activity?,
+        activity: Activity,
         requestCode: Int,
         resultCode: Int,
-        intent: Intent?,
+        data: Intent?
     ) {
         // Nothing required here
     }
@@ -235,8 +235,8 @@ class RNCIOPushMessaging(
      * But onNewIntent is called when the app is launched from background and the intent is
      * received, which helps us tracking the simple push notifications opened metrics.
      */
-    override fun onNewIntent(intent: Intent?) {
-        val intentArguments = intent?.extras ?: return
+    override fun onNewIntent(intent: Intent) {
+        val intentArguments = intent.extras ?: return
         kotlin.runCatching {
             if (pushModuleConfig.autoTrackPushEvents) {
                 SDKComponent.pushTrackingUtil.parseLaunchedActivityForTracking(intentArguments)
