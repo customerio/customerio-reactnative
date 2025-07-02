@@ -39,11 +39,11 @@ npm whoami
 echo "Authentication complete."
 
 echo "Performing an install to make sure that all dependencies are installed"
-yarn install --frozen-lockfile
-echo "yarn install done."
+npm ci
+echo "npm install done."
 
 echo "Running pre-deploy script to compile code"
-yarn pre-deploy
+npm run pre-deploy
 echo "pre-deploy step complete"
 
 # npmjs registry dist-tag for the release. 
