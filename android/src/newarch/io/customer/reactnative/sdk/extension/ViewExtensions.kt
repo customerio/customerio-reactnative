@@ -26,9 +26,9 @@ internal fun View.sendUIEventToReactJS(
  */
 private class UIStateEvent(
     view: View,
-    private val eventName: String,
+    private val name: String,
     private val payload: WritableMap? = null
 ) : Event<UIStateEvent>(UIManagerHelper.getSurfaceId(view.reactContext), view.id) {
-    override fun getEventName() = eventName
+    override fun getEventName() = name
     override fun getEventData(): WritableMap? = payload
 }
