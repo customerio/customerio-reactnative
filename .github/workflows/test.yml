@@ -11,11 +11,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
+      - run: npm ci
 
       - name: Compile
-        run: yarn typescript
+        run: npm run typescript
 
       - name: Publish test
         run: npm publish --dry-run
@@ -30,9 +29,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
-      - run: yarn install --frozen-lockfile
-      - run: yarn lint:report
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run lint:report
 
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@21a1ba0738d8b732639999029c4ff40b6e121bb4 # v3

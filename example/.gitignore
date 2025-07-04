@@ -39,7 +39,6 @@ android/app/src/main/assets/index.android.bundle
 #
 node_modules/
 npm-debug.log
-yarn-error.log
 ios/SampleApp.xcworkspace
 ios/SampleApp.xcodeproj
 
@@ -72,15 +71,6 @@ ios/SampleApp.xcodeproj
 
 # testing
 /coverage
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
 
 # GoogleService-Info.plist symlink
 ios/SampleApp/GoogleService-Info.plist

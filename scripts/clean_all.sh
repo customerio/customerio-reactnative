@@ -28,7 +28,6 @@ clean_up() {
   rm -rf vendor
   rm -rf lib
   rm -f package-lock.json
-  rm -f yarn.lock
 
   # Clean up the tarball file
   rm -f customerio-reactnative.tgz
