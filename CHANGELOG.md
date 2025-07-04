@@ -1,3 +1,9 @@
+## [4.4.2](https://github.com/customerio/customerio-reactnative/compare/4.4.1...4.4.2) (2025-07-04)
+
+### Bug Fixes
+
+* Update RN to v0.80 ([#447](https://github.com/customerio/customerio-reactnative/issues/447)) ([bf8ddf3](https://github.com/customerio/customerio-reactnative/commit/bf8ddf311ca3675f7298bdcfb76d9fe38558a3d5))
+
 ## [4.4.1](https://github.com/customerio/customerio-reactnative/compare/4.4.0...4.4.1) (2025-06-30)
 
 ### Bug Fixes
