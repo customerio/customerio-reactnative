@@ -7,8 +7,8 @@ import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
 import io.customer.reactnative.sdk.logging.RNCIOConsoleLoggerModule
-import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.BaseInlineInAppMessageViewManager
+import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
 import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 
@@ -48,19 +48,25 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     private fun createReactModuleInfoEntry(
         name: String,
         className: String = name,
-        isTurboModule: Boolean = false
+        canOverrideExistingModule: Boolean = false,
+        needsEagerInit: Boolean = false,
+        isCxxModule: Boolean = false,
+        isTurboModule: Boolean = false,
     ) = name to ReactModuleInfo(
-        name, // name
-        className, // className
-        false, // canOverrideExistingModule
-        false, // needsEagerInit
-        false, // isCxxModule
-        isTurboModule, // isTurboModule
+        name,
+        className,
+        canOverrideExistingModule,
+        needsEagerInit,
+        isCxxModule,
+        isTurboModule,
     )
 
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
         mapOf(
-            createReactModuleInfoEntry(name = CustomerIOReactNativeModule.NAME),
+            createReactModuleInfoEntry(
+                name = NativeCustomerIOModuleImpl.NAME,
+                isTurboModule = true
+            ),
             createReactModuleInfoEntry(name = RNCIOConsoleLoggerModule.NAME),
             createReactModuleInfoEntry(name = RNCIOInAppMessaging.NAME),
             createReactModuleInfoEntry(name = RNCIOPushMessaging.NAME),
