@@ -1,39 +1,54 @@
-import { NativeModules, Platform } from 'react-native';
-import { CioLogLevel, type CioConfig } from './cio-config';
-import { type IdentifyParams } from './cio-params';
+import { type TurboModule } from 'react-native';
 import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
+import {
+  CioLogLevel,
+  default as NativeModule,
+  type CioConfig,
+  type Spec as CodegenSpec,
+  type CustomAttributes,
+  type IdentifyParams,
+  type NativeSDKArgs,
+} from './specs/modules/NativeCustomerIO';
+import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
+import { assert } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
 
-const LINKING_ERROR =
-  `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: ` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo Go\n';
+// Ensures all methods defined in codegen spec are implemented by the public module
+interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {
+  isInitialized(): boolean;
+  inAppMessaging: CustomerIOInAppMessaging;
+  pushMessaging: CustomerIOPushMessaging;
+}
 
-const NativeCustomerIO = NativeModules.NativeCustomerIO
-  ? NativeModules.NativeCustomerIO
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
+// Track whether CustomerIO SDK has been initialized to prevent usage before setup
+let _initialized = false;
+
+// Reference to the native CustomerIO Data Pipelines module for SDK operations
+const nativeModule = ensureNativeModule(NativeModule);
+
+// Wrapper function that ensures SDK is initialized before calling native methods
+const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
+  if (!_initialized) {
+    throw new Error(
+      'CustomerIO SDK must be initialized before calling any methods. Please call CustomerIO.initialize() first.'
     );
+  }
+  return callNativeModule(nativeModule, fn);
+};
 
-export class CustomerIO {
-  private static initialized = false;
+export const CustomerIO = {
+  initialize: (config: CioConfig) => {
+    assert.config(config);
 
-  static readonly initialize = async (config: CioConfig) => {
     if (config.logLevel && config.logLevel !== CioLogLevel.None) {
       NativeLoggerListener.initialize();
     }
 
     const packageVersion = packageJson.version ?? '';
-    const args = {
+    const args: NativeSDKArgs = {
       packageSource: 'ReactNative',
       packageVersion: packageVersion,
     };
@@ -44,80 +59,71 @@ export class CustomerIO {
       args.packageVersion = expoVersion;
     }
 
-    NativeCustomerIO.initialize(config, args);
-    CustomerIO.initialized = true;
-  };
+    return callNativeModule(NativeModule, (native) => {
+      let result = native.initialize(config, args);
+      _initialized = true;
+      return result;
+    });
+  },
 
-  static readonly identify = async ({
-    userId,
-    traits,
-  }: IdentifyParams = {}) => {
-    CustomerIO.assrtInitialized();
+  identify: ({ userId, traits }: IdentifyParams) => {
     if (!userId && !traits) {
-      throw new Error('You must provide an id or traits to identify');
+      throw new Error('You must provide either userId or traits to identify');
     }
-    return NativeCustomerIO.identify(userId, traits);
-  };
-
-  static readonly clearIdentify = async () => {
-    return NativeCustomerIO.clearIdentify();
-  };
-
-  static readonly track = async (
-    name: string,
-    properties?: Record<string, any>
-  ) => {
-    CustomerIO.assrtInitialized();
-    if (!name) {
-      throw new Error('You must provide a name to track');
+    if (userId !== undefined) {
+      assert.string(userId, 'userId', { allowEmpty: false, usage: 'Identify' });
     }
-    return NativeCustomerIO.track(name, properties);
-  };
-
-  static readonly screen = async (
-    title: string,
-    properties?: Record<string, any>
-  ) => {
-    CustomerIO.assrtInitialized();
-    if (!title) {
-      throw new Error('You must provide a name to screen');
+    if (traits !== undefined) {
+      assert.record(traits, 'traits', { usage: 'Identify' });
     }
-    return NativeCustomerIO.screen(title, properties);
-  };
 
-  static readonly setProfileAttributes = async (
-    attributes: Record<string, any>
-  ) => {
-    return NativeCustomerIO.setProfileAttributes(attributes);
-  };
+    return withNativeModule((native) => native.identify({ userId, traits }));
+  },
 
-  static readonly setDeviceAttributes = async (
-    attributes: Record<string, any>
-  ) => {
-    return NativeCustomerIO.setDeviceAttributes(attributes);
-  };
+  clearIdentify: () => {
+    return withNativeModule((native) => native.clearIdentify());
+  },
 
-  static readonly registerDeviceToken = async (token: string) => {
-    if (token === null || token === undefined) {
-      throw new Error(
-        'You must provide a valid token to register device token.'
-      );
-    }
-    NativeCustomerIO.registerDeviceToken(token);
-  };
+  track: (name: string, properties?: CustomAttributes) => {
+    assert.string(name, 'name', { usage: 'Track Event' });
 
-  static readonly deleteDeviceToken = async () => {
-    NativeCustomerIO.deleteDeviceToken();
-  };
+    return withNativeModule((native) => native.track(name, properties));
+  },
 
-  static readonly isInitialized = () => CustomerIO.initialized;
+  screen: (title: string, properties?: CustomAttributes) => {
+    assert.string(title, 'title', { usage: 'Screen' });
 
-  static readonly inAppMessaging = new CustomerIOInAppMessaging();
-  static readonly pushMessaging = new CustomerIOPushMessaging();
+    return withNativeModule((native) => native.screen(title, properties));
+  },
 
-  private static readonly assrtInitialized = () => {
-    if (!CustomerIO.initialized) {
-      throw new Error('CustomerIO must be initialized before use');
-    }
-  };
-}
+  setProfileAttributes: (attributes: CustomAttributes) => {
+    assert.record(attributes, 'attributes', { usage: 'Profile' });
+
+    return withNativeModule((native) =>
+      native.setProfileAttributes(attributes)
+    );
+  },
+
+  setDeviceAttributes: (attributes: CustomAttributes) => {
+    assert.record(attributes, 'attributes', { usage: 'Device' });
+
+    return withNativeModule((native) => native.setDeviceAttributes(attributes));
+  },
+
+  registerDeviceToken: (token: string) => {
+    assert.string(token, 'token', { usage: 'Device' });
+
+    withNativeModule((native) => native.registerDeviceToken(token));
+  },
+
+  deleteDeviceToken: () => {
+    withNativeModule((native) => native.deleteDeviceToken());
+  },
+
+  isInitialized() {
+    return _initialized;
+  },
+
+  inAppMessaging: new CustomerIOInAppMessaging(),
+  pushMessaging: new CustomerIOPushMessaging(),
+} satisfies NativeSpec;
