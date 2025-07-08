@@ -146,8 +146,5 @@
         "InlineMessageNative": "RCTInlineMessageNative"
       }
     }
-  },
-  "dependencies": {
-    "customerio-reactnative": "^4.2.7"
   }
 }
