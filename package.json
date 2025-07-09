@@ -19,7 +19,7 @@
     },
     "./package.json": "./package.json"
   },
-  "cioNativeiOSSdkVersion": "= 3.10.7",
+  "cioNativeiOSSdkVersion": "= 3.10.8",
   "files": [
     "src",
     "lib",
