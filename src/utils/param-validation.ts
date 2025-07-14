@@ -16,6 +16,13 @@ function buildErrorMessage(
 }
 
 /**
+ * Returns true if the value is undefined or null.
+ */
+function isUndefined(value: unknown): boolean {
+  return value === undefined || value === null;
+}
+
+/**
  * Throws an error if the condition is true.
  * Use this to fail validation checks with cleaner syntax.
  */
@@ -34,7 +41,7 @@ function failIfUndefined(
   fieldName: string,
   usage?: string
 ): void {
-  failIf(value === undefined || value === null, () =>
+  failIf(isUndefined(value), () =>
     buildErrorMessage(usage, fieldName, 'is required')
   );
 }
@@ -49,11 +56,17 @@ function validateString(
   options: {
     allowEmpty?: boolean;
     usage?: string;
+    optional?: boolean;
   } = { allowEmpty: true }
 ) {
-  const prefix = options.usage ? `${options.usage} ` : '';
+  const { allowEmpty, usage, optional } = options;
+  if (optional && isUndefined(value)) {
+    return; // Skip validation for optional fields
+  }
 
-  failIfUndefined(value, fieldName, options.usage);
+  const prefix = usage ? `${usage} ` : '';
+
+  failIfUndefined(value, fieldName, usage);
   failIf(
     typeof value !== 'string',
     () => `${prefix}"${fieldName}" must be a string.`
@@ -62,7 +75,7 @@ function validateString(
   // we can safely cast it here without additional checks.
   const typedValue = value as string;
   failIf(
-    !options.allowEmpty && typedValue.trim() === '',
+    !allowEmpty && typedValue.trim() === '',
     () => `${prefix}"${fieldName}" must be a non-empty string.`
   );
 }
@@ -76,12 +89,18 @@ function validateRecord(
   options: {
     usage?: string;
     expectedType?: string;
+    optional?: boolean;
   } = {}
 ) {
-  const prefix = options.usage ? `${options.usage} ` : '';
-  const typeName = options.expectedType ?? 'plain';
+  const { usage, expectedType, optional } = options;
+  if (optional && isUndefined(value)) {
+    return; // Skip validation for optional fields
+  }
 
-  failIfUndefined(value, fieldName, options.usage);
+  const prefix = usage ? `${usage} ` : '';
+  const typeName = expectedType ?? 'plain';
+
+  failIfUndefined(value, fieldName, usage);
   failIf(
     typeof value !== 'object' || Array.isArray(value),
     () => `${prefix}"${fieldName}" must be a valid ${typeName} object.`
@@ -120,4 +139,8 @@ export const assert: {
   string: validateString,
   record: validateRecord,
   config: validateConfig,
+};
+
+export const validate = {
+  isUndefined: isUndefined,
 };

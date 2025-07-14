@@ -11,7 +11,7 @@ import {
   type NativeSDKArgs,
 } from './specs/modules/NativeCustomerIO';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
-import { assert } from './utils/param-validation';
+import { assert, validate } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
 
@@ -67,15 +67,16 @@ export const CustomerIO = {
   },
 
   identify: ({ userId, traits }: IdentifyParams) => {
-    if (!userId && !traits) {
+    if (validate.isUndefined(userId) && validate.isUndefined(traits)) {
       throw new Error('You must provide either userId or traits to identify');
     }
-    if (userId !== undefined) {
-      assert.string(userId, 'userId', { allowEmpty: false, usage: 'Identify' });
-    }
-    if (traits !== undefined) {
-      assert.record(traits, 'traits', { usage: 'Identify' });
-    }
+
+    assert.string(userId, 'userId', {
+      allowEmpty: false,
+      usage: 'Identify',
+      optional: true,
+    });
+    assert.record(traits, 'traits', { usage: 'Identify', optional: true });
 
     return withNativeModule((native) => native.identify({ userId, traits }));
   },
@@ -86,14 +87,20 @@ export const CustomerIO = {
 
   track: (name: string, properties?: CustomAttributes) => {
     assert.string(name, 'name', { usage: 'Track Event' });
-    assert.record(properties, 'properties', { usage: 'Track Event' });
+    assert.record(properties, 'properties', {
+      usage: 'Track Event',
+      optional: true,
+    });
 
     return withNativeModule((native) => native.track(name, properties));
   },
 
   screen: (title: string, properties?: CustomAttributes) => {
     assert.string(title, 'title', { usage: 'Screen' });
-    assert.record(properties, 'properties', { usage: 'Screen' });
+    assert.record(properties, 'properties', {
+      usage: 'Screen',
+      optional: true,
+    });
 
     return withNativeModule((native) => native.screen(title, properties));
   },
