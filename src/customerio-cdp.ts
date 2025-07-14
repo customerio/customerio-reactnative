@@ -7,7 +7,6 @@ import {
   default as NativeModule,
   type CioConfig,
   type Spec as CodegenSpec,
-  type CustomAttributes,
   type IdentifyParams,
   type NativeSDKArgs,
 } from './specs/modules/NativeCustomerIO';
@@ -15,6 +14,13 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 import { assert } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
+
+/**
+ * Redefine CustomAttributes for public API with proper typing as native spec uses `Object` for
+ * Codegen compatibility.
+ * This provides better TypeScript experience while maintaining compatibility with native bridge.
+ */
+type CustomAttributes = Record<string, any>;
 
 // Ensures all methods defined in codegen spec are implemented by the public module
 interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {
@@ -47,17 +53,11 @@ export const CustomerIO = {
       NativeLoggerListener.initialize();
     }
 
-    const packageVersion = packageJson.version ?? '';
-    const args: NativeSDKArgs = {
-      packageSource: 'ReactNative',
-      packageVersion: packageVersion,
-    };
-
     const expoVersion = packageJson.expoVersion ?? '';
-    if (expoVersion !== '') {
-      args.packageSource = 'Expo';
-      args.packageVersion = expoVersion;
-    }
+    const args: NativeSDKArgs = {
+      packageSource: expoVersion ? 'Expo' : 'ReactNative',
+      packageVersion: expoVersion || packageJson.version || '',
+    };
 
     return callNativeModule(NativeModule, (native) => {
       let result = native.initialize(config, args);
@@ -86,12 +86,14 @@ export const CustomerIO = {
 
   track: (name: string, properties?: CustomAttributes) => {
     assert.string(name, 'name', { usage: 'Track Event' });
+    assert.record(properties, 'properties', { usage: 'Track Event' });
 
     return withNativeModule((native) => native.track(name, properties));
   },
 
   screen: (title: string, properties?: CustomAttributes) => {
     assert.string(title, 'title', { usage: 'Screen' });
+    assert.record(properties, 'properties', { usage: 'Screen' });
 
     return withNativeModule((native) => native.screen(title, properties));
   },
