@@ -7,14 +7,20 @@ import {
   default as NativeModule,
   type CioConfig,
   type Spec as CodegenSpec,
-  type CustomAttributes,
   type IdentifyParams,
   type NativeSDKArgs,
 } from './specs/modules/NativeCustomerIO';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
-import { assert } from './utils/param-validation';
+import { assert, validate } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
+
+/**
+ * Redefine CustomAttributes for public API with proper typing as native spec uses `Object` for
+ * Codegen compatibility.
+ * This provides better TypeScript experience while maintaining compatibility with native bridge.
+ */
+type CustomAttributes = Record<string, any>;
 
 // Ensures all methods defined in codegen spec are implemented by the public module
 interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {
@@ -47,17 +53,11 @@ export const CustomerIO = {
       NativeLoggerListener.initialize();
     }
 
-    const packageVersion = packageJson.version ?? '';
-    const args: NativeSDKArgs = {
-      packageSource: 'ReactNative',
-      packageVersion: packageVersion,
-    };
-
     const expoVersion = packageJson.expoVersion ?? '';
-    if (expoVersion !== '') {
-      args.packageSource = 'Expo';
-      args.packageVersion = expoVersion;
-    }
+    const args: NativeSDKArgs = {
+      packageSource: expoVersion ? 'Expo' : 'ReactNative',
+      packageVersion: expoVersion || packageJson.version || '',
+    };
 
     return callNativeModule(NativeModule, (native) => {
       let result = native.initialize(config, args);
@@ -67,15 +67,16 @@ export const CustomerIO = {
   },
 
   identify: ({ userId, traits }: IdentifyParams) => {
-    if (!userId && !traits) {
+    if (validate.isUndefined(userId) && validate.isUndefined(traits)) {
       throw new Error('You must provide either userId or traits to identify');
     }
-    if (userId !== undefined) {
-      assert.string(userId, 'userId', { allowEmpty: false, usage: 'Identify' });
-    }
-    if (traits !== undefined) {
-      assert.record(traits, 'traits', { usage: 'Identify' });
-    }
+
+    assert.string(userId, 'userId', {
+      allowEmpty: false,
+      usage: 'Identify',
+      optional: true,
+    });
+    assert.record(traits, 'traits', { usage: 'Identify', optional: true });
 
     return withNativeModule((native) => native.identify({ userId, traits }));
   },
@@ -86,12 +87,20 @@ export const CustomerIO = {
 
   track: (name: string, properties?: CustomAttributes) => {
     assert.string(name, 'name', { usage: 'Track Event' });
+    assert.record(properties, 'properties', {
+      usage: 'Track Event',
+      optional: true,
+    });
 
     return withNativeModule((native) => native.track(name, properties));
   },
 
   screen: (title: string, properties?: CustomAttributes) => {
     assert.string(title, 'title', { usage: 'Screen' });
+    assert.record(properties, 'properties', {
+      usage: 'Screen',
+      optional: true,
+    });
 
     return withNativeModule((native) => native.screen(title, properties));
   },

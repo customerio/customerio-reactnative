@@ -82,10 +82,11 @@ export interface IdentifyParams {
 
 /**
  * Key-value pairs for custom user attributes and event properties.
- * We use `Object` instead of `Record<string, any>` because React Native
- * Codegen does not yet support generic types like `Record`
+ * Uses `Object` type for Codegen compatibility, public API redefines as
+ * `Record<string, any>` for better typing.
+ * Do not export to avoid type conflicts between native bridge and public API.
  */
-export type CustomAttributes = Object;
+type CustomAttributes = Object;
 
 // =============================================================================
 // TURBO MODULE SPEC – Defines native bridge interface
