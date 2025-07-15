@@ -31,8 +31,8 @@ object CustomerIOReactNativePackageImpl {
         val inAppMessagingModule = modules.getOrPut(RNCIOInAppMessaging.NAME) {
             RNCIOInAppMessaging(reactContext)
         } as RNCIOInAppMessaging
-        val mainModule = modules.getOrPut(CustomerIOReactNativeModule.NAME) {
-            CustomerIOReactNativeModule(
+        val mainModule = modules.getOrPut(NativeCustomerIOModuleImpl.NAME) {
+            NativeCustomerIOModule(
                 reactContext = reactContext,
                 pushMessagingModule = pushMessagingModule,
                 inAppMessagingModule = inAppMessagingModule,
@@ -43,7 +43,7 @@ object CustomerIOReactNativePackageImpl {
             RNCIOConsoleLoggerModule.NAME to loggerModule,
             RNCIOPushMessaging.NAME to pushMessagingModule,
             RNCIOInAppMessaging.NAME to inAppMessagingModule,
-            CustomerIOReactNativeModule.NAME to mainModule
+            NativeCustomerIOModuleImpl.NAME to mainModule
         )
     }
 
