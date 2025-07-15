@@ -1,3 +1,9 @@
+## [4.4.3](https://github.com/customerio/customerio-reactnative/compare/4.4.2...4.4.3) (2025-07-09)
+
+### Bug Fixes
+
+* Preserve numeric types when doing sanitization for JSON ([#460](https://github.com/customerio/customerio-reactnative/issues/460)) ([b1e5080](https://github.com/customerio/customerio-reactnative/commit/b1e5080dd1f225d37bafd597b0bab3185d14ead8))
+
 ## [4.4.2](https://github.com/customerio/customerio-reactnative/compare/4.4.1...4.4.2) (2025-07-04)
 
 ### Bug Fixes

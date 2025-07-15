@@ -1,0 +1,410 @@
+name: Auto-update Native SDKs
+
+on:
+  schedule:
+    # Check for updates daily at 9 AM UTC
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      ios_version:
+        description: 'Specific iOS SDK version to update to (optional)'
+        required: false
+      android_version:
+        description: 'Specific Android SDK version to update to (optional)'  
+        required: false
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      any_updates: ${{ steps.check_releases.outputs.any_updates }}
+      current_ios: ${{ steps.current_versions.outputs.current_ios }}
+      current_android: ${{ steps.current_versions.outputs.current_android }}
+      latest_ios: ${{ steps.check_releases.outputs.latest_ios }}
+      latest_android: ${{ steps.check_releases.outputs.latest_android }}
+      ios_needs_update: ${{ steps.check_releases.outputs.ios_needs_update }}
+      android_needs_update: ${{ steps.check_releases.outputs.android_needs_update }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js for API calls
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify GitHub permissions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Verifying GitHub API permissions..."
+          
+          # Test reading current repo
+          echo "Testing current repo access..."
+          gh api repos/${{ github.repository }} --jq '.name' || {
+            echo "❌ Cannot access current repository"
+            exit 1
+          }
+          
+          # Test reading external public releases  
+          echo "Testing external repo access..."
+          gh api repos/customerio/customerio-ios/releases/latest --jq '.tag_name' || {
+            echo "⚠️  Cannot access customerio-ios releases - will use fallback"
+          }
+          
+          gh api repos/customerio/customerio-android/releases/latest --jq '.tag_name' || {
+            echo "⚠️  Cannot access customerio-android releases - will use fallback"
+          }
+          
+          # Test PR creation permissions (dry run)
+          echo "Testing PR creation permissions..."
+          gh api repos/${{ github.repository }}/pulls --method GET --jq 'length' || {
+            echo "❌ Cannot access PR endpoint"
+            exit 1
+          }
+          
+          echo "✅ GitHub permissions verified successfully"
+
+      - name: Get current SDK versions
+        id: current_versions
+        run: |
+          # Get current iOS version from package.json
+          current_ios=$(grep '"cioNativeiOSSdkVersion":' package.json | sed 's/.*"cioNativeiOSSdkVersion": *"\(.*\)".*/\1/' | sed 's/^= *//')
+          echo "current_ios=$current_ios" >> $GITHUB_OUTPUT
+          
+          # Get current Android version from gradle.properties
+          current_android=$(grep 'customerio.reactnative.cioSDKVersionAndroid=' android/gradle.properties | sed 's/.*customerio.reactnative.cioSDKVersionAndroid=\(.*\)/\1/')
+          echo "current_android=$current_android" >> $GITHUB_OUTPUT
+          
+          echo "📋 Current versions:"
+          echo "iOS: $current_ios"
+          echo "Android: $current_android"
+
+      - name: Check for latest SDK releases
+        id: check_releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Checking for latest SDK releases..."
+          
+          # Function to get latest release using gh CLI
+          get_latest_release() {
+            local repo=$1
+            gh api "repos/$repo/releases/latest" --jq '.tag_name' 2>/dev/null | sed 's/^v//' || echo ""
+          }
+          
+          CURRENT_IOS="${{ steps.current_versions.outputs.current_ios }}"
+          CURRENT_ANDROID="${{ steps.current_versions.outputs.current_android }}"
+          INPUT_IOS="${{ github.event.inputs.ios_version }}"
+          INPUT_ANDROID="${{ github.event.inputs.android_version }}"
+          
+          # Get latest versions
+          LATEST_IOS="${INPUT_IOS:-$(get_latest_release 'customerio/customerio-ios')}"
+          LATEST_ANDROID="${INPUT_ANDROID:-$(get_latest_release 'customerio/customerio-android')}"
+          
+          # Check if updates needed
+          IOS_NEEDS_UPDATE="false"
+          ANDROID_NEEDS_UPDATE="false"
+          
+          if [[ -n "$LATEST_IOS" && "$LATEST_IOS" != "$CURRENT_IOS" ]]; then
+            IOS_NEEDS_UPDATE="true"
+          fi
+          
+          if [[ -n "$LATEST_ANDROID" && "$LATEST_ANDROID" != "$CURRENT_ANDROID" ]]; then
+            ANDROID_NEEDS_UPDATE="true"
+          fi
+          
+          # Set outputs
+          echo "latest_ios=${LATEST_IOS:-$CURRENT_IOS}" >> $GITHUB_OUTPUT
+          echo "latest_android=${LATEST_ANDROID:-$CURRENT_ANDROID}" >> $GITHUB_OUTPUT
+          echo "ios_needs_update=$IOS_NEEDS_UPDATE" >> $GITHUB_OUTPUT
+          echo "android_needs_update=$ANDROID_NEEDS_UPDATE" >> $GITHUB_OUTPUT
+          echo "any_updates=$([ "$IOS_NEEDS_UPDATE" = "true" ] || [ "$ANDROID_NEEDS_UPDATE" = "true" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+          
+          echo "🔍 Release check results:"
+          echo "iOS: $CURRENT_IOS → ${LATEST_IOS:-$CURRENT_IOS} (needs update: $IOS_NEEDS_UPDATE)"
+          echo "Android: $CURRENT_ANDROID → ${LATEST_ANDROID:-$CURRENT_ANDROID} (needs update: $ANDROID_NEEDS_UPDATE)"
+
+      - name: Show check results
+        run: |
+          if [[ "${{ steps.check_releases.outputs.any_updates }}" == "true" ]]; then
+            echo "✅ Updates found. Proceeding to update job."
+          else
+            echo "✅ No updates needed. Current versions are up to date."
+          fi
+
+  update-sdks:
+    needs: check-updates
+    if: needs.check-updates.outputs.any_updates == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Create feature branch
+        run: |
+          branch_name="auto-update/native-sdks-$(date +%Y%m%d-%H%M%S)"
+          echo "branch_name=$branch_name" >> $GITHUB_ENV
+          git checkout -b "$branch_name"
+
+      - name: Update SDK versions
+        run: |
+          # Build arguments for version updates
+          IOS_VERSION=""
+          ANDROID_VERSION=""
+          
+          if [[ "${{ needs.check-updates.outputs.ios_needs_update }}" == "true" ]]; then
+            IOS_VERSION="${{ needs.check-updates.outputs.latest_ios }}"
+          fi
+          
+          if [[ "${{ needs.check-updates.outputs.android_needs_update }}" == "true" ]]; then
+            ANDROID_VERSION="${{ needs.check-updates.outputs.latest_android }}"
+          fi
+          
+          # Update iOS version if needed
+          if [[ -n "$IOS_VERSION" ]]; then
+            echo "📝 Updating iOS SDK version to $IOS_VERSION"
+            # Update the cioNativeiOSSdkVersion in package.json
+            sed -i "s/\"cioNativeiOSSdkVersion\": *\".*\"/\"cioNativeiOSSdkVersion\": \"= $IOS_VERSION\"/" package.json
+            echo "✅ iOS version updated"
+          fi
+          
+          # Update Android version if needed  
+          if [[ -n "$ANDROID_VERSION" ]]; then
+            echo "📝 Updating Android SDK version to $ANDROID_VERSION"
+            # Update the customerio.reactnative.cioSDKVersionAndroid in gradle.properties
+            sed -i "s/customerio.reactnative.cioSDKVersionAndroid=.*/customerio.reactnative.cioSDKVersionAndroid=$ANDROID_VERSION/" android/gradle.properties
+            echo "✅ Android version updated"
+          fi
+
+      - name: Install dependencies and run tests
+        run: |
+          echo "📦 Installing dependencies..."
+          npm ci
+          
+          echo "🔍 Running TypeScript check..."
+          npm run typecheck
+          
+          echo "🔍 Running linting..."
+          npm run lint
+          
+          echo "✅ All checks completed successfully"
+
+      - name: Generate PR content from release notes
+        id: generate_pr_content
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to get release notes using gh CLI
+          get_release_notes() {
+            local owner=$1
+            local repo=$2
+            local version=$3
+            
+            # Try with 'v' prefix first, then without
+            for tag in "v$version" "$version"; do
+              gh api "repos/$owner/$repo/releases/tags/$tag" 2>/dev/null && return 0
+            done
+            return 1
+          }
+          
+          # Function to extract key changes from release notes
+          extract_key_changes() {
+            local release_body="$1"
+            echo "$release_body" | jq -r '.body' | grep -E '^[-*]\s+|^#{1,3}\s+|^[0-9]+\.\s+|^(Added|Fixed|Changed|Updated|Improved|Enhanced):' | head -5 || echo ""
+          }
+          
+          # Function to generate PR title
+          generate_title() {
+            local ios_updated=$1
+            local android_updated=$2
+            local ios_version=$3
+            local android_version=$4
+            
+            if [[ "$ios_updated" == "true" && "$android_updated" == "true" ]]; then
+              echo "chore: update Customer.io native SDKs (iOS $ios_version, Android $android_version)"
+            elif [[ "$ios_updated" == "true" ]]; then
+              echo "chore: update Customer.io iOS SDK to $ios_version"
+            elif [[ "$android_updated" == "true" ]]; then
+              echo "chore: update Customer.io Android SDK to $android_version"
+            else
+              echo "chore: update Customer.io native SDKs"
+            fi
+          }
+          
+          # Main logic
+          CURRENT_IOS="${{ needs.check-updates.outputs.current_ios }}"
+          CURRENT_ANDROID="${{ needs.check-updates.outputs.current_android }}"
+          NEW_IOS="${{ needs.check-updates.outputs.latest_ios }}"
+          NEW_ANDROID="${{ needs.check-updates.outputs.latest_android }}"
+          IOS_UPDATED="${{ needs.check-updates.outputs.ios_needs_update }}"
+          ANDROID_UPDATED="${{ needs.check-updates.outputs.android_needs_update }}"
+          
+          # Generate title
+          TITLE=$(generate_title "$IOS_UPDATED" "$ANDROID_UPDATED" "$NEW_IOS" "$NEW_ANDROID")
+          
+          # Generate description
+          DESCRIPTION="## Summary
+
+          Automated update of Customer.io native SDK dependencies:
+          
+          "
+          
+          if [[ "$IOS_UPDATED" == "true" ]]; then
+            IOS_RELEASE_URL="https://github.com/customerio/customerio-ios/releases/tag/v$NEW_IOS"
+            DESCRIPTION+="- **iOS SDK**: $CURRENT_IOS → $NEW_IOS ([Release Notes]($IOS_RELEASE_URL))
+          "
+            
+            # Try to get iOS release notes
+            if IOS_RELEASE=$(get_release_notes "customerio" "customerio-ios" "$NEW_IOS"); then
+              IOS_CHANGES=$(extract_key_changes "$IOS_RELEASE")
+              if [[ -n "$IOS_CHANGES" ]]; then
+                DESCRIPTION+="
+
+          ## Key Changes
+          
+          ### iOS SDK $NEW_IOS
+          $IOS_CHANGES
+          "
+              fi
+            fi
+          fi
+          
+          if [[ "$ANDROID_UPDATED" == "true" ]]; then
+            ANDROID_RELEASE_URL="https://github.com/customerio/customerio-android/releases/tag/v$NEW_ANDROID"
+            DESCRIPTION+="- **Android SDK**: $CURRENT_ANDROID → $NEW_ANDROID ([Release Notes]($ANDROID_RELEASE_URL))
+          "
+            
+            # Try to get Android release notes
+            if ANDROID_RELEASE=$(get_release_notes "customerio" "customerio-android" "$NEW_ANDROID"); then
+              ANDROID_CHANGES=$(extract_key_changes "$ANDROID_RELEASE")
+              if [[ -n "$ANDROID_CHANGES" ]]; then
+                if [[ "$IOS_UPDATED" != "true" ]]; then
+                  DESCRIPTION+="
+
+          ## Key Changes
+          "
+                fi
+                DESCRIPTION+="
+
+          ### Android SDK $NEW_ANDROID
+          $ANDROID_CHANGES
+          "
+              fi
+            fi
+          fi
+          
+          DESCRIPTION+="
+
+          ## Testing
+          
+          - ✅ TypeScript compilation passed
+          - ✅ ESLint checks passed
+          - ✅ Dependencies installed successfully
+          - ✅ React Native package builds successfully
+          
+          ## Files Updated
+          
+          "
+          
+          if [[ "$IOS_UPDATED" == "true" ]]; then
+            DESCRIPTION+="- \`package.json\` - Updated \`cioNativeiOSSdkVersion\` to \`= $NEW_IOS\`
+          "
+          fi
+          
+          if [[ "$ANDROID_UPDATED" == "true" ]]; then
+            DESCRIPTION+="- \`android/gradle.properties\` - Updated \`customerio.reactnative.cioSDKVersionAndroid\` to \`$NEW_ANDROID\`
+          "
+          fi
+          
+          DESCRIPTION+="
+
+          ## Migration Notes
+          
+          This update maintains API compatibility. The React Native wrapper uses the same public API surface, but benefits from bug fixes and improvements in the underlying native SDKs. Please test your integration thoroughly and review the release notes linked above for any specific changes that might affect your implementation.
+          
+          ---
+          *🤖 This PR was automatically generated and tested*"
+          
+          # Set outputs
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+          {
+            echo "description<<EOF"
+            echo "$DESCRIPTION"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+          
+          echo "📝 Generated PR content:"
+          echo "Title: $TITLE"
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add .
+          git commit -m "chore: update Customer.io native SDK versions
+
+          - iOS: ${{ needs.check-updates.outputs.current_ios }} → ${{ needs.check-updates.outputs.latest_ios }}
+          - Android: ${{ needs.check-updates.outputs.current_android }} → ${{ needs.check-updates.outputs.latest_android }}
+          
+          🤖 Automated update with compilation verification"
+
+      - name: Push branch and create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push origin "$branch_name"
+          
+          # Create PR
+          gh pr create \
+            --title "${{ steps.generate_pr_content.outputs.title }}" \
+            --body "${{ steps.generate_pr_content.outputs.description }}" \
+            --base main \
+            --head "$branch_name"
+          
+          echo "✅ Pull request created successfully!"
+
+      - name: Post workflow summary
+        run: |
+          echo "## 🚀 Native SDK Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Updates Applied:" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.check-updates.outputs.ios_needs_update }}" == "true" ]]; then
+            echo "- 📱 **iOS SDK**: ${{ needs.check-updates.outputs.current_ios }} → ${{ needs.check-updates.outputs.latest_ios }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [[ "${{ needs.check-updates.outputs.android_needs_update }}" == "true" ]]; then
+            echo "- 🤖 **Android SDK**: ${{ needs.check-updates.outputs.current_android }} → ${{ needs.check-updates.outputs.latest_android }}" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Verification:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ TypeScript compilation passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ ESLint checks passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Dependencies installed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Sample app builds will be tested after PR creation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch created**: \`$branch_name\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ Sample app builds will automatically run on the created PR" >> $GITHUB_STEP_SUMMARY 

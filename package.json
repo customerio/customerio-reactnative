@@ -1,6 +1,6 @@
 {
   "name": "customerio-reactnative",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "description": "Official Customer.io SDK using React Native. Track customers and send messages to your iOS/Android apps.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
@@ -19,7 +19,7 @@
     },
     "./package.json": "./package.json"
   },
-  "cioNativeiOSSdkVersion": "= 3.10.7",
+  "cioNativeiOSSdkVersion": "= 3.10.8",
   "files": [
     "src",
     "lib",
