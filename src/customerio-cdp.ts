@@ -3,24 +3,20 @@ import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 import {
-  CioLogLevel,
   default as NativeModule,
-  type CioConfig,
   type Spec as CodegenSpec,
-  type IdentifyParams,
-  type NativeSDKArgs,
 } from './specs/modules/NativeCustomerIO';
+import {
+  CioLogLevel,
+  type CioConfig,
+  type CustomAttributes,
+  type IdentifyParams,
+} from './types';
+import type { NativeSDKArgs } from './types/internal';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 import { assert, validate } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
-
-/**
- * Redefine CustomAttributes for public API with proper typing as native spec uses `Object` for
- * Codegen compatibility.
- * This provides better TypeScript experience while maintaining compatibility with native bridge.
- */
-type CustomAttributes = Record<string, any>;
 
 // Ensures all methods defined in codegen spec are implemented by the public module
 interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {
@@ -46,6 +42,7 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 };
 
 export const CustomerIO = {
+  /** Initialize the CustomerIO SDK with given configuration. */
   initialize: (config: CioConfig) => {
     assert.config(config);
 
@@ -66,6 +63,7 @@ export const CustomerIO = {
     });
   },
 
+  /** Identify a user to start tracking their activity. Requires userId, traits, or both. */
   identify: ({ userId, traits }: IdentifyParams) => {
     if (validate.isUndefined(userId) && validate.isUndefined(traits)) {
       throw new Error('You must provide either userId or traits to identify');
@@ -81,10 +79,12 @@ export const CustomerIO = {
     return withNativeModule((native) => native.identify({ userId, traits }));
   },
 
+  /** Clear current user identification and stop tracking. */
   clearIdentify: () => {
     return withNativeModule((native) => native.clearIdentify());
   },
 
+  /** Track an event with optional properties. */
   track: (name: string, properties?: CustomAttributes) => {
     assert.string(name, 'name', { usage: 'Track Event' });
     assert.record(properties, 'properties', {
@@ -95,6 +95,7 @@ export const CustomerIO = {
     return withNativeModule((native) => native.track(name, properties));
   },
 
+  /** Track a screen view event with optional properties. */
   screen: (title: string, properties?: CustomAttributes) => {
     assert.string(title, 'title', { usage: 'Screen' });
     assert.record(properties, 'properties', {
@@ -105,6 +106,7 @@ export const CustomerIO = {
     return withNativeModule((native) => native.screen(title, properties));
   },
 
+  /** Set or update attributes for the currently identified user profile. */
   setProfileAttributes: (attributes: CustomAttributes) => {
     assert.record(attributes, 'attributes', { usage: 'Profile' });
 
@@ -113,22 +115,26 @@ export const CustomerIO = {
     );
   },
 
+  /** Set attributes for the current device. */
   setDeviceAttributes: (attributes: CustomAttributes) => {
     assert.record(attributes, 'attributes', { usage: 'Device' });
 
     return withNativeModule((native) => native.setDeviceAttributes(attributes));
   },
 
+  /** Register a device token for push notifications. */
   registerDeviceToken: (token: string) => {
     assert.string(token, 'token', { usage: 'Device' });
 
     withNativeModule((native) => native.registerDeviceToken(token));
   },
 
+  /** Remove the current device token to stop receiving push notifications. */
   deleteDeviceToken: () => {
     withNativeModule((native) => native.deleteDeviceToken());
   },
 
+  /** Check if the CustomerIO SDK has been initialized. */
   isInitialized() {
     return _initialized;
   },

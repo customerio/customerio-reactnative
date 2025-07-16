@@ -1,7 +1,7 @@
 // Argument validation utilities for SDK internal use
 // Ensures input safety and throws clear errors when validation fails
 
-import type { CioConfig } from 'src/index';
+import type { CioConfig } from '../types';
 
 /**
  * Builds a standardized error message for validation failures.

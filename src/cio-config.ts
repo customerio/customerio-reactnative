@@ -1,11 +1,3 @@
-export {
-  CioLogLevel,
-  CioRegion,
-  PushClickBehaviorAndroid,
-  ScreenView,
-} from './specs/modules/NativeCustomerIO';
-export type { CioConfig } from './specs/modules/NativeCustomerIO';
-
 export type CioPushPermissionOptions = {
   ios?: {
     badge: boolean;
