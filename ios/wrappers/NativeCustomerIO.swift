@@ -6,44 +6,54 @@ import CioMessagingPush
 import React
 import UserNotifications
 
-@objc(CioRctWrapper)
-class CioRctWrapper: NSObject {
-    @objc var moduleRegistry: RCTModuleRegistry!
+@objc(NativeCustomerIO)
+public class NativeCustomerIO: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
 
-    @objc(initialize:args:)
-    func initialize(_ configJson: AnyObject, _ sdkArgs: AnyObject?) {
+    @objc
+    func initialize(_ config: [String: Any], args: [String: Any]) {
         do {
-            guard let sdkConfig = configJson as? [String: Any?] else {
-                logger.error("Initializing Customer.io SDK failed with error: Invalid config format")
-                return
-            }
-            let sdkParams = sdkArgs as? [String: Any?]
-            let packageSource = sdkParams?["packageSource"] as? String
-            let packageVersion = sdkParams?["packageVersion"] as? String
+            let packageSource = args["packageSource"] as? String
+            let packageVersion = args["packageVersion"] as? String
 
+            // Override SDK client info to include wrapper metadata in user agent
             if let source = packageSource, let sdkVersion = packageVersion {
-                DIGraphShared.shared.override(value: CustomerIOSdkClient(source: source, sdkVersion: sdkVersion), forType: SdkClient.self)
+                DIGraphShared.shared.override(
+                    value: CustomerIOSdkClient(source: source, sdkVersion: sdkVersion),
+                    forType: SdkClient.self
+                )
             }
 
-            let sdkConfigBuilder = try SDKConfigBuilder.create(from: sdkConfig)
+            let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
             CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
 
-            if let inAppConfig = try? MessagingInAppConfigBuilder.build(from: sdkConfig) {
-                MessagingInApp.initialize(withConfig: inAppConfig)
-                MessagingInApp.shared.setEventListener(self)
+            do {
+                // Initialize in-app messaging if config provided
+                if let inAppConfig = try MessagingInAppConfigBuilder.build(from: config) {
+                    MessagingInApp.initialize(withConfig: inAppConfig)
+                    MessagingInApp.shared.setEventListener(self)
+                }
+            } catch {
+                logger.error("[InApp] Failed to initialize module with error: \(error)")
             }
-            logger.debug("Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(configJson)")
+            logger.debug(
+                "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
+            )
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
         }
     }
 
     @objc
-    func identify(_ userId: String?, traits: [String: Any]?) {
+    func identify(_ params: [String: Any]?) {
+        let userId = params?["userId"] as? String
+        let traits = params?["traits"] as? [String: Any]
+
         if let userId = userId {
+            // Identify with userId and optional traits
             CustomerIO.shared.identify(userId: userId, traits: traits)
         } else if traits != nil {
+            // Anonymous profile identification with traits only
             if let traitsJson = try? JSON(traits as Any) {
                 CustomerIO.shared.identify(traits: traitsJson)
             } else {
@@ -70,13 +80,13 @@ class CioRctWrapper: NSObject {
     }
 
     @objc
-    func setProfileAttributes(_ attrs: [String: Any]) {
-        CustomerIO.shared.profileAttributes = attrs
+    func setProfileAttributes(_ attributes: [String: Any]) {
+        CustomerIO.shared.profileAttributes = attributes
     }
 
     @objc
-    func setDeviceAttributes(_ attrs: [String: Any]) {
-        CustomerIO.shared.deviceAttributes = attrs
+    func setDeviceAttributes(_ attributes: [String: Any]) {
+        CustomerIO.shared.deviceAttributes = attributes
     }
 
     @objc
@@ -90,8 +100,13 @@ class CioRctWrapper: NSObject {
     }
 }
 
-extension CioRctWrapper: InAppEventListener {
-    private func sendEvent(eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil) {
+// MARK: - In-App Message Event Handling
+
+extension NativeCustomerIO: InAppEventListener {
+    // Send in-app message events to React Native layer
+    private func sendEvent(
+        eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil
+    ) {
         var body = [
             CustomerioConstants.eventType: eventType,
             CustomerioConstants.messageId: message.messageId,
@@ -109,19 +124,22 @@ extension CioRctWrapper: InAppEventListener {
         )
     }
 
-    func messageShown(message: InAppMessage) {
+    public func messageShown(message: InAppMessage) {
         sendEvent(eventType: CustomerioConstants.messageShown, message: message)
     }
 
-    func messageDismissed(message: InAppMessage) {
+    public func messageDismissed(message: InAppMessage) {
         sendEvent(eventType: CustomerioConstants.messageDismissed, message: message)
     }
 
-    func errorWithMessage(message: InAppMessage) {
+    public func errorWithMessage(message: InAppMessage) {
         sendEvent(eventType: CustomerioConstants.errorWithMessage, message: message)
     }
 
-    func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
-        sendEvent(eventType: CustomerioConstants.messageActionTaken, message: message, actionValue: actionValue, actionName: actionName)
+    public func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
+        sendEvent(
+            eventType: CustomerioConstants.messageActionTaken, message: message, actionValue: actionValue,
+            actionName: actionName
+        )
     }
 }

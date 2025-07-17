@@ -144,6 +144,9 @@
     "ios": {
       "componentProvider": {
         "InlineMessageNative": "RCTInlineMessageNative"
+      },
+      "modulesProvider": {
+        "NativeCustomerIO": "RCTNativeCustomerIO"
       }
     }
   }
