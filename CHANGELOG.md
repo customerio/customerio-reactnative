@@ -1,3 +1,9 @@
+## [4.5.0](https://github.com/customerio/customerio-reactnative/compare/4.4.3...4.5.0) (2025-07-17)
+
+### Features
+
+* Add ability to configure messaging channels for local notifications ([#462](https://github.com/customerio/customerio-reactnative/issues/462)) ([2ddf8f5](https://github.com/customerio/customerio-reactnative/commit/2ddf8f500515e86baf7cb16b9ce56633a47b7c6b))
+
 ## [4.4.3](https://github.com/customerio/customerio-reactnative/compare/4.4.2...4.4.3) (2025-07-09)
 
 ### Bug Fixes
