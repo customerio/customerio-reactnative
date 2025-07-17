@@ -1,5 +1,5 @@
 import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
-import { CioLogLevel } from './cio-config';
+import { CioLogLevel } from './types';
 
 const LINKING_ERROR =
   `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: ` +
