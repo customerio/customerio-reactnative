@@ -72,5 +72,18 @@
       android:name="com.google.firebase.messaging.default_notification_color"
       android:resource="@color/notification_icon" />
 
+    <!-- These meta-data customizes CIO push notification messaging channel-->
+    <meta-data
+          android:name="io.customer.notification_channel_id"
+          android:value="custom_channel_rn" />
+    <meta-data
+        android:name="io.customer.notification_channel_name"
+        android:value="CIO Test" />
+    <!-- This values corresponds to Android Notification Manager' importance
+         as described here: https://developer.android.com/develop/ui/views/notifications/channels#importance -->
+    <meta-data
+        android:name="io.customer.notification_channel_importance"
+        android:value="4" />
+
   </application>
 </manifest>
