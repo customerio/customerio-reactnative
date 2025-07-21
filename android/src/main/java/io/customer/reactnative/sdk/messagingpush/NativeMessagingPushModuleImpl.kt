@@ -8,9 +8,7 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.facebook.react.bridge.ActivityEventListener
 import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.modules.core.PermissionAwareActivity
 import com.facebook.react.modules.core.PermissionListener
@@ -30,12 +28,19 @@ import io.customer.sdk.core.util.Logger
 import java.util.UUID
 
 /**
- * ReactNative module to hold push messages features in a single place to bridge with native code.
+ * Shared implementation for Customer.io Push Messaging Native SDK module.
+ * Contains the actual business logic used by both new and old architecture modules.
  */
-class RNCIOPushMessaging(
-    private val reactContext: ReactApplicationContext,
-) : ReactContextBaseJavaModule(reactContext), PermissionListener, ActivityEventListener {
-    override fun getName(): String = NAME
+object NativeMessagingPushModuleImpl : PermissionListener, ActivityEventListener {
+    const val NAME = "NativeCustomerIOMessagingPush"
+
+    /**
+     * Copying value os [Manifest.permission.POST_NOTIFICATIONS] as constant so we don't have to
+     * force newer compile sdk versions
+     */
+    private const val POST_NOTIFICATIONS_PERMISSION_NAME = "android.permission.POST_NOTIFICATIONS"
+    private const val BUILD_VERSION_CODE_TIRAMISU = 33
+    private const val POST_NOTIFICATIONS_PERMISSION_REQUEST = 24676
 
     private val logger: Logger = SDKComponent.logger
     private val pushModuleConfig: MessagingPushModuleConfig
@@ -47,10 +52,6 @@ class RNCIOPushMessaging(
      */
     private var notificationRequestPromise: Promise? = null
 
-    init {
-        reactContext.addActivityEventListener(this)
-    }
-
     /**
      * Adds push messaging module to native Android SDK based on the configuration provided by
      * customer app.
@@ -58,7 +59,7 @@ class RNCIOPushMessaging(
      * @param builder instance of CustomerIOBuilder to add push messaging module.
      * @param config configuration provided by customer app for push messaging module.
      */
-    internal fun addNativeModuleFromConfig(
+    fun addNativeModuleFromConfig(
         builder: CustomerIOBuilder,
         config: Map<String, Any>
     ) {
@@ -81,9 +82,12 @@ class RNCIOPushMessaging(
         builder.addCustomerIOModule(module)
     }
 
-    @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
-        promise.resolve(checkPushPermissionStatus().toReactNativeResult)
+    fun getPushPermissionStatus(
+        reactContext: ReactContext,
+        promise: Promise?,
+    ) {
+        val result = checkPushPermissionStatus(reactContext).toReactNativeResult
+        promise?.resolve(result)
     }
 
     /**
@@ -96,19 +100,22 @@ class RNCIOPushMessaging(
      * iOS only, unused on Android.
      * @param promise to resolve and return the results.
      */
-    @ReactMethod
-    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
+    fun showPromptForPushNotifications(
+        reactContext: ReactContext,
+        pushConfigurationOptions: ReadableMap?,
+        promise: Promise?,
+    ) {
         // Skip requesting permissions when already granted
-        if (checkPushPermissionStatus() == PermissionStatus.Granted) {
-            promise.resolve(PermissionStatus.Granted.toReactNativeResult)
+        if (checkPushPermissionStatus(reactContext) == PermissionStatus.Granted) {
+            promise?.resolve(PermissionStatus.Granted.toReactNativeResult)
             return
         }
 
         try {
-            val activity = reactApplicationContext.currentActivity
+            val activity = reactContext.currentActivity
             val permissionAwareActivity = activity as? PermissionAwareActivity
             if (permissionAwareActivity == null) {
-                promise.reject(
+                promise?.reject(
                     "E_ACTIVITY_DOES_NOT_EXIST",
                     "Permission cannot be requested because activity doesn't exist. Please make sure to request permission from UI components only"
                 )
@@ -122,7 +129,7 @@ class RNCIOPushMessaging(
                 this,
             )
         } catch (ex: Throwable) {
-            promise.reject(ex)
+            promise?.reject(ex)
             notificationRequestPromise = null
         }
     }
@@ -134,11 +141,15 @@ class RNCIOPushMessaging(
      * @param message push payload received from FCM.
      * @param handleNotificationTrigger indicating if the local notification should be triggered.
      */
-    @ReactMethod
-    fun handleMessage(message: ReadableMap?, handleNotificationTrigger: Boolean, promise: Promise) {
+    fun onMessageReceived(
+        reactContext: ReactContext,
+        message: ReadableMap?,
+        handleNotificationTrigger: Boolean,
+        promise: Promise?,
+    ) {
         try {
             if (message == null) {
-                promise.reject(IllegalArgumentException("Remote message cannot be null"))
+                promise?.reject(IllegalArgumentException("Remote message cannot be null"))
                 return
             }
 
@@ -150,10 +161,10 @@ class RNCIOPushMessaging(
                 remoteMessage = message.toFCMRemoteMessage(destination = destination),
                 handleNotificationTrigger = handleNotificationTrigger,
             )
-            promise.resolve(isNotificationHandled)
+            promise?.resolve(isNotificationHandled)
         } catch (ex: Throwable) {
             logger.error("Unable to handle push notification, reason: ${ex.message}")
-            promise.reject(ex)
+            promise?.reject(ex)
         }
     }
 
@@ -162,19 +173,18 @@ class RNCIOPushMessaging(
      * @returns Promise with device token as a string, or error if no token is
      * registered or the method fails to fetch token.
      */
-    @ReactMethod
-    fun getRegisteredDeviceToken(promise: Promise) {
+    fun getRegisteredDeviceToken(promise: Promise?) {
         try {
             // Get the device token from SDK
             val deviceToken: String? = CustomerIO.instance().registeredDeviceToken
 
             if (deviceToken != null) {
-                promise.resolve(deviceToken)
+                promise?.resolve(deviceToken)
             } else {
-                promise.reject("device_token_not_found", "The device token is not available.")
+                promise?.reject("device_token_not_found", "The device token is not available.")
             }
         } catch (e: Exception) {
-            promise.reject(
+            promise?.reject(
                 "error_getting_device_token",
                 "Error fetching registered device token.",
                 e
@@ -185,7 +195,7 @@ class RNCIOPushMessaging(
     /**
      * Checks current permission of push notification permission
      */
-    private fun checkPushPermissionStatus(): PermissionStatus =
+    private fun checkPushPermissionStatus(reactContext: ReactContext): PermissionStatus =
         // Skip requesting permissions for older versions where not required
         if (Build.VERSION.SDK_INT < BUILD_VERSION_CODE_TIRAMISU || ContextCompat.checkSelfPermission(
                 reactContext, POST_NOTIFICATIONS_PERMISSION_NAME,
@@ -251,16 +261,4 @@ class RNCIOPushMessaging(
      */
     private val PermissionStatus.toReactNativeResult: Any
         get() = this.name.uppercase()
-
-    companion object {
-        const val NAME = "CioRctPushMessaging"
-        /**
-         * Copying value os [Manifest.permission.POST_NOTIFICATIONS] as constant so we don't have to
-         * force newer compile sdk versions
-         */
-        private const val POST_NOTIFICATIONS_PERMISSION_NAME =
-            "android.permission.POST_NOTIFICATIONS"
-        private const val BUILD_VERSION_CODE_TIRAMISU = 33
-        private const val POST_NOTIFICATIONS_PERMISSION_REQUEST = 24676
-    }
 }

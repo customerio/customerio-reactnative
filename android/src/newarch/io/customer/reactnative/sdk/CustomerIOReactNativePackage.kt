@@ -10,7 +10,7 @@ import io.customer.reactnative.sdk.logging.RNCIOConsoleLoggerModule
 import io.customer.reactnative.sdk.messaginginapp.BaseInlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
-import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
+import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
 
 class CustomerIOReactNativePackage : BaseReactPackage() {
     // Caching native modules to avoid re-creating them multiple times
@@ -69,7 +69,10 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             ),
             createReactModuleInfoEntry(name = RNCIOConsoleLoggerModule.NAME),
             createReactModuleInfoEntry(name = RNCIOInAppMessaging.NAME),
-            createReactModuleInfoEntry(name = RNCIOPushMessaging.NAME),
+            createReactModuleInfoEntry(
+                name = NativeMessagingPushModuleImpl.NAME,
+                isTurboModule = true
+            ),
             createReactModuleInfoEntry(
                 name = BaseInlineInAppMessageViewManager.NAME,
                 isTurboModule = true
