@@ -4,7 +4,6 @@ import CioInternalCommon
 import CioMessagingInApp
 import CioMessagingPush
 import React
-import UserNotifications
 
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {

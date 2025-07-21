@@ -12,27 +12,35 @@ enum PushPermissionStatus: String, CaseIterable {
     }
 }
 
-@objc(CioRctPushMessaging)
-class CioRctPushMessaging: NSObject {
-    @objc static func requiresMainQueueSetup() -> Bool {
-        false /// false because our native module's initialization does not require access to UIKit
+@objc(NativeMessagingPush)
+public class NativeMessagingPush: NSObject {
+    private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
+
+    @objc
+    public func onMessageReceived(
+        _ message: NSDictionary,
+        handleNotificationTrigger: Bool,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject: @escaping RCTPromiseRejectBlock
+    ) {
+        Preconditions.unsupportedOnIOS(methodName: "onMessageReceived")
     }
 
     // Tracks `opened` push metrics when a push notification is interacted with.
     @objc
-    func trackNotificationResponseReceived(_ payload: NSDictionary) {
+    public func trackNotificationResponseReceived(_ payload: NSDictionary) {
         trackPushMetrics(payload: payload, event: .opened)
     }
 
     // Tracks `delivered` push metrics when a push notification is received.
     @objc
-    func trackNotificationReceived(_ payload: NSDictionary) {
+    public func trackNotificationReceived(_ payload: NSDictionary) {
         trackPushMetrics(payload: payload, event: .delivered)
     }
 
     // Get the currently registered device token for the app
-    @objc(getRegisteredDeviceToken:rejecter:)
-    func getRegisteredDeviceToken(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
+    @objc(getRegisteredDeviceToken:reject:)
+    public func getRegisteredDeviceToken(resolve: @escaping (RCTPromiseResolveBlock), reject: @escaping (RCTPromiseRejectBlock)) {
         guard let token = CustomerIO.shared.registeredDeviceToken else {
             reject(CustomerioConstants.cioTag, CustomerioConstants.showDeviceTokenFailureError, nil)
             return
@@ -41,19 +49,19 @@ class CioRctPushMessaging: NSObject {
     }
 
     private func trackPushMetrics(payload: NSDictionary, event: Metric) {
-        guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String, let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String
+        guard let deliveryId = payload[CustomerioConstants.CioDeliveryId] as? String,
+              let deviceToken = payload[CustomerioConstants.CioDeliveryToken] as? String
         else { return }
 
         MessagingPush.shared.trackMetric(deliveryID: deliveryId, event: event, deviceToken: deviceToken)
     }
 
-    @objc(showPromptForPushNotifications:resolver:rejecter:)
-    func showPromptForPushNotifications(options: [String: AnyHashable], resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter reject: @escaping (RCTPromiseRejectBlock)) {
+    @objc(showPromptForPushNotifications:resolve:reject:)
+    public func showPromptForPushNotifications(options: [String: AnyHashable], resolve: @escaping (RCTPromiseResolveBlock), reject: @escaping (RCTPromiseRejectBlock)) {
         // Show prompt if status is not determined
         getPushNotificationPermissionStatus { status in
             if status == .notDetermined {
                 self.requestPushAuthorization(options: options) { permissionStatus in
-
                     guard let isGranted = permissionStatus as? Bool else {
                         reject(CustomerioConstants.cioTag, CustomerioConstants.showPromptFailureError, permissionStatus as? Error)
                         return
@@ -66,8 +74,8 @@ class CioRctPushMessaging: NSObject {
         }
     }
 
-    @objc(getPushPermissionStatus:rejecter:)
-    func getPushPermissionStatus(resolver resolve: @escaping (RCTPromiseResolveBlock), rejecter _: @escaping (RCTPromiseRejectBlock)) {
+    @objc(getPushPermissionStatus:reject:)
+    public func getPushPermissionStatus(resolve: @escaping (RCTPromiseResolveBlock), _: @escaping (RCTPromiseRejectBlock)) {
         getPushNotificationPermissionStatus { status in
             resolve(status.value)
         }

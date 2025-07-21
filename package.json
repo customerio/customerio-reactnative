@@ -146,7 +146,8 @@
         "InlineMessageNative": "RCTInlineMessageNative"
       },
       "modulesProvider": {
-        "NativeCustomerIO": "RCTNativeCustomerIO"
+        "NativeCustomerIO": "RCTNativeCustomerIO",
+        "NativeCustomerIOMessagingPush": "RCTNativeMessagingPush"
       }
     }
   }
