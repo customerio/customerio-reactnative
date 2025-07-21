@@ -1,3 +1,9 @@
+## [4.5.1](https://github.com/customerio/customerio-reactnative/compare/4.5.0...4.5.1) (2025-07-21)
+
+### Bug Fixes
+
+* update Customer.io iOS SDK to 3.10.9 ([#466](https://github.com/customerio/customerio-reactnative/issues/466)) ([ccc149c](https://github.com/customerio/customerio-reactnative/commit/ccc149c17dd6e57881d2d3a864f63cb69958d91a))
+
 ## [4.5.0](https://github.com/customerio/customerio-reactnative/compare/4.4.3...4.5.0) (2025-07-17)
 
 ### Features
