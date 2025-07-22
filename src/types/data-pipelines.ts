@@ -1,4 +1,4 @@
-import type { PushClickBehaviorAndroid } from './PushClickBehaviorAndroid';
+import type { PushClickBehaviorAndroid } from './push';
 
 /**
  * Key-value pairs for custom user attributes and event properties.
