@@ -102,7 +102,7 @@ export class CustomerIO {
     static readonly track: (name: string, properties?: Record<string, any>) => Promise<any>;
 }
 
-// @public
+// @public (undocumented)
 export class CustomerIOInAppMessaging {
     dismissMessage(): void;
     // (undocumented)
@@ -126,7 +126,7 @@ export class CustomerIOPushMessaging {
     trackNotificationResponseReceived(payload: Object): void;
 }
 
-// @public
+// @public (undocumented)
 export interface InAppMessage {
     // (undocumented)
     deliveryId?: string;
@@ -136,7 +136,7 @@ export interface InAppMessage {
     messageId: string;
 }
 
-// @public
+// @public (undocumented)
 export class InAppMessageEvent {
     constructor(eventType: InAppMessageEventType, messageId: string, deliveryId?: string, actionValue?: string, actionName?: string);
     // (undocumented)
@@ -151,7 +151,7 @@ export class InAppMessageEvent {
     messageId: string;
 }
 
-// @public
+// @public (undocumented)
 export enum InAppMessageEventType {
     // (undocumented)
     errorWithMessage = "errorWithMessage",
@@ -163,12 +163,12 @@ export enum InAppMessageEventType {
     messageShown = "messageShown"
 }
 
-// @public
+// @public (undocumented)
 export const InlineInAppMessageView: React_2.FC<InlineInAppMessageViewProps>;
 
 // Warning: (ae-forgotten-export) The symbol "NativeProps" needs to be exported by the entry point index.d.ts
 //
-// @public
+// @public (undocumented)
 export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeChange' | 'onStateChange' | 'onActionClick'> {
     loadingComponent?: React_2.ReactNode;
     loadingContainerStyle?: ViewStyle;
@@ -188,7 +188,7 @@ export enum PushClickBehaviorAndroid {
     ResetTaskStack = "RESET_TASK_STACK"
 }
 
-// @public
+// @public (undocumented)
 export enum ScreenView {
     // (undocumented)
     All = "all",

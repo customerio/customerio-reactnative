@@ -19,6 +19,7 @@ import type { InAppMessage } from '../types';
 /**
  * Props for the InlineInAppMessageView component.
  */
+/** @public */
 export interface InlineInAppMessageViewProps
   extends Omit<
     NativeProps,
@@ -57,6 +58,7 @@ export interface InlineInAppMessageViewProps
  * />
  * ```
  */
+/** @public */
 const InlineInAppMessageView: React.FC<InlineInAppMessageViewProps> = ({
   style,
   loadingComponent,

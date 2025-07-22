@@ -1,3 +1,4 @@
+/** @public */
 export enum CioRegion {
   US = 'US',
   EU = 'EU',
@@ -8,11 +9,13 @@ export enum CioRegion {
  * - all: Send screen events to destinations for analytics purposes and to display in-app messages
  * - inApp: Only display in-app messages and not send screen events to destinations
  */
+/** @public */
 export enum ScreenView {
   All = 'all',
   InApp = 'inApp',
 }
 
+/** @public */
 export enum CioLogLevel {
   None = 'none',
   Error = 'error',
@@ -20,12 +23,14 @@ export enum CioLogLevel {
   Debug = 'debug',
 }
 
+/** @public */
 export enum PushClickBehaviorAndroid {
   ResetTaskStack = 'RESET_TASK_STACK',
   ActivityPreventRestart = 'ACTIVITY_PREVENT_RESTART',
   ActivityNoFlags = 'ACTIVITY_NO_FLAGS',
 }
 
+/** @public */
 export type CioConfig = {
   cdpApiKey: string;
   migrationSiteId?: string;
@@ -46,6 +51,7 @@ export type CioConfig = {
   };
 };
 
+/** @public */
 export type CioPushPermissionOptions = {
   ios?: {
     badge: boolean;
@@ -53,6 +59,7 @@ export type CioPushPermissionOptions = {
   };
 };
 
+/** @public */
 export enum CioPushPermissionStatus {
   Granted = 'GRANTED',
   Denied = 'DENIED',

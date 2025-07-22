@@ -27,6 +27,7 @@ const InAppEventListenerEventName = 'InAppEventListener';
 /**
  * Helper class so that registering event listeners is easier for customers.
  */
+/** @public */
 class CustomerIOInAppMessaging {
   eventEmitter: NativeEventEmitter = new NativeEventEmitter(
     InAppMessagingNative
@@ -60,6 +61,7 @@ class CustomerIOInAppMessaging {
 /**
  * Enum to represent the type of event triggered by in-app event callback.
  */
+/** @public */
 enum InAppMessageEventType {
   errorWithMessage = 'errorWithMessage',
   messageActionTaken = 'messageActionTaken',
@@ -70,6 +72,7 @@ enum InAppMessageEventType {
 /**
  * Class to hold in-app event attributes.
  */
+/** @public */
 class InAppMessageEvent {
   eventType: InAppMessageEventType;
   messageId: string;
