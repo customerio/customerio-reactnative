@@ -1,0 +1,21 @@
+name: Public API change Validation
+
+on: [pull_request]
+
+jobs:
+  validate-api:
+    name: Validate public API has not changed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+
+      - name: Build TypeScript declarations
+        run: npm run prepare
+
+      - name: Validate API
+        run: npx api-extractor run
