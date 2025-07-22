@@ -8,6 +8,7 @@ import { TurboModuleRegistry, type TurboModule } from 'react-native';
  */
 
 type NativeBridgeObject = Object;
+
 export interface Spec extends TurboModule {
   onMessageReceived(
     message: NativeBridgeObject,

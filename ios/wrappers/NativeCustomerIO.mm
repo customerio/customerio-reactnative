@@ -15,13 +15,11 @@
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
 // Create TurboModule instance for new architecture JSI integration
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeCustomerIOSpecJSI>(params);
 }
-#endif
 
 // Validates Swift bridge is available before method calls
 - (void)assertBridgeAvailable:(NSString *)context {
