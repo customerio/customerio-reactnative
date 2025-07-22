@@ -3,7 +3,6 @@ package io.customer.reactnative.sdk
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
-import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 
 /**
  * React Native module implementation for Customer.io Native SDK using using
@@ -12,7 +11,6 @@ import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 class NativeCustomerIOModule(
     private val reactContext: ReactApplicationContext,
     private val inAppMessagingModule: RNCIOInAppMessaging,
-    private val pushMessagingModule: RNCIOPushMessaging,
 ) : NativeCustomerIOSpec(reactContext) {
 
     override fun initialize(config: ReadableMap?, args: ReadableMap?) {
@@ -20,7 +18,6 @@ class NativeCustomerIOModule(
             reactContext = reactContext,
             sdkConfig = config,
             inAppMessagingModule = inAppMessagingModule,
-            pushMessagingModule = pushMessagingModule
         )
     }
 

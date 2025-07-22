@@ -8,7 +8,7 @@ import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
-import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
+import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
 import io.customer.reactnative.sdk.util.assertNotNull
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
@@ -39,7 +39,6 @@ internal object NativeCustomerIOModuleImpl {
         reactContext: ReactApplicationContext,
         sdkConfig: ReadableMap?,
         inAppMessagingModule: RNCIOInAppMessaging,
-        pushMessagingModule: RNCIOPushMessaging,
     ) {
         try {
             val packageConfig = sdkConfig.toMap()
@@ -74,7 +73,7 @@ internal object NativeCustomerIOModuleImpl {
 
                 // Configure push messaging module based on config provided by customer app
                 packageConfig.getTypedValue<Map<String, Any>>(key = "push").let { pushConfig ->
-                    pushMessagingModule.addNativeModuleFromConfig(
+                    NativeMessagingPushModuleImpl.addNativeModuleFromConfig(
                         builder = this,
                         config = pushConfig ?: emptyMap()
                     )

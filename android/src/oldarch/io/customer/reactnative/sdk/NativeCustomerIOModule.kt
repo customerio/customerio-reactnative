@@ -1,19 +1,16 @@
 package io.customer.reactnative.sdk
 
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
 import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
-import io.customer.reactnative.sdk.messagingpush.RNCIOPushMessaging
 
 /**
  * React Native module implementation for Customer.io Native SDK using using old architecture.
  */
 class NativeCustomerIOModule(
     reactContext: ReactApplicationContext,
-    private val pushMessagingModule: RNCIOPushMessaging,
     private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     override fun getName(): String = NativeCustomerIOModuleImpl.NAME
@@ -27,7 +24,6 @@ class NativeCustomerIOModule(
             reactContext = reactApplicationContext,
             sdkConfig = configJson,
             inAppMessagingModule = inAppMessagingModule,
-            pushMessagingModule = pushMessagingModule
         )
     }
 
@@ -69,15 +65,5 @@ class NativeCustomerIOModule(
     @ReactMethod
     fun deleteDeviceToken() {
         NativeCustomerIOModuleImpl.deleteDeviceToken()
-    }
-
-    @ReactMethod
-    fun getPushPermissionStatus(promise: Promise) {
-        pushMessagingModule.getPushPermissionStatus(promise)
-    }
-
-    @ReactMethod
-    fun showPromptForPushNotifications(pushConfigurationOptions: ReadableMap?, promise: Promise) {
-        pushMessagingModule.showPromptForPushNotifications(pushConfigurationOptions, promise)
     }
 }
