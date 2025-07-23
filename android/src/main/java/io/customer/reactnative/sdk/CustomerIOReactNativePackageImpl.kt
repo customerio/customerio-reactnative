@@ -5,7 +5,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
 import io.customer.reactnative.sdk.logging.RNCIOConsoleLoggerModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
-import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
+import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
+import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
 
@@ -29,20 +30,17 @@ object CustomerIOReactNativePackageImpl {
         val pushMessagingModule = modules.getOrPut(NativeMessagingPushModuleImpl.NAME) {
             NativeMessagingPushModule(reactContext)
         }
-        val inAppMessagingModule = modules.getOrPut(RNCIOInAppMessaging.NAME) {
-            RNCIOInAppMessaging(reactContext)
-        } as RNCIOInAppMessaging
+        val inAppMessagingModule = modules.getOrPut(NativeMessagingInAppModuleImpl.NAME) {
+            NativeMessagingInAppModule(reactContext)
+        }
         val mainModule = modules.getOrPut(NativeCustomerIOModuleImpl.NAME) {
-            NativeCustomerIOModule(
-                reactContext = reactContext,
-                inAppMessagingModule = inAppMessagingModule,
-            )
+            NativeCustomerIOModule(reactContext = reactContext)
         }
 
         return mapOf(
             RNCIOConsoleLoggerModule.NAME to loggerModule,
             NativeMessagingPushModuleImpl.NAME to pushMessagingModule,
-            RNCIOInAppMessaging.NAME to inAppMessagingModule,
+            NativeMessagingInAppModuleImpl.NAME to inAppMessagingModule,
             NativeCustomerIOModuleImpl.NAME to mainModule
         )
     }
