@@ -24,6 +24,7 @@ const NativeCustomerIO = NativeModules.NativeCustomerIO
       }
     );
 
+/** @public */
 export class CustomerIO {
   private static initialized = false;
 
