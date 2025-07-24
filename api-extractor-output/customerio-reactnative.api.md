@@ -5,8 +5,7 @@
 ```ts
 
 import { ActivityIndicatorProps } from 'react-native';
-import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
-import type { Double } from 'react-native/Libraries/Types/CodegenTypes';
+import type { CodegenTypes } from 'react-native';
 import { EmitterSubscription } from 'react-native';
 import { NativeEventEmitter } from 'react-native';
 import { default as React_2 } from 'react';
