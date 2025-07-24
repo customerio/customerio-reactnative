@@ -1,9 +1,6 @@
 import type { HostComponent, ViewProps } from 'react-native';
-import type {
-  DirectEventHandler,
-  Double,
-} from 'react-native/Libraries/Types/CodegenTypes';
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type { DirectEventHandler, Double } from 'react-native';
+import { codegenNativeComponent } from 'react-native';
 
 /** Event data for inline message size changes. */
 export interface SizeChangeEvent {
