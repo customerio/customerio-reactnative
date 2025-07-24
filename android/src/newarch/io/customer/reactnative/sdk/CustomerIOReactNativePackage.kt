@@ -6,7 +6,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
-import io.customer.reactnative.sdk.logging.RNCIOConsoleLoggerModule
+import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
+import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModuleImpl
 import io.customer.reactnative.sdk.messaginginapp.BaseInlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
@@ -67,7 +68,10 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
                 name = NativeCustomerIOModuleImpl.NAME,
                 isTurboModule = true
             ),
-            createReactModuleInfoEntry(name = RNCIOConsoleLoggerModule.NAME),
+            createReactModuleInfoEntry(
+                name = NativeCustomerIOLoggingModuleImpl.NAME,
+                isTurboModule = true
+            ),
             createReactModuleInfoEntry(
                 name = NativeMessagingInAppModuleImpl.NAME,
                 isTurboModule = true

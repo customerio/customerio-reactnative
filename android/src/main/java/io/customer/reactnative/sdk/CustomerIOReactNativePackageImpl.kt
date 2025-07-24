@@ -3,7 +3,8 @@ package io.customer.reactnative.sdk
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
-import io.customer.reactnative.sdk.logging.RNCIOConsoleLoggerModule
+import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
+import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModuleImpl
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
@@ -24,8 +25,8 @@ object CustomerIOReactNativePackageImpl {
     ): Map<String, NativeModule> {
         val modules = nativeModules ?: mutableMapOf()
 
-        val loggerModule = modules.getOrPut(RNCIOConsoleLoggerModule.NAME) {
-            RNCIOConsoleLoggerModule(reactContext)
+        val loggerModule = modules.getOrPut(NativeCustomerIOLoggingModuleImpl.NAME) {
+            NativeCustomerIOLoggingModule(reactContext)
         }
         val pushMessagingModule = modules.getOrPut(NativeMessagingPushModuleImpl.NAME) {
             NativeMessagingPushModule(reactContext)
@@ -38,7 +39,7 @@ object CustomerIOReactNativePackageImpl {
         }
 
         return mapOf(
-            RNCIOConsoleLoggerModule.NAME to loggerModule,
+            NativeCustomerIOLoggingModuleImpl.NAME to loggerModule,
             NativeMessagingPushModuleImpl.NAME to pushMessagingModule,
             NativeMessagingInAppModuleImpl.NAME to inAppMessagingModule,
             NativeCustomerIOModuleImpl.NAME to mainModule
