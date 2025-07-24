@@ -1,15 +1,11 @@
-import type { HostComponent, ViewProps } from 'react-native';
-import type {
-  DirectEventHandler,
-  Double,
-} from 'react-native/Libraries/Types/CodegenTypes';
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type { CodegenTypes, HostComponent, ViewProps } from 'react-native';
+import { codegenNativeComponent } from 'react-native';
 
 /** Event data for inline message size changes. */
 export interface SizeChangeEvent {
-  width: Double;
-  height: Double;
-  duration?: Double;
+  width: CodegenTypes.Double;
+  height: CodegenTypes.Double;
+  duration?: CodegenTypes.Double;
 }
 
 /** States representing the loading and display status of inline messages. */
@@ -40,9 +36,9 @@ export interface ActionClickEvent {
 export interface NativeProps extends ViewProps {
   /** Required element ID for retrieving inline message content. */
   elementId: string;
-  onSizeChange: DirectEventHandler<SizeChangeEvent>;
-  onStateChange?: DirectEventHandler<StateChangeEvent>;
-  onActionClick?: DirectEventHandler<ActionClickEvent>;
+  onSizeChange: CodegenTypes.DirectEventHandler<SizeChangeEvent>;
+  onStateChange?: CodegenTypes.DirectEventHandler<StateChangeEvent>;
+  onActionClick?: CodegenTypes.DirectEventHandler<ActionClickEvent>;
 }
 
 // React Native Codegen automatically generates the native component bridge based on the NativeProps interface
