@@ -23,29 +23,33 @@ export class NativeLoggerListener {
     }
     const loggerPrefix = '[CIO] ';
 
+    // Using console.log will log to the JavaScript side but prevent
+    // React Native's default behavior of redirecting logs to the native side.
+    // By doing it asynchronously, we ensure the logs are captured on both
+    // the JavaScript and native ends.
+    const logEvent = async (event: {
+      logLevel: CioLogLevel;
+      message: string;
+    }) => {
+      switch (event.logLevel) {
+        case CioLogLevel.Debug:
+          console.debug(loggerPrefix + event.message);
+          break;
+        case CioLogLevel.Info:
+          console.info(loggerPrefix + event.message);
+          break;
+        case CioLogLevel.Error:
+          console.error(loggerPrefix + event.message);
+          break;
+        default:
+          console.log(loggerPrefix + event);
+          break;
+      }
+    };
+
     const logHandler = (data: any) => {
       const event = data as { logLevel: CioLogLevel; message: string };
-      // Using console.log will log to the JavaScript side but prevent
-      // React Native's default behavior of redirecting logs to the native side.
-      // By doing it asynchronously, we ensure the logs are captured on both
-      // the JavaScript and native ends.
-      async function log() {
-        switch (event.logLevel) {
-          case CioLogLevel.Debug:
-            console.debug(loggerPrefix + event.message);
-            break;
-          case CioLogLevel.Info:
-            console.info(loggerPrefix + event.message);
-            break;
-          case CioLogLevel.Error:
-            console.error(loggerPrefix + event.message);
-            break;
-          default:
-            console.log(loggerPrefix + event);
-            break;
-        }
-      }
-      log();
+      logEvent(event);
     };
 
     return withNativeModule(async (native) => {
