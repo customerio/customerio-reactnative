@@ -113,6 +113,11 @@ RCT_EXTERN_METHOD(getPushPermissionStatus
                   : (RCTPromiseResolveBlock)resolve reject
                   : (RCTPromiseRejectBlock)reject)
 
+// Module initialization can happen on background thread
++ (BOOL)requiresMainQueueSetup {
+  return NO;
+}
+
 @end
 
 #endif

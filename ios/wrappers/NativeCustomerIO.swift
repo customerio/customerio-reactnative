@@ -30,7 +30,7 @@ public class NativeCustomerIO: NSObject {
                 // Initialize in-app messaging if config provided
                 if let inAppConfig = try MessagingInAppConfigBuilder.build(from: config) {
                     MessagingInApp.initialize(withConfig: inAppConfig)
-                    MessagingInApp.shared.setEventListener(self)
+                    MessagingInApp.shared.setEventListener(ReactInAppEventListener.shared)
                 }
             } catch {
                 logger.error("[InApp] Failed to initialize module with error: \(error)")
@@ -96,49 +96,5 @@ public class NativeCustomerIO: NSObject {
     @objc
     func deleteDeviceToken() {
         CustomerIO.shared.deleteDeviceToken()
-    }
-}
-
-// MARK: - In-App Message Event Handling
-
-extension NativeCustomerIO: InAppEventListener {
-    // Send in-app message events to React Native layer
-    private func sendEvent(
-        eventType: String, message: InAppMessage, actionValue: String? = nil, actionName: String? = nil
-    ) {
-        var body = [
-            CustomerioConstants.eventType: eventType,
-            CustomerioConstants.messageId: message.messageId,
-            CustomerioConstants.deliveryId: message.deliveryId
-        ]
-        if let actionValue = actionValue {
-            body[CustomerioConstants.actionValue] = actionValue
-        }
-        if let actionName = actionName {
-            body[CustomerioConstants.actionName] = actionName
-        }
-        CioRctInAppMessaging.shared?.sendEvent(
-            withName: CustomerioConstants.inAppEventListener,
-            body: body
-        )
-    }
-
-    public func messageShown(message: InAppMessage) {
-        sendEvent(eventType: CustomerioConstants.messageShown, message: message)
-    }
-
-    public func messageDismissed(message: InAppMessage) {
-        sendEvent(eventType: CustomerioConstants.messageDismissed, message: message)
-    }
-
-    public func errorWithMessage(message: InAppMessage) {
-        sendEvent(eventType: CustomerioConstants.errorWithMessage, message: message)
-    }
-
-    public func messageActionTaken(message: InAppMessage, actionValue: String, actionName: String) {
-        sendEvent(
-            eventType: CustomerioConstants.messageActionTaken, message: message, actionValue: actionValue,
-            actionName: actionName
-        )
     }
 }

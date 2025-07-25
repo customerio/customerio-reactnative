@@ -147,6 +147,7 @@
       },
       "modulesProvider": {
         "NativeCustomerIO": "RCTNativeCustomerIO",
+        "NativeCustomerIOMessagingInApp": "RCTNativeMessagingInApp",
         "NativeCustomerIOMessagingPush": "RCTNativeMessagingPush"
       }
     }
