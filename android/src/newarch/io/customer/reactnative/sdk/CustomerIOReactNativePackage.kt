@@ -6,54 +6,36 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
-import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
-import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModuleImpl
 import io.customer.reactnative.sdk.messaginginapp.BaseInlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
-import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
-import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
 
 class CustomerIOReactNativePackage : BaseReactPackage() {
-    // Caching native modules to avoid re-creating them multiple times
-    // This should be removed in the future when we switch to TurboModules
-    private val nativeModules = mutableMapOf<String, NativeModule>()
-
-    /**
-     * Initializes the native modules for Customer.io React Native SDK.
-     * This ensures that the modules are created only once and reused across the application.
-     */
-    private fun initializeNativeModules(reactContext: ReactApplicationContext) {
-        CustomerIOReactNativePackageImpl.initializeNativeModules(reactContext, nativeModules)
-    }
-
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
         return CustomerIOReactNativePackageImpl.createViewManagers(reactContext)
     }
 
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-        // Ensure modules are created first
-        initializeNativeModules(reactContext)
         // Debugging reveals that this method is never called for ViewManagers.
         // But since ReactNative docs recommend overriding it, we do so here for ViewManagers.
         // See: https://reactnative.dev/docs/fabric-native-components-introduction?platforms=android#4-write-the-reactwebviewpackage
-        return nativeModules[name] ?: when (name) {
+        return when (name) {
             BaseInlineInAppMessageViewManager.NAME -> InlineInAppMessageViewManager()
-            else -> null
+            else -> CustomerIOReactNativePackageImpl.createNativeModule(reactContext, name)
         }
     }
 
     /**
-     * Creates a map entry for React module registration with the given configuration.
+     * Creates a ReactModuleInfo for React module registration with the given configuration.
      * Using positional arguments instead of named arguments as named args break on RN 0.76.
      */
-    private fun createReactModuleInfoEntry(
+    private fun createReactModuleInfo(
         name: String,
         className: String = name,
         canOverrideExistingModule: Boolean = false,
         needsEagerInit: Boolean = false,
         isCxxModule: Boolean = false,
-        isTurboModule: Boolean = false,
-    ) = name to ReactModuleInfo(
+        isTurboModule: Boolean = true,
+    ) = ReactModuleInfo(
         name,
         className,
         canOverrideExistingModule,
@@ -63,27 +45,16 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     )
 
     override fun getReactModuleInfoProvider() = ReactModuleInfoProvider {
-        mapOf(
-            createReactModuleInfoEntry(
-                name = NativeCustomerIOModuleImpl.NAME,
-                isTurboModule = true
-            ),
-            createReactModuleInfoEntry(
-                name = NativeCustomerIOLoggingModuleImpl.NAME,
-                isTurboModule = true
-            ),
-            createReactModuleInfoEntry(
-                name = NativeMessagingInAppModuleImpl.NAME,
-                isTurboModule = true
-            ),
-            createReactModuleInfoEntry(
-                name = NativeMessagingPushModuleImpl.NAME,
-                isTurboModule = true
-            ),
-            createReactModuleInfoEntry(
-                name = BaseInlineInAppMessageViewManager.NAME,
-                isTurboModule = true
-            ),
-        )
+        buildMap {
+            // Register TurboModules
+            CustomerIOReactNativePackageImpl.turboModuleNames.forEach { moduleName ->
+                put(moduleName, createReactModuleInfo(name = moduleName))
+            }
+
+            // Register ViewManagers
+            val viewManagerName = BaseInlineInAppMessageViewManager.NAME
+            val viewManagerInfo = createReactModuleInfo(name = viewManagerName)
+            put(viewManagerName, viewManagerInfo)
+        }
     }
 }

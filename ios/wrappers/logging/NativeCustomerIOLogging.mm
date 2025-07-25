@@ -1,16 +1,16 @@
 #import "../utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
+#import <React/RCTInitializing.h>
+#import <React/RCTInvalidating.h>
 
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
 // Protocol that extends the spec with event emitter methods
-@protocol NativeCustomerIOLoggingBridge <NativeCustomerIOLoggingSpec>
+@protocol NativeCustomerIOLoggingBridge <NativeCustomerIOLoggingSpec, RCTInitializing, RCTInvalidating>
 - (void)setEventEmitter:(id)emitter;
-- (void)initialize;
-- (void)invalidate;
 @end
 
 // Objective-C wrapper for new architecture TurboModule implementation
@@ -94,7 +94,7 @@ Class<RCTBridgeModule> NativeCustomerIOLoggingCls(void) {
 // Old Architecture: Bridge methods exposed via RCT_EXTERN macros
 // Maps to Swift implementation without TurboModule overhead
 
-@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIOLogging, NativeCustomerIOLogging,
+@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIOLogging, NativeCustomerIOLoggingLegacy,
                                     RCTEventEmitter)
 
 RCT_EXTERN_METHOD(supportedEvents)
