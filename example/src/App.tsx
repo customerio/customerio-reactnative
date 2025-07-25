@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
 import { appTheme } from '@utils';
-import { CioConfig, CioPushPermissionStatus, CustomerIO } from 'customerio-reactnative';
+import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { AppEnvValues } from './env';
 
@@ -23,7 +23,7 @@ export default function App({ appName }: { appName: string }) {
   }
   Storage.setEnv(env);
 
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const storage = Storage.instance;
   const user = storage.getUser();
@@ -52,6 +52,64 @@ export default function App({ appName }: { appName: string }) {
         );
         CustomerIO.initialize(cioConfig);
       }
+
+      const logInAppEvent = (name: string, params: InAppMessageEvent) => {
+        console.log(`[InAppEventListener] onEventReceived: ${name}, params: `, params);
+      };
+
+      const onInAppEventReceived = (
+        eventName: string,
+        eventParams: InAppMessageEvent,
+      ) => {
+        logInAppEvent(eventName, eventParams);
+
+        const { deliveryId, messageId, actionValue, actionName } = eventParams;
+        const data: Map<string, any> = new Map();
+        data.set('event-name', eventName);
+        data.set('delivery-id', deliveryId ?? 'NULL');
+        data.set('message-id', messageId ?? 'NULL');
+        if (actionName) {
+          data.set('action-name', actionName);
+        }
+        if (actionValue) {
+          data.set('action-value', actionValue);
+        }
+
+        CustomerIO.track('InAppEventListener', data);
+      };
+
+      const inAppMessagingSDK = CustomerIO.inAppMessaging;
+      const inAppEventListener = inAppMessagingSDK.registerEventsListener((event) => {
+        switch (event.eventType) {
+          case InAppMessageEventType.messageShown:
+            onInAppEventReceived('messageShown', event);
+            break;
+
+          case InAppMessageEventType.messageDismissed:
+            onInAppEventReceived('messageDismissed', event);
+            break;
+
+          case InAppMessageEventType.errorWithMessage:
+            onInAppEventReceived('errorWithMessage', event);
+            break;
+
+          case InAppMessageEventType.messageActionTaken:
+            onInAppEventReceived('messageActionTaken', event);
+            // Dismiss in app message if the action is 'dismiss' or 'close'
+            if (event.actionValue === 'dismiss' || event.actionValue === 'close') {
+              inAppMessagingSDK.dismissMessage();
+            }
+            break;
+
+          default:
+            onInAppEventReceived('unsupported event', event);
+        }
+      });
+
+      // Remove listener once unmounted
+      return () => {
+        inAppEventListener.remove();
+      };
     };
     loadFromStorage();
   }, [storage]);

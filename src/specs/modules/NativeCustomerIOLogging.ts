@@ -1,8 +1,10 @@
-import {
-  CodegenTypes,
-  TurboModuleRegistry,
-  type TurboModule,
-} from 'react-native';
+import { TurboModuleRegistry, type TurboModule } from 'react-native';
+/* eslint-disable @react-native/no-deep-imports */
+import type {
+  Double,
+  EventEmitter,
+  UnsafeObject,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
 /**
  * Native module specification for CustomerIO Logging React Native SDK
@@ -14,19 +16,16 @@ import {
  * Codegen compatibility, and type safety approach.
  */
 
-/** Generic object type for native bridge data exchange */
-type NativeBridgeObject = Object;
-
 /** TurboModule interface for CustomerIO logging native operations */
 export interface Spec extends TurboModule {
-  readonly onCioLogEvent: CodegenTypes.EventEmitter<NativeBridgeObject>;
+  readonly onCioLogEvent: EventEmitter<UnsafeObject>;
   /** @internal - Added because React Native has no simpler way to check for New Architecture */
   isNewArchEnabled(): Promise<boolean>;
   // Old architecture support: EventEmitter requires these methods for proper functionality
   /** @internal - Registers an event listener for old architecture EventEmitter */
   addListener: (eventName: string) => void;
   /** @internal - Removes event listeners for old architecture EventEmitter */
-  removeListeners: (count: CodegenTypes.Double) => void;
+  removeListeners: (count: Double) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

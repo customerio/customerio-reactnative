@@ -43,11 +43,11 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 
 export const CustomerIO = {
   /** Initialize the CustomerIO SDK with given configuration. */
-  initialize: (config: CioConfig) => {
+  initialize: async (config: CioConfig) => {
     assert.config(config);
 
     if (config.logLevel && config.logLevel !== CioLogLevel.None) {
-      NativeLoggerListener.initialize();
+      await NativeLoggerListener.initialize();
     }
 
     const expoVersion = packageJson.expoVersion ?? '';
@@ -74,9 +74,14 @@ export const CustomerIO = {
       usage: 'Identify',
       optional: true,
     });
-    assert.record(traits, 'traits', { usage: 'Identify', optional: true });
+    const normalizedTraits = assert.attributes(traits, 'traits', {
+      usage: 'Identify',
+      optional: true,
+    });
 
-    return withNativeModule((native) => native.identify({ userId, traits }));
+    return withNativeModule((native) =>
+      native.identify({ userId, traits: normalizedTraits })
+    );
   },
 
   /** Clear current user identification and stop tracking. */
@@ -87,39 +92,45 @@ export const CustomerIO = {
   /** Track an event with optional properties. */
   track: (name: string, properties?: CustomAttributes) => {
     assert.string(name, 'name', { usage: 'Track Event' });
-    assert.record(properties, 'properties', {
+    const normalizedProps = assert.attributes(properties, 'properties', {
       usage: 'Track Event',
       optional: true,
     });
 
-    return withNativeModule((native) => native.track(name, properties));
+    return withNativeModule((native) => native.track(name, normalizedProps));
   },
 
   /** Track a screen view event with optional properties. */
   screen: (title: string, properties?: CustomAttributes) => {
     assert.string(title, 'title', { usage: 'Screen' });
-    assert.record(properties, 'properties', {
+    const normalizedProps = assert.attributes(properties, 'properties', {
       usage: 'Screen',
       optional: true,
     });
 
-    return withNativeModule((native) => native.screen(title, properties));
+    return withNativeModule((native) => native.screen(title, normalizedProps));
   },
 
   /** Set or update attributes for the currently identified user profile. */
   setProfileAttributes: (attributes: CustomAttributes) => {
-    assert.record(attributes, 'attributes', { usage: 'Profile' });
+    const normalizedAttrs = assert.attributes(attributes, 'attributes', {
+      usage: 'Profile',
+    }) as CustomAttributes;
 
     return withNativeModule((native) =>
-      native.setProfileAttributes(attributes)
+      native.setProfileAttributes(normalizedAttrs)
     );
   },
 
   /** Set attributes for the current device. */
   setDeviceAttributes: (attributes: CustomAttributes) => {
-    assert.record(attributes, 'attributes', { usage: 'Device' });
+    const normalizedAttrs = assert.attributes(attributes, 'attributes', {
+      usage: 'Device',
+    }) as CustomAttributes;
 
-    return withNativeModule((native) => native.setDeviceAttributes(attributes));
+    return withNativeModule((native) =>
+      native.setDeviceAttributes(normalizedAttrs)
+    );
   },
 
   /** Register a device token for push notifications. */

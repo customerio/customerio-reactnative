@@ -41,17 +41,12 @@ class NativeMessagingInAppModule(
     }
 
     @ReactMethod
-    fun isNewArchEnabled(promise: Promise) {
-        promise.resolve(false)
-    }
-
-    @ReactMethod
     fun addListener(eventName: String?) {
         listenerCount++
     }
 
     @ReactMethod
-    fun removeListeners(count: Int) {
-        listenerCount -= count
+    fun removeListeners(count: Double) {
+        listenerCount -= count.toInt()
     }
 }
