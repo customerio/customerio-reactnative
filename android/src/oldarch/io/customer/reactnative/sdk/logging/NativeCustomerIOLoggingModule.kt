@@ -44,7 +44,7 @@ class NativeCustomerIOLoggingModule(
     }
 
     @ReactMethod
-    fun removeListeners(count: Int) {
-        listenerCount -= count
+    fun removeListeners(count: Double) {
+        listenerCount -= count.toInt()
     }
 }

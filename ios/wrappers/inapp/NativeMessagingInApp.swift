@@ -2,47 +2,68 @@ import CioMessagingInApp
 import Foundation
 import React
 
+// Core in-app messaging implementation shared between new and old architecture
+class NativeMessagingInAppImplementation {
+    private let inAppEventCallback: (_ body: [String: Any]) -> Void
+
+    init(inAppEventCallback: @escaping (_ body: [String: Any]) -> Void) {
+        self.inAppEventCallback = inAppEventCallback
+    }
+
+    // Initialize in-app event listener - called by React Native
+    func initialize() {
+        ReactInAppEventListener.shared.setEventEmitter { [weak self] data in
+            guard let self else { return }
+
+            // Filter out nil values to convert [String: Any?] to [String: Any]
+            let body = data.compactMapValues { $0 }
+            inAppEventCallback(body)
+        }
+    }
+
+    // Clears the in-app event listener to prevent leaks when module is deallocated or invalidated
+    func clearInAppEventListener() {
+        ReactInAppEventListener.shared.clearEventEmitter()
+    }
+
+    // Clear in-app event listener to prevent leaks
+    func invalidate() {
+        clearInAppEventListener()
+    }
+}
+
+// In-app messaging module for new React Native architecture (TurboModule)
 @objc(NativeMessagingInApp)
-public class NativeMessagingInApp: RCTEventEmitter {
-    // Reference to the event emitter for new architecture (TurboModule)
-    private weak var eventEmitter: AnyObject?
+public class NativeMessagingInApp: NSObject {
+    private var implementation: NativeMessagingInAppImplementation!
+    // Reference to the ObjC event emitter for new architecture (TurboModule)
+    private weak var objcEventEmitter: AnyObject?
 
     @objc
     override public init() {
         super.init()
-        // Manually calling `initialize` for old arch, which doesn't invoke it automatically.
-        // New arch will call it again, but it's safe since it just reassigns the same listener.
-        initialize()
+
+        self.implementation = .init(inAppEventCallback: { [weak self] body in
+            self?.sendEvent(body: body)
+        })
     }
 
-    // Set event emitter reference for new architecture
+    // Set ObjC event emitter reference for new architecture
     @objc
     public func setEventEmitter(_ emitter: AnyObject) {
-        eventEmitter = emitter
+        objcEventEmitter = emitter
     }
 
-    // Initialize event listener - called by React Native
+    // Initialize in-app event listener - called by React Native
     @objc
     public func initialize() {
-        ReactInAppEventListener.shared.setEventEmitter { data in
-            // Filter out nil values to convert [String: Any?] to [String: Any]
-            let body = data.compactMapValues { $0 }
-            self.sendInAppEvent(withName: CustomerioConstants.inAppEventListener, body: body)
-        }
+        implementation.initialize()
     }
 
-    // Clear event listener to prevent memory leaks - called by React Native
+    // Clear in-app event listener to prevent memory leaks - called by React Native
     @objc
-    override public func invalidate() {
-        ReactInAppEventListener.shared.clearEventEmitter()
-    }
-
-    /**
-     * Overriding supportedEvents method to return an array of supported event names.
-     * We are combining in-app events against single name so only one event is added.
-     */
-    override public func supportedEvents() -> [String]! {
-        [CustomerioConstants.inAppEventListener]
+    public func invalidate() {
+        implementation.invalidate()
     }
 
     /**
@@ -53,23 +74,60 @@ public class NativeMessagingInApp: RCTEventEmitter {
         MessagingInApp.shared.dismissMessage()
     }
 
-    /**
-     * Send in-app event to React Native layer
-     * This method maintains compatibility with both architectures
-     */
-    @objc
-    public func sendInAppEvent(withName name: String, body: [String: Any]) {
-        if let emitter = eventEmitter {
-            // New architecture: use injected event emitter from TurboModule
-            let selector = Selector(("emitOnInAppEventReceived:"))
-            guard emitter.responds(to: selector) else {
-                assertionFailure("Event emitter does not respond to selector: emitOnInAppEventReceived:")
-                return
-            }
-            _ = emitter.perform(selector, with: body as NSDictionary)
-        } else {
-            // Old architecture: use self as RCTEventEmitter
-            super.sendEvent(withName: name, body: body)
+    // Send in-app event to React Native layer using ObjC event emitter
+    private func sendEvent(body: [String: Any]) {
+        guard let emitter = objcEventEmitter else {
+            assertionFailure("NativeMessagingInApp: ObjC event emitter is nil, cannot send in-app event")
+            return
         }
+
+        // New architecture: use injected ObjC event emitter from TurboModule
+        let selector = Selector(("emitOnInAppEventReceived:"))
+        guard emitter.responds(to: selector) else {
+            assertionFailure("ObjC event emitter does not respond to selector: emitOnInAppEventReceived:")
+            return
+        }
+        _ = emitter.perform(selector, with: body as NSDictionary)
+    }
+}
+
+// Legacy in-app messaging module for old React Native architecture (pre-TurboModule)
+@objc(NativeMessagingInAppLegacy)
+public class NativeMessagingInAppLegacy: RCTEventEmitter {
+    private var implementation: NativeMessagingInAppImplementation!
+
+    @objc
+    override public init() {
+        super.init()
+
+        self.implementation = .init(inAppEventCallback: { [weak self] body in
+            guard let self else { return }
+
+            // Old architecture: use self as RCTEventEmitter
+            sendEvent(withName: CustomerioConstants.inAppEventListener, body: body)
+        })
+        initialize()
+    }
+
+    deinit {
+        invalidate()
+    }
+
+    // Initialize in-app event listener - called by React Native
+    @objc
+    public func initialize() {
+        implementation.initialize()
+    }
+
+    @objc
+    override public func invalidate() {
+        implementation.invalidate()
+        super.invalidate()
+    }
+
+    // Returns array of supported event names for RCTEventEmitter
+    // All in-app events are combined under a single event name
+    override public func supportedEvents() -> [String]! {
+        [CustomerioConstants.inAppEventListener]
     }
 }

@@ -2,8 +2,6 @@ import CioAnalytics
 import CioDataPipelines
 import CioInternalCommon
 import CioMessagingInApp
-import CioMessagingPush
-import React
 
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {

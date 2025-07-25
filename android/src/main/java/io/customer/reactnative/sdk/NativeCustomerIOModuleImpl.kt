@@ -40,6 +40,13 @@ internal object NativeCustomerIOModuleImpl {
         sdkConfig: ReadableMap?,
     ) {
         try {
+            // Skip initialization if SDK instance already exists
+            val isSDKInitialized = runCatching { CustomerIO.instance() }.isSuccess
+            if (isSDKInitialized) {
+                logger.error("Customer.io SDK is already initialized. Skipping initialization.")
+                return
+            }
+
             val packageConfig = sdkConfig.toMap()
             val cdpApiKey = packageConfig.getTypedValue<String>(
                 Keys.Config.CDP_API_KEY
