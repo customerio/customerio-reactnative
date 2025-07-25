@@ -4,14 +4,12 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
-import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
 
 /**
  * React Native module implementation for Customer.io Native SDK using using old architecture.
  */
 class NativeCustomerIOModule(
     reactContext: ReactApplicationContext,
-    private val inAppMessagingModule: RNCIOInAppMessaging,
 ) : ReactContextBaseJavaModule(reactContext) {
     override fun getName(): String = NativeCustomerIOModuleImpl.NAME
 
@@ -23,7 +21,6 @@ class NativeCustomerIOModule(
         NativeCustomerIOModuleImpl.initialize(
             reactContext = reactApplicationContext,
             sdkConfig = configJson,
-            inAppMessagingModule = inAppMessagingModule,
         )
     }
 

@@ -7,7 +7,7 @@ import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
-import io.customer.reactnative.sdk.messaginginapp.RNCIOInAppMessaging
+import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
 import io.customer.reactnative.sdk.util.assertNotNull
 import io.customer.sdk.CustomerIO
@@ -38,7 +38,6 @@ internal object NativeCustomerIOModuleImpl {
     fun initialize(
         reactContext: ReactApplicationContext,
         sdkConfig: ReadableMap?,
-        inAppMessagingModule: RNCIOInAppMessaging,
     ) {
         try {
             val packageConfig = sdkConfig.toMap()
@@ -80,7 +79,7 @@ internal object NativeCustomerIOModuleImpl {
                 }
                 // Configure in-app messaging module based on config provided by customer app
                 packageConfig.getTypedValue<Map<String, Any>>(key = "inApp")?.let { inAppConfig ->
-                    inAppMessagingModule.addNativeModuleFromConfig(
+                    NativeMessagingInAppModuleImpl.addNativeModuleFromConfig(
                         builder = this,
                         config = inAppConfig,
                         region = region
