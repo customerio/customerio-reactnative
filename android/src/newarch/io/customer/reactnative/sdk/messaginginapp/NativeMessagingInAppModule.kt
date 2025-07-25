@@ -31,10 +31,6 @@ class NativeMessagingInAppModule(
         NativeMessagingInAppModuleImpl.dismissMessage()
     }
 
-    override fun isNewArchEnabled(promise: Promise?) {
-        promise?.resolve(true)
-    }
-
     override fun addListener(eventName: String?) {
         onlyForLegacyArch("addListener")
     }

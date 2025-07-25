@@ -1,4 +1,6 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
+/* eslint-disable @react-native/no-deep-imports */
+import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
 /**
  * Native module specification for CustomerIO React Native SDK
@@ -25,7 +27,7 @@ import { TurboModuleRegistry, type TurboModule } from 'react-native';
  *
  * @internal - Not exported to avoid conflicts with public API types
  */
-type NativeBridgeObject = Object;
+type NativeBridgeObject = UnsafeObject;
 
 // =============================================================================
 // TURBO MODULE SPEC – Defines native bridge interface
