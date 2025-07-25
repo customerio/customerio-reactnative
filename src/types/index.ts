@@ -1,3 +1,3 @@
 export * from './data-pipelines';
-export * from './InAppMessage';
+export * from './in-app';
 export * from './push';
