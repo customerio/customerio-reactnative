@@ -8,8 +8,12 @@ import {
 } from './types';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 
-// Ensures all methods defined in codegen spec are implemented by the public module
-interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {}
+/**
+ * Ensures all methods defined in codegen spec are implemented by the public module
+ *
+ * @internal
+ */
+interface NativePushSpec extends Omit<CodegenSpec, keyof TurboModule> {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
 const nativeModule = ensureNativeModule(NativeCustomerIOMessagingPush);
@@ -19,7 +23,7 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
   return callNativeModule(nativeModule, fn);
 };
 
-class CustomerIOPushMessaging implements NativeSpec {
+class CustomerIOPushMessaging implements NativePushSpec {
   /**
    * Processes push notification received outside the CIO SDK. The method displays notification on
    * device and tracks CIO metrics for push notification.

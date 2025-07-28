@@ -1,4 +1,3 @@
-import { type TurboModule } from 'react-native';
 import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
@@ -18,13 +17,6 @@ import { assert, validate } from './utils/param-validation';
 
 const packageJson = require('customerio-reactnative/package.json');
 
-// Ensures all methods defined in codegen spec are implemented by the public module
-interface NativeSpec extends Omit<CodegenSpec, keyof TurboModule> {
-  isInitialized(): boolean;
-  inAppMessaging: CustomerIOInAppMessaging;
-  pushMessaging: CustomerIOPushMessaging;
-}
-
 // Track whether CustomerIO SDK has been initialized to prevent usage before setup
 let _initialized = false;
 
@@ -32,18 +24,20 @@ let _initialized = false;
 const nativeModule = ensureNativeModule(NativeModule);
 
 // Wrapper function that ensures SDK is initialized before calling native methods
-const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
+const withNativeModule = async <R>(
+  fn: (native: CodegenSpec) => R
+): Promise<R> => {
   if (!_initialized) {
     throw new Error(
       'CustomerIO SDK must be initialized before calling any methods. Please call CustomerIO.initialize() first.'
     );
   }
-  return callNativeModule(nativeModule, fn);
+  return await callNativeModule(nativeModule, fn);
 };
 
-export const CustomerIO = {
+export class CustomerIO {
   /** Initialize the CustomerIO SDK with given configuration. */
-  initialize: async (config: CioConfig) => {
+  static readonly initialize = async (config: CioConfig) => {
     assert.config(config);
 
     if (config.logLevel && config.logLevel !== CioLogLevel.None) {
@@ -61,10 +55,13 @@ export const CustomerIO = {
       _initialized = true;
       return result;
     });
-  },
+  };
 
   /** Identify a user to start tracking their activity. Requires userId, traits, or both. */
-  identify: ({ userId, traits }: IdentifyParams) => {
+  static readonly identify = async ({
+    userId,
+    traits,
+  }: IdentifyParams = {}) => {
     if (validate.isUndefined(userId) && validate.isUndefined(traits)) {
       throw new Error('You must provide either userId or traits to identify');
     }
@@ -82,15 +79,18 @@ export const CustomerIO = {
     return withNativeModule((native) =>
       native.identify({ userId, traits: normalizedTraits })
     );
-  },
+  };
 
   /** Clear current user identification and stop tracking. */
-  clearIdentify: () => {
+  static readonly clearIdentify = async () => {
     return withNativeModule((native) => native.clearIdentify());
-  },
+  };
 
   /** Track an event with optional properties. */
-  track: (name: string, properties?: CustomAttributes) => {
+  static readonly track = async (
+    name: string,
+    properties?: Record<string, any>
+  ) => {
     assert.string(name, 'name', { usage: 'Track Event' });
     const normalizedProps = assert.attributes(properties, 'properties', {
       usage: 'Track Event',
@@ -98,10 +98,13 @@ export const CustomerIO = {
     });
 
     return withNativeModule((native) => native.track(name, normalizedProps));
-  },
+  };
 
   /** Track a screen view event with optional properties. */
-  screen: (title: string, properties?: CustomAttributes) => {
+  static readonly screen = async (
+    title: string,
+    properties?: Record<string, any>
+  ) => {
     assert.string(title, 'title', { usage: 'Screen' });
     const normalizedProps = assert.attributes(properties, 'properties', {
       usage: 'Screen',
@@ -109,10 +112,12 @@ export const CustomerIO = {
     });
 
     return withNativeModule((native) => native.screen(title, normalizedProps));
-  },
+  };
 
   /** Set or update attributes for the currently identified user profile. */
-  setProfileAttributes: (attributes: CustomAttributes) => {
+  static readonly setProfileAttributes = async (
+    attributes: Record<string, any>
+  ) => {
     const normalizedAttrs = assert.attributes(attributes, 'attributes', {
       usage: 'Profile',
     }) as CustomAttributes;
@@ -120,10 +125,12 @@ export const CustomerIO = {
     return withNativeModule((native) =>
       native.setProfileAttributes(normalizedAttrs)
     );
-  },
+  };
 
   /** Set attributes for the current device. */
-  setDeviceAttributes: (attributes: CustomAttributes) => {
+  static readonly setDeviceAttributes = async (
+    attributes: Record<string, any>
+  ) => {
     const normalizedAttrs = assert.attributes(attributes, 'attributes', {
       usage: 'Device',
     }) as CustomAttributes;
@@ -131,25 +138,23 @@ export const CustomerIO = {
     return withNativeModule((native) =>
       native.setDeviceAttributes(normalizedAttrs)
     );
-  },
+  };
 
   /** Register a device token for push notifications. */
-  registerDeviceToken: (token: string) => {
+  static readonly registerDeviceToken = async (token: string) => {
     assert.string(token, 'token', { usage: 'Device' });
 
-    withNativeModule((native) => native.registerDeviceToken(token));
-  },
+    return withNativeModule((native) => native.registerDeviceToken(token));
+  };
 
   /** Remove the current device token to stop receiving push notifications. */
-  deleteDeviceToken: () => {
-    withNativeModule((native) => native.deleteDeviceToken());
-  },
+  static readonly deleteDeviceToken = async () => {
+    return withNativeModule((native) => native.deleteDeviceToken());
+  };
 
   /** Check if the CustomerIO SDK has been initialized. */
-  isInitialized() {
-    return _initialized;
-  },
+  static readonly isInitialized = () => _initialized;
 
-  inAppMessaging: new CustomerIOInAppMessaging(),
-  pushMessaging: new CustomerIOPushMessaging(),
-} satisfies NativeSpec;
+  static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly pushMessaging = new CustomerIOPushMessaging();
+}

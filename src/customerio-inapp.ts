@@ -1,7 +1,6 @@
 import {
   NativeEventEmitter,
   type EmitterSubscription,
-  type EventSubscription,
   type TurboModule,
 } from 'react-native';
 import { InlineInAppMessageView } from './components';
@@ -15,8 +14,12 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 // Constant value used for emitting all events for in-app from native modules
 const InAppEventListenerEventName = 'InAppEventListener';
 
-// Ensures all methods defined in codegen spec are implemented by the public module
-interface NativeSpec
+/**
+ * Ensures all methods defined in codegen spec are implemented by the public module
+ *
+ * @internal
+ */
+interface NativeInAppSpec
   extends Omit<
     CodegenSpec,
     | keyof TurboModule
@@ -36,10 +39,11 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 /**
  * Helper class so that registering event listeners is easier for customers.
  */
-class CustomerIOInAppMessaging implements NativeSpec {
+class CustomerIOInAppMessaging implements NativeInAppSpec {
   registerEventsListener(listener: (event: InAppMessageEvent) => void) {
-    const emitter = (data: any) => {
+    const emitter = (...args: any[]) => {
       // Convert raw native payload to InAppMessageEvent
+      const data = args[0];
       const event = new InAppMessageEvent(
         data.eventType as InAppMessageEventType,
         data.messageId,
@@ -51,23 +55,33 @@ class CustomerIOInAppMessaging implements NativeSpec {
     };
 
     // Holds the real subscription once created
-    let actualSubscription: EventSubscription | EmitterSubscription;
+    let actualSubscription: EmitterSubscription;
     let removed = false;
 
-    // Proxy object returned immediately to support .remove()
+    // Proxy object returned immediately to keep the API consistent
     const proxySubscription = {
       remove: () => {
         removed = true;
         actualSubscription?.remove();
       },
-    };
+      emitter: new NativeEventEmitter(),
+      eventType: InAppEventListenerEventName,
+      listener: emitter,
+      context: undefined,
+      key: 0,
+      subscriber: {} as any,
+    } as EmitterSubscription;
 
     // Setup listener asynchronously based on architecture
     withNativeModule(async (native) => {
       const newArchEnabled = await isNewArchEnabled();
       if (newArchEnabled) {
         // Use TurboModule emitter for new architecture
-        actualSubscription = native.onInAppEventReceived(emitter);
+        const subscriber = native.onInAppEventReceived(emitter);
+        actualSubscription = {
+          ...proxySubscription,
+          remove: () => subscriber.remove(),
+        } as unknown as EmitterSubscription;
       } else {
         // Use legacy NativeEventEmitter for old architecture
         const eventEmitter = new NativeEventEmitter(native);
@@ -75,11 +89,11 @@ class CustomerIOInAppMessaging implements NativeSpec {
           InAppEventListenerEventName,
           emitter
         );
+      }
 
-        // Handle case where .remove() was called before subscription was ready
-        if (removed) {
-          actualSubscription?.remove();
-        }
+      // Handle case where .remove() was called before subscription was ready
+      if (removed) {
+        actualSubscription?.remove();
       }
     });
 
