@@ -54,7 +54,7 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
     };
 
     // Holds the real subscription once created
-    let actualSubscription: EmitterSubscription;
+    let actualSubscription: EmitterSubscription | undefined;
     let removed = false;
 
     // Proxy object returned immediately to keep the API consistent
