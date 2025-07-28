@@ -27,7 +27,7 @@ function isUndefined(value: unknown): boolean {
  * Use this to fail validation checks with cleaner syntax.
  */
 function failIf(condition: boolean, message: () => string): void {
-  if (condition) {
+  if (__DEV__ && condition) {
     throw new Error(`[CustomerIO] ${message()}`);
   }
 }
