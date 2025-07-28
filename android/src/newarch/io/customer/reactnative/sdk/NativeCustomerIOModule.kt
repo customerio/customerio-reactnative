@@ -1,5 +1,6 @@
 package io.customer.reactnative.sdk
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 
@@ -11,10 +12,11 @@ class NativeCustomerIOModule(
     private val reactContext: ReactApplicationContext,
 ) : NativeCustomerIOSpec(reactContext) {
 
-    override fun initialize(config: ReadableMap?, args: ReadableMap?) {
+    override fun initialize(config: ReadableMap?, args: ReadableMap?, promise: Promise?) {
         NativeCustomerIOModuleImpl.initialize(
             reactContext = reactContext,
             sdkConfig = config,
+            promise = promise,
         )
     }
 

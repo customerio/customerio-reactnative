@@ -1,5 +1,6 @@
 package io.customer.reactnative.sdk
 
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -16,11 +17,13 @@ class NativeCustomerIOModule(
     @ReactMethod
     fun initialize(
         configJson: ReadableMap,
-        @Suppress("UNUSED_PARAMETER") sdkArgs: ReadableMap
+        @Suppress("UNUSED_PARAMETER") sdkArgs: ReadableMap?,
+        promise: Promise?,
     ) {
         NativeCustomerIOModuleImpl.initialize(
             reactContext = reactApplicationContext,
             sdkConfig = configJson,
+            promise = promise,
         )
     }
 

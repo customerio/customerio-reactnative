@@ -1,6 +1,7 @@
 package io.customer.reactnative.sdk
 
 import android.app.Application
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import io.customer.datapipelines.config.ScreenView
@@ -38,6 +39,7 @@ internal object NativeCustomerIOModuleImpl {
     fun initialize(
         reactContext: ReactApplicationContext,
         sdkConfig: ReadableMap?,
+        promise: Promise?
     ) {
         try {
             val packageConfig = sdkConfig.toMap()
@@ -88,8 +90,10 @@ internal object NativeCustomerIOModuleImpl {
             }.build()
 
             logger.info("Customer.io instance initialized successfully from app")
+            promise?.resolve(true)
         } catch (ex: Exception) {
             logger.error("Failed to initialize Customer.io instance from app, ${ex.message}")
+            promise?.reject(ex)
         }
     }
 

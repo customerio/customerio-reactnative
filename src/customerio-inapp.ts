@@ -65,7 +65,7 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
         removed = true;
         actualSubscription?.remove();
       },
-      emitter: new NativeEventEmitter(),
+      emitter: new NativeEventEmitter(nativeModule),
       eventType: InAppEventListenerEventName,
       listener: emitter,
       context: undefined,

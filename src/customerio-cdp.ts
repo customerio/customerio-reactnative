@@ -24,15 +24,13 @@ let _initialized = false;
 const nativeModule = ensureNativeModule(NativeModule);
 
 // Wrapper function that ensures SDK is initialized before calling native methods
-const withNativeModule = async <R>(
-  fn: (native: CodegenSpec) => R
-): Promise<R> => {
+const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
   if (!_initialized) {
     throw new Error(
       'CustomerIO SDK must be initialized before calling any methods. Please call CustomerIO.initialize() first.'
     );
   }
-  return await callNativeModule(nativeModule, fn);
+  return callNativeModule(nativeModule, fn);
 };
 
 /** @public */
@@ -51,8 +49,8 @@ export class CustomerIO {
       packageVersion: expoVersion || packageJson.version || '',
     };
 
-    return callNativeModule(NativeModule, (native) => {
-      let result = native.initialize(config, args);
+    return await callNativeModule(NativeModule, async (native) => {
+      let result = await native.initialize(config, args);
       _initialized = true;
       return result;
     });

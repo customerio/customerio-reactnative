@@ -42,9 +42,12 @@ RCT_EXPORT_MODULE()
   return NO;
 }
 
-- (void)initialize:(NSDictionary *)config args:(NSDictionary *)args {
+- (void)initialize:(NSDictionary *)config
+              args:(NSDictionary *)args
+           resolve:(RCTPromiseResolveBlock)resolve
+            reject:(RCTPromiseRejectBlock)reject {
   [self assertBridgeAvailable:@"during initialize"];
-  [_swiftBridge initialize:config args:args];
+  [_swiftBridge initialize:config args:args resolve:resolve reject:reject];
 }
 
 - (void)identify:(NSDictionary *)params {
@@ -99,7 +102,11 @@ Class<RCTBridgeModule> NativeCustomerIOCls(void) { return RCTNativeCustomerIO.cl
 
 @interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIO, NativeCustomerIO, NSObject)
 
-RCT_EXTERN_METHOD(initialize : (NSDictionary *)config args : (NSDictionary *)args)
+RCT_EXTERN_METHOD(initialize
+                  : (NSDictionary *)config args
+                  : (NSDictionary *)args resolve
+                  : (RCTPromiseResolveBlock)resolve reject
+                  : (RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(identify : (NSDictionary *)params)
 RCT_EXTERN_METHOD(clearIdentify)
 RCT_EXTERN_METHOD(track : (NSString *)name properties : (NSDictionary *)properties)

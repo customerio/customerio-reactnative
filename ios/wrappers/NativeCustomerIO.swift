@@ -8,7 +8,12 @@ public class NativeCustomerIO: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
 
     @objc
-    func initialize(_ config: [String: Any], args: [String: Any]) {
+    func initialize(
+        _ config: [String: Any],
+        args: [String: Any],
+        resolve: @escaping (RCTPromiseResolveBlock),
+        reject: @escaping (RCTPromiseRejectBlock)
+    ) {
         do {
             let packageSource = args["packageSource"] as? String
             let packageVersion = args["packageVersion"] as? String
@@ -36,8 +41,10 @@ public class NativeCustomerIO: NSObject {
             logger.debug(
                 "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
             )
+            resolve(true)
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
+            reject(CustomerioConstants.cioTag, "Error initializing Customer.io SDK", nil)
         }
     }
 
