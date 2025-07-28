@@ -3,6 +3,8 @@
  *
  * Controls how the Android system handles activity lifecycle
  * when users tap on push notifications.
+ *
+ * @public
  */
 export enum PushClickBehaviorAndroid {
   /** Clear the activity task stack and start fresh */
@@ -18,6 +20,8 @@ export enum PushClickBehaviorAndroid {
  *
  * Configure which types of notifications to request permission for
  * on different platforms.
+ *
+ * @public
  */
 export type CioPushPermissionOptions = {
   ios?: {
@@ -33,6 +37,8 @@ export type CioPushPermissionOptions = {
  *
  * Indicates whether the user has granted, denied, or not yet
  * responded to push notification permission requests.
+ *
+ * @public
  */
 export enum CioPushPermissionStatus {
   /** User has granted push notification permissions */

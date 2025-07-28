@@ -3,6 +3,8 @@
  *
  * Contains metadata about displayed in-app messages that can be used
  * for tracking user interactions and message performance analytics.
+ *
+ * @public
  */
 export interface InAppMessage {
   /** Unique identifier for the message template */
@@ -15,6 +17,8 @@ export interface InAppMessage {
 
 /**
  * Enum to represent the type of event triggered by in-app event callback.
+ *
+ * @public
  */
 export enum InAppMessageEventType {
   errorWithMessage = 'errorWithMessage',

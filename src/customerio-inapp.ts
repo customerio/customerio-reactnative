@@ -38,6 +38,8 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 
 /**
  * Helper class so that registering event listeners is easier for customers.
+ *
+ * @public
  */
 class CustomerIOInAppMessaging implements NativeInAppSpec {
   registerEventsListener(listener: (event: InAppMessageEvent) => void) {

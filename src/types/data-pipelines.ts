@@ -15,6 +15,8 @@ import type { PushClickBehaviorAndroid } from './push';
  *   preferences: { theme: 'dark' }
  * };
  * ```
+ *
+ * @public
  */
 export type CustomAttributes = Record<string, any>;
 
@@ -23,6 +25,8 @@ export type CustomAttributes = Record<string, any>;
  *
  * @param userId - Unique identifier for the user (email, username, etc.)
  * @param traits - Additional user attributes and properties
+ *
+ * @public
  */
 export interface IdentifyParams {
   userId?: string;
@@ -43,6 +47,8 @@ export interface IdentifyParams {
  * @param autoTrackDeviceAttributes - Auto-track device information
  * @param inApp - In-app messaging configuration
  * @param push - Push notification configuration
+ *
+ * @public
  */
 export type CioConfig = {
   cdpApiKey: string;
@@ -68,6 +74,8 @@ export type CioConfig = {
  * Log levels for CustomerIO SDK debugging and monitoring.
  *
  * Controls the verbosity of SDK logging output for debugging purposes.
+ *
+ * @public
  */
 export enum CioLogLevel {
   /** No logging output */
@@ -82,6 +90,8 @@ export enum CioLogLevel {
 
 /**
  * Data center regions for CustomerIO API endpoints.
+ *
+ * @public
  */
 export enum CioRegion {
   US = 'US',
@@ -93,6 +103,8 @@ export enum CioRegion {
  *
  * Defines how the SDK should handle automatic screen view events
  * for analytics and in-app message targeting.
+ *
+ * @public
  */
 export enum ScreenView {
   /** Send screen events to destinations and display in-app messages */
