@@ -77,14 +77,14 @@ export class CustomerIO {
       optional: true,
     });
 
-    return withNativeModule((native) =>
+    return withNativeModule<any>((native) =>
       native.identify({ userId, traits: normalizedTraits })
     );
   };
 
   /** Clear current user identification and stop tracking. */
   static readonly clearIdentify = async () => {
-    return withNativeModule((native) => native.clearIdentify());
+    return withNativeModule<any>((native) => native.clearIdentify());
   };
 
   /** Track an event with optional properties. */
@@ -98,7 +98,9 @@ export class CustomerIO {
       optional: true,
     });
 
-    return withNativeModule((native) => native.track(name, normalizedProps));
+    return withNativeModule<any>((native) =>
+      native.track(name, normalizedProps)
+    );
   };
 
   /** Track a screen view event with optional properties. */
@@ -112,7 +114,9 @@ export class CustomerIO {
       optional: true,
     });
 
-    return withNativeModule((native) => native.screen(title, normalizedProps));
+    return withNativeModule<any>((native) =>
+      native.screen(title, normalizedProps)
+    );
   };
 
   /** Set or update attributes for the currently identified user profile. */
@@ -123,7 +127,7 @@ export class CustomerIO {
       usage: 'Profile',
     }) as CustomAttributes;
 
-    return withNativeModule((native) =>
+    return withNativeModule<any>((native) =>
       native.setProfileAttributes(normalizedAttrs)
     );
   };
@@ -136,7 +140,7 @@ export class CustomerIO {
       usage: 'Device',
     }) as CustomAttributes;
 
-    return withNativeModule((native) =>
+    return withNativeModule<any>((native) =>
       native.setDeviceAttributes(normalizedAttrs)
     );
   };
