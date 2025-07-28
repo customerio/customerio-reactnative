@@ -40,7 +40,7 @@ export class CustomerIO {
     assert.config(config);
 
     if (config.logLevel && config.logLevel !== CioLogLevel.None) {
-      await NativeLoggerListener.initialize();
+      NativeLoggerListener.initialize();
     }
 
     const expoVersion = packageJson.expoVersion ?? '';
@@ -49,8 +49,8 @@ export class CustomerIO {
       packageVersion: expoVersion || packageJson.version || '',
     };
 
-    return await callNativeModule(NativeModule, async (native) => {
-      let result = await native.initialize(config, args);
+    return callNativeModule(NativeModule, (native) => {
+      let result = native.initialize(config, args);
       _initialized = true;
       return result;
     });
