@@ -13,15 +13,38 @@ const withNativeModule = <R>(
   return callNativeModule(nativeModule, fn);
 };
 
+// Prefix for all CustomerIO log messages
+const loggerPrefix = '[CIO] ';
+
+// Shared architecture detection cache, default to true (new arch)
+let isNewArchEnabledCache: boolean = true;
+let isArchCacheInitialized: boolean = false;
+
+// Detect and cache React Native architecture type
+export const isNewArchEnabled = async (): Promise<boolean> => {
+  if (!isArchCacheInitialized) {
+    try {
+      const result = await callNativeModule(nativeModule, (native) =>
+        native.isNewArchEnabled()
+      );
+      isNewArchEnabledCache = result;
+      isArchCacheInitialized = true;
+    } catch (error) {
+      console.warn(`${loggerPrefix} Failed to determine architecture.`, error);
+      isArchCacheInitialized = true;
+    }
+  }
+  return isNewArchEnabledCache;
+};
+
 export class NativeLoggerListener {
   private static isInitialized = false;
 
-  static async initialize() {
+  static async initialize(): Promise<void> {
     // Prevent multiple registrations of the same log listener
     if (this.isInitialized) {
-      return;
+      return Promise.resolve();
     }
-    const loggerPrefix = '[CIO] ';
 
     // Using console.log will log to the JavaScript side but prevent
     // React Native's default behavior of redirecting logs to the native side.
@@ -52,20 +75,18 @@ export class NativeLoggerListener {
       logEvent(event);
     };
 
-    return withNativeModule(async (native) => {
-      // Check if new architecture is enabled
-      const isNewArch = await native.isNewArchEnabled();
-
-      if (isNewArch) {
-        // New architecture: Use TurboModule event emitter
-        return native.onCioLogEvent(logHandler);
+    // Determine architecture and setup appropriate event listener
+    const newArchEnabled = await isNewArchEnabled();
+    withNativeModule((native) => {
+      if (newArchEnabled) {
+        // Use TurboModule event system
+        native.onCioLogEvent(logHandler);
       } else {
-        // Old architecture: Use legacy NativeEventEmitter
+        // Use legacy NativeEventEmitter
         const bridge = new NativeEventEmitter(native);
-        return bridge.addListener('CioLogEvent', logHandler);
+        bridge.addListener('CioLogEvent', logHandler);
       }
-    }).finally(() => {
-      this.isInitialized = true;
     });
+    this.isInitialized = true;
   }
 }

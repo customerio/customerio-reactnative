@@ -1,7 +1,7 @@
 // Argument validation utilities for SDK internal use
 // Ensures input safety and throws clear errors when validation fails
 
-import type { CioConfig } from '../types';
+import type { CioConfig, CustomAttributes } from '../types';
 
 /**
  * Builds a standardized error message for validation failures.
@@ -108,6 +108,36 @@ function validateRecord(
 }
 
 /**
+ * Validates that a value is a valid CustomAttributes object.
+ * Automatically converts Map objects to plain objects for compatibility.
+ * This is a specialized version of validateRecord optimized for attribute validation.
+ */
+function validateAttributes(
+  value: unknown,
+  fieldName: string,
+  options: {
+    usage?: string;
+    expectedType?: string;
+    optional?: boolean;
+  } = {}
+): CustomAttributes | undefined {
+  const exists = !isUndefined(value);
+  if (options.optional && !exists) {
+    return; // Skip validation for optional fields
+  }
+
+  let attributes: unknown;
+  if (exists && value instanceof Map) {
+    // Convert Map to plain object for native serialization
+    attributes = Object.fromEntries(value);
+  } else {
+    attributes = value;
+  }
+  validateRecord(attributes, fieldName, options);
+  return attributes as CustomAttributes;
+}
+
+/**
  * Validates that the given value is a valid CioConfig object.
  * Throws if required fields are missing or incorrectly typed.
  */
@@ -134,10 +164,12 @@ type ConfigValidator = (value: unknown) => asserts value is CioConfig;
 export const assert: {
   string: typeof validateString;
   record: typeof validateRecord;
+  attributes: typeof validateAttributes;
   config: ConfigValidator;
 } = {
   string: validateString,
   record: validateRecord,
+  attributes: validateAttributes,
   config: validateConfig,
 };
 
