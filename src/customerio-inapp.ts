@@ -110,6 +110,7 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
 /**
  * Class to hold in-app event attributes.
  */
+/** @public */
 class InAppMessageEvent {
   eventType: InAppMessageEventType;
   messageId: string;

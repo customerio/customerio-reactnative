@@ -23,17 +23,18 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
   return callNativeModule(nativeModule, fn);
 };
 
+/** @public */
 class CustomerIOPushMessaging implements NativePushSpec {
   /**
    * Processes push notification received outside the CIO SDK. The method displays notification on
    * device and tracks CIO metrics for push notification.
    *
-   * @param message push payload received from FCM. The payload must contain data payload received in push
+   * @param message - push payload received from FCM. The payload must contain data payload received in push
    * notification.
-   * @param handleNotificationTrigger indicates whether it should display the notification or not.
+   * @param handleNotificationTrigger - indicates whether it should display the notification or not.
    * true (default): The SDK will display the notification and track associated metrics.
    * false: The SDK will only process the notification to track metrics but will not display any notification.
-   * @return promise that resolves to boolean indicating if the notification was handled by the SDK or not.
+   * @returns promise that resolves to boolean indicating if the notification was handled by the SDK or not.
    */
   onMessageReceived(
     message: any,
@@ -66,7 +67,7 @@ class CustomerIOPushMessaging implements NativePushSpec {
   /**
    * Track push notifications metrics using this method.
    * Call this method when a user interacts and taps open the push notification.
-   * @param payload Customer.io payload as received from the push notification
+   * @param payload - Customer.io payload as received from the push notification
    */
   trackNotificationResponseReceived(payload: Object) {
     // Tracking push notification metrics on Android is handled automatically
@@ -83,7 +84,7 @@ class CustomerIOPushMessaging implements NativePushSpec {
   /**
    * Track push notifications metrics using this method.
    * Call this method when a push notification is received.
-   * @param payload Customer.io payload as received from the push notification
+   * @param payload - Customer.io payload as received from the push notification
    */
   trackNotificationReceived(payload: Object) {
     // Tracking push notification metrics on Android is handled automatically

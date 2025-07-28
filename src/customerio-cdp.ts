@@ -35,6 +35,7 @@ const withNativeModule = async <R>(
   return await callNativeModule(nativeModule, fn);
 };
 
+/** @public */
 export class CustomerIO {
   /** Initialize the CustomerIO SDK with given configuration. */
   static readonly initialize = async (config: CioConfig) => {

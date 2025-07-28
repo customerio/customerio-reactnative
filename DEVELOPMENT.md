@@ -4,6 +4,36 @@
 
 Since this SDK is npm package, it does not need to be compiled separately.
 
+## API Change Detection
+
+This project uses [Microsoft API Extractor](https://api-extractor.com/) to detect breaking changes to the public API surface.
+
+### How it works
+
+- API Extractor generates a baseline file (`api-extractor-output/customerio-reactnative.api.md`) containing the current API surface
+- CI validates that this baseline matches the actual exported APIs
+- Any API changes require updating the baseline file and committing it
+
+### Local development
+
+**After making API changes:**
+
+1. Build TypeScript declarations:
+   ```bash
+   npm run prepare
+   ```
+
+2. Update the API baseline:
+   ```bash
+   npx api-extractor run --local
+   ```
+
+3. Review and commit the updated `api-extractor-output/customerio-reactnative.api.md` file
+
+**To validate without updating:**
+```bash
+npx api-extractor run
+```
 
 ## Work on Ami App locally
 
