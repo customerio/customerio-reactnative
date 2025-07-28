@@ -66,10 +66,6 @@ RCT_EXPORT_MODULE()
   [_swiftBridge invalidate];
 }
 
-- (void)isNewArchEnabled:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
-  resolve(@(YES));
-}
-
 - (void)addListener:(nonnull NSString *)eventName {
   RCT_LEGACY_ARCH_WARNING(addListener);
 }
@@ -98,12 +94,6 @@ Class<RCTBridgeModule> NativeCustomerIOLoggingCls(void) {
                                     RCTEventEmitter)
 
 RCT_EXTERN_METHOD(supportedEvents)
-
-RCT_REMAP_METHOD(isNewArchEnabled, isNewArchEnabledWithResolver
-                 : (RCTPromiseResolveBlock)resolve rejecter
-                 : (RCTPromiseRejectBlock)reject) {
-  resolve(@(NO));
-}
 
 // Background initialization is fine since logs are ignored until listeners are attached
 + (BOOL)requiresMainQueueSetup {

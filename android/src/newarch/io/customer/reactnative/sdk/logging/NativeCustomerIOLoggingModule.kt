@@ -1,6 +1,5 @@
 package io.customer.reactnative.sdk.logging
 
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import io.customer.reactnative.sdk.NativeCustomerIOLoggingSpec
 import io.customer.reactnative.sdk.util.onlyForLegacyArch
@@ -24,10 +23,6 @@ class NativeCustomerIOLoggingModule(
     override fun invalidate() {
         NativeCustomerIOLoggingModuleImpl.invalidate()
         super.invalidate()
-    }
-
-    override fun isNewArchEnabled(promise: Promise?) {
-        promise?.resolve(true)
     }
 
     override fun addListener(eventName: String?) {

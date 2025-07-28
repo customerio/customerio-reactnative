@@ -1,10 +1,10 @@
 import {
   NativeEventEmitter,
-  type EmitterSubscription,
+  type EventSubscription,
   type TurboModule,
 } from 'react-native';
 import { InlineInAppMessageView } from './components';
-import { isNewArchEnabled } from './native-logger-listener';
+import { NativeLoggerListener } from './native-logger-listener';
 import NativeCustomerIOMessagingInApp, {
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOMessagingInApp';
@@ -42,7 +42,9 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
  * @public
  */
 class CustomerIOInAppMessaging implements NativeInAppSpec {
-  registerEventsListener(listener: (event: InAppMessageEvent) => void) {
+  registerEventsListener(
+    listener: (event: InAppMessageEvent) => void
+  ): EventSubscription {
     const emitter = (data: any) => {
       // Convert raw native payload to InAppMessageEvent
       const event = new InAppMessageEvent(
@@ -55,50 +57,20 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
       listener(event);
     };
 
-    // Holds the real subscription once created
-    let actualSubscription: EmitterSubscription | undefined;
-    let removed = false;
-
-    // Proxy object returned immediately to keep the API consistent
-    const proxySubscription = {
-      remove: () => {
-        removed = true;
-        actualSubscription?.remove();
-      },
-      emitter: new NativeEventEmitter(nativeModule),
-      eventType: InAppEventListenerEventName,
-      listener: emitter,
-      context: undefined,
-      key: 0,
-      subscriber: {} as any,
-    } as EmitterSubscription;
-
-    // Setup listener asynchronously based on architecture
-    withNativeModule(async (native) => {
-      const newArchEnabled = await isNewArchEnabled();
-      if (newArchEnabled) {
-        // Use TurboModule emitter for new architecture
-        const subscriber = native.onInAppEventReceived(emitter);
-        actualSubscription = {
-          ...proxySubscription,
-          remove: () => subscriber.remove(),
-        } as unknown as EmitterSubscription;
-      } else {
-        // Use legacy NativeEventEmitter for old architecture
-        const eventEmitter = new NativeEventEmitter(native);
-        actualSubscription = eventEmitter.addListener(
-          InAppEventListenerEventName,
-          emitter
+    return withNativeModule((native) => {
+      try {
+        // Try new arch TurboModule event listener (not available in old arch)
+        return native.onInAppEventReceived(emitter);
+      } catch {
+        NativeLoggerListener.warn(
+          'Falling back to legacy event emitter (likely using old architecture). ' +
+            'Switch to new architecture for better performance and event handling.'
         );
-      }
-
-      // Handle case where .remove() was called before subscription was ready
-      if (removed) {
-        actualSubscription?.remove();
+        // Fallback to old arch NativeEventEmitter when new arch method fails
+        const eventEmitter = new NativeEventEmitter(native);
+        return eventEmitter.addListener(InAppEventListenerEventName, emitter);
       }
     });
-
-    return proxySubscription;
   }
 
   /**

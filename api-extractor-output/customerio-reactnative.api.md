@@ -7,8 +7,8 @@
 import { ActivityIndicatorProps } from 'react-native';
 import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
 import type { Double } from 'react-native/Libraries/Types/CodegenTypes';
-import { EmitterSubscription } from 'react-native';
 import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypes';
+import { EventSubscription } from 'react-native';
 import { default as React_2 } from 'react';
 import { TurboModule } from 'react-native';
 import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
@@ -94,7 +94,7 @@ export class CustomerIO {
 export class CustomerIOInAppMessaging implements NativeInAppSpec {
     dismissMessage(): void;
     // (undocumented)
-    registerEventsListener(listener: (event: InAppMessageEvent) => void): EmitterSubscription;
+    registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativePushSpec" needs to be exported by the entry point index.d.ts

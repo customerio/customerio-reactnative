@@ -19,8 +19,6 @@ import type {
 /** TurboModule interface for CustomerIO logging native operations */
 export interface Spec extends TurboModule {
   readonly onCioLogEvent: EventEmitter<UnsafeObject>;
-  /** @internal - Added because React Native has no simpler way to check for New Architecture */
-  isNewArchEnabled(): Promise<boolean>;
   // Old architecture support: EventEmitter requires these methods for proper functionality
   /** @internal - Registers an event listener for old architecture EventEmitter */
   addListener: (eventName: string) => void;

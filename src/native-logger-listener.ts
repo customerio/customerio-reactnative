@@ -13,32 +13,11 @@ const withNativeModule = <R>(
   return callNativeModule(nativeModule, fn);
 };
 
-// Prefix for all CustomerIO log messages
-const loggerPrefix = '[CIO] ';
-
-// Shared architecture detection cache, default to true (new arch)
-let isNewArchEnabledCache: boolean = true;
-let isArchCacheInitialized: boolean = false;
-
-// Detect and cache React Native architecture type
-export const isNewArchEnabled = async (): Promise<boolean> => {
-  if (!isArchCacheInitialized) {
-    try {
-      const result = await callNativeModule(nativeModule, (native) =>
-        native.isNewArchEnabled()
-      );
-      isNewArchEnabledCache = result;
-      isArchCacheInitialized = true;
-    } catch (error) {
-      console.warn(`${loggerPrefix} Failed to determine architecture.`, error);
-      isArchCacheInitialized = true;
-    }
-  }
-  return isNewArchEnabledCache;
-};
-
+/* @internal */
 export class NativeLoggerListener {
   private static isInitialized = false;
+  // Prefix for all CustomerIO log messages
+  private static loggerPrefix = '[CIO] ';
 
   static async initialize(): Promise<void> {
     // Prevent multiple registrations of the same log listener
@@ -56,16 +35,16 @@ export class NativeLoggerListener {
     }) => {
       switch (event.logLevel) {
         case CioLogLevel.Debug:
-          console.debug(loggerPrefix + event.message);
+          console.debug(this.loggerPrefix + event.message);
           break;
         case CioLogLevel.Info:
-          console.info(loggerPrefix + event.message);
+          console.info(this.loggerPrefix + event.message);
           break;
         case CioLogLevel.Error:
-          console.error(loggerPrefix + event.message);
+          console.error(this.loggerPrefix + event.message);
           break;
         default:
-          console.log(loggerPrefix + event);
+          console.log(this.loggerPrefix + event);
           break;
       }
     };
@@ -75,18 +54,22 @@ export class NativeLoggerListener {
       logEvent(event);
     };
 
-    // Determine architecture and setup appropriate event listener
-    const newArchEnabled = await isNewArchEnabled();
     withNativeModule((native) => {
-      if (newArchEnabled) {
-        // Use TurboModule event system
+      try {
+        // Try new arch TurboModule log listener (not available in old arch)
         native.onCioLogEvent(logHandler);
-      } else {
-        // Use legacy NativeEventEmitter
+      } catch {
+        // Fallback to old arch NativeEventEmitter when new arch method fails
         const bridge = new NativeEventEmitter(native);
         bridge.addListener('CioLogEvent', logHandler);
       }
     });
     this.isInitialized = true;
+  }
+
+  static warn(message: string) {
+    if (__DEV__) {
+      console.warn(this.loggerPrefix + message);
+    }
   }
 }
