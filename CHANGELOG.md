@@ -1,3 +1,9 @@
+## [4.6.0](https://github.com/customerio/customerio-reactnative/compare/4.5.2...4.6.0) (2025-07-29)
+
+### Features
+
+* utilize React Native New Architecture ([#484](https://github.com/customerio/customerio-reactnative/issues/484)) ([2476ee9](https://github.com/customerio/customerio-reactnative/commit/2476ee940d32e6b200c4cbea943413debbe51e75))
+
 ## [4.5.2](https://github.com/customerio/customerio-reactnative/compare/4.5.1...4.5.2) (2025-07-24)
 
 ### Bug Fixes
