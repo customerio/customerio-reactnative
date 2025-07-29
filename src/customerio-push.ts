@@ -1,31 +1,30 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform, type TurboModule } from 'react-native';
+import NativeCustomerIOMessagingPush, {
+  type Spec as CodegenSpec,
+} from './specs/modules/NativeCustomerIOMessagingPush';
 import {
   type CioPushPermissionOptions,
   CioPushPermissionStatus,
-} from './cio-config';
-
-const LINKING_ERROR =
-  `The package 'customerio-reactnative' doesn't seem to be linked. Make sure: \n\n` +
-  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
-  '- You rebuilt the app after installing the package\n' +
-  '- You are not using Expo managed workflow\n';
+} from './types';
+import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 
 /**
- * Get CustomerIOPushMessaging native module
+ * Ensures all methods defined in codegen spec are implemented by the public module
+ *
+ * @internal
  */
-const PushMessagingNative = NativeModules.CioRctPushMessaging
-  ? NativeModules.CioRctPushMessaging
-  : new Proxy(
-      {},
-      {
-        get() {
-          throw new Error(LINKING_ERROR);
-        },
-      }
-    );
+interface NativePushSpec extends Omit<CodegenSpec, keyof TurboModule> {}
+
+// Reference to the native CustomerIO Data Pipelines module for SDK operations
+const nativeModule = ensureNativeModule(NativeCustomerIOMessagingPush);
+
+// Wrapper function that ensures SDK is initialized before calling native methods
+const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
+  return callNativeModule(nativeModule, fn);
+};
 
 /** @public */
-class CustomerIOPushMessaging {
+class CustomerIOPushMessaging implements NativePushSpec {
   /**
    * Processes push notification received outside the CIO SDK. The method displays notification on
    * device and tracks CIO metrics for push notification.
@@ -48,9 +47,8 @@ class CustomerIOPushMessaging {
       // unnecessary platform specific checks.
       return Promise.resolve(true);
     } else {
-      return PushMessagingNative.handleMessage(
-        message,
-        handleNotificationTrigger
+      return withNativeModule((native) =>
+        native.onMessageReceived(message, handleNotificationTrigger)
       );
     }
   }
@@ -78,7 +76,9 @@ class CustomerIOPushMessaging {
     if (payload == null || this.isAndroid()) {
       return;
     }
-    PushMessagingNative.trackNotificationResponseReceived(payload);
+    withNativeModule((native) =>
+      native.trackNotificationResponseReceived(payload)
+    );
   }
 
   /**
@@ -93,7 +93,7 @@ class CustomerIOPushMessaging {
     if (payload == null || this.isAndroid()) {
       return;
     }
-    PushMessagingNative.trackNotificationReceived(payload);
+    withNativeModule((native) => native.trackNotificationReceived(payload));
   }
 
   /**
@@ -102,17 +102,21 @@ class CustomerIOPushMessaging {
    * registered or the method fails to fetch token.
    */
   getRegisteredDeviceToken(): Promise<string> {
-    return PushMessagingNative.getRegisteredDeviceToken();
+    return withNativeModule((native) => native.getRegisteredDeviceToken());
   }
 
   showPromptForPushNotifications(
     options: CioPushPermissionOptions = { ios: { badge: true, sound: true } }
   ): Promise<CioPushPermissionStatus> {
-    return PushMessagingNative.showPromptForPushNotifications(options);
+    return withNativeModule((native) =>
+      native.showPromptForPushNotifications(options)
+    ).then((status) => status as CioPushPermissionStatus);
   }
 
   getPushPermissionStatus(): Promise<CioPushPermissionStatus> {
-    return PushMessagingNative.getPushPermissionStatus();
+    return withNativeModule((native) => native.getPushPermissionStatus()).then(
+      (status) => status as CioPushPermissionStatus
+    );
   }
 
   isAndroid(): boolean {

@@ -5,14 +5,17 @@
 ```ts
 
 import { ActivityIndicatorProps } from 'react-native';
-import type { CodegenTypes } from 'react-native';
-import { EmitterSubscription } from 'react-native';
-import { NativeEventEmitter } from 'react-native';
+import type { DirectEventHandler } from 'react-native/Libraries/Types/CodegenTypes';
+import type { Double } from 'react-native/Libraries/Types/CodegenTypes';
+import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypes';
+import { EventSubscription } from 'react-native';
 import { default as React_2 } from 'react';
+import { TurboModule } from 'react-native';
+import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 import type { ViewProps } from 'react-native';
 import { ViewStyle } from 'react-native';
 
-// @public (undocumented)
+// @public
 export type CioConfig = {
     cdpApiKey: string;
     migrationSiteId?: string;
@@ -33,19 +36,15 @@ export type CioConfig = {
     };
 };
 
-// @public (undocumented)
+// @public
 export enum CioLogLevel {
-    // (undocumented)
     Debug = "debug",
-    // (undocumented)
     Error = "error",
-    // (undocumented)
     Info = "info",
-    // (undocumented)
     None = "none"
 }
 
-// @public (undocumented)
+// @public
 export type CioPushPermissionOptions = {
     ios?: {
         badge: boolean;
@@ -53,17 +52,14 @@ export type CioPushPermissionOptions = {
     };
 };
 
-// @public (undocumented)
+// @public
 export enum CioPushPermissionStatus {
-    // (undocumented)
     Denied = "DENIED",
-    // (undocumented)
     Granted = "GRANTED",
-    // (undocumented)
     NotDetermined = "NOTDETERMINED"
 }
 
-// @public (undocumented)
+// @public
 export enum CioRegion {
     // (undocumented)
     EU = "EU",
@@ -71,47 +67,40 @@ export enum CioRegion {
     US = "US"
 }
 
+// @public
+export type CustomAttributes = Record<string, any>;
+
 // @public (undocumented)
 export class CustomerIO {
-    // (undocumented)
     static readonly clearIdentify: () => Promise<any>;
-    // (undocumented)
     static readonly deleteDeviceToken: () => Promise<void>;
-    // Warning: (ae-forgotten-export) The symbol "IdentifyParams" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
     static readonly identify: ({ userId, traits, }?: IdentifyParams) => Promise<any>;
     // (undocumented)
     static readonly inAppMessaging: CustomerIOInAppMessaging;
-    // (undocumented)
     static readonly initialize: (config: CioConfig) => Promise<void>;
-    // (undocumented)
     static readonly isInitialized: () => boolean;
     // (undocumented)
     static readonly pushMessaging: CustomerIOPushMessaging;
-    // (undocumented)
     static readonly registerDeviceToken: (token: string) => Promise<void>;
-    // (undocumented)
     static readonly screen: (title: string, properties?: Record<string, any>) => Promise<any>;
-    // (undocumented)
     static readonly setDeviceAttributes: (attributes: Record<string, any>) => Promise<any>;
-    // (undocumented)
     static readonly setProfileAttributes: (attributes: Record<string, any>) => Promise<any>;
-    // (undocumented)
     static readonly track: (name: string, properties?: Record<string, any>) => Promise<any>;
 }
 
-// @public (undocumented)
-export class CustomerIOInAppMessaging {
+// Warning: (ae-forgotten-export) The symbol "NativeInAppSpec" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class CustomerIOInAppMessaging implements NativeInAppSpec {
     dismissMessage(): void;
     // (undocumented)
-    eventEmitter: NativeEventEmitter;
-    // (undocumented)
-    registerEventsListener(listener: (event: InAppMessageEvent) => void): EmitterSubscription;
+    registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
 }
 
+// Warning: (ae-forgotten-export) The symbol "NativePushSpec" needs to be exported by the entry point index.d.ts
+//
 // @public (undocumented)
-export class CustomerIOPushMessaging {
+export class CustomerIOPushMessaging implements NativePushSpec {
     // (undocumented)
     getPushPermissionStatus(): Promise<CioPushPermissionStatus>;
     getRegisteredDeviceToken(): Promise<string>;
@@ -125,13 +114,18 @@ export class CustomerIOPushMessaging {
     trackNotificationResponseReceived(payload: Object): void;
 }
 
-// @public (undocumented)
+// @public
+export interface IdentifyParams {
+    // (undocumented)
+    traits?: CustomAttributes;
+    // (undocumented)
+    userId?: string;
+}
+
+// @public
 export interface InAppMessage {
-    // (undocumented)
     deliveryId?: string;
-    // (undocumented)
     elementId?: string;
-    // (undocumented)
     messageId: string;
 }
 
@@ -150,7 +144,7 @@ export class InAppMessageEvent {
     messageId: string;
 }
 
-// @public (undocumented)
+// @public
 export enum InAppMessageEventType {
     // (undocumented)
     errorWithMessage = "errorWithMessage",
@@ -177,21 +171,16 @@ export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeCh
     onActionClick?: (message: InAppMessage, actionValue: string, actionName: string) => void;
 }
 
-// @public (undocumented)
+// @public
 export enum PushClickBehaviorAndroid {
-    // (undocumented)
     ActivityNoFlags = "ACTIVITY_NO_FLAGS",
-    // (undocumented)
     ActivityPreventRestart = "ACTIVITY_PREVENT_RESTART",
-    // (undocumented)
     ResetTaskStack = "RESET_TASK_STACK"
 }
 
-// @public (undocumented)
+// @public
 export enum ScreenView {
-    // (undocumented)
     All = "all",
-    // (undocumented)
     InApp = "inApp"
 }
 
