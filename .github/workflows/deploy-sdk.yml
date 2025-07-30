@@ -211,6 +211,67 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
+  trigger-docs-rebuild:
+    needs: [deploy-git-tag, deploy-npm]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Trigger docs rebuild
+        run: |
+          curl -X POST https://docs.customer.io/api/trigger-workflow \
+            -H "Content-Type: application/json" \
+            -d '{
+              "action": "published",
+              "repository": {
+                "full_name": "${{ github.repository }}"
+              },
+              "release": {
+                "tag_name": "${{ needs.deploy-git-tag.outputs.new_release_version }}",
+                "name": "${{ needs.deploy-git-tag.outputs.new_release_version }}",
+                "created_at": "${{ needs.deploy-git-tag.outputs.new_release_published }}"
+              },
+              "sender": {
+                "login": "${{ github.actor }}"
+              }
+            }'
+        continue-on-error: true
+
+      - name: Notify team of failure
+        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        if: ${{ failure() }}
+        with:
+          # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
+          payload: |
+            {
+              "text": "ReactNative SDK docs rebuild failure",
+              "username": "ReactNative deployment bot",
+              "icon_url": "https://vectorified.com/images/icon-react-native-24.png",
+              "channel": "#mobile-deployments",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ReactNative* SDK docs rebuild :warning: failure :warning:"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Failed to trigger docs rebuild for release *${{ needs.deploy-git-tag.outputs.new_release_version }}*. You may need to manually trigger the docs build. View <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|CI server logs> to learn why and fix the issue."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK 
+
+
   publish-sample-apps-public-builds:
     needs: deploy-npm
     uses: ./.github/workflows/build-release-sample-apps.yml
