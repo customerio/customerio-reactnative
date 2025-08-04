@@ -8,20 +8,28 @@ import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
-import { AppEnvValues } from './env';
+
+
+// Define minimal type inline since we're bypassing env.ts
+type SimpleEnv = {
+  API_KEY: string;
+  SITE_ID: string;
+  buildTimestamp?: number;
+};
 
 export default function App({ appName }: { appName: string }) {
-  const env =
-    AppEnvValues[appName.toLocaleLowerCase() as keyof typeof AppEnvValues] ??
-    AppEnvValues['default'];
-  if (!env) {
-    console.error(
-      `No default preset environment variables found nor environment variables for the app: ${appName}. The env.ts contains environment values for case-insenetive app names: ${Object.keys(
-        AppEnvValues
-      ).join(', ')}`
-    );
-  }
-  Storage.setEnv(env);
+  // BYPASS ENVIRONMENT FILE COMPLETELY - USE HARDCODED VALUES
+  const hardcodedEnv: SimpleEnv = {
+    API_KEY: 'hardcoded_dummy_api_key_12345',
+    SITE_ID: 'hardcoded_dummy_site_id_67890',
+    buildTimestamp: 1699999999,
+  };
+  
+  // Simple debug string
+  const debugInfo = `App="${appName}" 🔧HARDCODED_ENV 🔑${hardcodedEnv.API_KEY.substring(0, 10)}...`;
+  
+  // Set the hardcoded environment
+  Storage.setEnv(hardcodedEnv);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,7 +58,15 @@ export default function App({ appName }: { appName: string }) {
           'Initializing CustomerIO on app start with config',
           cioConfig
         );
-        CustomerIO.initialize(cioConfig);
+        try {
+          CustomerIO.initialize(cioConfig);
+          console.log('CustomerIO initialized successfully');
+        } catch (error) {
+          console.error('Failed to initialize CustomerIO:', error);
+          // Don't throw - let the app continue to run
+        }
+      } else {
+        console.error('No CustomerIO config found in storage');
       }
 
       const logInAppEvent = (name: string, params: InAppMessageEvent) => {
@@ -117,6 +133,12 @@ export default function App({ appName }: { appName: string }) {
   return (
     <>
       {isLoading && <BodyText>Loading....</BodyText>}
+      {/* Debug info - remove this after fixing the issue */}
+      {!isLoading && (
+        <BodyText style={{fontSize: 10, backgroundColor: 'yellow'}}>
+          {debugInfo}
+        </BodyText>
+      )}
       {!isLoading && (
         <NavigationCallbackContext.Provider
           value={{
