@@ -189,14 +189,11 @@ jobs:
           
           echo "Expected title: $EXPECTED_TITLE"
           
-          # Check for existing open PRs with the exact title or containing the version numbers
+          # Check for existing open PRs with the exact title only
+          # This prevents false positives from substring matching (e.g., "1.0" matching "1.0.1")
           EXISTING_PR=$(gh pr list --state=open --json number,title | \
-            jq -r --arg title "$EXPECTED_TITLE" --arg ios "$IOS_VERSION" --arg android "$ANDROID_VERSION" \
-            '.[] | select(
-              .title == $title or 
-              (.title | contains("Customer.io") and contains($ios)) or 
-              (.title | contains("Customer.io") and contains($android))
-            ) | .number' | head -1)
+            jq -r --arg title "$EXPECTED_TITLE" \
+            '.[] | select(.title == $title) | .number' | head -1)
           
           if [[ -n "$EXISTING_PR" ]]; then
             echo "⚠️  Found existing PR #$EXISTING_PR for the same SDK versions"
