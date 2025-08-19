@@ -163,13 +163,64 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Check for existing PR
+        id: check_existing_pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔍 Checking for existing PRs with same SDK versions..."
+          
+          # Generate the exact title that would be created and search for existing PRs
+          IOS_UPDATED="${{ needs.check-updates.outputs.ios_needs_update }}"
+          ANDROID_UPDATED="${{ needs.check-updates.outputs.android_needs_update }}"
+          IOS_VERSION="${{ needs.check-updates.outputs.latest_ios }}"
+          ANDROID_VERSION="${{ needs.check-updates.outputs.latest_android }}"
+          
+          # Generate the expected title using the same logic as the PR creation step
+          if [[ "$IOS_UPDATED" == "true" && "$ANDROID_UPDATED" == "true" ]]; then
+            EXPECTED_TITLE="chore: update Customer.io native SDKs (iOS $IOS_VERSION, Android $ANDROID_VERSION)"
+          elif [[ "$IOS_UPDATED" == "true" ]]; then
+            EXPECTED_TITLE="chore: update Customer.io iOS SDK to $IOS_VERSION"
+          elif [[ "$ANDROID_UPDATED" == "true" ]]; then
+            EXPECTED_TITLE="chore: update Customer.io Android SDK to $ANDROID_VERSION"
+          else
+            EXPECTED_TITLE="chore: update Customer.io native SDKs"
+          fi
+          
+          echo "Expected title: $EXPECTED_TITLE"
+          
+          # Check for existing open PRs with the exact title only
+          # This prevents false positives from substring matching (e.g., "1.0" matching "1.0.1")
+          EXISTING_PR=$(gh pr list --state=open --json number,title | \
+            jq -r --arg title "$EXPECTED_TITLE" \
+            '.[] | select(.title == $title) | .number' | head -1)
+          
+          if [[ -n "$EXISTING_PR" ]]; then
+            echo "⚠️  Found existing PR #$EXISTING_PR for the same SDK versions"
+            echo "existing_pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+            echo "should_skip=true" >> $GITHUB_OUTPUT
+            
+            # Get PR details
+            PR_DETAILS=$(gh pr view "$EXISTING_PR" --json title,url)
+            PR_TITLE=$(echo "$PR_DETAILS" | jq -r '.title')
+            PR_URL=$(echo "$PR_DETAILS" | jq -r '.url')
+            
+            echo "Existing PR: $PR_TITLE"
+            echo "URL: $PR_URL"
+          else
+            echo "✅ No existing PR found for these SDK versions"
+            echo "should_skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create feature branch
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         run: |
           branch_name="auto-update/native-sdks-$(date +%Y%m%d-%H%M%S)"
           echo "branch_name=$branch_name" >> $GITHUB_ENV
           git checkout -b "$branch_name"
 
       - name: Update SDK versions
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         run: |
           # Build arguments for version updates
           IOS_VERSION=""
@@ -200,6 +251,7 @@ jobs:
           fi
 
       - name: Install dependencies and run tests
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         run: |
           echo "📦 Installing dependencies..."
           npm ci
@@ -213,6 +265,7 @@ jobs:
           echo "✅ All checks completed successfully"
 
       - name: Generate PR content from release notes
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         id: generate_pr_content
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -360,6 +413,7 @@ jobs:
           echo "Title: $TITLE"
 
       - name: Commit changes
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -373,6 +427,7 @@ jobs:
           🤖 Automated update with compilation verification"
 
       - name: Push branch and create PR
+        if: steps.check_existing_pr.outputs.should_skip != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -387,11 +442,27 @@ jobs:
           
           echo "✅ Pull request created successfully!"
 
+      - name: Skip PR creation (already exists)
+        if: steps.check_existing_pr.outputs.should_skip == 'true'
+        run: |
+          echo "⚠️  Skipping PR creation - found existing PR #${{ steps.check_existing_pr.outputs.existing_pr_number }} for the same SDK versions"
+          echo "No new PR will be created to avoid duplicates."
+
       - name: Post workflow summary
         run: |
           echo "## 🚀 Native SDK Update Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Updates Applied:" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ steps.check_existing_pr.outputs.should_skip }}" == "true" ]]; then
+            echo "### ⚠️ Duplicate Prevention" >> $GITHUB_STEP_SUMMARY
+            echo "- Found existing PR #${{ steps.check_existing_pr.outputs.existing_pr_number }} for the same SDK versions" >> $GITHUB_STEP_SUMMARY
+            echo "- Skipped creating duplicate PR to avoid spam" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Pending Updates:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Updates Applied:" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           if [[ "${{ needs.check-updates.outputs.ios_needs_update }}" == "true" ]]; then
             echo "- 📱 **iOS SDK**: ${{ needs.check-updates.outputs.current_ios }} → ${{ needs.check-updates.outputs.latest_ios }}" >> $GITHUB_STEP_SUMMARY
           fi
@@ -399,12 +470,15 @@ jobs:
             echo "- 🤖 **Android SDK**: ${{ needs.check-updates.outputs.current_android }} → ${{ needs.check-updates.outputs.latest_android }}" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Verification:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ TypeScript compilation passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ ESLint checks passed" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Dependencies installed successfully" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Sample app builds will be tested after PR creation" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch created**: \`$branch_name\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "ℹ️ Sample app builds will automatically run on the created PR" >> $GITHUB_STEP_SUMMARY 
+          
+          if [[ "${{ steps.check_existing_pr.outputs.should_skip }}" != "true" ]]; then
+            echo "### Verification:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ TypeScript compilation passed" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ ESLint checks passed" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Dependencies installed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Sample app builds will be tested after PR creation" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Branch created**: \`$branch_name\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ Sample app builds will automatically run on the created PR" >> $GITHUB_STEP_SUMMARY
+          fi 
