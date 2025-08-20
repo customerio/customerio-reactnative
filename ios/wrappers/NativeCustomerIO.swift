@@ -6,6 +6,24 @@ import CioMessagingInApp
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
+    /// Checks whether the CustomerIO SDK has been initialized.
+    /// Returns `true` if the SDK has been successfully initialized, `false` otherwise.
+    private var isInitialized: Bool { CustomerIO.shared.implementation != nil }
+
+    /// Ensures that the CustomerIO SDK is initialized before performing operations.
+    /// Logs an error and returns false if the SDK is not initialized.
+    private func ensureInitialized() -> Bool {
+        guard isInitialized else {
+            logger.error("CustomerIO SDK is not initialized. Please call initialize() first.")
+            return false
+        }
+        return true
+    }
+
+    @objc(isInitialized:reject:)
+    func isInitialized(resolve: @escaping (RCTPromiseResolveBlock), _: @escaping (RCTPromiseRejectBlock)) {
+        resolve(isInitialized)
+    }
 
     @objc
     func initialize(
@@ -14,6 +32,13 @@ public class NativeCustomerIO: NSObject {
         resolve: @escaping (RCTPromiseResolveBlock),
         reject: @escaping (RCTPromiseRejectBlock)
     ) {
+        // Skip initialization if already initialized
+        if isInitialized {
+            logger.info("CustomerIO SDK is already initialized. Skipping initialization.")
+            resolve(true)
+            return
+        }
+
         do {
             let packageSource = args["packageSource"] as? String
             let packageVersion = args["packageVersion"] as? String
@@ -50,6 +75,8 @@ public class NativeCustomerIO: NSObject {
 
     @objc
     func identify(_ params: [String: Any]?) {
+        guard ensureInitialized() else { return }
+
         let userId = params?["userId"] as? String
         let traits = params?["traits"] as? [String: Any]
 
@@ -70,36 +97,43 @@ public class NativeCustomerIO: NSObject {
 
     @objc
     func clearIdentify() {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.clearIdentify()
     }
 
     @objc
     func track(_ name: String, properties: [String: Any]?) {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.track(name: name, properties: properties)
     }
 
     @objc
     func screen(_ title: String, properties: [String: Any]?) {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.screen(title: title, properties: properties)
     }
 
     @objc
     func setProfileAttributes(_ attributes: [String: Any]) {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.profileAttributes = attributes
     }
 
     @objc
     func setDeviceAttributes(_ attributes: [String: Any]) {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.deviceAttributes = attributes
     }
 
     @objc
     func registerDeviceToken(_ token: String) {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.registerDeviceToken(token)
     }
 
     @objc
     func deleteDeviceToken() {
+        guard ensureInitialized() else { return }
         CustomerIO.shared.deleteDeviceToken()
     }
 }

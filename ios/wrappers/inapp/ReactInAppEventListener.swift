@@ -4,9 +4,9 @@ import CioMessagingInApp
  * React Native bridge for Customer.io in-app messaging events.
  * Converts native SDK events to JavaScript compatible format.
  */
-class ReactInAppEventListener: InAppEventListener {
+public class ReactInAppEventListener: InAppEventListener {
     // Shared instance for global access
-    static let shared = ReactInAppEventListener()
+    public static let shared = ReactInAppEventListener()
     // Event emitter function to send events to React Native layer
     private var eventEmitter: (([String: Any?]) -> Void)?
 

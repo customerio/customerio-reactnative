@@ -15,6 +15,11 @@ class NativeCustomerIOModule(
     override fun getName(): String = NativeCustomerIOModuleImpl.NAME
 
     @ReactMethod
+    fun isInitialized(promise: Promise?) {
+        NativeCustomerIOModuleImpl.isInitialized(promise)
+    }
+
+    @ReactMethod
     fun initialize(
         configJson: ReadableMap,
         @Suppress("UNUSED_PARAMETER") sdkArgs: ReadableMap?,

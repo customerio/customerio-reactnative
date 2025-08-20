@@ -38,6 +38,7 @@ type NativeBridgeObject = UnsafeObject;
  * Uses generic Object types for React Native Codegen compatibility.
  */
 export interface Spec extends TurboModule {
+  isInitialized(): Promise<boolean>;
   initialize(
     config: NativeBridgeObject,
     args: NativeBridgeObject

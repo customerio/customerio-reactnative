@@ -25,11 +25,6 @@ const nativeModule = ensureNativeModule(NativeModule);
 
 // Wrapper function that ensures SDK is initialized before calling native methods
 const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
-  if (!_initialized) {
-    throw new Error(
-      'CustomerIO SDK must be initialized before calling any methods. Please call CustomerIO.initialize() first.'
-    );
-  }
   return callNativeModule(nativeModule, fn);
 };
 
@@ -155,8 +150,31 @@ export class CustomerIO {
     return withNativeModule((native) => native.deleteDeviceToken());
   };
 
-  /** Check if the CustomerIO SDK has been initialized. */
+  /**
+   * Check if the CustomerIO SDK has been initialized.
+   * @deprecated Use isInitializedAsync() for more reliable initialization checking.
+   */
   static readonly isInitialized = () => _initialized;
+
+  /**
+   * Asynchronously check if CustomerIO SDK has been properly initialized.
+   * This method queries native SDK directly for the most accurate status.
+   * Use this instead of isInitialized() for reliable initialization checking.
+   *
+   * @returns Promise that resolves to true if SDK is initialized, false otherwise
+   */
+  static readonly isInitializedAsync = async (): Promise<boolean> => {
+    try {
+      // Use native module to verify actual initialization state
+      const result = await withNativeModule((native) => native.isInitialized());
+      // Update cached state to match native state
+      _initialized = result;
+      return result;
+    } catch {
+      // If native module call fails, fallback to cached initialization state
+      return _initialized;
+    }
+  };
 
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
   static readonly pushMessaging = new CustomerIOPushMessaging();
