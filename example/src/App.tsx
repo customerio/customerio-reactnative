@@ -187,8 +187,11 @@ export default function App({ appName }: { appName: string }) {
             linking={{
               prefixes: [
                 'amiapp-reactnative-apns://',
+                'amiapp-reactnative-fcm://',
                 'http://www.amiapp-reactnative-apns.com',
                 'https://www.amiapp-reactnative-apns.com',
+                'http://www.amiapp-reactnative-fcm.com',
+                'https://www.amiapp-reactnative-fcm.com',
               ],
               config: {
                 screens: linkingScreens,
