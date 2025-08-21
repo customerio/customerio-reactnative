@@ -16,30 +16,35 @@ object NativeCustomerIOLoggingModuleImpl {
     // Log event emitter function to send events to React Native layer
     private var logEventEmitter: ((ReadableMap) -> Unit)? = null
 
-    init {
-        // Set up log dispatcher to forward native SDK logs to React Native
-        SDKComponent.logger.setLogDispatcher { level, message ->
-            emitLogEvent(level, message)
-        }
-    }
-
     // Sets the event emitter function used to send log events to React Native.
     internal fun setLogEventEmitter(emitter: ((ReadableMap) -> Unit)?) {
+        // Set up log dispatcher only when first emitter is set
+        if (emitter != null && logEventEmitter == null) {
+            SDKComponent.logger.setLogDispatcher { level, message ->
+                emitLogEvent(level, message)
+            }
+        }
+        
         this.logEventEmitter = emitter
     }
 
     // Clears the event emitter, should be called during module cleanup
     internal fun invalidate() {
+        // Clear log dispatcher to prevent memory leaks and further events
+        SDKComponent.logger.setLogDispatcher(null)
         this.logEventEmitter = null
     }
 
     // Converts native SDK log events to React Native compatible format and emits them.
     private fun emitLogEvent(level: CioLogLevel, message: String) {
+        // Defensive check: only emit if emitter is available
+        val emitter = logEventEmitter ?: return
+        
         val data = buildMap {
             put("logLevel", level.name.lowercase())
             put("message", message)
         }
 
-        logEventEmitter?.invoke(Arguments.makeNativeMap(data))
+        emitter.invoke(Arguments.makeNativeMap(data))
     }
 }
