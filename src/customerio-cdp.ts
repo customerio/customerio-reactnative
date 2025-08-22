@@ -25,11 +25,6 @@ const nativeModule = ensureNativeModule(NativeModule);
 
 // Wrapper function that ensures SDK is initialized before calling native methods
 const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
-  if (!_initialized) {
-    throw new Error(
-      'CustomerIO SDK must be initialized before calling any methods. Please call CustomerIO.initialize() first.'
-    );
-  }
   return callNativeModule(nativeModule, fn);
 };
 
@@ -155,9 +150,18 @@ export class CustomerIO {
     return withNativeModule((native) => native.deleteDeviceToken());
   };
 
-  /** Check if the CustomerIO SDK has been initialized. */
+  /**
+   * Check if the CustomerIO SDK has been initialized.
+   * @deprecated This method will be removed in a future version. If you need this functionality, please contact us.
+   */
   static readonly isInitialized = () => _initialized;
 
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 }
+
+// Initialize native logger when this module loads to ensure it's always available.
+// Since customerio-cdp.ts is the main SDK entry point and always imported,
+// this guarantees logger initialization even when native-logger-listener.ts
+// isn't directly accessed, also supporting auto-initialization in Expo apps.
+NativeLoggerListener.initNativeLogger();

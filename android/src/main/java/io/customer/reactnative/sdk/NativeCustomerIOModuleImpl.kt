@@ -29,18 +29,31 @@ internal object NativeCustomerIOModuleImpl {
     private val logger: Logger
         get() = SDKComponent.logger
 
-    private fun customerIO(): CustomerIO? = runCatching {
+    // Returns CustomerIO instance if initialized, null otherwise, with configurable failure handling.
+    private inline fun getSDKInstanceOrNull(
+        onFailure: (exception: Throwable) -> Unit = {}
+    ): CustomerIO? = runCatching {
         // If the SDK is not initialized, `CustomerIO.instance()` throws an exception
         CustomerIO.instance()
-    }.onFailure {
-        logger.error("Customer.io instance not initialized")
-    }.getOrNull()
+    }.onFailure(onFailure).getOrNull()
+
+    // Returns CustomerIO instance if initialized, null otherwise, logging error on failure.
+    private fun requireSDKInstance(): CustomerIO? = getSDKInstanceOrNull {
+        logger.error("CustomerIO SDK is not initialized. Please call initialize() first.")
+    }
 
     fun initialize(
         reactContext: ReactApplicationContext,
         sdkConfig: ReadableMap?,
         promise: Promise?
     ) {
+        // Skip initialization if already initialized
+        if (getSDKInstanceOrNull() != null) {
+            logger.info("CustomerIO SDK is already initialized. Skipping initialization.")
+            promise?.resolve(true)
+            return
+        }
+
         try {
             val packageConfig = sdkConfig.toMap()
             val cdpApiKey = packageConfig.getTypedValue<String>(
@@ -98,7 +111,7 @@ internal object NativeCustomerIOModuleImpl {
     }
 
     fun clearIdentify() {
-        customerIO()?.clearIdentify()
+        requireSDKInstance()?.clearIdentify()
     }
 
     fun identify(params: ReadableMap?) {
@@ -111,39 +124,39 @@ internal object NativeCustomerIOModuleImpl {
         }
 
         userId?.let {
-            customerIO()?.identify(userId, traits.toMap())
+            requireSDKInstance()?.identify(userId, traits.toMap())
         } ?: run {
-            customerIO()?.profileAttributes = traits.toMap()
+            requireSDKInstance()?.profileAttributes = traits.toMap()
         }
     }
 
     fun track(name: String?, properties: ReadableMap?) {
         val eventName = assertNotNull(name) ?: return
 
-        customerIO()?.track(eventName, properties.toMap())
+        requireSDKInstance()?.track(eventName, properties.toMap())
     }
 
     fun setDeviceAttributes(attributes: ReadableMap?) {
-        customerIO()?.deviceAttributes = attributes.toMap()
+        requireSDKInstance()?.deviceAttributes = attributes.toMap()
     }
 
     fun setProfileAttributes(attributes: ReadableMap?) {
-        customerIO()?.profileAttributes = attributes.toMap()
+        requireSDKInstance()?.profileAttributes = attributes.toMap()
     }
 
     fun screen(title: String?, properties: ReadableMap?) {
         val screenTitle = assertNotNull(title) ?: return
 
-        customerIO()?.screen(screenTitle, properties.toMap())
+        requireSDKInstance()?.screen(screenTitle, properties.toMap())
     }
 
     fun registerDeviceToken(token: String?) {
         val deviceToken = assertNotNull(token) ?: return
 
-        customerIO()?.registerDeviceToken(deviceToken)
+        requireSDKInstance()?.registerDeviceToken(deviceToken)
     }
 
     fun deleteDeviceToken() {
-        customerIO()?.deleteDeviceToken()
+        requireSDKInstance()?.deleteDeviceToken()
     }
 }

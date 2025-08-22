@@ -78,6 +78,7 @@ export class CustomerIO {
     // (undocumented)
     static readonly inAppMessaging: CustomerIOInAppMessaging;
     static readonly initialize: (config: CioConfig) => Promise<void>;
+    // @deprecated
     static readonly isInitialized: () => boolean;
     // (undocumented)
     static readonly pushMessaging: CustomerIOPushMessaging;

@@ -7,7 +7,7 @@ import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
+import FlashMessage from 'react-native-flash-message';
 import { AppEnvValues } from './env';
 
 export default function App({ appName }: { appName: string }) {
@@ -133,16 +133,8 @@ export default function App({ appName }: { appName: string }) {
               CustomerIO.clearIdentify();
             },
             onTrackEvent: (eventPayload) => {
-              if (CustomerIO.isInitialized()) {
-                console.log('Tracking event', eventPayload);
-                CustomerIO.track(eventPayload.name, eventPayload.properties);
-              } else {
-                showMessage({
-                  message: 'CustomerIO not initialized',
-                  description: 'Please set the CustomerIO config',
-                  type: 'danger',
-                });
-              }
+              console.log('Tracking event', eventPayload);
+              CustomerIO.track(eventPayload.name, eventPayload.properties);
             },
             onProfileAttributes(attributes) {
               console.log('Setting profile attributes', attributes);
@@ -154,10 +146,8 @@ export default function App({ appName }: { appName: string }) {
             },
             onScreenChange(screenName) {
               // See 'src/screens/content-navigator.tsx' for the how we implemented screen auto-tracking
-              if (CustomerIO.isInitialized()) {
-                console.log('Tracking screen change', screenName);
-                CustomerIO.screen(screenName);
-              }
+              console.log('Tracking screen change', screenName);
+              CustomerIO.screen(screenName);
             },
             async onPushNotificationRequestPermisionButtonPress(): Promise<void> {
               console.log('Requesting push notification permission');

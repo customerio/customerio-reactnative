@@ -60,16 +60,35 @@ export class NativeLoggerListener {
         native.onCioLogEvent(logHandler);
       } catch {
         // Fallback to old arch NativeEventEmitter when new arch method fails
-        const bridge = new NativeEventEmitter(native);
-        bridge.addListener('CioLogEvent', logHandler);
+        try {
+          // Use try-catch to prevent crashes for cases where native module may
+          // not be available instantly
+          const bridge = new NativeEventEmitter(native);
+          bridge.addListener('CioLogEvent', logHandler);
+        } catch (error) {
+          NativeLoggerListener.warn(
+            'Failed to attach old arch log listener:',
+            error
+          );
+        }
       }
     });
     this.isInitialized = true;
   }
 
-  static warn(message: string) {
+  // Logs warning messages in development mode only, with CIO prefix
+  static warn(message: string, error?: unknown) {
     if (__DEV__) {
-      console.warn(this.loggerPrefix + message);
+      console.warn(this.loggerPrefix + message, error);
+    }
+  }
+
+  // Initializes native logger listener with error handling
+  static initNativeLogger() {
+    try {
+      NativeLoggerListener.initialize();
+    } catch (error) {
+      NativeLoggerListener.warn('Failed to initialize native logger:', error);
     }
   }
 }
