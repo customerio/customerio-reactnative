@@ -82,17 +82,13 @@ export class NativeLoggerListener {
       console.warn(this.loggerPrefix + message, error);
     }
   }
-}
 
-// Initializes native logger listener with error handling
-function initNativeLogger() {
-  try {
-    NativeLoggerListener.initialize();
-  } catch (error) {
-    NativeLoggerListener.warn('Failed to initialize native logger:', error);
+  // Initializes native logger listener with error handling
+  static initNativeLogger() {
+    try {
+      NativeLoggerListener.initialize();
+    } catch (error) {
+      NativeLoggerListener.warn('Failed to initialize native logger:', error);
+    }
   }
 }
-
-// Initialize logger immediately when module loads to capture early SDK logs
-// and support auto SDK initialization in Expo applications
-initNativeLogger();

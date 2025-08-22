@@ -159,3 +159,9 @@ export class CustomerIO {
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 }
+
+// Initialize native logger when this module loads to ensure it's always available.
+// Since customerio-cdp.ts is the main SDK entry point and always imported,
+// this guarantees logger initialization even when native-logger-listener.ts
+// isn't directly accessed, also supporting auto-initialization in Expo apps.
+NativeLoggerListener.initNativeLogger();
