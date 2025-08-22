@@ -1,3 +1,9 @@
+## [4.7.0](https://github.com/customerio/customerio-reactnative/compare/4.6.0...4.7.0) (2025-08-22)
+
+### Features
+
+* improve initialization state handling and expo auto init support ([#504](https://github.com/customerio/customerio-reactnative/issues/504)) ([d3ed7f9](https://github.com/customerio/customerio-reactnative/commit/d3ed7f92f002113919d669a66f4fd4fedc11a56f))
+
 ## [4.6.0](https://github.com/customerio/customerio-reactnative/compare/4.5.2...4.6.0) (2025-07-29)
 
 ### Features
