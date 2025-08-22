@@ -42,11 +42,6 @@ internal object NativeCustomerIOModuleImpl {
         logger.error("CustomerIO SDK is not initialized. Please call initialize() first.")
     }
 
-    fun isInitialized(promise: Promise?) {
-        val isInitialized = getSDKInstanceOrNull() != null
-        promise?.resolve(isInitialized)
-    }
-
     fun initialize(
         reactContext: ReactApplicationContext,
         sdkConfig: ReadableMap?,

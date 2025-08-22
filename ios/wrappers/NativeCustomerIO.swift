@@ -20,11 +20,6 @@ public class NativeCustomerIO: NSObject {
         return true
     }
 
-    @objc(isInitialized:reject:)
-    func isInitialized(resolve: @escaping (RCTPromiseResolveBlock), _: @escaping (RCTPromiseRejectBlock)) {
-        resolve(isInitialized)
-    }
-
     @objc
     func initialize(
         _ config: [String: Any],

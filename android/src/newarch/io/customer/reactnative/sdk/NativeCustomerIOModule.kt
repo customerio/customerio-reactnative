@@ -20,10 +20,6 @@ class NativeCustomerIOModule(
         )
     }
 
-    override fun isInitialized(promise: Promise?) {
-        NativeCustomerIOModuleImpl.isInitialized(promise)
-    }
-
     override fun identify(params: ReadableMap?) {
         NativeCustomerIOModuleImpl.identify(params)
     }
