@@ -132,7 +132,7 @@ export default function App({ appName }: { appName: string }) {
               console.log('Clearing CustomerIO identify');
               CustomerIO.clearIdentify();
             },
-            onTrackEvent: async (eventPayload) => {
+            onTrackEvent: (eventPayload) => {
               console.log('Tracking event', eventPayload);
               CustomerIO.track(eventPayload.name, eventPayload.properties);
             },
@@ -144,7 +144,7 @@ export default function App({ appName }: { appName: string }) {
               console.log('Setting device attributes', attributes);
               CustomerIO.setDeviceAttributes(attributes);
             },
-            async onScreenChange(screenName) {
+            onScreenChange(screenName) {
               // See 'src/screens/content-navigator.tsx' for the how we implemented screen auto-tracking
               console.log('Tracking screen change', screenName);
               CustomerIO.screen(screenName);
