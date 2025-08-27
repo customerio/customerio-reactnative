@@ -1,3 +1,9 @@
+## [4.8.0](https://github.com/customerio/customerio-reactnative/compare/4.7.0...4.8.0) (2025-08-27)
+
+### Features
+
+* support for custom scheme link with fcm ([#507](https://github.com/customerio/customerio-reactnative/issues/507)) ([e5821d3](https://github.com/customerio/customerio-reactnative/commit/e5821d33abc21a0289f3b3795e1f271c6e51cb62))
+
 ## [4.7.0](https://github.com/customerio/customerio-reactnative/compare/4.6.0...4.7.0) (2025-08-22)
 
 ### Features
