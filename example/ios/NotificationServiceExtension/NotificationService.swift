@@ -20,6 +20,7 @@ class NotificationService: UNNotificationServiceExtension {
   
     PushInitializer.initializeForExtension(
       withConfig: MessagingPushConfigBuilder(cdpApiKey: Env.CDP_API_KEY)
+        .logLevel(.debug)
         .build()
     )
 
