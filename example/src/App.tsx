@@ -8,19 +8,10 @@ import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage from 'react-native-flash-message';
-import { AppEnvValues } from './env';
+import { getEnvForApp } from './env';
 
 export default function App({ appName }: { appName: string }) {
-  const env =
-    AppEnvValues[appName.toLocaleLowerCase() as keyof typeof AppEnvValues] ??
-    AppEnvValues['default'];
-  if (!env) {
-    console.error(
-      `No default preset environment variables found nor environment variables for the app: ${appName}. The env.ts contains environment values for case-insenetive app names: ${Object.keys(
-        AppEnvValues
-      ).join(', ')}`
-    );
-  }
+  const env = getEnvForApp(appName);
   Storage.setEnv(env);
 
   const [isLoading, setIsLoading] = useState(true);

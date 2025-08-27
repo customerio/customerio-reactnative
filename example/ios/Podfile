@@ -31,7 +31,6 @@ installation_root = Pod::Config.instance.installation_root
 create_project_file_if_not_exists(installation_root, app_target_name)
 update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
 
-
 if push_provider == "fcm"
   linkage = "dynamic"
 else
@@ -71,6 +70,6 @@ target nse_target_name do
   # Ideally, installing non-production SDK to main target should be enough
   # We should not need to install non-production SDK to app extension separately
   pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
-  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
-  # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: false, push_service: push_provider)
+  # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
+  # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
 end
