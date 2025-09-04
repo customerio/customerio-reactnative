@@ -1,3 +1,4 @@
+import CioInternalCommon
 import CioMessagingInApp
 
 /**
@@ -7,6 +8,13 @@ import CioMessagingInApp
 public class ReactInAppEventListener: InAppEventListener {
     // Shared instance for global access
     public static let shared = ReactInAppEventListener()
+
+    private init() {
+        // Registers in DI graph so it can be accessed by Expo without using direct imports and
+        // using common import and DI graph from native iOS SDK
+        DIGraphShared.shared.override(value: self, forType: InAppEventListener.self)
+    }
+
     // Event emitter function to send events to React Native layer
     private var eventEmitter: (([String: Any?]) -> Void)?
 

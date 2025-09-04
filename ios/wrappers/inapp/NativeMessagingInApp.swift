@@ -19,6 +19,10 @@ class NativeMessagingInAppImplementation {
             let body = data.compactMapValues { $0 }
             inAppEventCallback(body)
         }
+        // If MessagingInApp module has already been initialized, this sets the listener directly.
+        // If this method is called early, accessing ReactInAppEventListener.shared will also register
+        // it into the DI graph, making it available for access in Expo during auto-initialization.
+        MessagingInApp.shared.setEventListener(ReactInAppEventListener.shared)
     }
 
     // Clears the in-app event listener to prevent leaks when module is deallocated or invalidated
