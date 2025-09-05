@@ -1,3 +1,9 @@
+## [4.8.1](https://github.com/customerio/customerio-reactnative/compare/4.8.0...4.8.1) (2025-09-05)
+
+### Bug Fixes
+
+* Add missing InApp dismissMessage() for legacy RN architecture ([#511](https://github.com/customerio/customerio-reactnative/issues/511)) ([6ab19f5](https://github.com/customerio/customerio-reactnative/commit/6ab19f55048b6ff69fdaaa3f643120f312d09308))
+
 ## [4.8.0](https://github.com/customerio/customerio-reactnative/compare/4.7.0...4.8.0) (2025-08-27)
 
 ### Features
