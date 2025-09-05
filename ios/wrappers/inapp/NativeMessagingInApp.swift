@@ -130,4 +130,12 @@ public class NativeMessagingInAppLegacy: RCTEventEmitter {
     override public func supportedEvents() -> [String]! {
         [CustomerioConstants.inAppEventListener]
     }
+
+    /**
+     * Dismisses any currently displayed in-app message
+     */
+    @objc
+    public func dismissMessage() {
+        MessagingInApp.shared.dismissMessage()
+    }
 }
