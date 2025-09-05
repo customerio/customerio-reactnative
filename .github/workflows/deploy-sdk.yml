@@ -28,7 +28,7 @@ jobs:
           app_id: ${{ secrets.CIO_APP_ID }}
           private_key: ${{ secrets.CIO_APP_SECRET }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # If using sd on macos, "brew install" works great. for Linux, this is the recommended way.
       - name: Install sd CLI to use later in the workflow
@@ -36,7 +36,7 @@ jobs:
         uses: levibostian/setup-sd@cbdeed93d4fe03f9e36b73bb6d9e7c3c4805e1f9 # add-file-extension # Using fork until upstream Action has bug fixed in it.
 
       - name: Deploy git tag via semantic release
-        uses: cycjimmy/semantic-release-action@0a51e81a6baff2acad3ee88f4121c589c73d0f0e # v4.2.0
+        uses: cycjimmy/semantic-release-action@9cc899c47e6841430bbaedb43de1560a568dfd16 # v5.0.0
         id: semantic-release
         with:
           semantic_version: latest
@@ -49,7 +49,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
       - name: Notify team of git tag being created
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         if: steps.semantic-release.outputs.new_release_published == 'true'
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -84,7 +84,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -124,7 +124,7 @@ jobs:
     if: needs.deploy-git-tag.outputs.new_release_published == 'true' # only run if a git tag was made.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ needs.deploy-git-tag.outputs.new_release_git_head }}
 
@@ -142,7 +142,7 @@ jobs:
           IS_PRERELEASE: false # at this time, all deployments are made to `main` production branch
 
       - name: Notify team of successful deployment
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         if: ${{ success() }}
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
@@ -177,7 +177,7 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2.1.1
         if: ${{ failure() }} # only run this if any previous step failed
         with:
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
