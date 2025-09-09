@@ -1,3 +1,9 @@
+## [4.8.2](https://github.com/customerio/customerio-reactnative/compare/4.8.1...4.8.2) (2025-09-09)
+
+### Bug Fixes
+
+* update in-app module to set listener on initialize ([#513](https://github.com/customerio/customerio-reactnative/issues/513)) ([ad4b169](https://github.com/customerio/customerio-reactnative/commit/ad4b169058699f1143adce029e8647301693502b))
+
 ## [4.8.1](https://github.com/customerio/customerio-reactnative/compare/4.8.0...4.8.1) (2025-09-05)
 
 ### Bug Fixes
