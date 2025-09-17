@@ -53,10 +53,10 @@ class NativeCustomerIOLoggingModule(
     override fun initialize() {
         runWithTryCatch {
             super.initialize()
-        }
-        runOnSupportedAbi {
-            NativeCustomerIOLoggingModuleImpl.setLogEventEmitter { data ->
-                emitOnCioLogEvent(data)
+            runOnSupportedAbi {
+                NativeCustomerIOLoggingModuleImpl.setLogEventEmitter { data ->
+                    emitOnCioLogEvent(data)
+                }
             }
         }
     }
