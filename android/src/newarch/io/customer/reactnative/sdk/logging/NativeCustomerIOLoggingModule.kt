@@ -22,16 +22,11 @@ class NativeCustomerIOLoggingModule(
     }
 
     /**
-     * Executes the given action only if the current ABI supports it.
-     * Skips execution on armeabi/armeabi-v7a to prevent C++ crashes on unsupported architectures.
+     * Executes the given block and logs any uncaught exceptions using Android logger to protect
+     * against unexpected crashes and failures.
      */
-    private fun runOnSupportedAbi(action: () -> Unit) {
+    private fun runWithTryCatch(action: () -> Unit) {
         try {
-            if (isABIArmeabi) {
-                // Skip execution on armeabi-v7a to avoid known native (C++) crashes on unsupported ABIs.
-                // This is to ensures stability on lower-end or legacy devices by preventing risky native calls.
-                return
-            }
             action()
         } catch (ex: Exception) {
             // Use Android logger to avoid cyclic calls from internal SDK logging
@@ -39,9 +34,27 @@ class NativeCustomerIOLoggingModule(
         }
     }
 
+    /**
+     * Executes the given action only if the current ABI supports it.
+     * Skips execution on armeabi/armeabi-v7a to prevent C++ crashes on unsupported architectures.
+     */
+    private fun runOnSupportedAbi(action: () -> Unit) {
+        runWithTryCatch {
+            if (isABIArmeabi) {
+                // Skip execution on armeabi-v7a to avoid known native (C++) crashes on unsupported ABIs.
+                // This is to ensures stability on lower-end or legacy devices by preventing risky native calls.
+                return@runWithTryCatch
+            }
+
+            action()
+        }
+    }
+
     override fun initialize() {
-        runOnSupportedAbi {
+        runWithTryCatch {
             super.initialize()
+        }
+        runOnSupportedAbi {
             NativeCustomerIOLoggingModuleImpl.setLogEventEmitter { data ->
                 emitOnCioLogEvent(data)
             }
@@ -51,6 +64,8 @@ class NativeCustomerIOLoggingModule(
     override fun invalidate() {
         runOnSupportedAbi {
             NativeCustomerIOLoggingModuleImpl.invalidate()
+        }
+        runWithTryCatch {
             super.invalidate()
         }
     }
