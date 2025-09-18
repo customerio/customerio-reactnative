@@ -18,7 +18,7 @@ class NativeCustomerIOLoggingModule(
     // true if the app is currently running under armeabi/armeabi-v7a ABIs.
     // We check only the first ABI in SUPPORTED_ABIS because the first one is most preferred ABI.
     private val isABIArmeabi: Boolean by lazy {
-        Build.SUPPORTED_ABIS.firstOrNull()?.contains("armeabi", ignoreCase = true) == true
+        Build.SUPPORTED_ABIS?.firstOrNull()?.contains("armeabi", ignoreCase = true) == true
     }
 
     /**
