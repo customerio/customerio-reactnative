@@ -42,7 +42,7 @@ class NativeCustomerIOLoggingModule(
         runWithTryCatch {
             if (isABIArmeabi) {
                 // Skip execution on armeabi-v7a to avoid known native (C++) crashes on unsupported ABIs.
-                // This is to ensures stability on lower-end or legacy devices by preventing risky native calls.
+                // This ensures stability on lower-end or legacy devices by preventing risky native calls.
                 return@runWithTryCatch
             }
 
@@ -53,6 +53,12 @@ class NativeCustomerIOLoggingModule(
     override fun initialize() {
         runWithTryCatch {
             super.initialize()
+            if (isABIArmeabi) {
+                Log.i(
+                    "[CIO]",
+                    "Native logging is disabled on armeabi/armeabi-v7a ABI to avoid native crashes (Supported ABIs: ${Build.SUPPORTED_ABIS?.joinToString()})"
+                )
+            }
             runOnSupportedAbi {
                 NativeCustomerIOLoggingModuleImpl.setLogEventEmitter { data ->
                     emitOnCioLogEvent(data)
