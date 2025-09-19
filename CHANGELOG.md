@@ -1,3 +1,9 @@
+## [4.8.3](https://github.com/customerio/customerio-reactnative/compare/4.8.2...4.8.3) (2025-09-19)
+
+### Bug Fixes
+
+* suppress logger crash on armeabi devices ([#516](https://github.com/customerio/customerio-reactnative/issues/516)) ([c406795](https://github.com/customerio/customerio-reactnative/commit/c40679583d85abd6ca0046726f1257fd4dc6d52a))
+
 ## [4.8.2](https://github.com/customerio/customerio-reactnative/compare/4.8.1...4.8.2) (2025-09-09)
 
 ### Bug Fixes
