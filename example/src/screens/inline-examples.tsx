@@ -1,9 +1,35 @@
 import { InlineInAppMessageView, type InAppMessage } from 'customerio-reactnative';
 import React, { useContext } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { NavigationCallbackContext } from '@navigation';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-export const InlineExamplesScreen = () => {
+const Tab = createBottomTabNavigator();
+
+// Helper function to render sample content
+const renderSampleContent = () => (
+  <>
+    <View style={styles.row}>
+      <View style={[styles.image, styles.grayBackground, { aspectRatio: 4 / 3 }]} />
+      <View style={styles.textBlock}>
+        <View style={[styles.title, styles.grayBackground]} />
+        <View style={[styles.subTitle, styles.grayBackground]} />
+        <View style={[styles.description, styles.grayBackground]} />
+      </View>
+    </View>
+
+    <View style={[styles.fullWidthCard, styles.grayBackground]} />
+
+    <View style={styles.row}>
+      <View style={[styles.columnCard, styles.grayBackground]} />
+      <View style={[styles.columnCard, styles.grayBackground]} />
+      <View style={[styles.columnCard, styles.grayBackground]} />
+    </View>
+  </>
+);
+
+// Single Inline View Screen Component
+const SingleInlineScreen = () => {
   const { onTrackEvent } = useContext(NavigationCallbackContext);
 
   const handleActionClick = (message: InAppMessage, actionValue: string, actionName: string) => {
@@ -20,69 +46,113 @@ export const InlineExamplesScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.tabDescription}>
+        This tab uses elementId: "single-inline"
+      </Text>
+      
+      {renderSampleContent()}
+
       <InlineInAppMessageView
-        elementId="sticky-header"
-        style={[styles.inlineMessage, { marginTop: 0 }]}
+        elementId="single-inline"
+        style={styles.inlineMessage}
         onActionClick={handleActionClick}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.row}>
-          <View style={[styles.image, styles.grayBackground, { aspectRatio: 4 / 3 }]} />
-          <View style={styles.textBlock}>
-            <View style={[styles.title, styles.grayBackground]} />
-            <View style={[styles.subTitle, styles.grayBackground]} />
-            <View style={[styles.description, styles.grayBackground]} />
-          </View>
-        </View>
+      {renderSampleContent()}
+    </ScrollView>
+  );
+};
 
-        <View style={[styles.fullWidthCard, styles.grayBackground]} />
+// Multiple Inline Views Screen Component
+const MultipleInlineScreen = () => {
+  const { onTrackEvent } = useContext(NavigationCallbackContext);
 
-        <View style={styles.row}>
-          <View style={[styles.columnCard, styles.grayBackground]} />
-          <View style={[styles.columnCard, styles.grayBackground]} />
-          <View style={[styles.columnCard, styles.grayBackground]} />
-        </View>
+  const handleActionClick = (message: InAppMessage, actionValue: string, actionName: string) => {
+    onTrackEvent({
+      name: 'example_app_inline_message_action_clicked',
+      properties: {
+        messageId: message.messageId,
+        deliveryId: message.deliveryId,
+        elementId: message.elementId,
+        actionName,
+        actionValue,
+      },
+    });
+  };
 
-        <InlineInAppMessageView
-          elementId="inline"
-          style={[styles.inlineMessage]}
-          onActionClick={handleActionClick}
-        />
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.tabDescription}>
+        This tab uses elementIds: "multi-top", "multi-middle", "multi-bottom"
+      </Text>
 
-        <View style={styles.row}>
-          <View style={[styles.image, styles.grayBackground, { aspectRatio: 4 / 3 }]} />
-          <View style={styles.textBlock}>
-            <View style={[styles.title, styles.grayBackground]} />
-            <View style={[styles.subTitle, styles.grayBackground]} />
-            <View style={[styles.description, styles.grayBackground]} />
-          </View>
-        </View>
+      <InlineInAppMessageView
+        elementId="multi-top"
+        style={styles.inlineMessage}
+        onActionClick={handleActionClick}
+      />
 
-        <View style={[styles.fullWidthCard, styles.grayBackground]} />
+      {renderSampleContent()}
 
-        <View style={styles.row}>
-          <View style={[styles.columnCard, styles.grayBackground]} />
-          <View style={[styles.columnCard, styles.grayBackground]} />
-          <View style={[styles.columnCard, styles.grayBackground]} />
-        </View>
+      <InlineInAppMessageView
+        elementId="multi-middle"
+        style={styles.inlineMessage}
+        onActionClick={handleActionClick}
+      />
 
-        <InlineInAppMessageView
-          elementId="below-fold"
-          style={[styles.inlineMessage]}
-          onActionClick={handleActionClick}
-        />
-      </ScrollView>
-    </View>
+      {renderSampleContent()}
+
+      <InlineInAppMessageView
+        elementId="multi-bottom"
+        style={styles.inlineMessage}
+        onActionClick={handleActionClick}
+      />
+    </ScrollView>
+  );
+};
+
+// Main Tab Navigator Component
+export const InlineExamplesScreen = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        // Mount on first focus, then keep mounted
+        lazy: true,
+        // Don't re-render inactive tabs (needs enableFreeze in App.tsx)
+        freezeOnBlur: true,
+        // Hide tab bar header since we already have the main screen header
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen 
+        name="Single View" 
+        component={SingleInlineScreen}
+        options={{
+          tabBarLabel: 'Single View',
+        }}
+      />
+      <Tab.Screen 
+        name="Multiple Views" 
+        component={MultipleInlineScreen}
+        options={{
+          tabBarLabel: 'Multiple Views',
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    paddingBottom: 16,
+  tabDescription: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    backgroundColor: '#e8f4fd',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   scrollContent: {
     padding: 16,

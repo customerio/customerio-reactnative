@@ -8,7 +8,12 @@ import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage from 'react-native-flash-message';
+import { enableScreens, enableFreeze } from 'react-native-screens';
 import { getEnvForApp } from './env';
+
+// Enable native screen optimizations for better performance
+enableScreens(true);        // Better native performance
+enableFreeze(true);         // Let tabs "freeze" when not focused
 
 export default function App({ appName }: { appName: string }) {
   const env = getEnvForApp(appName);
