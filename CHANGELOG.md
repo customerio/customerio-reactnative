@@ -1,3 +1,9 @@
+## [4.9.0](https://github.com/customerio/customerio-reactnative/compare/4.8.3...4.9.0) (2025-10-04)
+
+### Features
+
+* Fix in-app inline tabbed bug ([#521](https://github.com/customerio/customerio-reactnative/issues/521)) ([0bca229](https://github.com/customerio/customerio-reactnative/commit/0bca229e5eb7ddb842d0c61e200ef6eddad1077e))
+
 ## [4.8.3](https://github.com/customerio/customerio-reactnative/compare/4.8.2...4.8.3) (2025-09-19)
 
 ### Bug Fixes
