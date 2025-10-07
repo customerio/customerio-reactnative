@@ -1,10 +1,12 @@
 package io.customer.reactnative.sdk.logging
 
-import android.os.Build
-import android.util.Log
 import com.facebook.react.bridge.ReactApplicationContext
 import io.customer.reactnative.sdk.NativeCustomerIOLoggingSpec
+import io.customer.reactnative.sdk.util.isRunningOnArmeabiABI
+import io.customer.reactnative.sdk.util.logUnsupportedAbi
 import io.customer.reactnative.sdk.util.onlyForLegacyArch
+import io.customer.reactnative.sdk.util.runIfAbiSupported
+import io.customer.reactnative.sdk.util.runWithTryCatch
 
 /**
  * React Native module implementation for Customer.io Logging Native SDK
@@ -13,53 +15,19 @@ import io.customer.reactnative.sdk.util.onlyForLegacyArch
 class NativeCustomerIOLoggingModule(
     reactContext: ReactApplicationContext,
 ) : NativeCustomerIOLoggingSpec(reactContext) {
-    override fun getName(): String = NativeCustomerIOLoggingModuleImpl.NAME
+    // Lazy property to check if the current ABI is supported (non-armeabi)
+    // Cached to avoid repeated ABI checks
+    private val isAbiSupported: Boolean by lazy { !isRunningOnArmeabiABI() }
 
-    // true if the app is currently running under armeabi/armeabi-v7a ABIs.
-    // We check only the first ABI in SUPPORTED_ABIS because the first one is most preferred ABI.
-    private val isABIArmeabi: Boolean by lazy {
-        Build.SUPPORTED_ABIS?.firstOrNull()
-            ?.lowercase()
-            ?.contains("armeabi") == true
-    }
-
-    /**
-     * Executes the given block and logs any uncaught exceptions using Android logger to protect
-     * against unexpected crashes and failures.
-     */
-    private fun runWithTryCatch(action: () -> Unit) {
-        try {
-            action()
-        } catch (ex: Exception) {
-            // Use Android logger to avoid cyclic calls from internal SDK logging
-            Log.e("[CIO]", "Error in NativeCustomerIOLoggingModule: ${ex.message}", ex)
-        }
-    }
-
-    /**
-     * Executes the given action only if the current ABI supports it.
-     * Skips execution on armeabi/armeabi-v7a to prevent C++ crashes on unsupported architectures.
-     */
     private fun runOnSupportedAbi(action: () -> Unit) {
-        runWithTryCatch {
-            if (isABIArmeabi) {
-                // Skip execution on armeabi-v7a to avoid known native (C++) crashes on unsupported ABIs.
-                // This ensures stability on lower-end or legacy devices by preventing risky native calls.
-                return@runWithTryCatch
-            }
-
-            action()
-        }
+        runIfAbiSupported(isSupported = isAbiSupported, action)
     }
 
     override fun initialize() {
         runWithTryCatch {
             super.initialize()
-            if (isABIArmeabi) {
-                Log.i(
-                    "[CIO]",
-                    "Native logging is disabled on armeabi/armeabi-v7a ABI to avoid native crashes (Supported ABIs: ${Build.SUPPORTED_ABIS?.joinToString()})"
-                )
+            if (!isAbiSupported) {
+                logUnsupportedAbi()
             }
             runOnSupportedAbi {
                 NativeCustomerIOLoggingModuleImpl.setLogEventEmitter { data ->
