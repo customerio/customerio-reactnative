@@ -1,3 +1,9 @@
+## [4.10.0](https://github.com/customerio/customerio-reactnative/compare/4.9.0...4.10.0) (2025-10-07)
+
+### Features
+
+* Improve push notificaiton delivery receipts delay ([#524](https://github.com/customerio/customerio-reactnative/issues/524)) ([0c04cd2](https://github.com/customerio/customerio-reactnative/commit/0c04cd28abbb185de832a78ea92e79bee94efb00))
+
 ## [4.9.0](https://github.com/customerio/customerio-reactnative/compare/4.8.3...4.9.0) (2025-10-04)
 
 ### Features
