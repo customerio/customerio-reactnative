@@ -1,3 +1,9 @@
+## [4.11.0](https://github.com/customerio/customerio-reactnative/compare/4.10.0...4.11.0) (2025-10-08)
+
+### Features
+
+* in-app anonymous support ([#526](https://github.com/customerio/customerio-reactnative/issues/526)) ([f114d29](https://github.com/customerio/customerio-reactnative/commit/f114d290c6a4c2539b622a483a9c0bc440650a89))
+
 ## [4.10.0](https://github.com/customerio/customerio-reactnative/compare/4.9.0...4.10.0) (2025-10-07)
 
 ### Features
