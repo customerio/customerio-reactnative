@@ -46,5 +46,7 @@ Pod::Spec.new do |s|
 
   s.subspec "fcm" do |ss|
     ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+    # Customer.io Firebase Wrapper - provides Firebase integration
+    ss.dependency "CioFirebaseWrapper", package["cioiOSFirebaseWrapperSdkVersion"]
   end
 end
