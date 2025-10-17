@@ -1,3 +1,13 @@
+## [5.0.0](https://github.com/customerio/customerio-reactnative/compare/4.11.0...5.0.0) (2025-10-17)
+
+### ⚠ BREAKING CHANGES
+
+* Add CioFirebaseWrapper to pull in Firebase specific services (#528)
+
+### Features
+
+* Add CioFirebaseWrapper to pull in Firebase specific services ([#528](https://github.com/customerio/customerio-reactnative/issues/528)) ([3c11e2e](https://github.com/customerio/customerio-reactnative/commit/3c11e2e3d800adfc1bf1a1a6d7a2700975370ea4))
+
 ## [4.11.0](https://github.com/customerio/customerio-reactnative/compare/4.10.0...4.11.0) (2025-10-08)
 
 ### Features
