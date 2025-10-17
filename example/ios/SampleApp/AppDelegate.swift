@@ -9,6 +9,7 @@ import UserNotifications
 import FirebaseMessaging
 import FirebaseCore
 import CioMessagingPushFCM
+import CioFirebaseWrapper
 
 typealias CioMessagingPushHandler = MessagingPushFCM
 
