@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/customerio/customerio-reactnative/compare/5.0.0...5.0.1) (2025-10-24)
+
+### Bug Fixes
+
+* prevent message type crash in release builds ([#531](https://github.com/customerio/customerio-reactnative/issues/531)) ([587012b](https://github.com/customerio/customerio-reactnative/commit/587012b2d2a7035eb035852ba5a2fd4a033f1306))
+
 ## [5.0.0](https://github.com/customerio/customerio-reactnative/compare/4.11.0...5.0.0) (2025-10-17)
 
 ### ⚠ BREAKING CHANGES
