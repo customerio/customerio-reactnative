@@ -1,3 +1,9 @@
+## [5.1.0](https://github.com/customerio/customerio-reactnative/compare/5.0.1...5.1.0) (2025-10-30)
+
+### Features
+
+* support for Android 16 ([#533](https://github.com/customerio/customerio-reactnative/issues/533)) ([fd567f3](https://github.com/customerio/customerio-reactnative/commit/fd567f3db1841e0f59a19de00e4449b2b74b9a8d))
+
 ## [5.0.1](https://github.com/customerio/customerio-reactnative/compare/5.0.0...5.0.1) (2025-10-24)
 
 ### Bug Fixes
