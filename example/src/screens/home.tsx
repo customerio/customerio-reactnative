@@ -7,8 +7,10 @@ import {
   NavigationScreenProps,
 } from '@navigation';
 import { Storage } from '@services';
+import { CioPushPermissionStatus } from 'customerio-reactnative';
 import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 
 export const HomeScreen = ({
   navigation,
@@ -21,17 +23,21 @@ export const HomeScreen = ({
       <ScrollView>
         <View style={styles.container}>
           <Button
-            title="Track an Event"
-            onPress={() => navigation.navigate('Track')}
-          />
-          <Button
             title="Send Random Event"
             onPress={() => {
               onTrackEvent({
                 name: 'random_event',
                 properties: { random: Math.random() },
               });
+              showMessage({
+                message: 'Random event sent successfully',
+                type: 'success',
+              });
             }}
+          />
+          <Button
+            title="Track an Event"
+            onPress={() => navigation.navigate('Track')}
           />
           <Button
             title="Set Profile Attributes"
@@ -47,8 +53,14 @@ export const HomeScreen = ({
           />
           <Button
             title="Request Push Notification Permission"
-            onPress={() => {
-              onPushNotificationRequestPermisionButtonPress();
+            onPress={async () => {
+              const permission = await onPushNotificationRequestPermisionButtonPress();
+              if (permission === CioPushPermissionStatus.Granted) {
+                showMessage({
+                  message: 'Push notifications enabled successfully',
+                  type: 'success',
+                });
+              }
             }}
           />
           <Button
