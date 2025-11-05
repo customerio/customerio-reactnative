@@ -52,7 +52,7 @@ env:
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: macos-14
+    runs-on: macos-15
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
