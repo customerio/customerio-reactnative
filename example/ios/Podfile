@@ -31,8 +31,11 @@ installation_root = Pod::Config.instance.installation_root
 create_project_file_if_not_exists(installation_root, app_target_name)
 update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
 
+# React Native 0.82 (New Architecture only) does not support dynamic frameworks yet
+# Use static frameworks instead when using FCM
+# See: https://github.com/reactwg/react-native-new-architecture/discussions/115
 if push_provider == "fcm"
-  linkage = "dynamic"
+  linkage = "static"
 else
   linkage = ENV["USE_FRAMEWORKS"]
 end
