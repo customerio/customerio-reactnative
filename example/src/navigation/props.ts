@@ -37,5 +37,5 @@ export type ContentNavigatorCallbacks = {
   onProfileAttributes: (attributes: Record<string, any>) => void;
   onDeviceAttributes: (attributes: Record<string, any>) => void;
   onScreenChange: (screenName: string) => void;
-  onPushNotificationRequestPermisionButtonPress: () => Promise<CioPushPermissionStatus>;
+  onPushNotificationRequestPermissionButtonPress: () => Promise<CioPushPermissionStatus>;
 };

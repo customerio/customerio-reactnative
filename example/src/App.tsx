@@ -155,7 +155,7 @@ export default function App({ appName }: { appName: string }) {
                 console.log('Tracking screen change', screenName);
                 CustomerIO.screen(screenName);
               },
-              async onPushNotificationRequestPermisionButtonPress(): Promise<CioPushPermissionStatus> {
+              async onPushNotificationRequestPermissionButtonPress(): Promise<CioPushPermissionStatus> {
                 console.log('Requesting push notification permission');
                 const permission =
                   await CustomerIO.pushMessaging.showPromptForPushNotifications({

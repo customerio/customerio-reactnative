@@ -16,7 +16,7 @@ export const HomeScreen = ({
   navigation,
 }: NavigationScreenProps<'Customer.io'>) => {
   const [user] = useState(Storage.instance.getUser());
-  const { onTrackEvent, onPushNotificationRequestPermisionButtonPress } =
+  const { onTrackEvent, onPushNotificationRequestPermissionButtonPress } =
     useContext(NavigationCallbackContext);
   return (
     <>
@@ -54,7 +54,7 @@ export const HomeScreen = ({
           <Button
             title="Request Push Notification Permission"
             onPress={async () => {
-              const permission = await onPushNotificationRequestPermisionButtonPress();
+              const permission = await onPushNotificationRequestPermissionButtonPress();
               if (permission === CioPushPermissionStatus.Granted) {
                 showMessage({
                   message: 'Push notifications enabled successfully',
