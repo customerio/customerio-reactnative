@@ -22,6 +22,7 @@ export const NavigationButton = ({
       onLongPress={() => {
         onLongPress?.();
       }}
+      style={styles.container}
     >
       <Image
         source={iconSource}
@@ -33,6 +34,12 @@ export const NavigationButton = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    // iOS liquid UI requires slight left padding to center header icons properly
+    paddingLeft: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   settingsIcon: {
     width: 24,
     height: 24,

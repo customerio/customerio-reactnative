@@ -1,7 +1,7 @@
 import { NavigationProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TrackEvent, User } from '@utils';
-import { CioConfig } from 'customerio-reactnative';
+import { CioConfig, CioPushPermissionStatus } from 'customerio-reactnative';
 
 export const SettingsScreenName = 'Settings' as const;
 export const HomeScreenName = 'Customer.io' as const;
@@ -37,5 +37,5 @@ export type ContentNavigatorCallbacks = {
   onProfileAttributes: (attributes: Record<string, any>) => void;
   onDeviceAttributes: (attributes: Record<string, any>) => void;
   onScreenChange: (screenName: string) => void;
-  onPushNotificationRequestPermisionButtonPress: () => Promise<void>;
+  onPushNotificationRequestPermissionButtonPress: () => Promise<CioPushPermissionStatus>;
 };

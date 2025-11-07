@@ -1,3 +1,4 @@
+import { CioPushPermissionStatus } from 'customerio-reactnative';
 import { createContext } from 'react';
 import { ContentNavigatorCallbacks } from './props';
 
@@ -10,5 +11,5 @@ export const NavigationCallbackContext =
     onProfileAttributes: () => {},
     onDeviceAttributes: () => {},
     onScreenChange: () => {},
-    onPushNotificationRequestPermisionButtonPress: async () => {},
+    onPushNotificationRequestPermissionButtonPress: async () => CioPushPermissionStatus.NotDetermined,
   });

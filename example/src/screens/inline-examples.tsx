@@ -1,8 +1,8 @@
-import { InlineInAppMessageView, type InAppMessage } from 'customerio-reactnative';
-import React, { useContext } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
 import { NavigationCallbackContext } from '@navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { InlineInAppMessageView, type InAppMessage } from 'customerio-reactnative';
+import React, { useContext } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +50,7 @@ const SingleInlineScreen = () => {
       <Text style={styles.tabDescription}>
         This tab uses elementId: "single-inline"
       </Text>
-      
+
       {renderSampleContent()}
 
       <InlineInAppMessageView
@@ -124,19 +124,27 @@ export const InlineExamplesScreen = () => {
         // Hide tab bar header since we already have the main screen header
         headerShown: false,
       }}
+      // Override safe area insets to prevent double padding (handled globally in App.tsx)
+      safeAreaInsets={{ bottom: 0 }}
     >
-      <Tab.Screen 
-        name="Single View" 
+      <Tab.Screen
+        name="Single View"
         component={SingleInlineScreen}
         options={{
           tabBarLabel: 'Single View',
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color }}>1</Text>
+          ),
         }}
       />
-      <Tab.Screen 
-        name="Multiple Views" 
+      <Tab.Screen
+        name="Multiple Views"
         component={MultipleInlineScreen}
         options={{
           tabBarLabel: 'Multiple Views',
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color }}>3</Text>
+          ),
         }}
       />
     </Tab.Navigator>

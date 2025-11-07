@@ -8,12 +8,21 @@ import { Storage } from '@services';
 import { appTheme } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage from 'react-native-flash-message';
-import { enableScreens, enableFreeze } from 'react-native-screens';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { enableFreeze, enableScreens } from 'react-native-screens';
 import { getEnvForApp } from './env';
 
 // Enable native screen optimizations for better performance
 enableScreens(true);        // Better native performance
 enableFreeze(true);         // Let tabs "freeze" when not focused
+
+// Wrapper component to provide FlashMessage with safe area insets
+const SafeFlashMessage = () => {
+  const insets = useSafeAreaInsets();
+  return (
+    <FlashMessage position={{ bottom: insets.bottom }} floating />
+  );
+};
 
 export default function App({ appName }: { appName: string }) {
   const env = getEnvForApp(appName);
@@ -25,13 +34,13 @@ export default function App({ appName }: { appName: string }) {
   const user = storage.getUser();
   const linkingScreens = user
     ? {
-        Home: 'home',
-        Settings: 'settings',
-      }
+      Home: 'home',
+      Settings: 'settings',
+    }
     : {
-        Login: 'login',
-        Settings: 'settings',
-      };
+      Login: 'login',
+      Settings: 'settings',
+    };
   useEffect(() => {
     const loadFromStorage = async () => {
       await storage.loadAll();
@@ -111,84 +120,88 @@ export default function App({ appName }: { appName: string }) {
   }, [storage]);
 
   return (
-    <>
-      {isLoading && <BodyText>Loading....</BodyText>}
-      {!isLoading && (
-        <NavigationCallbackContext.Provider
-          value={{
-            onSetConfig: (config) => {
-              console.log('Initializing CustomerIO with config', config);
-              CustomerIO.initialize(config);
-            },
-            onLogin: (user) => {
-              console.log('Identifying user', user);
-              CustomerIO.identify({ userId: user.traits.email ?? user.id, traits: user.traits });
-            },
-            onLogout: async () => {
-              console.log('Clearing CustomerIO identify');
-              CustomerIO.clearIdentify();
-            },
-            onTrackEvent: (eventPayload) => {
-              console.log('Tracking event', eventPayload);
-              CustomerIO.track(eventPayload.name, eventPayload.properties);
-            },
-            onProfileAttributes(attributes) {
-              console.log('Setting profile attributes', attributes);
-              CustomerIO.setProfileAttributes(attributes);
-            },
-            onDeviceAttributes(attributes) {
-              console.log('Setting device attributes', attributes);
-              CustomerIO.setDeviceAttributes(attributes);
-            },
-            onScreenChange(screenName) {
-              // See 'src/screens/content-navigator.tsx' for the how we implemented screen auto-tracking
-              console.log('Tracking screen change', screenName);
-              CustomerIO.screen(screenName);
-            },
-            async onPushNotificationRequestPermisionButtonPress(): Promise<void> {
-              console.log('Requesting push notification permission');
-              const permission =
-                await CustomerIO.pushMessaging.showPromptForPushNotifications({
-                  ios: { sound: true, badge: true },
-                });
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
+        {isLoading && <BodyText>Loading....</BodyText>}
+        {!isLoading && (
+          <NavigationCallbackContext.Provider
+            value={{
+              onSetConfig: (config) => {
+                console.log('Initializing CustomerIO with config', config);
+                CustomerIO.initialize(config);
+              },
+              onLogin: (user) => {
+                console.log('Identifying user', user);
+                CustomerIO.identify({ userId: user.traits.email ?? user.id, traits: user.traits });
+              },
+              onLogout: async () => {
+                console.log('Clearing CustomerIO identify');
+                CustomerIO.clearIdentify();
+              },
+              onTrackEvent: (eventPayload) => {
+                console.log('Tracking event', eventPayload);
+                CustomerIO.track(eventPayload.name, eventPayload.properties);
+              },
+              onProfileAttributes(attributes) {
+                console.log('Setting profile attributes', attributes);
+                CustomerIO.setProfileAttributes(attributes);
+              },
+              onDeviceAttributes(attributes) {
+                console.log('Setting device attributes', attributes);
+                CustomerIO.setDeviceAttributes(attributes);
+              },
+              onScreenChange(screenName) {
+                // See 'src/screens/content-navigator.tsx' for the how we implemented screen auto-tracking
+                console.log('Tracking screen change', screenName);
+                CustomerIO.screen(screenName);
+              },
+              async onPushNotificationRequestPermissionButtonPress(): Promise<CioPushPermissionStatus> {
+                console.log('Requesting push notification permission');
+                const permission =
+                  await CustomerIO.pushMessaging.showPromptForPushNotifications({
+                    ios: { sound: true, badge: true },
+                  });
 
-              switch (permission) {
-                case CioPushPermissionStatus.Granted:
-                  console.log(
-                    `Push notifications are now enabled on this device`
-                  );
-                  break;
-                case CioPushPermissionStatus.Denied:
-                case CioPushPermissionStatus.NotDetermined:
-                  console.log(
-                    `Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device`
-                  );
-                  break;
-              }
-            },
-          }}
-        >
-          <NavigationContainer
-            theme={appTheme}
-            linking={{
-              prefixes: [
-                'amiapp-reactnative-apns://',
-                'amiapp-reactnative-fcm://',
-                'http://www.amiapp-reactnative-apns.com',
-                'https://www.amiapp-reactnative-apns.com',
-                'http://www.amiapp-reactnative-fcm.com',
-                'https://www.amiapp-reactnative-fcm.com',
-              ],
-              config: {
-                screens: linkingScreens,
+                switch (permission) {
+                  case CioPushPermissionStatus.Granted:
+                    console.log(
+                      `Push notifications are now enabled on this device`
+                    );
+                    break;
+                  case CioPushPermissionStatus.Denied:
+                  case CioPushPermissionStatus.NotDetermined:
+                    console.log(
+                      `Push notifications are denied on this device. Please allow notification permission from settings to receive push on this device`
+                    );
+                    break;
+                }
+
+                return permission;
               },
             }}
           >
-            <ContentNavigator appName={appName} />
-            <FlashMessage position="top" duration={4000} />
-          </NavigationContainer>
-        </NavigationCallbackContext.Provider>
-      )}
-    </>
+            <NavigationContainer
+              theme={appTheme}
+              linking={{
+                prefixes: [
+                  'amiapp-reactnative-apns://',
+                  'amiapp-reactnative-fcm://',
+                  'http://www.amiapp-reactnative-apns.com',
+                  'https://www.amiapp-reactnative-apns.com',
+                  'http://www.amiapp-reactnative-fcm.com',
+                  'https://www.amiapp-reactnative-fcm.com',
+                ],
+                config: {
+                  screens: linkingScreens,
+                },
+              }}
+            >
+              <ContentNavigator appName={appName} />
+              <SafeFlashMessage />
+            </NavigationContainer>
+          </NavigationCallbackContext.Provider>
+        )}
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
