@@ -62,7 +62,7 @@ jobs:
             platform: 'ios'
             platform_name: 'iOS'
             platform_name_upper: 'IOS'
-          - name: 'FCM'
+          - name: 'APN'
             cio-workspace-name: 'Mobile: React Native'
             platform: 'android'
             platform_name: 'Android'
