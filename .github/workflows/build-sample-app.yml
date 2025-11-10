@@ -197,7 +197,7 @@ jobs:
         run: |
           ENV_FILE="Env.swift"
           cp "$ENV_FILE.sample" "$ENV_FILE"
-          sd 'CDP_API_KEY: String = ".*"' "CDP_API_KEY: String = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}\"" "$ENV_FILE"
+          sd 'CDP_API_KEY = ".*"' "CDP_API_KEY = \"${{ secrets[format('CUSTOMERIO_{0}_WORKSPACE_CDP_API_KEY', inputs.app_name)] }}\"" "$ENV_FILE"
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
@@ -240,7 +240,7 @@ jobs:
         if: ${{ inputs.platform == 'ios' }}
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '16'
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         id: build_app
