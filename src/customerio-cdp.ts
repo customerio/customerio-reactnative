@@ -7,10 +7,10 @@ import {
 } from './specs/modules/NativeCustomerIO';
 import {
   CioLogLevel,
+  MetricEvent,
   type CioConfig,
   type CustomAttributes,
   type IdentifyParams,
-  MetricEvent,
 } from './types';
 import type { NativeSDKArgs } from './types/internal';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
@@ -152,7 +152,7 @@ export class CustomerIO {
   };
 
   /** Track push notification metrics for delivered, opened, or converted events. */
-  static readonly trackMetric = ({
+  static readonly trackMetric = async ({
     deliveryID,
     deviceToken,
     event,
