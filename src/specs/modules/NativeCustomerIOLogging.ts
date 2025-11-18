@@ -1,5 +1,4 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
-/* eslint-disable @react-native/no-deep-imports */
 import type {
   Double,
   EventEmitter,

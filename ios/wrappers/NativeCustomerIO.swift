@@ -127,6 +127,17 @@ public class NativeCustomerIO: NSObject {
     }
 
     @objc
+    func trackMetric(_ deliveryId: String, deviceToken: String, event: String) {
+        guard ensureInitialized() else { return }
+        guard let metricEvent = Metric.getEvent(from: event) else {
+            logger.error("Invalid metric event: \(event)")
+            return
+        }
+
+        CustomerIO.shared.trackMetric(deliveryID: deliveryId, event: metricEvent, deviceToken: deviceToken)
+    }
+
+    @objc
     func deleteDeviceToken() {
         guard ensureInitialized() else { return }
         CustomerIO.shared.deleteDeviceToken()

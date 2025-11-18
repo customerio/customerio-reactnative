@@ -10,6 +10,7 @@ import {
   type CioConfig,
   type CustomAttributes,
   type IdentifyParams,
+  MetricEvent,
 } from './types';
 import type { NativeSDKArgs } from './types/internal';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
@@ -148,6 +149,24 @@ export class CustomerIO {
   /** Remove the current device token to stop receiving push notifications. */
   static readonly deleteDeviceToken = async () => {
     return withNativeModule((native) => native.deleteDeviceToken());
+  };
+
+  /** Track push notification metrics for delivered, opened, or converted events. */
+  static readonly trackMetric = ({
+    deliveryID,
+    deviceToken,
+    event,
+  }: {
+    deliveryID: string;
+    deviceToken: string;
+    event: MetricEvent;
+  }) => {
+    assert.string(deliveryID, 'deliveryID', { usage: 'Track Metric' });
+    assert.string(deviceToken, 'deviceToken', { usage: 'Track Metric' });
+
+    return withNativeModule((native) =>
+      native.trackMetric(deliveryID, deviceToken, event)
+    );
   };
 
   /**
