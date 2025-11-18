@@ -87,6 +87,11 @@ export class CustomerIO {
     static readonly setDeviceAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly setProfileAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly track: (name: string, properties?: Record<string, any>) => Promise<any>;
+    static readonly trackMetric: ({ deliveryID, deviceToken, event, }: {
+        deliveryID: string;
+        deviceToken: string;
+        event: MetricEvent;
+    }) => Promise<void>;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeInAppSpec" needs to be exported by the entry point index.d.ts
@@ -170,6 +175,13 @@ export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeCh
         minimumHeight?: number;
     };
     onActionClick?: (message: InAppMessage, actionValue: string, actionName: string) => void;
+}
+
+// @public
+export enum MetricEvent {
+    Converted = "converted",
+    Delivered = "delivered",
+    Opened = "opened"
 }
 
 // @public
