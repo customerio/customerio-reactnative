@@ -163,6 +163,7 @@ export class CustomerIO {
   }) => {
     assert.string(deliveryID, 'deliveryID', { usage: 'Track Metric' });
     assert.string(deviceToken, 'deviceToken', { usage: 'Track Metric' });
+    assert.string(event, 'event', { usage: 'Track Metric' });
 
     return withNativeModule((native) =>
       native.trackMetric(deliveryID, deviceToken, event)
