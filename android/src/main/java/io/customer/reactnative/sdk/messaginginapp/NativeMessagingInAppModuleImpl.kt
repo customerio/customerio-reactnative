@@ -19,7 +19,7 @@ object NativeMessagingInAppModuleImpl {
 
     private val inAppMessagingModule: ModuleMessagingInApp?
         get() = kotlin.runCatching { CustomerIO.instance().inAppMessaging() }.getOrNull()
-    internal val inAppEventListener = ReactInAppEventListener()
+    val inAppEventListener = ReactInAppEventListener()
 
     /**
      * Adds InAppMessaging module to native Android SDK based on configuration provided by customer

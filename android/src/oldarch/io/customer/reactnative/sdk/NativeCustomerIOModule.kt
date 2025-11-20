@@ -63,6 +63,11 @@ class NativeCustomerIOModule(
     }
 
     @ReactMethod
+    fun trackMetric(deliveryID: String, deviceToken: String, event: String) {
+        NativeCustomerIOModuleImpl.trackMetric(deliveryID, deviceToken, event)
+    }
+
+    @ReactMethod
     fun deleteDeviceToken() {
         NativeCustomerIOModuleImpl.deleteDeviceToken()
     }

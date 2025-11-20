@@ -1,3 +1,15 @@
+## [5.2.0](https://github.com/customerio/customerio-reactnative/compare/5.1.1...5.2.0) (2025-11-20)
+
+### Features
+
+* add trackMetric method for manual push metric tracking ([#539](https://github.com/customerio/customerio-reactnative/issues/539)) ([43deefe](https://github.com/customerio/customerio-reactnative/commit/43deefef5afe66161ed954948c5f0388ba79be37))
+
+## [5.1.1](https://github.com/customerio/customerio-reactnative/compare/5.1.0...5.1.1) (2025-11-14)
+
+### Bug Fixes
+
+* expose in-app listener for expo ([#538](https://github.com/customerio/customerio-reactnative/issues/538)) ([48687f0](https://github.com/customerio/customerio-reactnative/commit/48687f07556645f58c569fd11bea7720494da829))
+
 ## [5.1.0](https://github.com/customerio/customerio-reactnative/compare/5.0.1...5.1.0) (2025-10-30)
 
 ### Features

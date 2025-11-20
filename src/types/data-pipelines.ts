@@ -112,3 +112,17 @@ export enum ScreenView {
   /** Only display in-app messages, don't send to destinations */
   InApp = 'inApp',
 }
+
+/**
+ * Enum to specify the type of metric for tracking
+ *
+ * @public
+ */
+export enum MetricEvent {
+  /** Push notification was delivered to the device */
+  Delivered = 'delivered',
+  /** Push notification was opened by the user */
+  Opened = 'opened',
+  /** Push notification resulted in a conversion */
+  Converted = 'converted',
+}
