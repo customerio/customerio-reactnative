@@ -48,6 +48,10 @@ class NativeCustomerIOModule(
         NativeCustomerIOModuleImpl.registerDeviceToken(token)
     }
 
+    override fun trackMetric(deliveryID: String?, deviceToken: String?, event: String?) {
+        NativeCustomerIOModuleImpl.trackMetric(deliveryID, deviceToken, event)
+    }
+
     override fun deleteDeviceToken() {
         NativeCustomerIOModuleImpl.deleteDeviceToken()
     }

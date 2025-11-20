@@ -7,6 +7,7 @@ import {
 } from './specs/modules/NativeCustomerIO';
 import {
   CioLogLevel,
+  MetricEvent,
   type CioConfig,
   type CustomAttributes,
   type IdentifyParams,
@@ -148,6 +149,25 @@ export class CustomerIO {
   /** Remove the current device token to stop receiving push notifications. */
   static readonly deleteDeviceToken = async () => {
     return withNativeModule((native) => native.deleteDeviceToken());
+  };
+
+  /** Track push notification metrics for delivered, opened, or converted events. */
+  static readonly trackMetric = async ({
+    deliveryID,
+    deviceToken,
+    event,
+  }: {
+    deliveryID: string;
+    deviceToken: string;
+    event: MetricEvent;
+  }) => {
+    assert.string(deliveryID, 'deliveryID', { usage: 'Track Metric' });
+    assert.string(deviceToken, 'deviceToken', { usage: 'Track Metric' });
+    assert.string(event, 'event', { usage: 'Track Metric' });
+
+    return withNativeModule((native) =>
+      native.trackMetric(deliveryID, deviceToken, event)
+    );
   };
 
   /**

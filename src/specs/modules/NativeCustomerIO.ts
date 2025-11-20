@@ -1,5 +1,4 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
-/* eslint-disable @react-native/no-deep-imports */
 import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 
 /**
@@ -49,6 +48,7 @@ export interface Spec extends TurboModule {
   setProfileAttributes(attributes: NativeBridgeObject): void;
   setDeviceAttributes(attributes: NativeBridgeObject): void;
   registerDeviceToken(token: string): void;
+  trackMetric(deliveryID: string, deviceToken: string, event: string): void;
   deleteDeviceToken(): void;
 }
 

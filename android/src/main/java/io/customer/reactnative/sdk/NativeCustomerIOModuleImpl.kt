@@ -17,6 +17,9 @@ import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.CioLogLevel
 import io.customer.sdk.core.util.Logger
 import io.customer.sdk.data.model.Region
+import io.customer.sdk.events.Metric
+import io.customer.sdk.events.TrackMetric
+import io.customer.sdk.events.serializedName
 
 /**
  * Shared implementation logic for Customer.io Native SDK communication in React Native.
@@ -154,6 +157,28 @@ internal object NativeCustomerIOModuleImpl {
         val deviceToken = assertNotNull(token) ?: return
 
         requireSDKInstance()?.registerDeviceToken(deviceToken)
+    }
+
+    fun trackMetric(deliveryId: String?, deviceToken: String?, eventName: String?) {
+        try {
+            if (deliveryId == null || deviceToken == null || eventName == null) {
+                throw IllegalArgumentException("Missing required parameters")
+            }
+
+            val event = Metric.values().find {
+                it.serializedName.equals(eventName, true)
+            } ?: throw IllegalArgumentException("Invalid metric event name")
+
+            requireSDKInstance()?.trackMetric(
+                event = TrackMetric.Push(
+                    deliveryId = deliveryId,
+                    deviceToken = deviceToken,
+                    metric = event
+                )
+            )
+        } catch (e: Exception) {
+            logger.error("Error tracking push metric: ${e.message}")
+        }
     }
 
     fun deleteDeviceToken() {

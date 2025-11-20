@@ -85,6 +85,13 @@ RCT_EXPORT_MODULE()
   [_swiftBridge registerDeviceToken:token];
 }
 
+- (void)trackMetric:(NSString *)deliveryID
+        deviceToken:(NSString *)deviceToken
+              event:(NSString *)event {
+  [self assertBridgeAvailable:@"during trackMetric"];
+  [_swiftBridge trackMetric:deliveryID deviceToken:deviceToken event:event];
+}
+
 - (void)deleteDeviceToken {
   [self assertBridgeAvailable:@"during deleteDeviceToken"];
   [_swiftBridge deleteDeviceToken];
@@ -114,6 +121,7 @@ RCT_EXTERN_METHOD(screen : (NSString *)title properties : (NSDictionary *)proper
 RCT_EXTERN_METHOD(setProfileAttributes : (NSDictionary *)attributes)
 RCT_EXTERN_METHOD(setDeviceAttributes : (NSDictionary *)attributes)
 RCT_EXTERN_METHOD(registerDeviceToken : (NSString *)token)
+RCT_EXTERN_METHOD(trackMetric : (NSString *)deliveryID deviceToken : (NSString *)deviceToken event : (NSString *)event)
 RCT_EXTERN_METHOD(deleteDeviceToken)
 
 // Module initialization can happen on background thread
