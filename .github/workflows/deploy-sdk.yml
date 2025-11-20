@@ -38,4 +38,4 @@ jobs:
         run: npm version 0.0.0-test-oidc --no-git-tag-version
 
       - name: Publish to npm
-        run: npm publish --dry-run --tag test-oidc
+        run: npm publish --tag test-oidc
