@@ -31,9 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Test authentication
-        run: npm whoami
-
       - name: Run pre-deploy
         run: npm run pre-deploy
 
