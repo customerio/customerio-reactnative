@@ -35,7 +35,7 @@ jobs:
             echo "sdk_version=${{ inputs.sdk_version }}" >> $GITHUB_OUTPUT
           fi
 
-  build-sample-app:
+  build-sample-app-ios:
     needs: [determine-branch, determine-sdk-version]
     uses: ./.github/workflows/build-sample-app.yml
     with:
@@ -45,5 +45,18 @@ jobs:
       platform: "ios"
       platform_name: "iOS"
       platform_name_upper: "IOS"
+      sdk_version: ${{ needs.determine-sdk-version.outputs.resolved_version }}
+    secrets: inherit
+
+  build-sample-app-android:
+    needs: [determine-branch, determine-sdk-version]
+    uses: ./.github/workflows/build-sample-app.yml
+    with:
+      app_name: "APN"
+      branch_name: ${{ needs.determine-branch.outputs.branch_name }}
+      cio-workspace-name: "Mobile: React Native"
+      platform: "android"
+      platform_name: "Android"
+      platform_name_upper: "ANDROID"
       sdk_version: ${{ needs.determine-sdk-version.outputs.resolved_version }}
     secrets: inherit
