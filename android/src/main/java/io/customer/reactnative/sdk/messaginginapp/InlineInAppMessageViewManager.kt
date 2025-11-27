@@ -1,8 +1,12 @@
 package io.customer.reactnative.sdk.messaginginapp
 
+import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
+import com.facebook.react.viewmanagers.InlineMessageNativeManagerDelegate
+import com.facebook.react.viewmanagers.InlineMessageNativeManagerInterface
 import io.customer.messaginginapp.ui.bridge.WrapperPlatformDelegate
 
 /**
@@ -11,12 +15,17 @@ import io.customer.messaginginapp.ui.bridge.WrapperPlatformDelegate
  * Provides common functionality for both old and new React Native architecture
  * implementations, including view creation, event handling, and property management.
  */
-abstract class BaseInlineInAppMessageViewManager :
+@ReactModule(name = InlineInAppMessageViewManager.NAME)
+class InlineInAppMessageViewManager :
+    InlineMessageNativeManagerInterface<ReactInlineInAppMessageView>,
     SimpleViewManager<ReactInlineInAppMessageView>() {
-    override fun getName() = NAME
+    private val delegate = InlineMessageNativeManagerDelegate(this)
 
-    override fun createViewInstance(context: ThemedReactContext): ReactInlineInAppMessageView {
-        return ReactInlineInAppMessageView(context)
+    override fun getName() = NAME
+    override fun getDelegate(): ViewManagerDelegate<ReactInlineInAppMessageView> = delegate
+
+    override fun createViewInstance(reactContext: ThemedReactContext): ReactInlineInAppMessageView {
+        return ReactInlineInAppMessageView(reactContext)
     }
 
     /**
@@ -25,7 +34,7 @@ abstract class BaseInlineInAppMessageViewManager :
      * - onSizeChange: Triggered when the size of the inline message changes.
      * - onStateChange: Triggered when the state of the inline message changes.
      */
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any>? {
+    override fun getExportedCustomDirectEventTypeConstants(): Map<String?, Any?> {
         val customEvents = super.getExportedCustomDirectEventTypeConstants() ?: mutableMapOf()
         val registerCustomEvent = { eventName: String ->
             customEvents.put(eventName, mapOf("registrationName" to eventName))
@@ -37,11 +46,11 @@ abstract class BaseInlineInAppMessageViewManager :
     }
 
     @ReactProp(name = "elementId")
-    fun setElementId(view: ReactInlineInAppMessageView, elementId: String?) {
-        view.elementId = elementId
+    override fun setElementId(view: ReactInlineInAppMessageView?, value: String?) {
+        view?.elementId = value
     }
 
     companion object {
-        const val NAME = "InlineMessageNative"
+        internal const val NAME = "InlineMessageNative"
     }
 }
