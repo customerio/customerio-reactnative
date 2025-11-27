@@ -50,3 +50,9 @@ internal fun ReadableMap.toFCMRemoteMessage(destination: String): RemoteMessage 
         build()
     }
 }
+
+/**
+ * Maps native class to react native supported type so the result can be passed on to JS/TS classes.
+ */
+internal val PermissionStatus.toReactNativeResult: Any
+    get() = this.name.uppercase()
