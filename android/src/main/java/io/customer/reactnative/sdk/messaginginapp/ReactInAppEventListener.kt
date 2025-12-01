@@ -9,7 +9,7 @@ import io.customer.messaginginapp.type.InAppMessage
  * React Native bridge for Customer.io in-app messaging events.
  * Converts native SDK events to JavaScript compatible format.
  */
-class ReactInAppEventListener : InAppEventListener {
+class ReactInAppEventListener private constructor() : InAppEventListener {
     // Event emitter function to send events to React Native layer
     private var eventEmitter: ((ReadableMap) -> Unit)? = null
 
@@ -30,6 +30,9 @@ class ReactInAppEventListener : InAppEventListener {
         actionValue: String? = null,
         actionName: String? = null,
     ) {
+        // Get the emitter, return early if not set
+        val emitter = eventEmitter ?: return
+
         val data = buildMap {
             put("eventType", eventType)
             put("messageId", message.messageId)
@@ -38,7 +41,7 @@ class ReactInAppEventListener : InAppEventListener {
             actionName?.let { put("actionName", it) }
         }
 
-        eventEmitter?.invoke(Arguments.makeNativeMap(data))
+        emitter.invoke(Arguments.makeNativeMap(data))
     }
 
     override fun errorWithMessage(message: InAppMessage) = emitInAppEvent(
@@ -66,4 +69,9 @@ class ReactInAppEventListener : InAppEventListener {
         eventType = "messageShown",
         message = message,
     )
+
+    companion object {
+        // Singleton instance with public visibility for direct access by Expo plugin
+        val shared: ReactInAppEventListener by lazy { ReactInAppEventListener() }
+    }
 }

@@ -1,6 +1,5 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 import type {
-  Double,
   EventEmitter,
   UnsafeObject,
 } from 'react-native/Libraries/Types/CodegenTypes';
@@ -18,11 +17,6 @@ import type {
 /** TurboModule interface for CustomerIO logging native operations */
 export interface Spec extends TurboModule {
   readonly onCioLogEvent: EventEmitter<UnsafeObject>;
-  // Old architecture support: EventEmitter requires these methods for proper functionality
-  /** @internal - Registers an event listener for old architecture EventEmitter */
-  addListener: (eventName: string) => void;
-  /** @internal - Removes event listeners for old architecture EventEmitter */
-  removeListeners: (count: Double) => void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(
