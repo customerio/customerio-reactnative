@@ -1,8 +1,5 @@
 #import "utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
 // Objective-C wrapper for new architecture TurboModule implementation
@@ -101,34 +98,3 @@ RCT_EXPORT_MODULE()
 Class<RCTBridgeModule> NativeCustomerIOCls(void) { return RCTNativeCustomerIO.class; }
 
 @end
-
-#else
-
-// Old Architecture: Bridge methods exposed via RCT_EXTERN macros
-// Maps to Swift implementation without TurboModule overhead
-
-@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIO, NativeCustomerIO, NSObject)
-
-RCT_EXTERN_METHOD(initialize
-                  : (NSDictionary *)config args
-                  : (NSDictionary *)args resolve
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(identify : (NSDictionary *)params)
-RCT_EXTERN_METHOD(clearIdentify)
-RCT_EXTERN_METHOD(track : (NSString *)name properties : (NSDictionary *)properties)
-RCT_EXTERN_METHOD(screen : (NSString *)title properties : (NSDictionary *)properties)
-RCT_EXTERN_METHOD(setProfileAttributes : (NSDictionary *)attributes)
-RCT_EXTERN_METHOD(setDeviceAttributes : (NSDictionary *)attributes)
-RCT_EXTERN_METHOD(registerDeviceToken : (NSString *)token)
-RCT_EXTERN_METHOD(trackMetric : (NSString *)deliveryID deviceToken : (NSString *)deviceToken event : (NSString *)event)
-RCT_EXTERN_METHOD(deleteDeviceToken)
-
-// Module initialization can happen on background thread
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
-}
-
-@end
-
-#endif

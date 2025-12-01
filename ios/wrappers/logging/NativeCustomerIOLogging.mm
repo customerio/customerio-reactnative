@@ -3,9 +3,6 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTInitializing.h>
 #import <React/RCTInvalidating.h>
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
 // Protocol that extends the spec with event emitter methods
@@ -24,13 +21,11 @@
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
 // Create TurboModule instance for new architecture JSI integration
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeCustomerIOLoggingSpecJSI>(params);
 }
-#endif
 
 // Validates Swift bridge is available before method calls
 - (void)assertBridgeAvailable:(NSString *)context {
@@ -84,22 +79,3 @@ Class<RCTBridgeModule> NativeCustomerIOLoggingCls(void) {
 }
 
 @end
-
-#else
-
-// Old Architecture: Bridge methods exposed via RCT_EXTERN macros
-// Maps to Swift implementation without TurboModule overhead
-
-@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIOLogging, NativeCustomerIOLoggingLegacy,
-                                    RCTEventEmitter)
-
-RCT_EXTERN_METHOD(supportedEvents)
-
-// Background initialization is fine since logs are ignored until listeners are attached
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
-}
-
-@end
-
-#endif
