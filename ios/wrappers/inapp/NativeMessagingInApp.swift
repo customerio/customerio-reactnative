@@ -2,16 +2,25 @@ import CioMessagingInApp
 import Foundation
 import React
 
-// Core in-app messaging implementation shared between new and old architecture
-class NativeMessagingInAppImplementation {
-    private let inAppEventCallback: (_ body: [String: Any]) -> Void
+// In-app messaging module for new React Native architecture (TurboModule)
+@objc(NativeMessagingInApp)
+public class NativeMessagingInApp: NSObject {
+    // Reference to the ObjC event emitter for new architecture (TurboModule)
+    private weak var objcEventEmitter: AnyObject?
+    private lazy var inAppEventCallback: (_ body: [String: Any]) -> Void = { [weak self] body in
+        self?.sendEvent(body: body)
+    }
 
-    init(inAppEventCallback: @escaping (_ body: [String: Any]) -> Void) {
-        self.inAppEventCallback = inAppEventCallback
+    // Set ObjC event emitter reference for new architecture
+    @objc
+    public func setEventEmitter(_ emitter: AnyObject) {
+        objcEventEmitter = emitter
     }
 
     // Initialize in-app event listener - called by React Native
-    func initialize() {
+    @objc
+    public func initialize() {
+        // Initialize in-app event listener - called by React Native
         ReactInAppEventListener.shared.setEventEmitter { [weak self] data in
             guard let self else { return }
 
@@ -25,49 +34,11 @@ class NativeMessagingInAppImplementation {
         MessagingInApp.shared.setEventListener(ReactInAppEventListener.shared)
     }
 
-    // Clears the in-app event listener to prevent leaks when module is deallocated or invalidated
-    func clearInAppEventListener() {
-        ReactInAppEventListener.shared.clearEventEmitter()
-    }
-
-    // Clear in-app event listener to prevent leaks
-    func invalidate() {
-        clearInAppEventListener()
-    }
-}
-
-// In-app messaging module for new React Native architecture (TurboModule)
-@objc(NativeMessagingInApp)
-public class NativeMessagingInApp: NSObject {
-    private var implementation: NativeMessagingInAppImplementation!
-    // Reference to the ObjC event emitter for new architecture (TurboModule)
-    private weak var objcEventEmitter: AnyObject?
-
-    @objc
-    override public init() {
-        super.init()
-
-        self.implementation = .init(inAppEventCallback: { [weak self] body in
-            self?.sendEvent(body: body)
-        })
-    }
-
-    // Set ObjC event emitter reference for new architecture
-    @objc
-    public func setEventEmitter(_ emitter: AnyObject) {
-        objcEventEmitter = emitter
-    }
-
-    // Initialize in-app event listener - called by React Native
-    @objc
-    public func initialize() {
-        implementation.initialize()
-    }
-
     // Clear in-app event listener to prevent memory leaks - called by React Native
     @objc
     public func invalidate() {
-        implementation.invalidate()
+        // Clear in-app event listener to prevent leaks
+        clearInAppEventListener()
     }
 
     /**
@@ -76,6 +47,11 @@ public class NativeMessagingInApp: NSObject {
     @objc(dismissMessage)
     public func dismissMessage() {
         MessagingInApp.shared.dismissMessage()
+    }
+
+    // Clears the in-app event listener to prevent leaks when module is deallocated or invalidated
+    func clearInAppEventListener() {
+        ReactInAppEventListener.shared.clearEventEmitter()
     }
 
     // Send in-app event to React Native layer using ObjC event emitter
@@ -92,54 +68,5 @@ public class NativeMessagingInApp: NSObject {
             return
         }
         _ = emitter.perform(selector, with: body as NSDictionary)
-    }
-}
-
-// Legacy in-app messaging module for old React Native architecture (pre-TurboModule)
-@objc(NativeMessagingInAppLegacy)
-public class NativeMessagingInAppLegacy: RCTEventEmitter {
-    private var implementation: NativeMessagingInAppImplementation!
-
-    @objc
-    override public init() {
-        super.init()
-
-        self.implementation = .init(inAppEventCallback: { [weak self] body in
-            guard let self else { return }
-
-            // Old architecture: use self as RCTEventEmitter
-            sendEvent(withName: CustomerioConstants.inAppEventListener, body: body)
-        })
-        initialize()
-    }
-
-    deinit {
-        invalidate()
-    }
-
-    // Initialize in-app event listener - called by React Native
-    @objc
-    public func initialize() {
-        implementation.initialize()
-    }
-
-    @objc
-    override public func invalidate() {
-        implementation.invalidate()
-        super.invalidate()
-    }
-
-    // Returns array of supported event names for RCTEventEmitter
-    // All in-app events are combined under a single event name
-    override public func supportedEvents() -> [String]! {
-        [CustomerioConstants.inAppEventListener]
-    }
-
-    /**
-     * Dismisses any currently displayed in-app message
-     */
-    @objc
-    public func dismissMessage() {
-        MessagingInApp.shared.dismissMessage()
     }
 }

@@ -1,8 +1,5 @@
 #import "../utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
 // Objective-C wrapper for new architecture TurboModule implementation
@@ -88,36 +85,3 @@ Class<RCTBridgeModule> NativeCustomerIOMessagingPushCls(void) {
 }
 
 @end
-
-#else
-
-// Old Architecture: Bridge methods exposed via RCT_EXTERN macros
-// Maps to Swift implementation without TurboModule overhead
-
-@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIOMessagingPush, NativeMessagingPush, NSObject)
-
-RCT_EXTERN_METHOD(trackNotificationResponseReceived : (NSDictionary *)payload)
-
-RCT_EXTERN_METHOD(trackNotificationReceived : (NSDictionary *)payload)
-
-RCT_EXTERN_METHOD(getRegisteredDeviceToken
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(showPromptForPushNotifications
-                  : (NSDictionary *)options resolve
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(getPushPermissionStatus
-                  : (RCTPromiseResolveBlock)resolve reject
-                  : (RCTPromiseRejectBlock)reject)
-
-// Module initialization can happen on background thread
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
-}
-
-@end
-
-#endif
