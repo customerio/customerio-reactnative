@@ -100,7 +100,7 @@ export class CustomerIO {
 export class CustomerIOInAppMessaging implements NativeInAppSpec {
     dismissMessage(): void;
     // (undocumented)
-    registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
+    registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription | undefined;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativePushSpec" needs to be exported by the entry point index.d.ts
