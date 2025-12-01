@@ -3,9 +3,6 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTInitializing.h>
 #import <React/RCTInvalidating.h>
-
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
 // Protocol that extends the spec with setEventEmitter method
@@ -24,13 +21,11 @@
 
 RCT_EXPORT_MODULE()
 
-#ifdef RCT_NEW_ARCH_ENABLED
 // Create TurboModule instance for new architecture JSI integration
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeCustomerIOMessagingInAppSpecJSI>(params);
 }
-#endif
 
 // Validates Swift bridge is available before method calls
 - (void)assertBridgeAvailable:(NSString *)context {
@@ -89,23 +84,3 @@ Class<RCTBridgeModule> NativeCustomerIOMessagingInAppCls(void) {
 }
 
 @end
-
-#else
-
-// Old Architecture: Bridge methods exposed via RCT_EXTERN macros
-// Maps to Swift implementation without TurboModule overhead
-
-@interface RCT_EXTERN_REMAP_MODULE (NativeCustomerIOMessagingInApp, NativeMessagingInAppLegacy,
-                                    RCTEventEmitter)
-
-RCT_EXTERN_METHOD(supportedEvents)
-RCT_EXTERN_METHOD(dismissMessage)
-
-// Module initialization can happen on background thread
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
-}
-
-@end
-
-#endif

@@ -1,5 +1,3 @@
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import "RCTInlineMessageNative.h"
 #import "ReactInlineMessageView.h"
 
@@ -13,7 +11,7 @@
 using namespace facebook::react;
 
 /// New architecture React Native view for inline messages
-@interface RCTInlineMessageNative ()
+@interface RCTInlineMessageNative () <RCTInlineMessageNativeViewProtocol>
 /// Bridge to Swift ReactInlineMessageView for platform-agnostic implementation
 @property(nonatomic, strong) id bridge;
 @end
@@ -155,5 +153,3 @@ using namespace facebook::react;
 Class<RCTComponentViewProtocol> InlineMessageNativeCls(void) {
   return RCTInlineMessageNative.class;
 }
-
-#endif

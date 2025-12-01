@@ -6,8 +6,6 @@ load "/tmp/override_cio_sdk.rb"
 # end of internal Customer.io testing code
 # -------------
 
-# Uncomment the next line to disable react-native's new architecture.
-# ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command("node", ["-p",
                                                  'require.resolve(
