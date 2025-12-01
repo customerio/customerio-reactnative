@@ -8,8 +8,8 @@ import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
-import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModuleImpl
-import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModuleImpl
+import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
+import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
 import io.customer.reactnative.sdk.util.assertNotNull
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
@@ -22,15 +22,13 @@ import io.customer.sdk.events.TrackMetric
 import io.customer.sdk.events.serializedName
 
 /**
- * Shared implementation logic for Customer.io Native SDK communication in React Native.
- * Contains actual business logic used by both old and new architecture [NativeCustomerIOModule] classes.
- * Handles SDK initialization, user identification, event tracking, and device management.
+ * React Native module implementation for Customer.io Native SDK
+ * using TurboModules with new architecture.
  */
-internal object NativeCustomerIOModuleImpl {
-    const val NAME = "NativeCustomerIO"
-
-    private val logger: Logger
-        get() = SDKComponent.logger
+class NativeCustomerIOModule(
+    private val reactContext: ReactApplicationContext,
+) : NativeCustomerIOSpec(reactContext) {
+    private val logger: Logger = SDKComponent.logger
 
     // Returns CustomerIO instance if initialized, null otherwise, with configurable failure handling.
     private inline fun getSDKInstanceOrNull(
@@ -45,11 +43,8 @@ internal object NativeCustomerIOModuleImpl {
         logger.error("CustomerIO SDK is not initialized. Please call initialize() first.")
     }
 
-    fun initialize(
-        reactContext: ReactApplicationContext,
-        sdkConfig: ReadableMap?,
-        promise: Promise?
-    ) {
+
+    override fun initialize(config: ReadableMap?, args: ReadableMap?, promise: Promise?) {
         // Skip initialization if already initialized
         if (getSDKInstanceOrNull() != null) {
             logger.info("CustomerIO SDK is already initialized. Skipping initialization.")
@@ -58,7 +53,7 @@ internal object NativeCustomerIOModuleImpl {
         }
 
         try {
-            val packageConfig = sdkConfig.toMap()
+            val packageConfig = config.toMap()
             val cdpApiKey = packageConfig.getTypedValue<String>(
                 Keys.Config.CDP_API_KEY
             ) ?: throw IllegalArgumentException("CDP API Key is required to initialize Customer.io")
@@ -90,14 +85,14 @@ internal object NativeCustomerIOModuleImpl {
 
                 // Configure push messaging module based on config provided by customer app
                 packageConfig.getTypedValue<Map<String, Any>>(key = "push").let { pushConfig ->
-                    NativeMessagingPushModuleImpl.addNativeModuleFromConfig(
+                    NativeMessagingPushModule.addNativeModuleFromConfig(
                         builder = this,
                         config = pushConfig ?: emptyMap()
                     )
                 }
                 // Configure in-app messaging module based on config provided by customer app
                 packageConfig.getTypedValue<Map<String, Any>>(key = "inApp")?.let { inAppConfig ->
-                    NativeMessagingInAppModuleImpl.addNativeModuleFromConfig(
+                    NativeMessagingInAppModule.addNativeModuleFromConfig(
                         builder = this,
                         config = inAppConfig,
                         region = region
@@ -113,11 +108,7 @@ internal object NativeCustomerIOModuleImpl {
         }
     }
 
-    fun clearIdentify() {
-        requireSDKInstance()?.clearIdentify()
-    }
-
-    fun identify(params: ReadableMap?) {
+    override fun identify(params: ReadableMap?) {
         val userId = params?.getString("userId")
         val traits = params?.getMap("traits")
 
@@ -129,51 +120,55 @@ internal object NativeCustomerIOModuleImpl {
         userId?.let {
             requireSDKInstance()?.identify(userId, traits.toMap())
         } ?: run {
-            requireSDKInstance()?.profileAttributes = traits.toMap()
+            requireSDKInstance()?.setProfileAttributes(traits.toMap())
         }
     }
 
-    fun track(name: String?, properties: ReadableMap?) {
+    override fun clearIdentify() {
+        requireSDKInstance()?.clearIdentify()
+    }
+
+    override fun track(name: String?, properties: ReadableMap?) {
         val eventName = assertNotNull(name) ?: return
 
         requireSDKInstance()?.track(eventName, properties.toMap())
     }
 
-    fun setDeviceAttributes(attributes: ReadableMap?) {
-        requireSDKInstance()?.deviceAttributes = attributes.toMap()
-    }
-
-    fun setProfileAttributes(attributes: ReadableMap?) {
-        requireSDKInstance()?.profileAttributes = attributes.toMap()
-    }
-
-    fun screen(title: String?, properties: ReadableMap?) {
+    override fun screen(title: String?, properties: ReadableMap?) {
         val screenTitle = assertNotNull(title) ?: return
 
         requireSDKInstance()?.screen(screenTitle, properties.toMap())
     }
 
-    fun registerDeviceToken(token: String?) {
+    override fun setProfileAttributes(attributes: ReadableMap?) {
+        requireSDKInstance()?.setProfileAttributes(attributes.toMap())
+    }
+
+    override fun setDeviceAttributes(attributes: ReadableMap?) {
+        requireSDKInstance()?.setDeviceAttributes(attributes.toMap())
+    }
+
+    override fun registerDeviceToken(token: String?) {
         val deviceToken = assertNotNull(token) ?: return
 
         requireSDKInstance()?.registerDeviceToken(deviceToken)
     }
 
-    fun trackMetric(deliveryId: String?, deviceToken: String?, eventName: String?) {
+    override fun trackMetric(deliveryID: String?, deviceToken: String?, event: String?) {
         try {
-            if (deliveryId == null || deviceToken == null || eventName == null) {
+            if (deliveryID == null || deviceToken == null || event == null) {
                 throw IllegalArgumentException("Missing required parameters")
             }
 
-            val event = Metric.values().find {
-                it.serializedName.equals(eventName, true)
+            val metric = Metric.values().find {
+                it.serializedName.equals(event, true)
             } ?: throw IllegalArgumentException("Invalid metric event name")
 
             requireSDKInstance()?.trackMetric(
                 event = TrackMetric.Push(
-                    deliveryId = deliveryId,
+                    deliveryId = deliveryID,
                     deviceToken = deviceToken,
-                    metric = event
+                    metric = metric
                 )
             )
         } catch (e: Exception) {
@@ -181,7 +176,11 @@ internal object NativeCustomerIOModuleImpl {
         }
     }
 
-    fun deleteDeviceToken() {
+    override fun deleteDeviceToken() {
         requireSDKInstance()?.deleteDeviceToken()
+    }
+
+    companion object {
+        internal const val NAME = "NativeCustomerIO"
     }
 }
