@@ -19,10 +19,14 @@ const InAppEventListenerEventName = 'InAppEventListener';
  *
  * @internal
  */
-interface NativeInAppSpec extends Omit<
-  CodegenSpec,
-  keyof TurboModule | 'onInAppEventReceived' | 'addListener' | 'removeListeners'
-> {}
+interface NativeInAppSpec
+  extends Omit<
+    CodegenSpec,
+    | keyof TurboModule
+    | 'onInAppEventReceived'
+    | 'addListener'
+    | 'removeListeners'
+  > {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
 const nativeModule = ensureNativeModule(NativeCustomerIOMessagingInApp);
