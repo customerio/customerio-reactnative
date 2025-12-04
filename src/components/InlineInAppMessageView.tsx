@@ -20,11 +20,10 @@ import type { InAppMessage } from '../types';
  * Props for the InlineInAppMessageView component.
  */
 /** @public */
-export interface InlineInAppMessageViewProps
-  extends Omit<
-    NativeProps,
-    'onSizeChange' | 'onStateChange' | 'onActionClick'
-  > {
+export interface InlineInAppMessageViewProps extends Omit<
+  NativeProps,
+  'onSizeChange' | 'onStateChange' | 'onActionClick'
+> {
   /** Custom loading component to display while message is loading */
   loadingComponent?: React.ReactNode;
   /** Props for the default ActivityIndicator with optional minimum height */
