@@ -1,3 +1,9 @@
+## [5.3.0](https://github.com/customerio/customerio-reactnative/compare/5.2.0...5.3.0) (2025-12-04)
+
+### Features
+
+* Update example app icons ([#549](https://github.com/customerio/customerio-reactnative/issues/549)) ([5e6f255](https://github.com/customerio/customerio-reactnative/commit/5e6f2552f96c7a385952482354bcbb7921426858))
+
 ## [5.2.0](https://github.com/customerio/customerio-reactnative/compare/5.1.1...5.2.0) (2025-11-20)
 
 ### Features
