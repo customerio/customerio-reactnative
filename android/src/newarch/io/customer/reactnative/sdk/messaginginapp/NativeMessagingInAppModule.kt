@@ -1,9 +1,7 @@
 package io.customer.reactnative.sdk.messaginginapp
 
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingInAppSpec
-import io.customer.reactnative.sdk.util.onlyForLegacyArch
 
 /**
  * React Native module implementation for Customer.io In-App Messaging Native SDK
@@ -29,13 +27,5 @@ class NativeMessagingInAppModule(
 
     override fun dismissMessage() {
         NativeMessagingInAppModuleImpl.dismissMessage()
-    }
-
-    override fun addListener(eventName: String?) {
-        onlyForLegacyArch("addListener")
-    }
-
-    override fun removeListeners(count: Double) {
-        onlyForLegacyArch("removeListeners")
     }
 }
