@@ -22,7 +22,7 @@ class NativeMessagingInAppModule(
     private val inAppMessagingModule: ModuleMessagingInApp?
         get() = kotlin.runCatching { CustomerIO.instance().inAppMessaging() }.getOrNull()
 
-    private val inAppEventListener = ReactInAppEventListener.shared
+    private val inAppEventListener = ReactInAppEventListener.instance
 
     override fun initialize() {
         super.initialize()
@@ -64,7 +64,7 @@ class NativeMessagingInAppModule(
 
             val module = ModuleMessagingInApp(
                 MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
-                    setEventListener(eventListener = ReactInAppEventListener.shared)
+                    setEventListener(eventListener = ReactInAppEventListener.instance)
                 }.build(),
             )
             builder.addCustomerIOModule(module)
