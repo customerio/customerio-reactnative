@@ -72,6 +72,6 @@ class ReactInAppEventListener private constructor() : InAppEventListener {
 
     companion object {
         // Singleton instance with public visibility for direct access by Expo plugin
-        val shared: ReactInAppEventListener by lazy { ReactInAppEventListener() }
+        val instance: ReactInAppEventListener by lazy { ReactInAppEventListener() }
     }
 }

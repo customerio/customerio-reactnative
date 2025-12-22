@@ -31,7 +31,7 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 class CustomerIOInAppMessaging implements NativeInAppSpec {
   registerEventsListener(
     listener: (event: InAppMessageEvent) => void
-  ): EventSubscription | undefined {
+  ): EventSubscription {
     const emitter = (data: any) => {
       // Convert raw native payload to InAppMessageEvent
       const event = new InAppMessageEvent(
@@ -55,7 +55,13 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
           'Failed to attach in-app event listener:',
           error
         );
-        return undefined;
+        // Return a no-op subscription to maintain backwards compatibility
+        return {
+          remove: () => {},
+          eventType: '',
+          key: 0,
+          subscriber: null as any,
+        } as EventSubscription;
       }
     });
   }
