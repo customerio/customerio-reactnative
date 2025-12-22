@@ -113,7 +113,7 @@ export default function App({ appName }: { appName: string }) {
 
       // Remove listener once unmounted
       return () => {
-        inAppEventListener?.remove();
+        inAppEventListener.remove();
       };
     };
     loadFromStorage();
