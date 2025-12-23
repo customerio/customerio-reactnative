@@ -28,7 +28,8 @@ import io.customer.sdk.events.serializedName
 class NativeCustomerIOModule(
     private val reactContext: ReactApplicationContext,
 ) : NativeCustomerIOSpec(reactContext) {
-    private val logger: Logger = SDKComponent.logger
+    private val logger: Logger
+        get() = SDKComponent.logger
 
     // Returns CustomerIO instance if initialized, null otherwise, with configurable failure handling.
     private inline fun getSDKInstanceOrNull(

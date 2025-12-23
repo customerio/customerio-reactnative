@@ -37,7 +37,8 @@ import java.util.UUID
 class NativeMessagingPushModule(
     private val reactContext: ReactApplicationContext,
 ) : NativeCustomerIOMessagingPushSpec(reactContext), PermissionListener, ActivityEventListener {
-    private val logger: Logger = SDKComponent.logger
+    private val logger: Logger
+        get() = SDKComponent.logger
 
     /**
      * Temporarily holds reference for notification request as the request is dependent on Android
