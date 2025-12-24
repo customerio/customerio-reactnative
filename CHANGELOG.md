@@ -1,3 +1,13 @@
+## [6.0.0](https://github.com/customerio/customerio-reactnative/compare/5.3.0...6.0.0) (2025-12-24)
+
+### ⚠ BREAKING CHANGES
+
+* remove support for React Native old architecture (#553)
+
+### Features
+
+* remove support for React Native old architecture ([#553](https://github.com/customerio/customerio-reactnative/issues/553)) ([4956640](https://github.com/customerio/customerio-reactnative/commit/495664072c744d4a2005bce243b2a6b5564d2c0f))
+
 ## [5.3.0](https://github.com/customerio/customerio-reactnative/compare/5.2.0...5.3.0) (2025-12-04)
 
 ### Features
