@@ -15,6 +15,7 @@ buildscript {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: "com.facebook.react"
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['customerio.reactnative.' + name]
@@ -24,32 +25,12 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['customerio.reactnative.' + name]).toInteger()
 }
 
-def isNewArchitectureEnabled() {
-  // Allow customers to override new architecture setting specifically for Customer.io SDK.
-  // This is useful as a workaround for apps where the new architecture has issues.
-  // Customers can add 'customerioNewArchEnabled=false' in their gradle.properties
-  // to force the SDK to use old architecture even when their app has newArchEnabled=true.
-  // This can be helpful for customers who are using the new architecture in their app, but are on older
-  // versions of React Native than the one used by the SDK to generate the codegen files.
-  if (project.hasProperty("customerioNewArchEnabled")) {
-    return project.customerioNewArchEnabled == "true"
-  }
-  // Otherwise, use react-native's newArchEnabled property.
-  return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
-}
-
-if (isNewArchitectureEnabled()) {
-  apply plugin: "com.facebook.react"
-}
-
 android {
   namespace = 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   defaultConfig {
-    def isNewArchEnabled = isNewArchitectureEnabled()
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchEnabled.toString())
   }
   
   buildTypes {
@@ -63,16 +44,6 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_17
     targetCompatibility JavaVersion.VERSION_17
-  }
-  sourceSets {
-    main {
-      if (isNewArchitectureEnabled()) {
-        // Include both new architecture source directories and codegen generated files
-        java.srcDirs += ['src/newarch']
-      } else {
-        java.srcDirs += ['src/oldarch']
-      }
-    }
   }
 }
 

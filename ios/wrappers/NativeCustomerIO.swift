@@ -111,13 +111,13 @@ public class NativeCustomerIO: NSObject {
     @objc
     func setProfileAttributes(_ attributes: [String: Any]) {
         guard ensureInitialized() else { return }
-        CustomerIO.shared.profileAttributes = attributes
+        CustomerIO.shared.setProfileAttributes(attributes)
     }
 
     @objc
     func setDeviceAttributes(_ attributes: [String: Any]) {
         guard ensureInitialized() else { return }
-        CustomerIO.shared.deviceAttributes = attributes
+        CustomerIO.shared.setDeviceAttributes(attributes)
     }
 
     @objc
