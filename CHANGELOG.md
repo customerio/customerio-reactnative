@@ -1,3 +1,9 @@
+## [6.1.0](https://github.com/customerio/customerio-reactnative/compare/6.0.0...6.1.0) (2026-01-14)
+
+### Features
+
+* In-App SSE ([#555](https://github.com/customerio/customerio-reactnative/issues/555)) ([a777c69](https://github.com/customerio/customerio-reactnative/commit/a777c6958cc8b48116687a0a521a44fbee4582bd))
+
 ## [6.0.0](https://github.com/customerio/customerio-reactnative/compare/5.3.0...6.0.0) (2025-12-24)
 
 ### ⚠ BREAKING CHANGES
