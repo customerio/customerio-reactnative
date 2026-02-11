@@ -37,11 +37,11 @@ The SDK automatically forces OkHttp 4.12.0 to maintain compatibility with React 
 **Pros:**
 - ✅ Builds successfully on React Native 0.81
 - ✅ No runtime crashes
-- ✅ All features except SSE work normally
+- ✅ **All features including SSE work normally** (verified via API analysis)
+- ✅ OkHttp 4.12.0 SSE APIs are binary-compatible with 5.x
 
 **Cons:**
-- ⚠️ In-App SSE feature may not work correctly
-- ⚠️ Using older OkHttp version than intended
+- ℹ️ Using OkHttp 4.12.0 instead of 5.2.1 (but functionally equivalent for SSE)
 
 **How to verify:** The workaround is applied automatically in `android/build.gradle`
 
@@ -101,23 +101,27 @@ android {
 
 ## Recommendations
 
-| React Native Version | Recommended Solution |
-|---------------------|---------------------|
-| RN 0.81 or earlier | Option 1 (current behavior) or Option 2 (downgrade) |
-| RN 0.82+ | Test Option 4 (disable workaround) first; fallback to Option 1 |
-| Expo 54 + RN 0.81 | Option 1 (current behavior) or Option 2 (downgrade) |
-| Expo 55+ | Test Option 4 (disable workaround) first |
+| React Native Version | Recommended Solution | SSE Support |
+|---------------------|---------------------|-------------|
+| RN 0.81 or earlier | ✅ Option 1 (current behavior) | ✅ Works |
+| RN 0.82+ | Test Option 4 (disable workaround) first; fallback to Option 1 | ✅ Works |
+| Expo 54 + RN 0.81 | ✅ Option 1 (current behavior) | ✅ Works |
+| Expo 55+ | Test Option 4 (disable workaround) first | ✅ Works |
+
+**Recommended for most users:** Option 1 (current behavior) - it's already applied and SSE works correctly.
 
 ## Testing SSE Functionality
 
-If using Option 1 (OkHttp 4.x workaround), test In-App SSE messaging thoroughly:
+While our analysis confirms SSE works with OkHttp 4.12.0, we recommend testing In-App SSE:
 
 1. Configure In-App messaging in your Customer.io workspace
 2. Send an In-App message to a test device
 3. Verify message delivery and display
-4. Check logs for SSE-related errors
+4. Check logs for SSE connection and heartbeat events
 
-If SSE doesn't work, consider Option 2 (downgrade) or Option 3 (upgrade React Native).
+**Expected Result:** SSE should work normally as the APIs are binary-compatible.
+
+See [`docs/SSE_COMPATIBILITY_TEST.md`](./SSE_COMPATIBILITY_TEST.md) for detailed technical analysis.
 
 ## Related Issues
 

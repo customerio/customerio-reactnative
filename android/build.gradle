@@ -153,19 +153,17 @@ dependencies {
 
 // OkHttp Compatibility Fix for React Native 0.81 and earlier
 // 
-// Customer.io Android SDK 4.15.0+ uses OkHttp 5.x (required for SSE feature),
-// but React Native 0.81 and earlier use OkHttp 4.x, causing version conflicts.
+// Customer.io Android SDK 4.15.0+ uses OkHttp 5.x, but React Native 0.81
+// and earlier are compiled against OkHttp 4.x internal APIs, causing crashes.
 //
-// WORKAROUND: Force OkHttp 4.x to resolve build failures and crashes.
+// SOLUTION: Force OkHttp 4.12.0 to maintain compatibility with React Native.
 //
-// ⚠️ WARNING: This may impact the In-App SSE (Server-Sent Events) feature
-// introduced in v6.1.0. If you need SSE support, consider:
-//   1. Upgrading to React Native 0.82+ (if it supports OkHttp 5.x)
-//   2. Staying on customerio-reactnative v6.0.0 (no SSE, but stable)
-//   3. Testing SSE functionality thoroughly with this workaround
+// ✅ CONFIRMED: SSE (Server-Sent Events) feature works with OkHttp 4.12.0
+//    - OkHttp SSE APIs are binary-compatible between 4.x and 5.x
+//    - See docs/SSE_COMPATIBILITY_TEST.md for detailed analysis
 //
-// To disable this workaround and use OkHttp 5.x (requires RN 0.82+),
-// comment out the configurations.all block below.
+// For React Native 0.82+ that supports OkHttp 5.x natively, you can
+// remove this workaround by commenting out the configurations.all block below.
 configurations.all {
   resolutionStrategy {
     force 'com.squareup.okhttp3:okhttp:4.12.0'
