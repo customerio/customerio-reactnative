@@ -1,3 +1,9 @@
+## [6.1.2](https://github.com/customerio/customerio-reactnative/compare/6.1.1...6.1.2) (2026-02-16)
+
+### Bug Fixes
+
+* Downgrade okhttp version to 4.x ([#563](https://github.com/customerio/customerio-reactnative/issues/563)) ([260bee8](https://github.com/customerio/customerio-reactnative/commit/260bee88990c72eb7b06c09e5f22410a56cf951c))
+
 ## [6.1.1](https://github.com/customerio/customerio-reactnative/compare/6.1.0...6.1.1) (2026-02-06)
 
 ### Bug Fixes
