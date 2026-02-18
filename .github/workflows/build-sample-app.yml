@@ -238,9 +238,7 @@ jobs:
 
       - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
         if: ${{ inputs.platform == 'ios' }}
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '16'
+        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@MacOS-15+iOS-26
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         id: build_app
