@@ -51,9 +51,9 @@ target app_target_name do
     :path => config[:reactNativePath],
     :app_path => "#{installation_root}/..",
   )
-  pod "customerio-reactnative/#{push_provider}", :path => cio_package_path
+  # pod "customerio-reactnative/#{push_provider}", :path => cio_package_path
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
-  # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
+  install_non_production_ios_sdk_git_branch(branch_name: 'feature/message-inbox-mvp', is_app_extension: false, push_service: push_provider)
 
   post_install do |installer|
     react_native_post_install(

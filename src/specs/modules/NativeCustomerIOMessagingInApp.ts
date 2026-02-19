@@ -15,6 +15,14 @@ import type {
 export interface Spec extends TurboModule {
   dismissMessage(): void;
   readonly onInAppEventReceived: EventEmitter<UnsafeObject>;
+  // Notification Inbox related methods
+  setupInboxListener(): void;
+  readonly subscribeToMessagesChanged: EventEmitter<UnsafeObject>;
+  getMessages(topic?: string): Promise<UnsafeObject[]>;
+  markMessageOpened(message: UnsafeObject): void;
+  markMessageUnopened(message: UnsafeObject): void;
+  markMessageDeleted(message: UnsafeObject): void;
+  trackMessageClicked(message: UnsafeObject, actionName?: string): void;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

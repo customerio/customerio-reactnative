@@ -1,6 +1,10 @@
 import { type EventSubscription, type TurboModule } from 'react-native';
 import { InlineInAppMessageView } from './components';
 import { NativeLoggerListener } from './native-logger-listener';
+import {
+  NotificationInbox,
+  type NotificationInboxSpec,
+} from './notification-inbox';
 import NativeCustomerIOMessagingInApp, {
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOMessagingInApp';
@@ -14,7 +18,7 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
  */
 interface NativeInAppSpec extends Omit<
   CodegenSpec,
-  keyof TurboModule | 'onInAppEventReceived'
+  keyof TurboModule | NotificationInboxSpec | 'onInAppEventReceived'
 > {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
@@ -31,6 +35,8 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
  * @public
  */
 class CustomerIOInAppMessaging implements NativeInAppSpec {
+  private _notificationInbox?: NotificationInbox;
+
   registerEventsListener(
     listener: (event: InAppMessageEvent) => void
   ): EventSubscription {
@@ -74,6 +80,18 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
   dismissMessage() {
     withNativeModule((native) => native.dismissMessage());
   }
+
+  /**
+   * Gets the message inbox instance for managing inbox messages
+   *
+   * @returns NotificationInbox instance for fetching and managing inbox messages
+   */
+  inbox(): NotificationInbox {
+    if (!this._notificationInbox) {
+      this._notificationInbox = new NotificationInbox();
+    }
+    return this._notificationInbox;
+  }
 }
 
 /**
@@ -104,4 +122,6 @@ class InAppMessageEvent {
 
 // Export in-app messaging types and components for simplified imports
 export type { InlineInAppMessageViewProps } from './components';
+export { NotificationInbox } from './notification-inbox';
+export type { InboxMessage, NotificationInboxChangeListener } from './types';
 export { CustomerIOInAppMessaging, InAppMessageEvent, InlineInAppMessageView };
