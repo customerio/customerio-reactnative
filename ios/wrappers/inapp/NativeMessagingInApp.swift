@@ -122,7 +122,6 @@ public class NativeMessagingInApp: NSObject {
         guard !isInboxChangeListenerSetup else {
             return
         }
-        isInboxChangeListenerSetup = true
 
         // All listener setup must run on MainActor
         Task { @MainActor in
@@ -136,6 +135,9 @@ public class NativeMessagingInApp: NSObject {
             // Add listener to inbox without topic filter (all messages)
             // Topic filtering happens client-side in TypeScript layer
             inbox.addChangeListener(listener)
+
+            // Set flag after successful setup (allows retry if setup was called before SDK initialized)
+            self.isInboxChangeListenerSetup = true
         }
     }
 
@@ -143,13 +145,15 @@ public class NativeMessagingInApp: NSObject {
         guard isInboxChangeListenerSetup else {
             return
         }
-        isInboxChangeListenerSetup = false
 
         // All listener cleanup must run on MainActor
         Task { @MainActor in
             let listener = ReactNotificationInboxChangeListener.shared
             inbox.removeChangeListener(listener)
             listener.clearEventEmitter()
+
+            // Reset flag after cleanup completes
+            self.isInboxChangeListenerSetup = false
         }
     }
 
