@@ -18,7 +18,7 @@ env:
 jobs:
   deploy-cocoapods:
     name: Deploy SDK to Cocoapods 
-    runs-on: macos-12
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - name: Checkout existing tag if manually running CI task  
