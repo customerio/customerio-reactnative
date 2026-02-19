@@ -5,28 +5,18 @@ import Foundation
 
 extension InboxMessage {
     /// Converts InboxMessage to dictionary for React Native bridge
+    /// Note: Uses NSNull for nil optional values to match Android behavior (explicit null vs undefined)
     func toDictionary() -> [String: Any] {
-        var dict: [String: Any] = [
+        return [
             "queueId": queueId,
+            "deliveryId": deliveryId ?? NSNull(),
             "sentAt": sentAt.timeIntervalSince1970 * 1000, // Convert to milliseconds
-            "topics": topics,
+            "expiry": expiry.map { $0.timeIntervalSince1970 * 1000 } ?? NSNull(),
             "type": type,
             "opened": opened,
+            "topics": topics,
+            "priority": priority ?? NSNull(),
             "properties": properties
         ]
-
-        if let deliveryId = deliveryId {
-            dict["deliveryId"] = deliveryId
-        }
-
-        if let expiry = expiry {
-            dict["expiry"] = expiry.timeIntervalSince1970 * 1000 // Convert to milliseconds
-        }
-
-        if let priority = priority {
-            dict["priority"] = priority
-        }
-
-        return dict
     }
 }

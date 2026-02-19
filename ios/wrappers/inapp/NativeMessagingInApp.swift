@@ -13,7 +13,12 @@ public class NativeMessagingInApp: NSObject {
     }
 
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
+
     // Flag to track inbox listener setup state
+    // Note: Theoretical race condition exists (check before Task completes), but acceptable because:
+    // 1. React Native TurboModule calls are serialized on JS thread
+    // 2. Duplicate registrations use same singleton listener instance (harmless)
+    // 3. Native SDK handles duplicate listener registrations gracefully
     private var isInboxChangeListenerSetup = false
 
     // Computed property to access inbox instance
