@@ -30,7 +30,7 @@ export const InboxMessagesScreen = ({
 
   useEffect(() => {
     // Subscribe to inbox updates
-    const subscription = inbox.subscribeToUpdates({
+    const subscription = inbox.subscribeToMessages({
       onMessagesChanged: (updatedMessages) => {
         setMessages(updatedMessages);
         setLoading(false);
