@@ -193,14 +193,12 @@ public class NativeMessagingInApp: NSObject {
             return
         }
 
-        guard let inbox = requireInboxInstance() else {
-            return
-        }
-
         // All listener cleanup must run on MainActor
         Task { @MainActor in
             let listener = ReactNotificationInboxChangeListener.shared
-            inbox.removeChangeListener(listener)
+            // Only remove if inbox available
+            requireInboxInstance()?.removeChangeListener(listener)
+            // Always clean up emitter and flag, even if inbox unavailable
             listener.clearEventEmitter()
 
             // Reset flag after cleanup completes
