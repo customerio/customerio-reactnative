@@ -21,7 +21,7 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
  */
 interface NotificationInboxPublicSpec {
   getMessages(topic?: string): Promise<InboxMessage[]>;
-  subscribeToUpdates(
+  subscribeToMessages(
     listener: NotificationInboxChangeListener,
     topic?: string
   ): EventSubscription;
@@ -80,7 +80,7 @@ export class NotificationInbox implements NotificationInboxPublicSpec {
    * Subscribes to inbox message changes.
    * Optionally filter messages by topic.
    */
-  subscribeToUpdates(
+  subscribeToMessages(
     listener: NotificationInboxChangeListener,
     topic?: string
   ): EventSubscription {

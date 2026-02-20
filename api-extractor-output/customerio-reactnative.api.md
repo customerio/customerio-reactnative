@@ -206,7 +206,7 @@ export class NotificationInbox implements NotificationInboxPublicSpec {
     markMessageDeleted(message: InboxMessage): void;
     markMessageOpened(message: InboxMessage): void;
     markMessageUnopened(message: InboxMessage): void;
-    subscribeToUpdates(listener: NotificationInboxChangeListener, topic?: string): EventSubscription;
+    subscribeToMessages(listener: NotificationInboxChangeListener, topic?: string): EventSubscription;
     trackMessageClicked(message: InboxMessage, actionName?: string): void;
 }
 

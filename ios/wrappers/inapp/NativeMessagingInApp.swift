@@ -14,12 +14,8 @@ public class NativeMessagingInApp: NSObject {
 
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
 
-    // Flag to track inbox listener setup state
-    // Note: Theoretical race condition exists (check before Task completes), but acceptable because:
-    // 1. React Native TurboModule calls are serialized on JS thread
-    // 2. Duplicate registrations use same singleton listener instance (harmless)
-    // 3. Native SDK handles duplicate listener registrations gracefully
-    private var isInboxChangeListenerSetup = false
+    // Task that consumes the inbox messages stream
+    private var messagesStreamTask: Task<Void, Never>?
 
     // Set ObjC event emitter reference for new architecture
     @objc
@@ -160,7 +156,7 @@ public class NativeMessagingInApp: NSObject {
     /// Note: Inbox must be available (SDK initialized) before this can succeed.
     private func setupInboxChangeListener() {
         // Only set up once to avoid duplicate listeners
-        guard !isInboxChangeListenerSetup else {
+        guard messagesStreamTask == nil else {
             return
         }
 
@@ -169,41 +165,23 @@ public class NativeMessagingInApp: NSObject {
             return
         }
 
-        // All listener setup must run on MainActor
-        Task { @MainActor in
-            let listener = ReactNotificationInboxChangeListener.shared
-
-            listener.setEventEmitter { [weak self] data in
+        // Consume messages stream asynchronously
+        messagesStreamTask = Task { [weak self] in
+            for await messages in inbox.messages(topic: nil) {
                 guard let self else { return }
-                self.sendInboxChangeEvent(data: data)
+
+                // Emit messages to React Native
+                let messagesArray = messages.map { $0.toDictionary() }
+                let payload: [String: Any] = ["messages": messagesArray]
+                self.sendInboxChangeEvent(data: payload)
             }
-
-            // Add listener to inbox without topic filter (all messages)
-            // Topic filtering happens client-side in TypeScript layer
-            inbox.addChangeListener(listener)
-
-            // Set flag after successful setup
-            self.isInboxChangeListenerSetup = true
-            logger.debug("NotificationInboxChangeListener set up successfully")
         }
     }
 
     private func clearInboxChangeListener() {
-        guard isInboxChangeListenerSetup else {
-            return
-        }
-
-        // All listener cleanup must run on MainActor
-        Task { @MainActor in
-            let listener = ReactNotificationInboxChangeListener.shared
-            // Only remove if inbox available
-            requireInboxInstance()?.removeChangeListener(listener)
-            // Always clean up emitter and flag, even if inbox unavailable
-            listener.clearEventEmitter()
-
-            // Reset flag after cleanup completes
-            self.isInboxChangeListenerSetup = false
-        }
+        // Cancel the stream consumption task - this automatically cleans up the stream
+        messagesStreamTask?.cancel()
+        messagesStreamTask = nil
     }
 
     private func sendInboxChangeEvent(data: [String: Any]) {
