@@ -49,13 +49,13 @@ export type NotificationInboxSpec =
 function parseInboxMessage(raw: any): InboxMessage {
   return {
     queueId: raw.queueId,
-    deliveryId: raw.deliveryId,
-    expiry: raw.expiry,
+    deliveryId: raw.deliveryId ?? undefined,
+    expiry: raw.expiry ?? undefined,
     sentAt: raw.sentAt,
     topics: raw.topics || [],
     type: raw.type,
     opened: raw.opened,
-    priority: raw.priority,
+    priority: raw.priority ?? undefined,
     properties: raw.properties || {},
   };
 }
