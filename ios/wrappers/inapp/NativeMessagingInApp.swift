@@ -21,11 +21,6 @@ public class NativeMessagingInApp: NSObject {
     // 3. Native SDK handles duplicate listener registrations gracefully
     private var isInboxChangeListenerSetup = false
 
-    // Computed property to access inbox instance
-    private var inbox: NotificationInbox {
-        MessagingInApp.shared.inbox
-    }
-
     // Set ObjC event emitter reference for new architecture
     @objc
     public func setEventEmitter(_ emitter: AnyObject) {
@@ -61,9 +56,7 @@ public class NativeMessagingInApp: NSObject {
         clearInboxChangeListener()
     }
 
-    /**
-     * Dismisses any currently displayed in-app message
-     */
+    /// Dismisses any currently displayed in-app message
     @objc(dismissMessage)
     public func dismissMessage() {
         MessagingInApp.shared.dismissMessage()
@@ -78,6 +71,15 @@ public class NativeMessagingInApp: NSObject {
 
     @objc(getMessages:resolve:reject:)
     public func getMessages(topic: String?, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        guard let inbox = requireInboxInstance() else {
+            reject(
+                "INBOX_NOT_AVAILABLE",
+                "Notification Inbox is not available. Ensure CustomerIO SDK is initialized.",
+                nil
+            )
+            return
+        }
+
         Task {
             // Use native topic filtering - SDK handles filtering and case sensitivity
             let messages = await inbox.getMessages(topic: topic)
@@ -88,26 +90,30 @@ public class NativeMessagingInApp: NSObject {
 
     @objc(markMessageOpened:)
     public func markMessageOpened(message: NSDictionary) {
-        guard let inboxMessage = parseInboxMessage(from: message) else { return }
-        inbox.markMessageOpened(message: inboxMessage)
+        performInboxMessageAction(message: message) { inbox, inboxMessage in
+            inbox.markMessageOpened(message: inboxMessage)
+        }
     }
 
     @objc(markMessageUnopened:)
     public func markMessageUnopened(message: NSDictionary) {
-        guard let inboxMessage = parseInboxMessage(from: message) else { return }
-        inbox.markMessageUnopened(message: inboxMessage)
+        performInboxMessageAction(message: message) { inbox, inboxMessage in
+            inbox.markMessageUnopened(message: inboxMessage)
+        }
     }
 
     @objc(markMessageDeleted:)
     public func markMessageDeleted(message: NSDictionary) {
-        guard let inboxMessage = parseInboxMessage(from: message) else { return }
-        inbox.markMessageDeleted(message: inboxMessage)
+        performInboxMessageAction(message: message) { inbox, inboxMessage in
+            inbox.markMessageDeleted(message: inboxMessage)
+        }
     }
 
     @objc(trackMessageClicked:actionName:)
     public func trackMessageClicked(message: NSDictionary, actionName: String?) {
-        guard let inboxMessage = parseInboxMessage(from: message) else { return }
-        inbox.trackMessageClicked(message: inboxMessage, actionName: actionName)
+        performInboxMessageAction(message: message) { inbox, inboxMessage in
+            inbox.trackMessageClicked(message: inboxMessage, actionName: actionName)
+        }
     }
 
     // MARK: - Helper Methods
@@ -117,14 +123,49 @@ public class NativeMessagingInApp: NSObject {
         ReactInAppEventListener.shared.clearEventEmitter()
     }
 
-    /**
-     * Sets up the inbox change listener to receive real-time updates.
-     * This method can be called multiple times safely and will only set up the listener once.
-     * Note: Inbox must be available (SDK initialized) before this can succeed.
-     */
+    /// Returns inbox instance if available, nil otherwise with error logging
+    /// Note: Notification Inbox is only available after SDK is initialized
+    private func requireInboxInstance() -> NotificationInbox? {
+        guard MessagingInApp.shared.implementation != nil else {
+            logger.error("Notification Inbox is not available. Ensure CustomerIO SDK is initialized.")
+            return nil
+        }
+        return MessagingInApp.shared.inbox
+    }
+
+    /// Parses NSDictionary to InboxMessage with error logging
+    private func parseInboxMessage(from dictionary: NSDictionary) -> InboxMessage? {
+        guard let dict = dictionary as? [String: Any],
+              let inboxMessage = InboxMessageFactory.fromDictionary(dict)
+        else {
+            logger.error("Invalid message data: \(dictionary)")
+            return nil
+        }
+        return inboxMessage
+    }
+
+    /// Helper to validate inbox availability and message data before performing a message action
+    /// Returns early if inbox is unavailable or message data is invalid
+    private func performInboxMessageAction(
+        message: NSDictionary,
+        action: (NotificationInbox, InboxMessage) -> Void
+    ) {
+        guard let inbox = requireInboxInstance() else { return }
+        guard let inboxMessage = parseInboxMessage(from: message) else { return }
+        action(inbox, inboxMessage)
+    }
+
+    /// Sets up the inbox change listener to receive real-time updates.
+    /// This method can be called multiple times safely and will only set up the listener once.
+    /// Note: Inbox must be available (SDK initialized) before this can succeed.
     private func setupInboxChangeListener() {
         // Only set up once to avoid duplicate listeners
         guard !isInboxChangeListenerSetup else {
+            return
+        }
+
+        // Check if SDK is initialized before attempting setup
+        guard let inbox = requireInboxInstance() else {
             return
         }
 
@@ -141,13 +182,18 @@ public class NativeMessagingInApp: NSObject {
             // Topic filtering happens client-side in TypeScript layer
             inbox.addChangeListener(listener)
 
-            // Set flag after successful setup (allows retry if setup was called before SDK initialized)
+            // Set flag after successful setup
             self.isInboxChangeListenerSetup = true
+            logger.debug("NotificationInboxChangeListener set up successfully")
         }
     }
 
     private func clearInboxChangeListener() {
         guard isInboxChangeListenerSetup else {
+            return
+        }
+
+        guard let inbox = requireInboxInstance() else {
             return
         }
 
@@ -188,20 +234,5 @@ public class NativeMessagingInApp: NSObject {
             return
         }
         _ = emitter.perform(selector, with: body as NSDictionary)
-    }
-}
-
-// MARK: - NativeMessagingInApp Extension
-
-extension NativeMessagingInApp {
-    /// Parses NSDictionary to InboxMessage with error logging
-    private func parseInboxMessage(from dictionary: NSDictionary) -> InboxMessage? {
-        guard let dict = dictionary as? [String: Any],
-              let inboxMessage = InboxMessageFactory.fromDictionary(dict)
-        else {
-            logger.error("Invalid message data: \(dictionary)")
-            return nil
-        }
-        return inboxMessage
     }
 }
