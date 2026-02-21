@@ -2,6 +2,7 @@ import { BuildInfoText, Button, Profile } from '@components';
 import {
   CustomDeviceAttrScreenName,
   CustomProfileAttrScreenName,
+  InboxMessagesScreenName,
   InlineExamplesScreenName,
   NavigationCallbackContext,
   NavigationScreenProps,
@@ -67,6 +68,12 @@ export const HomeScreen = ({
             title="Inline Examples"
             onPress={() => {
               navigation.navigate(InlineExamplesScreenName);
+            }}
+          />
+          <Button
+            title="Inbox Messages"
+            onPress={() => {
+              navigation.navigate(InboxMessagesScreenName);
             }}
           />
         </View>

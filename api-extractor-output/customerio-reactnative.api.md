@@ -99,6 +99,7 @@ export class CustomerIO {
 // @public
 export class CustomerIOInAppMessaging implements NativeInAppSpec {
     dismissMessage(): void;
+    inbox(): NotificationInbox;
     // (undocumented)
     registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
 }
@@ -162,6 +163,19 @@ export enum InAppMessageEventType {
     messageShown = "messageShown"
 }
 
+// @public
+export interface InboxMessage {
+    deliveryId?: string;
+    expiry?: number;
+    opened: boolean;
+    priority?: number;
+    properties: Record<string, any>;
+    queueId: string;
+    sentAt: number;
+    topics: string[];
+    type: string;
+}
+
 // @public (undocumented)
 export const InlineInAppMessageView: React_2.FC<InlineInAppMessageViewProps>;
 
@@ -183,6 +197,23 @@ export enum MetricEvent {
     Delivered = "delivered",
     Opened = "opened"
 }
+
+// Warning: (ae-forgotten-export) The symbol "NotificationInboxPublicSpec" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class NotificationInbox implements NotificationInboxPublicSpec {
+    getMessages(topic?: string): Promise<InboxMessage[]>;
+    markMessageDeleted(message: InboxMessage): void;
+    markMessageOpened(message: InboxMessage): void;
+    markMessageUnopened(message: InboxMessage): void;
+    subscribeToMessages(listener: NotificationInboxChangeListener, topic?: string): EventSubscription;
+    trackMessageClicked(message: InboxMessage, actionName?: string): void;
+}
+
+// @public
+export type NotificationInboxChangeListener = {
+    onMessagesChanged: (messages: InboxMessage[]) => void;
+};
 
 // @public
 export enum PushClickBehaviorAndroid {

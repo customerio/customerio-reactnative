@@ -66,6 +66,38 @@ RCT_EXPORT_MODULE()
   [_swiftBridge dismissMessage];
 }
 
+- (void)setupInboxListener {
+  [self assertBridgeAvailable:@"during setupInboxListener"];
+  [_swiftBridge setupInboxListener];
+}
+
+- (void)getMessages:(NSString *)topic
+            resolve:(RCTPromiseResolveBlock)resolve
+             reject:(RCTPromiseRejectBlock)reject {
+  [self assertBridgeAvailable:@"during getMessages"];
+  [_swiftBridge getMessages:topic resolve:resolve reject:reject];
+}
+
+- (void)markMessageOpened:(NSDictionary *)message {
+  [self assertBridgeAvailable:@"during markMessageOpened"];
+  [_swiftBridge markMessageOpened:message];
+}
+
+- (void)markMessageUnopened:(NSDictionary *)message {
+  [self assertBridgeAvailable:@"during markMessageUnopened"];
+  [_swiftBridge markMessageUnopened:message];
+}
+
+- (void)markMessageDeleted:(NSDictionary *)message {
+  [self assertBridgeAvailable:@"during markMessageDeleted"];
+  [_swiftBridge markMessageDeleted:message];
+}
+
+- (void)trackMessageClicked:(NSDictionary *)message actionName:(NSString *)actionName {
+  [self assertBridgeAvailable:@"during trackMessageClicked"];
+  [_swiftBridge trackMessageClicked:message actionName:actionName];
+}
+
 - (void)addListener:(nonnull NSString *)eventName {
   RCT_LEGACY_ARCH_WARNING(addListener);
 }
@@ -76,6 +108,10 @@ RCT_EXPORT_MODULE()
 
 - (void)emitOnInAppEventReceived:(NSDictionary *)value {
   [super emitOnInAppEventReceived:value];
+}
+
+- (void)emitSubscribeToMessagesChanged:(NSDictionary *)value {
+  [super emitSubscribeToMessagesChanged:value];
 }
 
 // Export class factory function for React Native component registration
