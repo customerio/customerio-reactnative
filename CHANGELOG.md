@@ -1,3 +1,9 @@
+## [6.2.0](https://github.com/customerio/customerio-reactnative/compare/6.1.2...6.2.0) (2026-02-21)
+
+### Features
+
+* support for notification inbox ([#568](https://github.com/customerio/customerio-reactnative/issues/568)) ([aa38d99](https://github.com/customerio/customerio-reactnative/commit/aa38d994773e162112127fd4b49321ac7a4276b7))
+
 ## [6.1.2](https://github.com/customerio/customerio-reactnative/compare/6.1.1...6.1.2) (2026-02-16)
 
 ### Bug Fixes
