@@ -12,6 +12,4 @@ export interface Spec extends TurboModule {
   requestLocationUpdate(): void;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>(
-  'NativeCustomerIOLocation'
-);
+export default TurboModuleRegistry.get<Spec>('NativeCustomerIOLocation');

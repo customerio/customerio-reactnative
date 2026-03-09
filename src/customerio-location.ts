@@ -3,7 +3,6 @@ import {
   default as NativeModule,
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOLocation';
-import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 
 /**
  * Ensures all methods defined in codegen spec are implemented by the public module
@@ -12,10 +11,12 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
  */
 interface NativeLocationSpec extends Omit<CodegenSpec, keyof TurboModule> {}
 
-const nativeModule = ensureNativeModule(NativeModule);
-
-const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
-  return callNativeModule(nativeModule, fn);
+// Location is an optional module — NativeModule may be null when location is not enabled.
+// Methods silently no-op when the native module is unavailable.
+const withNativeModule = (fn: (native: CodegenSpec) => void): void => {
+  if (NativeModule) {
+    fn(NativeModule);
+  }
 };
 
 /** @public */
