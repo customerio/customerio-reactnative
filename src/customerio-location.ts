@@ -1,8 +1,16 @@
+import { type TurboModule } from 'react-native';
 import {
   default as NativeModule,
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOLocation';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
+
+/**
+ * Ensures all methods defined in codegen spec are implemented by the public module
+ *
+ * @internal
+ */
+interface NativeLocationSpec extends Omit<CodegenSpec, keyof TurboModule> {}
 
 const nativeModule = ensureNativeModule(NativeModule);
 
@@ -11,7 +19,7 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 };
 
 /** @public */
-export class CustomerIOLocation {
+export class CustomerIOLocation implements NativeLocationSpec {
   /**
    * Sets the last known location from the host app's existing location system.
    * Use this when your app already manages location and you want to send that data

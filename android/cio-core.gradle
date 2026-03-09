@@ -1,12 +1,10 @@
-def cioLocationEnabled = rootProject.hasProperty("customerio_location_enabled")
-
 dependencies {
     api "io.customer.android:datapipelines:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
     // Location module is optional - customers enable it by adding
     // customerio_location_enabled=true in their gradle.properties
-    if (cioLocationEnabled) {
+    if (project.cioLocationEnabled) {
         implementation "io.customer.android:location:$cioAndroidSDKVersion"
     } else {
         compileOnly "io.customer.android:location:$cioAndroidSDKVersion"

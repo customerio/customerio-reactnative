@@ -65,14 +65,16 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
         // List of all Fabric ViewManagers and TurboModules registered in this package.
         // Used by React Native to identify and instantiate the modules.
-        val moduleNames: List<String> = listOf(
-            InlineInAppMessageViewManager.NAME,
-            NativeCustomerIOLoggingModule.NAME,
-            NativeCustomerIOModule.NAME,
-            NativeLocationModule.NAME,
-            NativeMessagingInAppModule.NAME,
-            NativeMessagingPushModule.NAME,
-        )
+        val moduleNames: List<String> = buildList {
+            add(InlineInAppMessageViewManager.NAME)
+            add(NativeCustomerIOLoggingModule.NAME)
+            add(NativeCustomerIOModule.NAME)
+            if (BuildConfig.CIO_LOCATION_ENABLED) {
+                add(NativeLocationModule.NAME)
+            }
+            add(NativeMessagingInAppModule.NAME)
+            add(NativeMessagingPushModule.NAME)
+        }
         return ReactModuleInfoProvider {
             // Register all ViewManagers and TurboModules
             moduleNames.associateWith { moduleName ->

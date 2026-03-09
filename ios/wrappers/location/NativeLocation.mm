@@ -20,7 +20,7 @@ RCT_EXPORT_MODULE()
 - (instancetype)init {
   if (self = [super init]) {
     // Use runtime class lookup - NativeLocation class only exists when CioLocation subspec is installed
-    Class swiftClass = NSClassFromString(@"NativeLocation");
+    Class swiftClass = NSClassFromString(@"NativeCustomerIOLocation");
     if (swiftClass) {
       _swiftBridge = [[swiftClass alloc] init];
     }
