@@ -53,5 +53,8 @@ Pod::Spec.new do |s|
   # Location module is optional - customers must opt in by adding this subspec.
   s.subspec "location" do |ss|
     ss.dependency "CustomerIO/Location", package["cioNativeiOSSdkVersion"]
+    ss.pod_target_xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '$(inherited) -DCIO_LOCATION_ENABLED'
+    }
   end
 end

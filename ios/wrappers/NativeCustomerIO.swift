@@ -2,7 +2,7 @@ import CioAnalytics
 import CioDataPipelines
 import CioInternalCommon
 import CioMessagingInApp
-#if canImport(CioLocation)
+#if CIO_LOCATION_ENABLED
 import CioLocation
 #endif
 
@@ -51,7 +51,7 @@ public class NativeCustomerIO: NSObject {
 
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
 
-            #if canImport(CioLocation)
+            #if CIO_LOCATION_ENABLED
             // Add location module to config builder if location config is provided
             if let locationConfig = config["location"] as? [String: Any] {
                 let trackingModeValue = locationConfig["trackingMode"] as? String
