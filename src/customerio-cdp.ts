@@ -1,4 +1,5 @@
 import { CustomerIOInAppMessaging } from './customerio-inapp';
+import { CustomerIOLocation } from './customerio-location';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 import {
@@ -177,6 +178,7 @@ export class CustomerIO {
   static readonly isInitialized = () => _initialized;
 
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly location = new CustomerIOLocation();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 }
 

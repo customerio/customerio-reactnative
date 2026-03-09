@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
@@ -32,6 +33,7 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             InlineInAppMessageViewManager.NAME -> InlineInAppMessageViewManager()
             NativeCustomerIOLoggingModule.NAME -> NativeCustomerIOLoggingModule(reactContext)
             NativeCustomerIOModule.NAME -> NativeCustomerIOModule(reactContext = reactContext)
+            NativeLocationModule.NAME -> NativeLocationModule(reactContext)
             NativeMessagingInAppModule.NAME -> NativeMessagingInAppModule(reactContext)
             NativeMessagingPushModule.NAME -> NativeMessagingPushModule(reactContext)
             else -> assertNotNull<NativeModule>(value = null) { "Unknown module name: $name" }
@@ -65,6 +67,7 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             InlineInAppMessageViewManager.NAME,
             NativeCustomerIOLoggingModule.NAME,
             NativeCustomerIOModule.NAME,
+            NativeLocationModule.NAME,
             NativeMessagingInAppModule.NAME,
             NativeMessagingPushModule.NAME,
         )

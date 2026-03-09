@@ -1,6 +1,7 @@
 import CioAnalytics
 import CioDataPipelines
 import CioInternalCommon
+import CioLocation
 import CioMessagingInApp
 
 @objc(NativeCustomerIO)
@@ -47,6 +48,22 @@ public class NativeCustomerIO: NSObject {
             }
 
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
+
+            // Add location module to config builder if location config is provided
+            if let locationConfig = config["location"] as? [String: Any] {
+                let trackingModeValue = locationConfig["trackingMode"] as? String
+                let mode: LocationTrackingMode
+                switch trackingModeValue?.uppercased() {
+                case "OFF":
+                    mode = .off
+                case "ON_APP_START":
+                    mode = .onAppStart
+                default:
+                    mode = .manual
+                }
+                _ = sdkConfigBuilder.addModule(LocationModule(config: LocationConfig(mode: mode)))
+            }
+
             CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
 
             do {
@@ -58,6 +75,7 @@ public class NativeCustomerIO: NSObject {
             } catch {
                 logger.error("[InApp] Failed to initialize module with error: \(error)")
             }
+
             logger.debug(
                 "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
             )
