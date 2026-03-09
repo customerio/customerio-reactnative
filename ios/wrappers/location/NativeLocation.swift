@@ -1,3 +1,4 @@
+#if canImport(CioLocation)
 import CioLocation
 import CoreLocation
 
@@ -15,3 +16,4 @@ public class NativeLocation: NSObject {
         CustomerIO.location.requestLocationUpdate()
     }
 }
+#endif

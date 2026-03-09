@@ -1,4 +1,3 @@
-#import "../utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
@@ -18,18 +17,13 @@ RCT_EXPORT_MODULE()
   return std::make_shared<facebook::react::NativeCustomerIOLocationSpecJSI>(params);
 }
 
-// Validates Swift bridge is available before method calls
-- (void)assertBridgeAvailable:(NSString *)context {
-  RCT_ASSERT_BRIDGE_AVAILABLE(self.swiftBridge, context);
-}
-
 - (instancetype)init {
   if (self = [super init]) {
-    // Use runtime class lookup to avoid import issues and circular dependencies
+    // Use runtime class lookup - NativeLocation class only exists when CioLocation subspec is installed
     Class swiftClass = NSClassFromString(@"NativeLocation");
-    RCT_ASSERT_NOT_NIL(swiftClass, @"NativeLocation Swift class", @"during runtime lookup");
-    _swiftBridge = [[swiftClass alloc] init];
-    [self assertBridgeAvailable:@"creating NativeLocation Swift instance"];
+    if (swiftClass) {
+      _swiftBridge = [[swiftClass alloc] init];
+    }
   }
   return self;
 }
@@ -41,12 +35,12 @@ RCT_EXPORT_MODULE()
 
 - (void)setLastKnownLocation:(double)latitude
                     longitude:(double)longitude {
-  [self assertBridgeAvailable:@"during setLastKnownLocation"];
+  if (!_swiftBridge) return;
   [_swiftBridge setLastKnownLocation:latitude longitude:longitude];
 }
 
 - (void)requestLocationUpdate {
-  [self assertBridgeAvailable:@"during requestLocationUpdate"];
+  if (!_swiftBridge) return;
   [_swiftBridge requestLocationUpdate];
 }
 

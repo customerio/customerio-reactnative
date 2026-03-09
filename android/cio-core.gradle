@@ -2,5 +2,6 @@ dependencies {
     api "io.customer.android:datapipelines:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
-    api "io.customer.android:location:$cioAndroidSDKVersion"
+    // Location module is optional - customers must add this dependency in their app's build.gradle
+    compileOnly "io.customer.android:location:$cioAndroidSDKVersion"
 }

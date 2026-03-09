@@ -8,7 +8,6 @@ import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
-import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
 import io.customer.reactnative.sdk.util.assertNotNull
@@ -100,12 +99,19 @@ class NativeCustomerIOModule(
                         region = region
                     )
                 }
-                // Configure location module based on config provided by customer app
+                // Configure location module based on config provided by customer app (optional dependency)
                 packageConfig.getTypedValue<Map<String, Any>>(key = "location")?.let { locationConfig ->
-                    NativeLocationModule.addNativeModuleFromConfig(
-                        builder = this,
-                        config = locationConfig
-                    )
+                    try {
+                        val locationModuleClass = Class.forName("io.customer.reactnative.sdk.location.NativeLocationModule")
+                        val method = locationModuleClass.getDeclaredMethod(
+                            "addNativeModuleFromConfig",
+                            CustomerIOBuilder::class.java,
+                            Map::class.java
+                        )
+                        method.invoke(null, this, locationConfig)
+                    } catch (_: ClassNotFoundException) {
+                        logger.error("Location module dependency not found. Add the location dependency to use location features.")
+                    }
                 }
             }.build()
 
