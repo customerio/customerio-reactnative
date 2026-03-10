@@ -2,9 +2,6 @@ import CioAnalytics
 import CioDataPipelines
 import CioInternalCommon
 import CioMessagingInApp
-#if CIO_LOCATION_ENABLED
-import CioLocation
-#endif
 
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {
@@ -52,19 +49,8 @@ public class NativeCustomerIO: NSObject {
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
 
             #if CIO_LOCATION_ENABLED
-            // Add location module to config builder if location config is provided
-            if let locationConfig = config["location"] as? [String: Any] {
-                let trackingModeValue = locationConfig["trackingMode"] as? String
-                let mode: LocationTrackingMode
-                switch trackingModeValue?.uppercased() {
-                case "OFF":
-                    mode = .off
-                case "ON_APP_START":
-                    mode = .onAppStart
-                default:
-                    mode = .manual
-                }
-                _ = sdkConfigBuilder.addModule(LocationModule(config: LocationConfig(mode: mode)))
+            if let locationModule = NativeLocation.module(from: config) {
+                _ = sdkConfigBuilder.addModule(locationModule)
             }
             #endif
 
@@ -72,7 +58,10 @@ public class NativeCustomerIO: NSObject {
 
             // Only CustomerIO.initialize must run on the main thread (e.g. for Location module).
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
+                guard let self = self else {
+                    reject(CustomerioConstants.cioTag, "Error initializing Customer.io SDK", nil)
+                    return
+                }
                 CustomerIO.initialize(withConfig: builtConfig)
 
                 do {
