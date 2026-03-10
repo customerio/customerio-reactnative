@@ -46,10 +46,11 @@ export class CustomerIO {
       packageVersion: expoVersion || packageJson.version || '',
     };
 
-    return callNativeModule(NativeModule, (native) => {
-      let result = native.initialize(config, args);
+    const promise = callNativeModule(NativeModule, (native) =>
+      native.initialize(config, args)
+    );
+    return promise.then(() => {
       _initialized = true;
-      return result;
     });
   };
 
