@@ -12,10 +12,18 @@ import {
 interface NativeLocationSpec extends Omit<CodegenSpec, keyof TurboModule> {}
 
 // Location is an optional module — NativeModule may be null when location is not enabled.
-// Methods silently no-op when the native module is unavailable.
+// Methods silently no-op when the native module is unavailable, with a one-time dev warning.
+let hasWarnedNotEnabled = false;
 const withNativeModule = (fn: (native: CodegenSpec) => void): void => {
   if (NativeModule) {
     fn(NativeModule);
+  } else if (__DEV__ && !hasWarnedNotEnabled) {
+    hasWarnedNotEnabled = true;
+    console.warn(
+      'Customer.io: Location module is not enabled. ' +
+        'To use location features, set customerio_location_enabled=true in ' +
+        'gradle.properties (Android) or add the location subspec to your Podfile (iOS).'
+    );
   }
 };
 
