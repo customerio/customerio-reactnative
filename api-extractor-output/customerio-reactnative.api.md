@@ -34,7 +34,17 @@ export type CioConfig = {
             pushClickBehavior?: PushClickBehaviorAndroid;
         };
     };
+    location?: {
+        trackingMode?: CioLocationTrackingMode;
+    };
 };
+
+// @public
+export enum CioLocationTrackingMode {
+    Manual = "MANUAL",
+    Off = "OFF",
+    OnAppStart = "ON_APP_START"
+}
 
 // @public
 export enum CioLogLevel {
@@ -74,12 +84,14 @@ export type CustomAttributes = Record<string, any>;
 export class CustomerIO {
     static readonly clearIdentify: () => Promise<any>;
     static readonly deleteDeviceToken: () => Promise<void>;
-    static readonly identify: ({ userId, traits, }?: IdentifyParams) => Promise<any>;
+    static readonly identify: (input?: IdentifyParams) => Promise<any>;
     // (undocumented)
     static readonly inAppMessaging: CustomerIOInAppMessaging;
     static readonly initialize: (config: CioConfig) => Promise<void>;
     // @deprecated
     static readonly isInitialized: () => boolean;
+    // (undocumented)
+    static readonly location: CustomerIOLocation;
     // (undocumented)
     static readonly pushMessaging: CustomerIOPushMessaging;
     static readonly registerDeviceToken: (token: string) => Promise<void>;
@@ -87,7 +99,7 @@ export class CustomerIO {
     static readonly setDeviceAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly setProfileAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly track: (name: string, properties?: Record<string, any>) => Promise<any>;
-    static readonly trackMetric: ({ deliveryID, deviceToken, event, }: {
+    static readonly trackMetric: (input: {
         deliveryID: string;
         deviceToken: string;
         event: MetricEvent;
@@ -102,6 +114,14 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
     inbox(): NotificationInbox;
     // (undocumented)
     registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
+}
+
+// Warning: (ae-forgotten-export) The symbol "NativeLocationSpec" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export class CustomerIOLocation implements NativeLocationSpec {
+    requestLocationUpdate(): void;
+    setLastKnownLocation(latitude: number, longitude: number): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativePushSpec" needs to be exported by the entry point index.d.ts
