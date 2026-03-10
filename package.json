@@ -19,7 +19,7 @@
     },
     "./package.json": "./package.json"
   },
-  "cioNativeiOSSdkVersion": "= 4.2.0",
+  "cioNativeiOSSdkVersion": "= 4.3.0",
   "cioiOSFirebaseWrapperSdkVersion": "= 1.0.0",
   "files": [
     "src",
@@ -150,6 +150,7 @@
       "modulesProvider": {
         "NativeCustomerIOLogging": "RCTNativeCustomerIOLogging",
         "NativeCustomerIO": "RCTNativeCustomerIO",
+        "NativeCustomerIOLocation": "RCTNativeCustomerIOLocation",
         "NativeCustomerIOMessagingInApp": "RCTNativeMessagingInApp",
         "NativeCustomerIOMessagingPush": "RCTNativeMessagingPush"
       }

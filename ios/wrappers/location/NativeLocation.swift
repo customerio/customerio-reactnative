@@ -1,4 +1,5 @@
 #if CIO_LOCATION_ENABLED
+import CioDataPipelines
 import CioLocation
 import CoreLocation
 
