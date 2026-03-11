@@ -16,11 +16,10 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
  *
  * @internal
  */
-interface NativeInAppSpec
-  extends Omit<
-    CodegenSpec,
-    keyof TurboModule | NotificationInboxSpec | 'onInAppEventReceived'
-  > {}
+interface NativeInAppSpec extends Omit<
+  CodegenSpec,
+  keyof TurboModule | NotificationInboxSpec | 'onInAppEventReceived'
+> {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
 const nativeModule = ensureNativeModule(NativeCustomerIOMessagingInApp);
