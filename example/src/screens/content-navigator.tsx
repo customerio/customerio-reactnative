@@ -5,6 +5,7 @@ import {
   InboxMessagesScreenName,
   InlineExamplesScreenName,
   InternalSettingsScreenName,
+  LocationScreenName,
   LoginScreenName,
   NavigationCallbackContext,
   NavigationStackParamList,
@@ -22,6 +23,7 @@ import {
   InboxMessagesScreen,
   InlineExamplesScreen,
   InternalSettingsScreen,
+  LocationScreen,
   LogingScreen,
   SettingsScreen,
   TrackScreen,
@@ -124,6 +126,15 @@ export const ContentNavigator = ({ appName }: { appName: string }) => {
           name={InboxMessagesScreenName}
           component={InboxMessagesScreen}
           options={{
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackVisible: true,
+          }}
+        />
+        <Stack.Screen
+          name={LocationScreenName}
+          component={LocationScreen}
+          options={{
+            title: 'Location Test',
             headerBackButtonDisplayMode: 'minimal',
             headerBackVisible: true,
           }}

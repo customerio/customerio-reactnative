@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
@@ -32,6 +33,9 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             InlineInAppMessageViewManager.NAME -> InlineInAppMessageViewManager()
             NativeCustomerIOLoggingModule.NAME -> NativeCustomerIOLoggingModule(reactContext)
             NativeCustomerIOModule.NAME -> NativeCustomerIOModule(reactContext = reactContext)
+            NativeLocationModule.NAME -> if (BuildConfig.CIO_LOCATION_ENABLED) {
+                NativeLocationModule(reactContext)
+            } else null
             NativeMessagingInAppModule.NAME -> NativeMessagingInAppModule(reactContext)
             NativeMessagingPushModule.NAME -> NativeMessagingPushModule(reactContext)
             else -> assertNotNull<NativeModule>(value = null) { "Unknown module name: $name" }
@@ -61,10 +65,13 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
         // List of all Fabric ViewManagers and TurboModules registered in this package.
         // Used by React Native to identify and instantiate the modules.
+        // Location module is always registered so TurboModuleRegistry.getEnforcing()
+        // doesn't crash at import time. getModule() returns null when disabled.
         val moduleNames: List<String> = listOf(
             InlineInAppMessageViewManager.NAME,
             NativeCustomerIOLoggingModule.NAME,
             NativeCustomerIOModule.NAME,
+            NativeLocationModule.NAME,
             NativeMessagingInAppModule.NAME,
             NativeMessagingPushModule.NAME,
         )

@@ -25,14 +25,22 @@ def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['customerio.reactnative.' + name]).toInteger()
 }
 
+ext.cioLocationEnabled = rootProject.findProperty("customerio_location_enabled")?.toBoolean() ?: false
+
 android {
   namespace = 'io.customer.reactnative.sdk'
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+    buildConfigField "boolean", "CIO_LOCATION_ENABLED", "${project.cioLocationEnabled}"
+    consumerProguardFiles 'consumer-rules.pro'
   }
-  
+
+  buildFeatures {
+    buildConfig true
+  }
+
   buildTypes {
     release {
       minifyEnabled false

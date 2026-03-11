@@ -68,6 +68,10 @@ export type CioConfig = {
       pushClickBehavior?: PushClickBehaviorAndroid;
     };
   };
+  location?: {
+    /** Location tracking mode. Defaults to 'manual' if location config is provided. */
+    trackingMode?: CioLocationTrackingMode;
+  };
 };
 
 /**
@@ -111,6 +115,20 @@ export enum ScreenView {
   All = 'all',
   /** Only display in-app messages, don't send to destinations */
   InApp = 'inApp',
+}
+
+/**
+ * Location tracking mode for the CustomerIO Location module.
+ *
+ * @public
+ */
+export enum CioLocationTrackingMode {
+  /** Location tracking is disabled. All location operations no-op. */
+  Off = 'OFF',
+  /** Host app controls when location is captured (default when location config is provided). */
+  Manual = 'MANUAL',
+  /** SDK auto-captures location once per app launch when the app becomes active. */
+  OnAppStart = 'ON_APP_START',
 }
 
 /**

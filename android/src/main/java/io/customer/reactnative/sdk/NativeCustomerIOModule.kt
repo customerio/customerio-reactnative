@@ -8,6 +8,7 @@ import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
 import io.customer.reactnative.sdk.util.assertNotNull
@@ -98,6 +99,15 @@ class NativeCustomerIOModule(
                         config = inAppConfig,
                         region = region
                     )
+                }
+                // Configure location module if enabled via gradle property
+                if (BuildConfig.CIO_LOCATION_ENABLED) {
+                    packageConfig.getTypedValue<Map<String, Any>>(key = "location")?.let { locationConfig ->
+                        NativeLocationModule.addNativeModuleFromConfig(
+                            builder = this,
+                            config = locationConfig
+                        )
+                    }
                 }
             }.build()
 

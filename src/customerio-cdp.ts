@@ -1,4 +1,5 @@
 import { CustomerIOInAppMessaging } from './customerio-inapp';
+import { CustomerIOLocation } from './customerio-location';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
 import {
@@ -45,10 +46,11 @@ export class CustomerIO {
       packageVersion: expoVersion || packageJson.version || '',
     };
 
-    return callNativeModule(NativeModule, (native) => {
-      let result = native.initialize(config, args);
+    const promise = callNativeModule(NativeModule, (native) =>
+      native.initialize(config, args)
+    );
+    return promise.then(() => {
       _initialized = true;
-      return result;
     });
   };
 
@@ -177,6 +179,7 @@ export class CustomerIO {
   static readonly isInitialized = () => _initialized;
 
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly location = new CustomerIOLocation();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 }
 

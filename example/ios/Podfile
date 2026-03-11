@@ -6,17 +6,26 @@ load "/tmp/override_cio_sdk.rb"
 # end of internal Customer.io testing code
 # -------------
 
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command("node", ["-p",
-                                                 'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+# Resolve scripts with node to allow for hoisting
+def node_require(script)
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
 require_relative "../scripts/ios_project_setup_utils.rb"
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+setup_permissions([
+  'LocationWhenInUse',
+])
 
 push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
 
@@ -51,7 +60,7 @@ target app_target_name do
     :path => config[:reactNativePath],
     :app_path => "#{installation_root}/..",
   )
-  pod "customerio-reactnative/#{push_provider}", :path => cio_package_path
+  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location"]
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 

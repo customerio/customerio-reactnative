@@ -47,21 +47,38 @@ public class NativeCustomerIO: NSObject {
             }
 
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
-            CustomerIO.initialize(withConfig: sdkConfigBuilder.build())
 
-            do {
-                // Initialize in-app messaging if config provided
-                if let inAppConfig = try MessagingInAppConfigBuilder.build(from: config) {
-                    MessagingInApp.initialize(withConfig: inAppConfig)
-                    MessagingInApp.shared.setEventListener(ReactInAppEventListener.shared)
-                }
-            } catch {
-                logger.error("[InApp] Failed to initialize module with error: \(error)")
+            #if CIO_LOCATION_ENABLED
+            if let locationModule = NativeLocation.module(from: config) {
+                _ = sdkConfigBuilder.addModule(locationModule)
             }
-            logger.debug(
-                "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
-            )
-            resolve(true)
+            #endif
+
+            let builtConfig = sdkConfigBuilder.build()
+
+            // Only CustomerIO.initialize must run on the main thread (e.g. for Location module).
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    reject(CustomerioConstants.cioTag, "Error initializing Customer.io SDK", nil)
+                    return
+                }
+                CustomerIO.initialize(withConfig: builtConfig)
+
+                do {
+                    // Initialize in-app messaging if config provided
+                    if let inAppConfig = try MessagingInAppConfigBuilder.build(from: config) {
+                        MessagingInApp.initialize(withConfig: inAppConfig)
+                        MessagingInApp.shared.setEventListener(ReactInAppEventListener.shared)
+                    }
+                } catch {
+                    self.logger.error("[InApp] Failed to initialize module with error: \(error)")
+                }
+
+                self.logger.debug(
+                    "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
+                )
+                resolve(true)
+            }
         } catch {
             logger.error("Initializing Customer.io SDK failed with error: \(error)")
             reject(CustomerioConstants.cioTag, "Error initializing Customer.io SDK", nil)
