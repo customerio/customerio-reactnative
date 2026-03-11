@@ -12,6 +12,7 @@ export const CustomDeviceAttrScreenName = 'Device Attributes' as const;
 export const InternalSettingsScreenName = 'Internal Settings' as const;
 export const InlineExamplesScreenName = 'Inline Examples' as const;
 export const InboxMessagesScreenName = 'Inbox Messages' as const;
+export const LocationScreenName = 'Location' as const;
 
 export type NavigationStackParamList = {
   [SettingsScreenName]: undefined;
@@ -24,6 +25,7 @@ export type NavigationStackParamList = {
   [InternalSettingsScreenName]: undefined;
   [InlineExamplesScreenName]: undefined;
   [InboxMessagesScreenName]: undefined;
+  [LocationScreenName]: undefined;
 };
 
 export type NavigationProps = NavigationProp<NavigationStackParamList>;

@@ -4,6 +4,7 @@ export * from './home';
 export * from './inbox-messages';
 export * from './inline-examples';
 export * from './internal-settings';
+export * from './location';
 export * from './login';
 export * from './settings';
 export * from './track';
