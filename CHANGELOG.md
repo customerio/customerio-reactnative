@@ -1,3 +1,9 @@
+## [6.3.1](https://github.com/customerio/customerio-reactnative/compare/6.3.0...6.3.1) (2026-03-12)
+
+### Bug Fixes
+
+* Make location android dep api instead of implementation ([#574](https://github.com/customerio/customerio-reactnative/issues/574)) ([24db093](https://github.com/customerio/customerio-reactnative/commit/24db0939eb67670f4088f181526f941fd904e387))
+
 ## [6.3.0](https://github.com/customerio/customerio-reactnative/compare/6.2.0...6.3.0) (2026-03-11)
 
 ### Features
