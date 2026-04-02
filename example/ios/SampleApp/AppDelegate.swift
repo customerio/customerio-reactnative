@@ -69,8 +69,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     #endif
     
     
-    CioMessagingPushHandler.initialize(withConfig: MessagingPushConfigBuilder().build())
-    
+    CioMessagingPushHandler.initialize(
+        withConfig: MessagingPushConfigBuilder()
+            .appGroupId("group.io.customer.ami.cio")
+            .build()
+    )
     
     return true
   }
