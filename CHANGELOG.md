@@ -1,3 +1,9 @@
+## [6.4.0](https://github.com/customerio/customerio-reactnative/compare/6.3.1...6.4.0) (2026-04-02)
+
+### Features
+
+* Push delivery reslience improvement ([#577](https://github.com/customerio/customerio-reactnative/issues/577)) ([ea0b04a](https://github.com/customerio/customerio-reactnative/commit/ea0b04ab0b7925e0bcc16063f17b72dc846a7511))
+
 ## [6.3.1](https://github.com/customerio/customerio-reactnative/compare/6.3.0...6.3.1) (2026-03-12)
 
 ### Bug Fixes
