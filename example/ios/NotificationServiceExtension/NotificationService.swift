@@ -1,6 +1,7 @@
 import UserNotifications
 #if USE_FCM
 import CioMessagingPushFCM
+import CioFirebaseWrapper
 typealias PushInitializer = MessagingPushFCM
 #else
 
