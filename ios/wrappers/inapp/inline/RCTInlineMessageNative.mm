@@ -7,6 +7,7 @@
 #import <react/renderer/components/RNCustomerIOSpec/EventEmitters.h>
 #import <react/renderer/components/RNCustomerIOSpec/Props.h>
 #import <react/renderer/components/RNCustomerIOSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/RNCustomerIOSpec/ShadowNodes.h>
 
 using namespace facebook::react;
 
@@ -22,9 +23,10 @@ using namespace facebook::react;
   NSAssert(self.bridge != nil, @"Bridge is nil when %@", context);
 }
 
-- (instancetype)init {
-  if (self = [super init]) {
-    // Create Swift bridge using runtime class resolution
+- (instancetype)initWithFrame:(CGRect)frame {
+  if (self = [super initWithFrame:frame]) {
+    _props = InlineMessageNativeShadowNode::defaultSharedProps();
+
     Class bridgeClass = NSClassFromString(@"ReactInlineMessageView");
     if (bridgeClass) {
       self.bridge = [[bridgeClass alloc] initWithContainerView:self];
@@ -36,14 +38,21 @@ using namespace facebook::react;
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps {
-  const auto &oldViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(_props);
   const auto &newViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(props);
 
   [self assertBridgeAvailable:@"during updateProps"];
   [self.bridge setupForReuse];
 
-  // Handle react native props here
-  if (oldViewProps.elementId != newViewProps.elementId) {
+  // On first mount Fabric passes oldProps = nullptr; apply all props unconditionally.
+  // On updates, diff against the parameter rather than _props so we never rely on
+  // the ivar's runtime type.
+  BOOL elementIdChanged = YES;
+  if (oldProps) {
+    const auto &oldViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(oldProps);
+    elementIdChanged = oldViewProps.elementId != newViewProps.elementId;
+  }
+
+  if (elementIdChanged) {
     NSString *elementId = [NSString stringWithCString:newViewProps.elementId.c_str() encoding:NSUTF8StringEncoding];
     [self assertBridgeAvailable:@"updating elementId prop"];
     [self.bridge setElementId:elementId];
