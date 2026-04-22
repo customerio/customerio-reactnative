@@ -21,6 +21,8 @@ export type CioConfig = {
     migrationSiteId?: string;
     region?: CioRegion;
     logLevel?: CioLogLevel;
+    apiHost?: string;
+    cdnHost?: string;
     flushAt?: number;
     flushInterval?: number;
     screenViewUse?: ScreenView;

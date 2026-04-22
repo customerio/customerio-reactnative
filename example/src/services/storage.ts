@@ -5,12 +5,8 @@ import { Env } from '../env';
 
 const USER_STORAGE_KEY = 'user';
 const CIO_CONFIG_STORAGE_KEY = 'cioConfig';
-export type InternalSettings = {
-  cdnHost: string;
-  apiHost: string;
-};
 
-type Config = Partial<CioConfig> & { qa?: InternalSettings };
+type Config = Partial<CioConfig>;
 
 const createDefaultConfig = (env: Env | null | undefined): Config => {
   return {
@@ -73,11 +69,7 @@ export class Storage {
   };
 
   readonly setCioConfig = async (cioConfig: CioConfig) => {
-    const config = cioConfig as Config;
-    this.config = {
-      ...config,
-      qa: config.qa ?? Storage.defaultConfig.qa,
-    };
+    this.config = cioConfig as Config;
     await AsyncStorage.setItem(
       CIO_CONFIG_STORAGE_KEY,
       JSON.stringify(this.config)
@@ -93,34 +85,11 @@ export class Storage {
   };
 
   readonly resetCioConfig = async () => {
-    if (this.config === null) {
-      this.config = Storage.defaultConfig;
-    } else {
-      this.config = {
-        ...this.config,
-        ...Storage.defaultConfig,
-        qa: this.config.qa,
-      };
-    }
-
-    await AsyncStorage.setItem(
-      CIO_CONFIG_STORAGE_KEY,
-      JSON.stringify(this.config)
-    );
-  };
-
-  readonly getInternalDevConfig = (): InternalSettings | undefined => {
-    return this.config?.qa ?? Storage.defaultConfig.qa;
-  };
-
-  readonly setInternalDevConfig = async (
-    internalSettings: InternalSettings
-  ) => {
-    if (this.config === null) {
-      this.config = { ...Storage.defaultConfig, qa: internalSettings };
-    } else {
-      this.config = { ...this.config, qa: internalSettings };
-    }
+    this.config = {
+      ...Storage.defaultConfig,
+      apiHost: this.config?.apiHost,
+      cdnHost: this.config?.cdnHost,
+    };
 
     await AsyncStorage.setItem(
       CIO_CONFIG_STORAGE_KEY,

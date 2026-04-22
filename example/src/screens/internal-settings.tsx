@@ -4,28 +4,28 @@ import {
   LargeBoldText,
   TextField,
 } from '@components';
-import { InternalSettings, Storage } from '@services';
+import { Storage } from '@services';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
-const validateSettings = (config: InternalSettings) => {
-  if (!config.apiHost || !config.cdnHost) {
+type HostOverrides = {
+  apiHost?: string;
+  cdnHost?: string;
+};
+
+const validateSettings = (overrides: HostOverrides) => {
+  if (!overrides.apiHost || !overrides.cdnHost) {
     throw Error('CDN and API host values are missing');
-  } else if (!config.cdnHost) {
-    throw Error('CDB Host value is missing');
-  } else if (!config.apiHost) {
-    throw Error('API Host value is missing');
   }
 };
 
 export const InternalSettingsScreen = () => {
-  const [config, setConfig] = useState<InternalSettings>(
-    Storage.instance.getInternalDevConfig() || {
-      cdnHost: '',
-      apiHost: '',
-    }
-  );
+  const initialConfig = Storage.instance.getCioConfig();
+  const [config, setConfig] = useState<HostOverrides>({
+    apiHost: initialConfig?.apiHost ?? '',
+    cdnHost: initialConfig?.cdnHost ?? '',
+  });
 
   return (
     <ScrollView>
@@ -56,7 +56,11 @@ export const InternalSettingsScreen = () => {
           onPress={async () => {
             try {
               validateSettings(config);
-              Storage.instance.setInternalDevConfig(config);
+              await Storage.instance.setCioConfig({
+                ...Storage.instance.getCioConfig(),
+                apiHost: config.apiHost,
+                cdnHost: config.cdnHost,
+              });
 
               showMessage({
                 message: 'Internal Settings saved successfully',

@@ -84,6 +84,10 @@ class NativeCustomerIOModule(
                     ?.let { flushInterval(it) }
                 packageConfig.getTypedValue<Boolean>(Keys.Config.TRACK_APP_LIFECYCLE_EVENTS)
                     ?.let { trackApplicationLifecycleEvents(it) }
+                packageConfig.getTypedValue<String>(Keys.Config.API_HOST)
+                    ?.let { apiHost(it) }
+                packageConfig.getTypedValue<String>(Keys.Config.CDN_HOST)
+                    ?.let { cdnHost(it) }
 
                 // Configure push messaging module based on config provided by customer app
                 packageConfig.getTypedValue<Map<String, Any>>(key = "push").let { pushConfig ->

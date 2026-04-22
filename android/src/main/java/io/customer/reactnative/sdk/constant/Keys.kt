@@ -12,6 +12,8 @@ internal object Keys {
         const val FLUSH_AT = "flushAt"
         const val FLUSH_INTERVAL = "flushInterval"
         const val SCREEN_VIEW_USE = "screenViewUse"
+        const val API_HOST = "apiHost"
+        const val CDN_HOST = "cdnHost"
         // Push messaging
         const val PUSH_CLICK_BEHAVIOR = "pushClickBehavior"
     }
