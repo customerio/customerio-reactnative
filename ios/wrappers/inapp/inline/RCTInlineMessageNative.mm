@@ -23,6 +23,10 @@ using namespace facebook::react;
   NSAssert(self.bridge != nil, @"Bridge is nil when %@", context);
 }
 
+- (instancetype)init {
+  return [self initWithFrame:CGRectZero];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
   if (self = [super initWithFrame:frame]) {
     _props = InlineMessageNativeShadowNode::defaultSharedProps();
