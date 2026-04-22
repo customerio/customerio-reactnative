@@ -3,6 +3,7 @@ export * from './custom-attribute';
 export * from './home';
 export * from './inbox-messages';
 export * from './inline-examples';
+export * from './inline-repro';
 export * from './internal-settings';
 export * from './location';
 export * from './login';

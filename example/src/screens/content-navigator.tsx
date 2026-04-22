@@ -4,6 +4,7 @@ import {
   HomeScreenName,
   InboxMessagesScreenName,
   InlineExamplesScreenName,
+  InlineReproScreenName,
   InternalSettingsScreenName,
   LocationScreenName,
   LoginScreenName,
@@ -22,6 +23,7 @@ import {
   HomeScreen,
   InboxMessagesScreen,
   InlineExamplesScreen,
+  InlineReproScreen,
   InternalSettingsScreen,
   LocationScreen,
   LogingScreen,
@@ -117,6 +119,14 @@ export const ContentNavigator = ({ appName }: { appName: string }) => {
         <Stack.Screen
           name={InlineExamplesScreenName}
           component={InlineExamplesScreen}
+          options={{
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackVisible: true,
+          }}
+        />
+        <Stack.Screen
+          name={InlineReproScreenName}
+          component={InlineReproScreen}
           options={{
             headerBackButtonDisplayMode: 'minimal',
             headerBackVisible: true,

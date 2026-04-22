@@ -4,6 +4,7 @@ import {
   CustomProfileAttrScreenName,
   InboxMessagesScreenName,
   InlineExamplesScreenName,
+  InlineReproScreenName,
   LocationScreenName,
   NavigationCallbackContext,
   NavigationScreenProps,
@@ -69,6 +70,12 @@ export const HomeScreen = ({
             title="Inline Examples"
             onPress={() => {
               navigation.navigate(InlineExamplesScreenName);
+            }}
+          />
+          <Button
+            title="Inline Repro (iOS crash)"
+            onPress={() => {
+              navigation.navigate(InlineReproScreenName);
             }}
           />
           <Button

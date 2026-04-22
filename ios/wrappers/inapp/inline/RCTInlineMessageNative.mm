@@ -23,6 +23,8 @@ using namespace facebook::react;
 }
 
 - (instancetype)init {
+  fprintf(stderr, "[CIO-REPRO] RCTInlineMessageNative -init entered\n");
+  fflush(stderr);
   if (self = [super init]) {
     // Create Swift bridge using runtime class resolution
     Class bridgeClass = NSClassFromString(@"ReactInlineMessageView");
@@ -35,7 +37,18 @@ using namespace facebook::react;
   return self;
 }
 
+// TEMP: forwarder to observe whether Fabric instantiates via -initWithFrame:
+- (instancetype)initWithFrame:(CGRect)frame {
+  fprintf(stderr, "[CIO-REPRO] RCTInlineMessageNative -initWithFrame: entered\n");
+  fflush(stderr);
+  return [super initWithFrame:frame];
+}
+
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps {
+  fprintf(stderr, "[CIO-REPRO] updateProps entered; bridge=%s; oldProps=%s\n",
+          self.bridge == nil ? "NIL" : "OK",
+          oldProps ? "present" : "null");
+  fflush(stderr);
   const auto &oldViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(_props);
   const auto &newViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(props);
 
