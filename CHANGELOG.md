@@ -1,3 +1,9 @@
+## [6.4.1](https://github.com/customerio/customerio-reactnative/compare/6.4.0...6.4.1) (2026-04-23)
+
+### Bug Fixes
+
+* Fix: EXC_BAD_ACCESS in RCTInlineMessageNative.updateProps on iOS Fabric ([#581](https://github.com/customerio/customerio-reactnative/issues/581)) ([e93e8df](https://github.com/customerio/customerio-reactnative/commit/e93e8df46d615a0407af256826030e43e3dee6d5))
+
 ## [6.4.0](https://github.com/customerio/customerio-reactnative/compare/6.3.1...6.4.0) (2026-04-02)
 
 ### Features
