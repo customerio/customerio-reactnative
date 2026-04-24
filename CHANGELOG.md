@@ -1,3 +1,9 @@
+## [6.4.2](https://github.com/customerio/customerio-reactnative/compare/6.4.1...6.4.2) (2026-04-24)
+
+### Bug Fixes
+
+* Honor top-level apiHost and cdnHost in CioConfig ([#584](https://github.com/customerio/customerio-reactnative/issues/584)) ([f47c786](https://github.com/customerio/customerio-reactnative/commit/f47c786b5dc2c0926b6f9973afa9c03df7240851))
+
 ## [6.4.1](https://github.com/customerio/customerio-reactnative/compare/6.4.0...6.4.1) (2026-04-23)
 
 ### Bug Fixes
