@@ -40,6 +40,8 @@ export interface IdentifyParams {
  * @param migrationSiteId - Legacy site ID for migrating from tracking API
  * @param region - Data center region (US or EU)
  * @param logLevel - SDK logging verbosity level
+ * @param apiHost - Override the CDP API host. Use to route SDK traffic through a first-party proxy.
+ * @param cdnHost - Override the CDN host. Use to route SDK traffic through a first-party proxy.
  * @param flushAt - Number of events to batch before sending
  * @param flushInterval - Time interval (seconds) to flush events
  * @param screenViewUse - How to handle screen view tracking
@@ -55,6 +57,8 @@ export type CioConfig = {
   migrationSiteId?: string;
   region?: CioRegion;
   logLevel?: CioLogLevel;
+  apiHost?: string;
+  cdnHost?: string;
   flushAt?: number;
   flushInterval?: number;
   screenViewUse?: ScreenView;
