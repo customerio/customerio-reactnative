@@ -1,0 +1,108 @@
+name: Debug App Token Probe
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/debug-app-token.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mint App installation token
+        id: app_token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          client-id: ${{ secrets.CIO_APP_CLIENT_ID }}
+          private-key: ${{ secrets.CIO_APP_SECRET }}
+
+      - name: Print App identity (slug + installation-id)
+        run: |
+          echo "app-slug:        ${{ steps.app_token.outputs.app-slug }}"
+          echo "installation-id: ${{ steps.app_token.outputs.installation-id }}"
+          if [ "${{ steps.app_token.outputs.app-slug }}" != "cio-mobile-release" ]; then
+            echo "::error::App slug mismatch - expected cio-mobile-release, got ${{ steps.app_token.outputs.app-slug }}"
+            exit 1
+          fi
+
+      - name: Hash App token + GITHUB_TOKEN
+        id: token_hashes
+        env:
+          APP_TOKEN: ${{ steps.app_token.outputs.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          APP_HASH=$(printf '%s' "$APP_TOKEN" | sha256sum | awk '{print $1}')
+          GH_HASH=$(printf '%s'  "$GH_TOKEN"  | sha256sum | awk '{print $1}')
+          echo "app_hash=$APP_HASH" >> "$GITHUB_OUTPUT"
+          echo "gh_hash=$GH_HASH"  >> "$GITHUB_OUTPUT"
+          echo "App token    sha256: $APP_HASH"
+          echo "GITHUB_TOKEN sha256: $GH_HASH"
+
+      - name: Checkout (default - persists GITHUB_TOKEN)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          path: checkout-default
+
+      - name: Hash creds persisted by default checkout
+        id: default_creds
+        run: |
+          HEADER=$(git -C checkout-default config --get http.https://github.com/.extraheader || true)
+          if [ -z "$HEADER" ]; then
+            echo "::error::no persisted creds in default checkout"
+            exit 1
+          fi
+          B64=$(printf '%s' "$HEADER" | awk '{print $NF}')
+          TOKEN=$(printf '%s' "$B64" | base64 -d | sed 's/^x-access-token://')
+          H=$(printf '%s' "$TOKEN" | sha256sum | awk '{print $1}')
+          echo "default_hash=$H" >> "$GITHUB_OUTPUT"
+          echo "default checkout cred sha256: $H"
+
+      - name: Checkout (with App token)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          path: checkout-app
+
+      - name: Hash creds persisted by App-token checkout
+        id: app_creds
+        run: |
+          HEADER=$(git -C checkout-app config --get http.https://github.com/.extraheader || true)
+          if [ -z "$HEADER" ]; then
+            echo "::error::no persisted creds in app checkout"
+            exit 1
+          fi
+          B64=$(printf '%s' "$HEADER" | awk '{print $NF}')
+          TOKEN=$(printf '%s' "$B64" | base64 -d | sed 's/^x-access-token://')
+          H=$(printf '%s' "$TOKEN" | sha256sum | awk '{print $1}')
+          echo "app_hash=$H" >> "$GITHUB_OUTPUT"
+          echo "app checkout cred sha256: $H"
+
+      - name: Assert hash relationships
+        run: |
+          APP="${{ steps.token_hashes.outputs.app_hash }}"
+          GH="${{ steps.token_hashes.outputs.gh_hash }}"
+          DEF="${{ steps.default_creds.outputs.default_hash }}"
+          APPCO="${{ steps.app_creds.outputs.app_hash }}"
+          printf 'app token        : %s\n' "$APP"
+          printf 'github_token     : %s\n' "$GH"
+          printf 'default checkout : %s\n' "$DEF"
+          printf 'app     checkout : %s\n' "$APPCO"
+          fail=0
+          if [ "$APP"   != "$APPCO" ]; then
+            echo "::error::APP token != app-checkout creds (token: not honored)"
+            fail=1
+          fi
+          if [ "$GH"    != "$DEF"   ]; then
+            echo "::error::GITHUB_TOKEN != default-checkout creds (unexpected)"
+            fail=1
+          fi
+          if [ "$APPCO" =  "$DEF"   ]; then
+            echo "::error::app-checkout == default-checkout (token: silently ignored)"
+            fail=1
+          fi
+          [ "$fail" -eq 0 ] && echo "All assertions passed."
+          exit "$fail"
