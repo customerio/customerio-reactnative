@@ -25,7 +25,7 @@
           "package.json",
           "android/src/main/res/values/customer_io_config.xml"
         ],
-        "message": "chore: prepare for ${nextRelease.version}\n\n${nextRelease.notes}"
+        "message": "chore: prepare for ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
     ["@semantic-release/github", {
