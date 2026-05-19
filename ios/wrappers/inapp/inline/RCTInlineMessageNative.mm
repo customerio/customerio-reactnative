@@ -51,15 +51,22 @@ using namespace facebook::react;
   // On updates, diff against the parameter rather than _props so we never rely on
   // the ivar's runtime type.
   BOOL elementIdChanged = YES;
+  BOOL showScrollIndicatorsChanged = YES;
   if (oldProps) {
     const auto &oldViewProps = *std::static_pointer_cast<InlineMessageNativeProps const>(oldProps);
     elementIdChanged = oldViewProps.elementId != newViewProps.elementId;
+    showScrollIndicatorsChanged = oldViewProps.showScrollIndicators != newViewProps.showScrollIndicators;
   }
 
   if (elementIdChanged) {
     NSString *elementId = [NSString stringWithCString:newViewProps.elementId.c_str() encoding:NSUTF8StringEncoding];
     [self assertBridgeAvailable:@"updating elementId prop"];
     [self.bridge setElementId:elementId];
+  }
+
+  if (showScrollIndicatorsChanged) {
+    [self assertBridgeAvailable:@"updating showScrollIndicators prop"];
+    [self.bridge setShowScrollIndicators:newViewProps.showScrollIndicators];
   }
 
   [super updateProps:props oldProps:oldProps];

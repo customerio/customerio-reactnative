@@ -14,6 +14,7 @@ import { TurboModule } from 'react-native';
 import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 import type { ViewProps } from 'react-native';
 import { ViewStyle } from 'react-native';
+import type { WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
 
 // @public
 export type CioConfig = {
@@ -204,13 +205,14 @@ export const InlineInAppMessageView: React_2.FC<InlineInAppMessageViewProps>;
 // Warning: (ae-forgotten-export) The symbol "NativeProps" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeChange' | 'onStateChange' | 'onActionClick'> {
+export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeChange' | 'onStateChange' | 'onActionClick' | 'showScrollIndicators'> {
     loadingComponent?: React_2.ReactNode;
     loadingContainerStyle?: ViewStyle;
     loadingIndicatorProps?: ActivityIndicatorProps & {
         minimumHeight?: number;
     };
     onActionClick?: (message: InAppMessage, actionValue: string, actionName: string) => void;
+    showScrollIndicators?: boolean;
 }
 
 // @public
