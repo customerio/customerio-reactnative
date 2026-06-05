@@ -1,3 +1,9 @@
+## [6.5.0](https://github.com/customerio/customerio-reactnative/compare/6.4.3...6.5.0) (2026-06-05)
+
+### Features
+
+* update native SDKs to iOS 4.5.0 and Android 4.18.0 ([#596](https://github.com/customerio/customerio-reactnative/issues/596)) ([0a94e26](https://github.com/customerio/customerio-reactnative/commit/0a94e26dffced1551ec9dba75a1a6c5f1520d65a))
+
 ## [6.4.3](https://github.com/customerio/customerio-reactnative/compare/6.4.2...6.4.3) (2026-05-21)
 
 ### Bug Fixes
