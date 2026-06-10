@@ -10,6 +10,33 @@ All `CustomerIO.*` calls are located in [`src/App.tsx`](src/App.tsx) for easy re
 
 ---
 
+## 🧩 Conditional Customer.io inclusion (`CIO_ENABLED`)
+
+This app demonstrates how a host that ships **separate builds per customer** can include Customer.io for some builds and **fully exclude** it for others — no compiled CIO code, none of the SDK's JS bundled, and zero runtime footprint — all driven by a single build-time flag.
+
+Set `CIO_ENABLED=0` at build time to exclude Customer.io; omit it (or set anything else) to include it (the default).
+
+| Layer | File | What the flag does |
+| --- | --- | --- |
+| JS bundle | [`metro.config.js`](metro.config.js) | Resolves the `@cio` facade to [`src/cio/index.noop.ts`](src/cio/index.noop.ts) (inert stub) instead of [`index.real.ts`](src/cio/index.real.ts), so `customerio-reactnative` is never bundled. |
+| Native linking | [`react-native.config.js`](react-native.config.js) | Disables autolinking (`platforms: { ios: null, android: null }`) so the native module isn't compiled in and its manifest entries/pods don't merge. |
+| iOS pods | [`ios/Podfile`](ios/Podfile) | Skips the `customerio-reactnative` + rich-push pods. |
+| iOS native code | [`ios/SampleApp/AppDelegate.swift`](ios/SampleApp/AppDelegate.swift) | `#if canImport(CioMessagingPush…)` guards compile out the CIO app-delegate wrapper and push init automatically when the pods are absent. |
+
+> **All four must read the same flag.** The app imports CIO only through the `@cio` facade, never from `customerio-reactnative` directly. Every native bridge in the SDK uses `TurboModuleRegistry.getEnforcing(...)`, which throws at launch if the JS is loaded while the native module is unlinked — so a lazy/conditional `import()` is **not** a safe substitute for the facade swap.
+
+```bash
+# Include Customer.io (default)
+npm run ios
+npm run android
+
+# Exclude Customer.io entirely
+CIO_ENABLED=0 npm run pods && CIO_ENABLED=0 npm run ios
+CIO_ENABLED=0 npm run android
+```
+
+---
+
 ## 📱 iOS SDK Integration
 
 Key files involved in the native iOS setup:

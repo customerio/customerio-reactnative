@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
 import { appTheme } from '@utils';
-import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
+import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from '@cio';
 import FlashMessage from 'react-native-flash-message';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { enableFreeze, enableScreens } from 'react-native-screens';

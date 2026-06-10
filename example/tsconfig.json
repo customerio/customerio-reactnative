@@ -7,6 +7,7 @@
     "rootDir": ".",
     "types": ["jest"],
     "paths": {
+      "@cio": ["./src/cio/index.real"],
       "@assets/*": ["./src/assets/*"],
       "@components": ["./src/components"],
       "@screens": ["./src/screens"],

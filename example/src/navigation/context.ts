@@ -1,4 +1,4 @@
-import { CioPushPermissionStatus } from 'customerio-reactnative';
+import { CioPushPermissionStatus } from '@cio';
 import { createContext } from 'react';
 import { ContentNavigatorCallbacks } from './props';
 

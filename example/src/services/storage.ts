@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '@utils';
-import { CioConfig, CioLocationTrackingMode, CioLogLevel, CioRegion } from 'customerio-reactnative';
+import { CioConfig, CioLocationTrackingMode, CioLogLevel, CioRegion } from '@cio';
 import { Env } from '../env';
 
 const USER_STORAGE_KEY = 'user';

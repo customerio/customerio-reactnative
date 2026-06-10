@@ -1,6 +1,6 @@
 import { NavigationCallbackContext } from '@navigation';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { InlineInAppMessageView, type InAppMessage } from 'customerio-reactnative';
+import { InlineInAppMessageView, type InAppMessage } from '@cio';
 import React, { useContext } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 

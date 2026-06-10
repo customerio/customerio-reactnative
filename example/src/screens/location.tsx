@@ -5,7 +5,7 @@ import {
   ButtonExperience,
 } from '@components';
 import { Colors } from '@colors';
-import { CustomerIO } from 'customerio-reactnative';
+import { CustomerIO } from '@cio';
 import React, { useState } from 'react';
 import {
   Alert,
