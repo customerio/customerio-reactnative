@@ -21,7 +21,7 @@ Set `CIO_ENABLED=0` at build time to exclude Customer.io; omit it (or set anythi
 | JS bundle | [`metro.config.js`](metro.config.js) | Resolves the `@cio` facade to [`src/cio/index.noop.ts`](src/cio/index.noop.ts) (inert stub) instead of [`index.real.ts`](src/cio/index.real.ts), so `customerio-reactnative` is never bundled. |
 | Native linking | [`react-native.config.js`](react-native.config.js) | Disables autolinking (`platforms: { ios: null, android: null }`) so the native module isn't compiled in and its manifest entries/pods don't merge. |
 | iOS pods | [`ios/Podfile`](ios/Podfile) | Skips the `customerio-reactnative` + rich-push pods. |
-| iOS native code | [`ios/SampleApp/AppDelegate.swift`](ios/SampleApp/AppDelegate.swift) | `#if canImport(CioMessagingPush…)` guards compile out the CIO app-delegate wrapper and push init automatically when the pods are absent. |
+| iOS native code | [`ios/SampleApp/AppDelegate.swift`](ios/SampleApp/AppDelegate.swift), [`ios/NotificationServiceExtension/NotificationService.swift`](ios/NotificationServiceExtension/NotificationService.swift) | `#if canImport(CioMessagingPush…)` guards compile out the CIO app-delegate wrapper, push init, and the rich-push Notification Service Extension logic automatically when the pods are absent (the NSE falls back to delivering the notification unmodified). |
 
 > **All four must read the same flag.** The app imports CIO only through the `@cio` facade, never from `customerio-reactnative` directly. Every native bridge in the SDK uses `TurboModuleRegistry.getEnforcing(...)`, which throws at launch if the JS is loaded while the native module is unlinked — so a lazy/conditional `import()` is **not** a safe substitute for the facade swap.
 
