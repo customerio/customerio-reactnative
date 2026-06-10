@@ -48,6 +48,10 @@ on:
 env:
   RUBY_VERSION: '3.2'
   NODE_VERSION: '20'
+  # SHOWCASE ONLY (showcase/optional-cio-inclusion): force the disabled path so
+  # CI validates that the sample apps build with Customer.io fully excluded.
+  # Do not merge — normal builds must leave this unset (defaults to enabled).
+  CIO_ENABLED: '0'
 
 jobs:
   build-sample-app:
