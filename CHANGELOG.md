@@ -1,3 +1,9 @@
+## [6.5.2](https://github.com/customerio/customerio-reactnative/compare/6.5.1...6.5.2) (2026-06-23)
+
+### Bug Fixes
+
+* update native SDKs — iOS 4.5.3 (resolve duplicate event delivery bugs) and Android 4.18.2 (scope in-app polling to process lifecycle) ([#603](https://github.com/customerio/customerio-reactnative/issues/603)) ([45312e5](https://github.com/customerio/customerio-reactnative/commit/45312e585d251d74174a4607494f99e165602b50))
+
 ## [6.5.1](https://github.com/customerio/customerio-reactnative/compare/6.5.0...6.5.1) (2026-06-16)
 
 ### Bug Fixes
