@@ -1,6 +1,7 @@
 import CioMessagingInApp
 import Foundation
 import UIKit
+import WebKit
 
 /// React Native wrapper for inline message display with content view lifecycle management.
 ///
@@ -27,6 +28,14 @@ class ReactInlineMessageView: NSObject {
     func setElementId(_ elementId: String) {
         // Set element ID on the prepared content view
         contentView.elementId = elementId
+    }
+
+    private var showScrollIndicators: Bool = true
+
+    @objc
+    func setShowScrollIndicators(_ showScrollIndicators: Bool) {
+        self.showScrollIndicators = showScrollIndicators
+        applyScrollIndicators(in: contentView)
     }
 
     @objc
@@ -106,6 +115,7 @@ extension ReactInlineMessageView: InlineMessageBridgeViewDelegate {
     }
 
     func onMessageSizeChanged(width: CGFloat, height: CGFloat) {
+        applyScrollIndicators(in: contentView)
         sendOnSizeChangeEvent(width: width, height: height)
     }
 
@@ -114,11 +124,20 @@ extension ReactInlineMessageView: InlineMessageBridgeViewDelegate {
     }
 
     func onStartLoading(onComplete: @escaping () -> Void) {
+        applyScrollIndicators(in: contentView)
         sendOnStateChangeEvent(state: .loadingStarted)
         onComplete()
     }
 
     func onFinishLoading() {
         sendOnStateChangeEvent(state: .loadingFinished)
+    }
+
+    private func applyScrollIndicators(in view: UIView) {
+        if let webView = view as? WKWebView {
+            webView.scrollView.showsVerticalScrollIndicator = showScrollIndicators
+            webView.scrollView.showsHorizontalScrollIndicator = showScrollIndicators
+        }
+        view.subviews.forEach { applyScrollIndicators(in: $0) }
     }
 }
