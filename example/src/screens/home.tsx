@@ -9,7 +9,7 @@ import {
   NavigationScreenProps,
 } from '@navigation';
 import { Storage } from '@services';
-import { CioPushPermissionStatus } from 'customerio-reactnative';
+import { CioPushPermissionStatus } from '@cio';
 import React, { useContext, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';

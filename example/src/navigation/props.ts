@@ -1,7 +1,7 @@
 import { NavigationProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TrackEvent, User } from '@utils';
-import { CioConfig, CioPushPermissionStatus } from 'customerio-reactnative';
+import { CioConfig, CioPushPermissionStatus } from '@cio';
 
 export const SettingsScreenName = 'Settings' as const;
 export const HomeScreenName = 'Customer.io' as const;

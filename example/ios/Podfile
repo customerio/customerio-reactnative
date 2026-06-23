@@ -29,6 +29,13 @@ setup_permissions([
 
 push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
 
+# Single build-time flag — must agree with example/metro.config.js and
+# example/react-native.config.js. CIO_ENABLED=0 excludes the Customer.io pods
+# from the build entirely (no compiled CIO code in the app or the NSE target).
+# The matching #if canImport(...) guards in AppDelegate.swift then compile out
+# the native push setup automatically, since those modules won't be importable.
+cio_enabled = (ENV["CIO_ENABLED"] != "0")
+
 app_target_name = "SampleApp"
 nse_target_name = "NotificationServiceExtension"
 installation_root = Pod::Config.instance.installation_root
@@ -60,7 +67,9 @@ target app_target_name do
     :path => config[:reactNativePath],
     :app_path => "#{installation_root}/..",
   )
-  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location"]
+  if cio_enabled
+    pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location"]
+  end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 
@@ -79,7 +88,9 @@ target nse_target_name do
   inherit! :none
   # Ideally, installing non-production SDK to main target should be enough
   # We should not need to install non-production SDK to app extension separately
-  pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
+  if cio_enabled
+    pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
+  end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
 end

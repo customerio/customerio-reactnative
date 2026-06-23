@@ -1,5 +1,5 @@
 import { NavigationScreenProps } from '@navigation';
-import { CustomerIO, InboxMessage } from 'customerio-reactnative';
+import { CustomerIO, InboxMessage } from '@cio';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,

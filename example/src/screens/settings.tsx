@@ -13,7 +13,7 @@ import {
   CioLogLevel,
   CioRegion,
   CustomerIO,
-} from 'customerio-reactnative';
+} from '@cio';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
