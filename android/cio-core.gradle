@@ -3,10 +3,18 @@ dependencies {
     api "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
     // Location module is optional - customers enable it by adding
-    // customerio_location_enabled=true in their gradle.properties
-    if (project.cioLocationEnabled) {
+    // customerio_location_enabled=true in their gradle.properties.
+    // Geofence implies Location: enabling geofence pulls in location too.
+    if (project.cioLocationEnabled || project.cioGeofenceEnabled) {
         api "io.customer.android:location:$cioAndroidSDKVersion"
     } else {
         compileOnly "io.customer.android:location:$cioAndroidSDKVersion"
+    }
+    // Geofence module is optional - customers enable it by adding
+    // customerio_geofence_enabled=true in their gradle.properties
+    if (project.cioGeofenceEnabled) {
+        api "io.customer.android:geofence:$cioAndroidSDKVersion"
+    } else {
+        compileOnly "io.customer.android:geofence:$cioAndroidSDKVersion"
     }
 }

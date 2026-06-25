@@ -76,6 +76,12 @@ export type CioConfig = {
     /** Location tracking mode. Defaults to 'manual' if location config is provided. */
     trackingMode?: CioLocationTrackingMode;
   };
+  /**
+   * Geofence configuration. Providing this opts the app into geofence monitoring,
+   * which runs automatically once enabled and has no options yet. Enabling geofence
+   * also enables the Location module, which geofence depends on.
+   */
+  geofence?: {};
 };
 
 /**

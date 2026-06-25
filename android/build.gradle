@@ -26,6 +26,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 ext.cioLocationEnabled = rootProject.findProperty("customerio_location_enabled")?.toBoolean() ?: false
+ext.cioGeofenceEnabled = rootProject.findProperty("customerio_geofence_enabled")?.toBoolean() ?: false
 
 android {
   namespace = 'io.customer.reactnative.sdk'
@@ -33,7 +34,10 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    buildConfigField "boolean", "CIO_LOCATION_ENABLED", "${project.cioLocationEnabled}"
+    // Geofence implies Location, so the Location flag is on whenever geofence is enabled
+    // (mirrors the iOS geofence subspec, which also defines CIO_LOCATION_ENABLED).
+    buildConfigField "boolean", "CIO_LOCATION_ENABLED", "${project.cioLocationEnabled || project.cioGeofenceEnabled}"
+    buildConfigField "boolean", "CIO_GEOFENCE_ENABLED", "${project.cioGeofenceEnabled}"
     consumerProguardFiles 'consumer-rules.pro'
   }
 
