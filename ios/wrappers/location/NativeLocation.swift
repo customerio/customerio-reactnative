@@ -6,11 +6,13 @@ import CoreLocation
 @objc(NativeCustomerIOLocation)
 public class NativeLocation: NSObject {
 
-    /// Parses the root config and returns a `LocationModule` if location config is present.
-    /// Keeps config parsing within the location module.
-    static func module(from config: [String: Any]) -> LocationModule? {
-        guard let locationConfig = config["location"] as? [String: Any] else { return nil }
-        let trackingModeValue = locationConfig["trackingMode"] as? String
+    /// Parses the root config and returns a `LocationModule` when location config is present
+    /// or when geofence is enabled (geofence depends on the location module). Keeps config
+    /// parsing within the location module. Defaults to `manual` tracking when no config is given.
+    static func module(from config: [String: Any], geofenceEnabled: Bool = false) -> LocationModule? {
+        let locationConfig = config["location"] as? [String: Any]
+        guard locationConfig != nil || geofenceEnabled else { return nil }
+        let trackingModeValue = locationConfig?["trackingMode"] as? String
         let mode: LocationTrackingMode
         switch trackingModeValue?.uppercased() {
         case "OFF":

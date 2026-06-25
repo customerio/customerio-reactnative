@@ -8,6 +8,7 @@ import io.customer.datapipelines.config.ScreenView
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.toMap
+import io.customer.reactnative.sdk.geofence.NativeGeofenceModule
 import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
@@ -104,12 +105,28 @@ class NativeCustomerIOModule(
                         region = region
                     )
                 }
-                // Configure location module if enabled via gradle property
+                // Configure location module. Geofence implies location, so register location
+                // (with the app's config if given, otherwise defaults) whenever location or
+                // geofence is enabled, since geofence relies on the location module's fixes.
+                // CIO_LOCATION_ENABLED is already true for geofence-enabled builds.
                 if (BuildConfig.CIO_LOCATION_ENABLED) {
-                    packageConfig.getTypedValue<Map<String, Any>>(key = "location")?.let { locationConfig ->
+                    val locationConfig = packageConfig.getTypedValue<Map<String, Any>>(key = "location")
+                    val geofenceConfigured = BuildConfig.CIO_GEOFENCE_ENABLED &&
+                        packageConfig.getTypedValue<Map<String, Any>>(key = "geofence") != null
+                    if (locationConfig != null || geofenceConfigured) {
                         NativeLocationModule.addNativeModuleFromConfig(
                             builder = this,
-                            config = locationConfig
+                            config = locationConfig ?: emptyMap()
+                        )
+                    }
+                }
+                // Configure geofence module if enabled via gradle property; it runs
+                // automatically once registered and relies on the location module above.
+                if (BuildConfig.CIO_GEOFENCE_ENABLED) {
+                    packageConfig.getTypedValue<Map<String, Any>>(key = "geofence")?.let { geofenceConfig ->
+                        NativeGeofenceModule.addNativeModuleFromConfig(
+                            builder = this,
+                            config = geofenceConfig
                         )
                     }
                 }
