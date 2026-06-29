@@ -69,6 +69,15 @@ public class NativeCustomerIO: NSObject {
             }
             #endif
 
+            // Customer value wins; default on when the geofence module is added, off otherwise.
+            #if CIO_GEOFENCE_ENABLED
+            let geofenceAdded = config["geofence"] != nil
+            #else
+            let geofenceAdded = false
+            #endif
+            let allowBackgroundDelivery = (config["ios"] as? [String: Any])?["allowBackgroundDelivery"] as? Bool
+            _ = sdkConfigBuilder.allowBackgroundDelivery(allowBackgroundDelivery ?? geofenceAdded)
+
             let builtConfig = sdkConfigBuilder.build()
 
             // Only CustomerIO.initialize must run on the main thread (e.g. for Location module).

@@ -40,6 +40,9 @@ export type CioConfig = {
         trackingMode?: CioLocationTrackingMode;
     };
     geofence?: {};
+    ios?: {
+        allowBackgroundDelivery?: boolean;
+    };
 };
 
 // @public
