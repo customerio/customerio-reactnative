@@ -1,7 +1,7 @@
 # -------------
 # This code only used internally for Customer.io testing
 require 'open-uri'
-IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/main/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
+IO.copy_stream(URI.open('https://raw.githubusercontent.com/customerio/customerio-ios/feature/geofence-on-device/scripts/cocoapods_override_sdk.rb'), "/tmp/override_cio_sdk.rb")
 load "/tmp/override_cio_sdk.rb"
 # end of internal Customer.io testing code
 # -------------
@@ -63,7 +63,11 @@ target app_target_name do
   )
   pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location", "geofence"]
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
-  # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
+  # TEMP: geofence is not yet released; build against the feature branch. Revert once the native SDK ships.
+  install_non_production_ios_sdk_git_branch(branch_name: 'feature/geofence-on-device', is_app_extension: false, push_service: push_provider)
+  # TEMP: the umbrella CustomerIO/LocationGeofence subspec isn't on the released trunk spec yet,
+  # so resolve it from the feature branch's podspec explicitly. Revert once the native SDK ships.
+  pod 'CustomerIO/LocationGeofence', :git => 'https://github.com/customerio/customerio-ios.git', :branch => 'feature/geofence-on-device'
 
   post_install do |installer|
     react_native_post_install(

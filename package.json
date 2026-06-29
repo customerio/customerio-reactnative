@@ -19,7 +19,7 @@
     },
     "./package.json": "./package.json"
   },
-  "cioNativeiOSSdkVersion": "= 4.6.0",
+  "cioNativeiOSSdkVersion": "= 4.5.3",
   "cioiOSFirebaseWrapperSdkVersion": "= 1.0.0",
   "files": [
     "src",
