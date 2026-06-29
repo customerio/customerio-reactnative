@@ -1,3 +1,4 @@
+import { CustomerIOGeofence } from './customerio-geofence';
 import { CustomerIOInAppMessaging } from './customerio-inapp';
 import { CustomerIOLocation } from './customerio-location';
 import { CustomerIOPushMessaging } from './customerio-push';
@@ -178,6 +179,7 @@ export class CustomerIO {
    */
   static readonly isInitialized = () => _initialized;
 
+  static readonly geofence = new CustomerIOGeofence();
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
   static readonly location = new CustomerIOLocation();
   static readonly pushMessaging = new CustomerIOPushMessaging();
