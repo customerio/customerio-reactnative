@@ -82,6 +82,14 @@ export type CioConfig = {
    * also enables the Location module, which geofence depends on.
    */
   geofence?: {};
+  /** iOS-only SDK configuration. Has no effect on Android. */
+  ios?: {
+    /**
+     * Whether geofence transitions are delivered in real time on a background cold-wake.
+     * When unset, defaults to on if the geofence module is enabled, off otherwise.
+     */
+    allowBackgroundDelivery?: boolean;
+  };
 };
 
 /**
