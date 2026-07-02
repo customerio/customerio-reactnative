@@ -141,7 +141,7 @@ export const LocationScreen = () => {
       // The SDK's auto-fetch hook runs once per process, so a grant made in Settings
       // needs an explicit request to register geofences this session.
       if (status && isGrantedStatus(status) && !isGrantedStatus(previous)) {
-        CustomerIO.location.requestLocationUpdate();
+        CustomerIO.geofence.refreshFromCurrentLocation();
       }
     });
     return () => subscription.remove();
@@ -222,8 +222,8 @@ export const LocationScreen = () => {
       const result = await request(BACKGROUND_LOCATION_PERMISSION);
       await refreshLocationStatus();
       if (result === RESULTS.GRANTED) {
-        // Fetch so geofences register now (auto-fetch already ran this process).
-        CustomerIO.location.requestLocationUpdate();
+        // Refresh geofences from the current location now (silent — no analytics event).
+        CustomerIO.geofence.refreshFromCurrentLocation();
         showMessage({
           message: 'Background location granted — fetching location to start geofence',
           type: 'success',
@@ -273,8 +273,8 @@ export const LocationScreen = () => {
         const result = await request(LOCATION_PERMISSION);
         await refreshLocationStatus();
         if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
-          // Foreground granted — fetch so geofences register, then offer background.
-          CustomerIO.location.requestLocationUpdate();
+          // Foreground granted — refresh geofences from current location, then offer background.
+          CustomerIO.geofence.refreshFromCurrentLocation();
           showBackgroundRationale();
         } else if (result === RESULTS.BLOCKED) {
           showOpenSettingsDialog();

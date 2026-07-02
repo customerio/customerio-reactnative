@@ -155,6 +155,7 @@
         "NativeCustomerIOLogging": "RCTNativeCustomerIOLogging",
         "NativeCustomerIO": "RCTNativeCustomerIO",
         "NativeCustomerIOLocation": "RCTNativeCustomerIOLocation",
+        "NativeCustomerIOGeofence": "RCTNativeCustomerIOGeofence",
         "NativeCustomerIOMessagingInApp": "RCTNativeMessagingInApp",
         "NativeCustomerIOMessagingPush": "RCTNativeMessagingPush"
       }

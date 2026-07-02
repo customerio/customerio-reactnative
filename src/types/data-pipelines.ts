@@ -78,10 +78,18 @@ export type CioConfig = {
   };
   /**
    * Geofence configuration. Providing this opts the app into geofence monitoring,
-   * which runs automatically once enabled and has no options yet. Enabling geofence
-   * also enables the Location module, which geofence depends on.
+   * which runs automatically once enabled. Enabling geofence also enables the
+   * Location module, which geofence depends on.
    */
-  geofence?: {};
+  geofence?: {
+    /**
+     * How the SDK acquires location fixes for geofence monitoring. Defaults to
+     * `AUTOMATIC` (the SDK acquires location itself on identify and app launch). Use
+     * `MANUAL` to drive refreshes yourself via
+     * `CustomerIO.geofence.refreshFromCurrentLocation()`.
+     */
+    locationMode?: CioGeofenceLocationMode;
+  };
   /** iOS-only SDK configuration. Has no effect on Android. */
   ios?: {
     /**
@@ -147,6 +155,18 @@ export enum CioLocationTrackingMode {
   Manual = 'MANUAL',
   /** SDK auto-captures location once per app launch when the app becomes active. */
   OnAppStart = 'ON_APP_START',
+}
+
+/**
+ * How the Geofence module acquires location fixes.
+ *
+ * @public
+ */
+export enum CioGeofenceLocationMode {
+  /** SDK acquires location itself (on identify and app launch). Default. */
+  Automatic = 'AUTOMATIC',
+  /** Host drives refreshes via `CustomerIO.geofence.refreshFromCurrentLocation()`. */
+  Manual = 'MANUAL',
 }
 
 /**

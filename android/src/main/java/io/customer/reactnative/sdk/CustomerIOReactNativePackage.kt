@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import io.customer.reactnative.sdk.geofence.NativeGeofenceModule
 import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
@@ -35,6 +36,9 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             NativeCustomerIOModule.NAME -> NativeCustomerIOModule(reactContext = reactContext)
             NativeLocationModule.NAME -> if (BuildConfig.CIO_LOCATION_ENABLED) {
                 NativeLocationModule(reactContext)
+            } else null
+            NativeGeofenceModule.NAME -> if (BuildConfig.CIO_GEOFENCE_ENABLED) {
+                NativeGeofenceModule(reactContext)
             } else null
             NativeMessagingInAppModule.NAME -> NativeMessagingInAppModule(reactContext)
             NativeMessagingPushModule.NAME -> NativeMessagingPushModule(reactContext)
@@ -72,6 +76,7 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             NativeCustomerIOLoggingModule.NAME,
             NativeCustomerIOModule.NAME,
             NativeLocationModule.NAME,
+            NativeGeofenceModule.NAME,
             NativeMessagingInAppModule.NAME,
             NativeMessagingPushModule.NAME,
         )
