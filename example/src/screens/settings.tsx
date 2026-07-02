@@ -10,6 +10,7 @@ import {
 import { Storage } from '@services';
 import {
   CioConfig,
+  CioLocationTrackingMode,
   CioLogLevel,
   CioRegion,
   CustomerIO,
@@ -56,6 +57,28 @@ export const SettingsScreen = () => {
           }}
           selectedValue={config.region ?? CioRegion.US}
           label="Region"
+        />
+
+        <SingleSelect<CioLocationTrackingMode>
+          data={[
+            { label: 'Off', value: CioLocationTrackingMode.Off },
+            { label: 'Manual', value: CioLocationTrackingMode.Manual },
+            {
+              label: 'On App Start',
+              value: CioLocationTrackingMode.OnAppStart,
+            },
+          ]}
+          onValueChange={(trackingMode) => {
+            setConfig({
+              ...config,
+              location: { ...config.location, trackingMode },
+            });
+          }}
+          selectedValue={
+            config.location?.trackingMode ?? CioLocationTrackingMode.OnAppStart
+          }
+          label="Location Tracking Mode"
+          fullWidth
         />
 
         <Switch

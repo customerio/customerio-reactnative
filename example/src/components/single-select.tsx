@@ -10,6 +10,8 @@ type SingleSelectProps<T extends Key> = {
   selectedValue: T;
   onValueChange: (value: T) => void;
   label?: string;
+  /** Stack the label above the options and stretch the options to fill the width. */
+  fullWidth?: boolean;
 };
 
 export const SingleSelect = <T extends Key>({
@@ -17,18 +19,25 @@ export const SingleSelect = <T extends Key>({
   selectedValue,
   onValueChange,
   label,
+  fullWidth,
 }: SingleSelectProps<T>) => {
   const [value, setValue] = useState(selectedValue);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, fullWidth && styles.containerFullWidth]}>
       {label && <BoldText style={styles.label}>{label}</BoldText>}
-      <View style={styles.selectionItems}>
+      <View
+        style={[
+          styles.selectionItems,
+          fullWidth && styles.selectionItemsFullWidth,
+        ]}
+      >
         {data.map((item, index) => (
           <TouchableOpacity
             key={item.value}
             style={[
               styles.itemContainer,
+              fullWidth && styles.itemContainerFullWidth,
               item.value === value && styles.selectedItemContainer,
               index === 0 && styles.firstItemContainer,
               index === data.length - 1 && styles.lastItemContainer,
@@ -62,15 +71,28 @@ const styles = StyleSheet.create({
     gap: 8,
   },
 
+  containerFullWidth: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+
   selectionItems: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
   },
 
+  selectionItemsFullWidth: {
+    flexWrap: 'nowrap',
+  },
+
   itemContainer: {
     padding: 8,
     backgroundColor: Colors.secondaryBg,
+  },
+
+  itemContainerFullWidth: {
+    flex: 1,
   },
 
   selectedItemContainer: {
