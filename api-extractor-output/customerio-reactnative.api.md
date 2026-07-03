@@ -39,11 +39,19 @@ export type CioConfig = {
     location?: {
         trackingMode?: CioLocationTrackingMode;
     };
-    geofence?: {};
+    geofence?: {
+        locationMode?: CioGeofenceLocationMode;
+    };
     ios?: {
         allowBackgroundDelivery?: boolean;
     };
 };
+
+// @public
+export enum CioGeofenceLocationMode {
+    Automatic = "AUTOMATIC",
+    Manual = "MANUAL"
+}
 
 // @public
 export enum CioLocationTrackingMode {
@@ -114,8 +122,11 @@ export class CustomerIO {
     }) => Promise<void>;
 }
 
+// Warning: (ae-forgotten-export) The symbol "NativeGeofenceSpec" needs to be exported by the entry point index.d.ts
+//
 // @public
-export class CustomerIOGeofence {
+export class CustomerIOGeofence implements NativeGeofenceSpec {
+    refreshFromCurrentLocation(): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeInAppSpec" needs to be exported by the entry point index.d.ts
