@@ -96,6 +96,7 @@ jobs:
           PUBLIC_BUILDS_GROUP: public
           # Input variables
           CURRENT_BRANCH: ${{ github.ref }}
+          PR_HEAD_BRANCH: ${{ github.head_ref }}
         run: |
           # Initialize with the default distribution group
           distribution_groups=("$ALL_BUILDS_GROUP")
@@ -103,6 +104,10 @@ jobs:
           # Append distribution groups based on branch and context if the app is primary
           if [[ "$IS_PRIMARY_APP" == "true" ]]; then
             [[ "$CURRENT_BRANCH" == "refs/heads/feature/"* ]] && distribution_groups+=("$FEATURE_BUILDS_GROUP")
+            # TEMP (geofence pre-release): also publish this PR's builds to the feature-branch
+            # channel so peers can test geofence before native iOS 4.7.0 / Android 4.20.0 ship.
+            # Reverted with the rest of the geofence test wiring once native goes live.
+            [[ "$PR_HEAD_BRANCH" == "mbl-1785-geofence-final" ]] && distribution_groups+=("$FEATURE_BUILDS_GROUP")
             [[ "$CURRENT_BRANCH" == "refs/heads/main" ]] && distribution_groups+=("$NEXT_BUILDS_GROUP")
             [[ -n "${{ inputs.sdk_version }}" ]] && distribution_groups+=("$PUBLIC_BUILDS_GROUP")
           fi
