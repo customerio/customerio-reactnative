@@ -42,8 +42,10 @@ type LocationStatus =
   | 'backgroundGranted'
   | 'denied';
 
-const isGrantedStatus = (status: LocationStatus | null) =>
-  status === 'foregroundOnly' || status === 'backgroundGranted';
+// Higher = more access. Used to fetch only when the permission level increases
+// (e.g. gaining "Always" in Settings), never on a downgrade between states.
+const grantRank = (status: LocationStatus | null) =>
+  status === 'backgroundGranted' ? 2 : status === 'foregroundOnly' ? 1 : 0;
 
 const PRESETS: { label: string; lat: number; lng: number }[] = [
   { label: 'New York', lat: 40.7128, lng: -74.006 },
@@ -136,11 +138,11 @@ export const LocationScreen = () => {
       if (state !== 'active') return;
       const previous = locationStatusRef.current;
       const status = await refreshLocationStatus();
-      // Fetch only when gaining access from a non-granted state — not on a downgrade
-      // between granted states (e.g. revoking "Always" back to "When in Use" in Settings).
-      // The SDK's auto-fetch hook runs once per process, so a grant made in Settings
-      // needs an explicit request to register geofences this session.
-      if (status && isGrantedStatus(status) && !isGrantedStatus(previous)) {
+      // Fetch whenever the permission level increased (a grant made in Settings),
+      // including foregroundOnly → backgroundGranted; skip downgrades between states
+      // (e.g. revoking "Always" back to "When in Use"). The SDK's auto-fetch hook runs
+      // once per process, so a grant made in Settings needs an explicit request.
+      if (status && grantRank(status) > grantRank(previous)) {
         CustomerIO.geofence.refreshFromCurrentLocation();
       }
     });
@@ -195,7 +197,9 @@ export const LocationScreen = () => {
           ? "Upgrade to 'Always'"
           : 'Allow all the time';
       case 'backgroundGranted':
-        return Platform.OS === 'ios' ? 'Always — granted' : 'Background — granted';
+        return Platform.OS === 'ios'
+          ? '✓ Always — granted'
+          : '✓ Background — granted';
       case 'denied':
         return 'Open Settings';
       default:
@@ -220,8 +224,15 @@ export const LocationScreen = () => {
   const requestBackgroundLocation = async () => {
     try {
       const result = await request(BACKGROUND_LOCATION_PERMISSION);
-      await refreshLocationStatus();
-      if (result === RESULTS.GRANTED) {
+      const next = await refreshLocationStatus();
+      // A concurrent refresh (e.g. AppState resume on return from Settings) superseded
+      // this read and owns the outcome — don't act on the stale request payload.
+      if (next === null) {
+        return;
+      }
+      // Trust the freshly-read status: the OS may already show background granted
+      // (e.g. enabled in Settings) even when the request result comes back denied.
+      if (next === 'backgroundGranted' || result === RESULTS.GRANTED) {
         // Refresh geofences from the current location now (silent — no analytics event).
         CustomerIO.geofence.refreshFromCurrentLocation();
         showMessage({
@@ -248,10 +259,10 @@ export const LocationScreen = () => {
     Alert.alert(
       'Allow background location?',
       'Geofence transitions only fire while the app is backgrounded if you grant ' +
-        '"Always" / "Allow all the time". If no prompt appears, use Open Settings.',
+        '"Always" / "Allow all the time". Continue and choose it when prompted — or ' +
+        'in Settings if no prompt appears.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Open Settings', onPress: () => Linking.openSettings() },
         { text: 'Continue', onPress: () => requestBackgroundLocation() },
       ]
     );
@@ -361,6 +372,7 @@ export const LocationScreen = () => {
             experience={ButtonExperience.callToAction}
             onPress={handleBackgroundLocationTap}
             disabled={!backgroundButtonEnabled}
+            style={backgroundButtonEnabled ? undefined : styles.buttonDone}
           />
           <BodyText style={styles.hint}>
             Geofence runs automatically once enabled, but needs background
@@ -377,6 +389,7 @@ export const LocationScreen = () => {
             title="Request location once (SDK)"
             experience={ButtonExperience.normal}
             onPress={handleRequestSdkLocationUpdate}
+            style={styles.secondaryButton}
           />
           <BodyText style={styles.hint}>
             Ask for permission if needed, then SDK fetches location once. The SDK
@@ -394,7 +407,7 @@ export const LocationScreen = () => {
                 title={label}
                 experience={ButtonExperience.normal}
                 onPress={() => handlePreset(lat, lng, label)}
-                style={styles.presetButton}
+                style={[styles.presetButton, styles.secondaryButton]}
               />
             ))}
           </View>
@@ -408,7 +421,7 @@ export const LocationScreen = () => {
             title={useCurrentLocationLoading ? '📍  Fetching...' : '📍  Use Current Location'}
             experience={ButtonExperience.normal}
             onPress={handleUseCurrentLocation}
-            style={styles.useCurrentButton}
+            style={[styles.useCurrentButton, styles.secondaryButton]}
             disabled={useCurrentLocationLoading}
           />
           <BodyText style={styles.hint}>
@@ -480,6 +493,15 @@ const styles = StyleSheet.create({
   sectionHeading: {
     fontWeight: '700',
     marginBottom: 4,
+  },
+  // Granted state: keep the CTA color but dim it so it reads as done, not actionable.
+  buttonDone: {
+    opacity: 0.55,
+  },
+  // Secondary buttons: darker fill so they stay visible against the card (which
+  // shares the default 'normal' button color).
+  secondaryButton: {
+    backgroundColor: Colors.bodyBg,
   },
   presetGrid: {
     flexDirection: 'row',
