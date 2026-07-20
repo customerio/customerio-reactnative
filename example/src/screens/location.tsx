@@ -230,9 +230,10 @@ export const LocationScreen = () => {
       if (next === null) {
         return;
       }
-      // Trust the freshly-read status: the OS may already show background granted
-      // (e.g. enabled in Settings) even when the request result comes back denied.
-      if (next === 'backgroundGranted' || result === RESULTS.GRANTED) {
+      // The freshly-read status is the single source of truth: request() can lag
+      // behind the OS (e.g. "Always" enabled in Settings), and it can also report
+      // GRANTED when the fresh check still reads foregroundOnly — so trust `next`.
+      if (next === 'backgroundGranted') {
         // Refresh geofences from the current location now (silent — no analytics event).
         CustomerIO.geofence.refreshFromCurrentLocation();
         showMessage({
@@ -282,8 +283,13 @@ export const LocationScreen = () => {
       default: {
         // notDetermined: request foreground first, then escalate to background.
         const result = await request(LOCATION_PERMISSION);
-        await refreshLocationStatus();
-        if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
+        const next = await refreshLocationStatus();
+        // A concurrent refresh superseded this read and owns the outcome.
+        if (next === null) {
+          return;
+        }
+        // Trust the freshly-read status (same as requestBackgroundLocation).
+        if (next === 'foregroundOnly' || next === 'backgroundGranted') {
           // Foreground granted — refresh geofences from current location, then offer background.
           CustomerIO.geofence.refreshFromCurrentLocation();
           showBackgroundRationale();
