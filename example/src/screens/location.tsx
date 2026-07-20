@@ -282,14 +282,13 @@ export const LocationScreen = () => {
         return;
       default: {
         // notDetermined: request foreground first, then escalate to background.
+        // The in-app foreground prompt makes request()'s result authoritative here
+        // (unlike the background/Settings path); a concurrent AppState refresh can
+        // supersede a status read, so branch on the result to avoid skipping the
+        // background rationale.
         const result = await request(LOCATION_PERMISSION);
-        const next = await refreshLocationStatus();
-        // A concurrent refresh superseded this read and owns the outcome.
-        if (next === null) {
-          return;
-        }
-        // Trust the freshly-read status (same as requestBackgroundLocation).
-        if (next === 'foregroundOnly' || next === 'backgroundGranted') {
+        await refreshLocationStatus();
+        if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
           // Foreground granted — refresh geofences from current location, then offer background.
           CustomerIO.geofence.refreshFromCurrentLocation();
           showBackgroundRationale();
