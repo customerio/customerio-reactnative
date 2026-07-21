@@ -18,7 +18,7 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     logLevel: CioLogLevel.Debug,
     trackApplicationLifecycleEvents: true,
     location: {
-      trackingMode: CioLocationTrackingMode.OnAppStart,
+      trackingMode: CioLocationTrackingMode.Manual,
     },
     // Opt into geofence monitoring. Runs automatically once enabled and implies the
     // Location module above.

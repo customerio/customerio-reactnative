@@ -75,7 +75,7 @@ export const SettingsScreen = () => {
             });
           }}
           selectedValue={
-            config.location?.trackingMode ?? CioLocationTrackingMode.OnAppStart
+            config.location?.trackingMode ?? CioLocationTrackingMode.Manual
           }
           label="Location Tracking Mode"
           fullWidth
