@@ -131,7 +131,10 @@ export const LiveActivitiesScreen = () => {
       if (Platform.OS === 'ios') {
         await SampleCustomLiveActivity.updateRideshare(customId, 'Almost there', 2);
       } else {
-        // The wrapper's custom API re-issues start to replace the live notification's content.
+        // Android has no by-id update for custom types: `startCustom` always mints a new
+        // notification. End the current one first so we replace it in place instead of
+        // stacking a second notification and orphaning the previous one.
+        await CustomerIO.liveActivities.end(customId);
         const id = await CustomerIO.liveActivities.startCustom(RIDESHARE_TYPE, {
           driverName: 'Alex',
           status: 'Almost there',
