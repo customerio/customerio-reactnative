@@ -4,6 +4,8 @@ import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
 import UserNotifications
+// Wrapper pod module — exposes NativeLiveActivities for reporting a Live Activity deep-link open.
+import customerio_reactnative
 
 #if USE_FCM
 import FirebaseMessaging
@@ -83,6 +85,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: Deep linking
 extension AppDelegate {
   func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    // Reference pattern: report the "opened" metric when the app is launched from a tapped Live
+    // Activity. A Live Activity tap arrives here (the app's URL entry point), not through JS, so the
+    // host app forwards the URL to the wrapper. Returns true if it matched a CIO-tracked activity.
+    NativeLiveActivities.reportDeepLinkOpen(url)
+
     return RCTLinkingManager.application(app, open: url, options: options)
   }
   
