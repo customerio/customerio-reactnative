@@ -64,6 +64,11 @@ public class NativeCustomerIO: NSObject {
                 }
                 CustomerIO.initialize(withConfig: builtConfig)
 
+                #if CIO_LIVEACTIVITIES_ENABLED
+                // Initialize Live Activities after CustomerIO.initialize (it reads the shared SDK).
+                NativeLiveActivities.initializeModule(from: config)
+                #endif
+
                 do {
                     // Initialize in-app messaging if config provided
                     if let inAppConfig = try MessagingInAppConfigBuilder.build(from: config) {
