@@ -53,7 +53,9 @@ public class NativeCustomerIO: NSObject {
             // config is provided or geofence is enabled, since geofence relies on the
             // location module's fixes.
             #if CIO_GEOFENCE_ENABLED
-            let geofenceConfigured = config["geofence"] != nil
+            // Match NativeGeofence.module(from:): only a dictionary counts as configured,
+            // so a non-map value (e.g. null bridged from JS) doesn't imply location.
+            let geofenceConfigured = config["geofence"] as? [String: Any] != nil
             #else
             let geofenceConfigured = false
             #endif
@@ -71,7 +73,9 @@ public class NativeCustomerIO: NSObject {
 
             // Customer value wins; default on when the geofence module is added, off otherwise.
             #if CIO_GEOFENCE_ENABLED
-            let geofenceAdded = config["geofence"] != nil
+            // Match NativeGeofence.module(from:): only a dictionary adds the module, so
+            // background delivery shouldn't default on for a non-map geofence value.
+            let geofenceAdded = config["geofence"] as? [String: Any] != nil
             #else
             let geofenceAdded = false
             #endif
