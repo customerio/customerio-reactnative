@@ -26,8 +26,8 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     location: {
       trackingMode: CioLocationTrackingMode.OnAppStart,
     },
-    liveActivities: {
-      templates: [
+    liveNotifications: {
+      types: [
         LiveActivityTemplate.Segments,
         LiveActivityTemplate.CountdownTimer,
       ],

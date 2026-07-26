@@ -6,7 +6,7 @@ import { NativeModules, Platform, ScrollView, StyleSheet, View } from 'react-nat
 import { showMessage } from 'react-native-flash-message';
 
 // Reverse-DNS identifier for the app-defined "rideshare" activity type. Must match the
-// value registered in the SDK config (`liveActivities.customTypes`), the Android
+// value registered in the SDK config (`liveNotifications.customTypes`), the Android
 // `createLiveNotification` callback, and the iOS widget's `RideshareAttributes`.
 const RIDESHARE_TYPE = 'io.customer.livenotifications.custom.rideshare';
 

@@ -11,7 +11,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
-import io.customer.messagingpush.data.communication.CustomerIOPushNotificationCallback
+import io.customer.messagingpush.data.communication.CustomerIOLiveNotificationsCallback
 import io.customer.messagingpush.data.model.CustomerIOParsedPushPayload
 import io.customer.reactnative.sdk.liveactivities.NativeLiveActivitiesModule
 
@@ -45,7 +45,7 @@ class MainApplication : Application(), ReactApplication {
  * [createLiveNotification] for every live notification; return a built [Notification] to take
  * over rendering for our custom type, or null to let the SDK use its built-in templates.
  */
-private class RideshareLiveNotificationCallback : CustomerIOPushNotificationCallback {
+private class RideshareLiveNotificationCallback : CustomerIOLiveNotificationsCallback {
   override fun createLiveNotification(
     payload: CustomerIOParsedPushPayload,
     context: Context,
