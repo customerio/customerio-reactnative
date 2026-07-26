@@ -78,7 +78,7 @@ export type CioConfig = {
     trackingMode?: CioLocationTrackingMode;
   };
   /** Live Activities (iOS) / Live Notifications (Android) configuration. */
-  liveActivities?: LiveActivitiesConfig;
+  liveNotifications?: LiveActivitiesConfig;
 };
 
 /**

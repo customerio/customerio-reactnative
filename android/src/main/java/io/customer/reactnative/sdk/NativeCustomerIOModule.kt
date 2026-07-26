@@ -96,7 +96,7 @@ class NativeCustomerIOModule(
                     NativeMessagingPushModule.addNativeModuleFromConfig(
                         builder = this,
                         config = pushConfig ?: emptyMap(),
-                        liveActivitiesConfig = packageConfig.getTypedValue<Map<String, Any>>(key = "liveActivities")
+                        liveActivitiesConfig = packageConfig.getTypedValue<Map<String, Any>>(key = "liveNotifications")
                     )
                 }
                 // Configure in-app messaging module based on config provided by customer app

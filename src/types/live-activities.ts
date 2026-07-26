@@ -9,14 +9,19 @@
  */
 
 /**
- * Built-in template identifiers usable from the wrapper.
+ * Built-in activity type identifiers usable from the wrapper.
  *
- * Use these enum members (not raw strings) for `LiveActivitiesConfig.templates`
- * and a payload's `type` to avoid typos.
+ * The values are the reverse-DNS identifiers Customer.io uses everywhere — the
+ * `notificationType` on the wire, Android's `LiveNotificationType`, and iOS's
+ * `CIOSegmentsAttributes.identifier` — so JS, both native SDKs, and the backend
+ * share one vocabulary.
+ *
+ * Use these enum members (not raw strings) for `LiveActivitiesConfig.types` and a
+ * payload's `type` to avoid typos.
  */
 export enum LiveActivityTemplate {
-  Segments = 'segments',
-  CountdownTimer = 'countdownTimer',
+  Segments = 'io.customer.livenotifications.segments',
+  CountdownTimer = 'io.customer.livenotifications.countdowntimer',
 }
 
 /**
@@ -79,6 +84,11 @@ export interface LiveActivitiesBranding {
   companyName?: string;
   /** Accent color as "#RRGGBB". */
   accentColorHex?: string;
+  /**
+   * Bundled Android drawable resource name for the logo, resolved natively.
+   * Preferred over {@link logoUrl} when both are set — it needs no network.
+   */
+  logoResource?: string;
   /** Remote logo URL (downloaded and cached natively). */
   logoUrl?: string;
   /** Android drawable resource name, resolved natively. */
@@ -86,13 +96,17 @@ export interface LiveActivitiesBranding {
 }
 
 /**
- * Live Activities configuration, passed under the `liveActivities` key of the SDK config.
+ * Live Activities configuration, passed under the `liveNotifications` key of the SDK config.
  *
  * @public
  */
 export interface LiveActivitiesConfig {
-  /** Built-in templates to enable. Enables the matching native type on each platform. */
-  templates?: LiveActivityTemplate[];
+  /**
+   * Built-in activity types to enable. Enables the matching native type on each
+   * platform and registers push-to-start for it. Unrecognized identifiers are
+   * ignored, so a newer native template can't break an older wrapper build.
+   */
+  types?: LiveActivityTemplate[];
   /** Reverse-DNS identifiers for custom (app-defined) activity types. */
   customTypes?: string[];
   /** Android Live Notification branding (ignored on iOS). */

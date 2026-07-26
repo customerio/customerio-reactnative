@@ -8,8 +8,13 @@ import Foundation
 
 @objc(NativeCustomerIOLiveActivities)
 public class NativeLiveActivities: NSObject {
-    /// The held Live Activities module (not a singleton in the native SDK), created during SDK init.
-    private static var module: LiveActivitiesModule?
+    /// Reverse-DNS activity type identifiers for the SDK's built-in templates. These are the same
+    /// strings the backend sends as `notificationType` and that Android's `LiveNotificationType`
+    /// exposes, so JS, both native SDKs, and the wire format share one vocabulary.
+    enum TypeIdentifier {
+        static let segments = "io.customer.livenotifications.segments"
+        static let countdownTimer = "io.customer.livenotifications.countdowntimer"
+    }
 
     /// Type-erased handles keyed by activity id. The native `start` returns a generic
     /// `CIOLiveActivity<Attributes>` that can't cross the bridge, so we keep closures that capture
@@ -22,22 +27,31 @@ public class NativeLiveActivities: NSObject {
     private static var activities: [String: ActivityBox] = [:]
     private static let lock = NSLock()
 
-    // MARK: - Init from SDK config
+    // MARK: - Module registration
 
-    /// Initialize the Live Activities module from the SDK config's `liveActivities` key. Registers
-    /// the enabled built-in template attribute types so `start` can request them.
-    static func initializeModule(from config: [String: Any]) {
-        guard let laConfig = config["liveActivities"] as? [String: Any] else { return }
-        guard #available(iOS 16.2, *) else { return }
-        let templates = (laConfig["templates"] as? [String]) ?? []
+    /// Build the Live Activities module from the SDK config's `liveNotifications` key, mirroring
+    /// ``NativeLocation/module(from:)``. Registers the enabled built-in template attribute types so
+    /// `CustomerIO.liveActivities.start` can request them, and so push-to-start tokens register for
+    /// them at SDK init.
+    ///
+    /// Unrecognized type identifiers are ignored: a newer native SDK may ship templates this
+    /// wrapper build doesn't know, and that must never break registration of the ones it does.
+    static func module(from config: [String: Any]) -> LiveActivitiesModule? {
+        guard let liveConfig = config["liveNotifications"] as? [String: Any] else { return nil }
+        guard #available(iOS 16.2, *) else { return nil }
+        let types = (liveConfig["types"] as? [String]) ?? []
         var builder = LiveActivityConfigBuilder()
-        if templates.contains("segments") {
-            builder = builder.register(CIOSegmentsAttributes.self)
+        for type in types {
+            switch type {
+            case TypeIdentifier.segments:
+                builder = builder.register(CIOSegmentsAttributes.self)
+            case TypeIdentifier.countdownTimer:
+                builder = builder.register(CIOCountdownTimerAttributes.self)
+            default:
+                continue
+            }
         }
-        if templates.contains("countdownTimer") {
-            builder = builder.register(CIOCountdownTimerAttributes.self)
-        }
-        module = LiveActivitiesModule.initialize(builder.build())
+        return LiveActivitiesModule(config: builder.build())
     }
 
     // MARK: - Bridge methods
@@ -48,31 +62,40 @@ public class NativeLiveActivities: NSObject {
         resolve: @escaping RCTPromiseResolveBlock,
         reject: @escaping RCTPromiseRejectBlock
     ) {
-        guard #available(iOS 16.2, *), let module = Self.module else {
+        guard #available(iOS 16.2, *) else {
             return reject(Self.unavailableCode, Self.unavailableMessage, nil)
         }
         guard let map = payload as? [String: Any], let type = map["type"] as? String else {
             return reject("live_activity_start_failed", "payload.type is required", nil)
         }
         do {
+            // A nil handle means the module isn't registered or this type wasn't enabled. The
+            // native SDK logs and returns nil rather than throwing, so surface it as a rejected
+            // promise — never a crash.
             let id: String
             switch type {
-            case "segments":
-                let handle = try module.start(
+            case TypeIdentifier.segments:
+                guard let handle = try CustomerIO.liveActivities.start(
                     CIOSegmentsAttributes(header: map["header"] as? String ?? ""),
                     contentState: Self.segmentsState(from: map)
-                )
+                ) else {
+                    return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
+                }
                 Self.store(handle: handle, contentBuilder: Self.segmentsState)
                 id = handle.id
-            case "countdownTimer":
-                let handle = try module.start(
+            case TypeIdentifier.countdownTimer:
+                guard let handle = try CustomerIO.liveActivities.start(
                     CIOCountdownTimerAttributes(header: map["header"] as? String ?? ""),
                     contentState: Self.countdownState(from: map)
-                )
+                ) else {
+                    return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
+                }
                 Self.store(handle: handle, contentBuilder: Self.countdownState)
                 id = handle.id
             default:
-                return reject("live_activity_start_failed", "Unknown live activity template type: \(type)", nil)
+                // A newer native SDK may know this type even though this wrapper build doesn't.
+                // Fail softly so an unrecognized template can never crash the host app.
+                return reject(Self.unsupportedTypeCode, "Unsupported Live Activity template: \(type)", nil)
             }
             resolve(id)
         } catch {
@@ -139,14 +162,17 @@ public class NativeLiveActivities: NSObject {
         )
     }
 
-    /// Report an `opened` metric when the app is opened from a tapped Live Activity.
+    /// Report an `opened` metric for a tapped Live Activity and return the deep link to route to.
     ///
     /// Not exposed to JavaScript: a Live Activity tap arrives through the app's native URL/scene
-    /// entry point, so call this from there (see the sample app's `AppDelegate`). Returns `true`
-    /// if `url` matched a Customer.io-tracked activity's deep link.
+    /// entry point, so call this from there (see the sample app's `AppDelegate`).
+    ///
+    /// - Returns: the customer's redirect URL for a Customer.io widget URL (`nil` when it carries
+    ///   none), or `url` unchanged when it isn't a Customer.io URL — so existing routing still
+    ///   handles non-CIO links.
     @discardableResult
-    public static func reportDeepLinkOpen(_ url: URL) -> Bool {
-        module?.handleDeepLinkOpen(url) ?? false
+    public static func handleWidgetUrl(_ url: URL) -> URL? {
+        CustomerIO.liveActivities.handleWidgetUrl(url)
     }
 
     // MARK: - Helpers
@@ -195,6 +221,14 @@ public class NativeLiveActivities: NSObject {
 
     private static let unavailableCode = "live_activity_module_unavailable"
     private static let unavailableMessage =
-        "Live Activities are unavailable. Enable live activity templates in the SDK config and add the widget extension."
+        "Live Activities require iOS 16.2 or later."
+
+    private static let notRegisteredCode = "live_activity_type_not_registered"
+    private static func notRegisteredMessage(_ type: String) -> String {
+        "Live Activity type '\(type)' is not registered. Add it to `liveNotifications.types` in your " +
+            "Customer.io SDK config, and make sure your widget extension renders it."
+    }
+
+    private static let unsupportedTypeCode = "live_activity_type_unsupported"
 }
 #endif

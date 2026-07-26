@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.module.annotations.ReactModule
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
+import io.customer.messagingpush.data.communication.CustomerIOLiveNotificationsCallback
 import io.customer.messagingpush.livenotification.LiveNotificationAsset
 import io.customer.messagingpush.livenotification.LiveNotificationBranding
 import io.customer.messagingpush.livenotification.LiveNotificationData
@@ -87,7 +88,7 @@ class NativeLiveActivitiesModule(
 
     private fun parseData(payload: ReadableMap): LiveNotificationData {
         return when (val type = payload.getString("type")) {
-            "segments" -> LiveNotificationData.Segments(
+            LiveNotificationType.SEGMENTS.identifier -> LiveNotificationData.Segments(
                 header = payload.requireString("header"),
                 status = payload.requireString("status"),
                 substatus = payload.optString("substatus"),
@@ -96,7 +97,7 @@ class NativeLiveActivitiesModule(
                 trailingText = payload.optString("trailingText"),
             )
 
-            "countdownTimer" -> LiveNotificationData.CountdownTimer(
+            LiveNotificationType.COUNTDOWN_TIMER.identifier -> LiveNotificationData.CountdownTimer(
                 header = payload.requireString("header"),
                 title = payload.requireString("title"),
                 statusMessage = payload.optString("statusMessage"),
@@ -107,7 +108,9 @@ class NativeLiveActivitiesModule(
                 },
             )
 
-            else -> throw IllegalArgumentException("Unknown live activity template type: $type")
+            // A newer native SDK may know this type even though this wrapper build doesn't.
+            // Reject softly (the caller turns this into a rejected promise) rather than crash.
+            else -> throw IllegalArgumentException("Unsupported Live Activity template: $type")
         }
     }
 
@@ -140,19 +143,18 @@ class NativeLiveActivitiesModule(
         // (e.g. in Application.onCreate before React Native starts). Stored statically because the
         // SDK config is applied in applyLiveActivitiesConfig, not on this module instance.
         @Volatile
-        private var liveNotificationCallback:
-            io.customer.messagingpush.data.communication.CustomerIOPushNotificationCallback? = null
+        private var liveNotificationCallback: CustomerIOLiveNotificationsCallback? = null
 
         /**
-         * Register the host app's callback for rendering custom live notifications. Custom
+         * Register the host app's callback for rendering live notifications itself. Custom
          * (app-defined) activity types have no built-in template, so the app must build the
-         * [android.app.Notification] in [io.customer.messagingpush.data.communication.CustomerIOPushNotificationCallback.createLiveNotification].
+         * [android.app.Notification] in
+         * [CustomerIOLiveNotificationsCallback.createLiveNotification]; returning `null` there
+         * falls back to the SDK's built-in template.
          * Call this before the Customer.io SDK is initialized.
          */
         @JvmStatic
-        fun setLiveNotificationCallback(
-            callback: io.customer.messagingpush.data.communication.CustomerIOPushNotificationCallback,
-        ) {
+        fun setLiveNotificationCallback(callback: CustomerIOLiveNotificationsCallback) {
             liveNotificationCallback = callback
         }
 
@@ -168,17 +170,15 @@ class NativeLiveActivitiesModule(
             builder: MessagingPushModuleConfig.Builder,
             config: Map<String, Any>,
         ) {
-            // Wire the host app's custom-live-notification renderer, if one was registered.
-            liveNotificationCallback?.let { builder.setNotificationCallback(it) }
+            // Wire the host app's live-notification renderer, if one was registered.
+            liveNotificationCallback?.let { builder.setLiveNotificationCallback(it) }
 
-            val templateTypes = config.getTypedValue<List<*>>("templates")
+            // Unrecognized identifiers are ignored: a newer native SDK may ship types this
+            // wrapper build doesn't know, and that must never break the ones it does know.
+            val templateTypes = config.getTypedValue<List<*>>("types")
                 ?.mapNotNull { it as? String }
-                ?.mapNotNull { name ->
-                    when (name) {
-                        "segments" -> LiveNotificationType.SEGMENTS
-                        "countdownTimer" -> LiveNotificationType.COUNTDOWN_TIMER
-                        else -> null
-                    }
+                ?.mapNotNull { identifier ->
+                    LiveNotificationType.entries.firstOrNull { it.identifier == identifier }
                 }
                 .orEmpty()
             if (templateTypes.isNotEmpty()) {
@@ -197,23 +197,34 @@ class NativeLiveActivitiesModule(
                 val accentColor = branding.getTypedValue<String>("accentColorHex")
                     ?.let { runCatching { Color.parseColor(it) }.getOrNull() }
                     ?: Color.TRANSPARENT
-                val logoUrl = branding.getTypedValue<String>("logoUrl")
+                // A bundled drawable is preferred over a remote URL: it renders without a network
+                // round-trip, so the logo is present on the very first frame.
+                val logo = branding.getTypedValue<String>("logoResource")
+                    ?.let { name -> drawableResId(name)?.let(LiveNotificationAsset::Drawable) }
+                    ?: branding.getTypedValue<String>("logoUrl")
+                        ?.let(LiveNotificationAsset::RemoteUrl)
                 val smallIcon = branding.getTypedValue<String>("smallIconResource")
-                    ?.let { name ->
-                        val context = SDKComponent.android().applicationContext
-                        context.resources
-                            .getIdentifier(name, "drawable", context.packageName)
-                            .takeIf { it != 0 }
-                    }
+                    ?.let { name -> drawableResId(name) }
                 builder.setLiveNotificationBranding(
                     LiveNotificationBranding(
                         companyName = branding.getTypedValue<String>("companyName").orEmpty(),
                         accentColor = accentColor,
                         smallIcon = smallIcon,
-                        logo = logoUrl?.let { LiveNotificationAsset.RemoteUrl(it) },
+                        logo = logo,
                     ),
                 )
             }
+        }
+
+        /**
+         * Resolve a bundled drawable by name, or `null` when the host app doesn't ship one under
+         * that name — a missing asset must degrade to "no image", never crash rendering.
+         */
+        private fun drawableResId(name: String): Int? {
+            val context = SDKComponent.android().applicationContext
+            return context.resources
+                .getIdentifier(name, "drawable", context.packageName)
+                .takeIf { it != 0 }
         }
     }
 }

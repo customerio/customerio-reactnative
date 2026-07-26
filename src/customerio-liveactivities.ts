@@ -41,8 +41,8 @@ const withNativeModule = <T>(
  * Live Activities (iOS) / Live Notifications (Android).
  *
  * Start, update, and end live, updating notifications from built-in templates
- * (Segments, Countdown Timer). Enable templates via the `liveActivities` key of the
- * SDK config passed to {@link CustomerIO.initialize}.
+ * (Segments, Countdown Timer). Enable the activity types via the `liveNotifications`
+ * key of the SDK config passed to {@link CustomerIO.initialize}.
  *
  * @public
  */
