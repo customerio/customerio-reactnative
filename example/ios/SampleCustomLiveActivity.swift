@@ -1,5 +1,6 @@
 #if os(iOS)
 import ActivityKit
+import CioDataPipelines
 import CioLiveActivities
 import Foundation
 import React
@@ -8,19 +9,19 @@ import React
 ///
 /// iOS custom activity types can't be data-driven across the Customer.io wrapper bridge (they need
 /// an app-declared `ActivityAttributes` + Widget Extension), so the sample app ships this module
-/// instead. It holds its own `LiveActivitiesModule` — separate from the one the wrapper creates for
-/// the built-in templates — registered for ``RideshareAttributes``. The SDK still mints ids, sends
-/// push tokens, and reports start/update/end lifecycle events for the type.
+/// instead. The app requests the activity itself through ActivityKit and hands it to
+/// ``CustomerIO/liveActivities`` via `adopt(_:)`, which returns a handle whose update/end report
+/// lifecycle events.
+///
+/// Note `adopt` intentionally does not report a `start` event — reporting one requires the type to
+/// be registered on the SDK's Live Activities module, and only a Swift metatype can do that, which
+/// can't cross the bridge from JavaScript.
 ///
 /// This mirrors the wrapper's `ios/wrappers/liveactivities/NativeLiveActivities.swift`: the generic
 /// `start` returns a `CIOLiveActivity<Attributes>` handle that can't cross the bridge, so we keep a
 /// per-id box of closures that capture the concrete handle for later update/end.
 @objc(SampleCustomLiveActivity)
 class SampleCustomLiveActivity: NSObject {
-    private static let rideshareIdentifier = "io.customer.livenotifications.custom.rideshare"
-
-    private static var module: LiveActivitiesModule?
-
     private struct ActivityBox {
         let update: (_ status: String, _ etaMinutes: Int) async -> Void
         let end: () async -> Void
@@ -28,18 +29,6 @@ class SampleCustomLiveActivity: NSObject {
 
     private static var activities: [String: ActivityBox] = [:]
     private static let lock = NSLock()
-
-    @available(iOS 16.2, *)
-    private static func sharedModule() -> LiveActivitiesModule {
-        if let module { return module }
-        let created = LiveActivitiesModule.initialize(
-            LiveActivityConfigBuilder()
-                .register(RideshareAttributes.self, identifier: rideshareIdentifier)
-                .build()
-        )
-        module = created
-        return created
-    }
 
     @objc(startRideshare:status:eta:resolve:reject:)
     func startRideshare(
@@ -53,10 +42,21 @@ class SampleCustomLiveActivity: NSObject {
             return reject("live_activity_unavailable", "Live Activities require iOS 16.2+", nil)
         }
         do {
-            let handle = try Self.sharedModule().start(
-                RideshareAttributes(driverName: driverName),
-                contentState: RideshareAttributes.ContentState(status: status, etaMinutes: eta.intValue)
+            let activity = try Activity.request(
+                attributes: RideshareAttributes(driverName: driverName),
+                content: ActivityContent(
+                    state: RideshareAttributes.ContentState(status: status, etaMinutes: eta.intValue),
+                    staleDate: nil
+                ),
+                pushType: nil
             )
+            guard let handle = CustomerIO.liveActivities.adopt(activity) else {
+                return reject(
+                    "live_activity_module_unavailable",
+                    "Customer.io Live Activities are not initialized. Initialize the SDK first.",
+                    nil
+                )
+            }
             Self.store(handle: handle)
             resolve(handle.id)
         } catch {
