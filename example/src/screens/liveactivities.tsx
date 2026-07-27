@@ -64,7 +64,15 @@ export const LiveActivitiesScreen = () => {
   const endSegments = async () => {
     if (!segmentsId) return;
     try {
-      await CustomerIO.liveActivities.end(segmentsId);
+      // Pass a final content-state so iOS renders a terminal card instead of freezing on the
+      // last progress value. Android ignores it and renders its own terminal state.
+      await CustomerIO.liveActivities.end(segmentsId, {
+        type: LiveActivityTemplate.Segments,
+        header: 'Order #4021',
+        status: 'Delivered',
+        segmentsTotal,
+        segmentsComplete: segmentsTotal,
+      });
       showMessage({ message: 'Segments ended', type: 'info' });
       setSegmentsId(null);
       setSegmentsComplete(0);
@@ -92,7 +100,13 @@ export const LiveActivitiesScreen = () => {
   const endCountdown = async () => {
     if (!countdownId) return;
     try {
-      await CustomerIO.liveActivities.end(countdownId);
+      // Terminal state: drop the endTime so the card reads as finished rather than counting down.
+      await CustomerIO.liveActivities.end(countdownId, {
+        type: LiveActivityTemplate.CountdownTimer,
+        header: 'Flash sale',
+        title: 'Sale ended',
+        statusMessage: 'Thanks for shopping',
+      });
       showMessage({ message: 'Countdown ended', type: 'info' });
       setCountdownId(null);
     } catch (e) {
