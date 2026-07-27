@@ -238,7 +238,7 @@ export interface LiveActivitiesBranding {
 export interface LiveActivitiesConfig {
     branding?: LiveActivitiesBranding;
     customType?: string;
-    types?: LiveActivityTemplate[];
+    types?: Exclude<LiveActivityTemplate, LiveActivityTemplate.Custom>[];
 }
 
 // @public

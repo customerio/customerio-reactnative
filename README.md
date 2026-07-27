@@ -75,9 +75,11 @@ This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-n
 
 Enable the activity types you use under the `liveNotifications` key of your SDK config. On iOS, also add the `liveactivities` pod subspec and a Widget Extension that renders the SDK's built-in templates.
 
-**One manual step is required on iOS.** Forward every opened URL to the SDK from your `AppDelegate`, or taps on a Live Activity are not attributed:
+**One manual step is required on iOS.** Forward every opened URL to the SDK from your `AppDelegate`, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it — and note this only compiles once the `liveactivities` subspec is installed:
 
 ```swift
+import customerio_reactnative
+
 override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
   // Reports an `opened` metric and returns the deep link to route to. A non-Customer.io URL comes
   // back unchanged; `nil` means the activity carried no deep link, so there is nothing to open.

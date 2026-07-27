@@ -72,6 +72,10 @@ export interface LiveActivityCustomPayload {
   /**
    * The full content-state, re-sent in its entirety on every update. Neither platform keeps a
    * static/dynamic split for custom types, so include anything your widget needs each time.
+   *
+   * Values must be strings. Numbers and booleans are coerced, but nested objects and arrays are
+   * not supported and the platforms disagree on them — iOS drops them, Android stringifies them —
+   * so flatten anything structured before sending it.
    */
   data: Record<string, string>;
 }
@@ -141,8 +145,11 @@ export interface LiveActivitiesConfig {
    * Built-in activity types to enable. Enables the matching native type on each
    * platform and registers push-to-start for it. Unrecognized identifiers are
    * ignored, so a newer native template can't break an older wrapper build.
+   *
+   * `Custom` is excluded on purpose — it is enabled by {@link LiveActivitiesConfig.customType},
+   * and both platforms would silently drop it from this list.
    */
-  types?: LiveActivityTemplate[];
+  types?: Exclude<LiveActivityTemplate, LiveActivityTemplate.Custom>[];
   /**
    * Your own reverse-DNS identifier for the custom activity type, e.g.
    * `'com.myapp.rideshare'`. Setting it enables the custom template on both platforms.

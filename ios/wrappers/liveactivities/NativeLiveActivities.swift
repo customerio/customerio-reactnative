@@ -73,9 +73,13 @@ public class NativeLiveActivities: NSObject {
         // The custom template registers one SDK-owned Swift type under the app's own identifier.
         // That indirection is what lets a JavaScript app have a custom activity at all: the SDK needs
         // a metatype to register and to observe push-to-start for, and a metatype can't cross a bridge.
-        if let customType = (liveConfig["customType"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
-           !customType.isEmpty {
-            customActivityType = customType
+        // Assigned unconditionally: a re-initialize that drops `customType` must clear it, or `start`
+        // would keep accepting custom payloads for a type that is no longer registered.
+        let trimmedCustomType = (liveConfig["customType"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let customType = (trimmedCustomType?.isEmpty == false) ? trimmedCustomType : nil
+        customActivityType = customType
+        if let customType {
             builder = builder.register(CIOCustomAttributes.self, identifier: customType)
         }
         return LiveActivitiesModule(config: builder.build())
@@ -103,7 +107,7 @@ public class NativeLiveActivities: NSObject {
             switch type {
             case TypeIdentifier.segments:
                 guard let handle = try CustomerIO.liveActivities.start(
-                    CIOSegmentsAttributes(header: map["header"] as? String ?? ""),
+                    CIOSegmentsAttributes(header: try Self.requireString(map, "header")),
                     contentState: Self.segmentsState(from: map)
                 ) else {
                     return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
@@ -112,7 +116,7 @@ public class NativeLiveActivities: NSObject {
                 id = handle.id
             case TypeIdentifier.countdownTimer:
                 guard let handle = try CustomerIO.liveActivities.start(
-                    CIOCountdownTimerAttributes(header: map["header"] as? String ?? ""),
+                    CIOCountdownTimerAttributes(header: try Self.requireString(map, "header")),
                     contentState: Self.countdownState(from: map)
                 ) else {
                     return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
@@ -193,7 +197,7 @@ public class NativeLiveActivities: NSObject {
         reject: @escaping RCTPromiseRejectBlock
     ) {
         Self.lock.lock()
-        let box = Self.activities.removeValue(forKey: activityId)
+        let box = Self.activities[activityId]
         Self.lock.unlock()
         // Unknown/already-ended id is treated as success (idempotent end). See `update` for why an
         // unknown id is not an error.
@@ -205,6 +209,10 @@ public class NativeLiveActivities: NSObject {
         Task {
             do {
                 try await box.end(map)
+                // Dropped only once the end succeeded. Removing up front would lose the handle on a
+                // throw, and the retry would then take the unknown-id path above and report success
+                // for an activity still on screen.
+                Self.forget(activityId)
                 resolve(nil)
             } catch {
                 reject("live_activity_end_failed", error.localizedDescription, error)
@@ -244,13 +252,38 @@ public class NativeLiveActivities: NSObject {
         lock.unlock()
     }
 
+    private static func forget(_ activityId: String) {
+        lock.lock()
+        activities.removeValue(forKey: activityId)
+        lock.unlock()
+    }
+
+    /// Thrown for a missing required field so the caller sees a rejected promise naming it, rather
+    /// than an activity rendering with a blank line. Matches Android, whose `requireString` /
+    /// `requireDouble` already reject — an untyped JavaScript caller should not get a silent
+    /// half-rendered card on one platform and an error on the other.
+    private struct MissingFieldError: LocalizedError {
+        let field: String
+        var errorDescription: String? { "\(field) is required" }
+    }
+
+    private static func requireString(_ map: [String: Any], _ key: String) throws -> String {
+        guard let value = map[key] as? String else { throw MissingFieldError(field: key) }
+        return value
+    }
+
+    private static func requireInt(_ map: [String: Any], _ key: String) throws -> Int {
+        guard let value = map[key] as? NSNumber else { throw MissingFieldError(field: key) }
+        return value.intValue
+    }
+
     @available(iOS 16.2, *)
     private static func segmentsState(from map: [String: Any]) throws -> CIOSegmentsAttributes.ContentState {
         CIOSegmentsAttributes.ContentState(
-            status: map["status"] as? String ?? "",
+            status: try requireString(map, "status"),
             substatus: map["substatus"] as? String,
-            segmentsTotal: intValue(map["segmentsTotal"]),
-            segmentsComplete: intValue(map["segmentsComplete"]),
+            segmentsTotal: try requireInt(map, "segmentsTotal"),
+            segmentsComplete: try requireInt(map, "segmentsComplete"),
             trailingText: map["trailingText"] as? String
         )
     }
@@ -262,7 +295,7 @@ public class NativeLiveActivities: NSObject {
             endTime = EpochSecondsDate(Date(timeIntervalSince1970: seconds.doubleValue))
         }
         return CIOCountdownTimerAttributes.ContentState(
-            title: map["title"] as? String ?? "",
+            title: try requireString(map, "title"),
             statusMessage: map["statusMessage"] as? String,
             endTime: endTime
         )
@@ -285,10 +318,6 @@ public class NativeLiveActivities: NSObject {
             }
         }
         return CIOCustomAttributes.ContentState(data: data)
-    }
-
-    private static func intValue(_ any: Any?) -> Int {
-        (any as? NSNumber)?.intValue ?? 0
     }
 
     private static let unavailableCode = "live_activity_module_unavailable"

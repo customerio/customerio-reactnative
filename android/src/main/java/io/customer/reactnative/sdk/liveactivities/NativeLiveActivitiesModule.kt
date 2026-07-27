@@ -50,8 +50,17 @@ class NativeLiveActivitiesModule(
             val map = requireNotNull(payload) { "payload is required" }
             // Custom types have no built-in template, so they take the SDK's untyped map path and are
             // rendered by the app's own callback. Built-ins keep the typed path.
-            val id = if (map.getString("type") == CUSTOM_TYPE_DISCRIMINATOR) {
-                module.startLiveNotification(requireCustomActivityType(), customData(map))
+            val isCustom = map.getString("type") == CUSTOM_TYPE_DISCRIMINATOR
+            val activityType = if (isCustom) {
+                requireCustomActivityType()
+            } else {
+                requireNotNull(map.getString("type")) { "payload.type is required" }
+            }
+            if (activityType !in enabledActivityTypes) {
+                return promise.rejectNotRegistered(activityType)
+            }
+            val id = if (isCustom) {
+                module.startLiveNotification(activityType, customData(map))
             } else {
                 module.startLiveNotification(parseData(map))
             }
@@ -153,6 +162,16 @@ class NativeLiveActivitiesModule(
         )
     }
 
+    /** Mirrors iOS's `live_activity_type_not_registered` so the same mistake reads the same way. */
+    private fun Promise?.rejectNotRegistered(activityType: String?) {
+        this?.reject(
+            "live_activity_type_not_registered",
+            "Live Activity type '$activityType' is not registered. Add it to " +
+                "`liveNotifications.types` in your Customer.io SDK config (or set " +
+                "`liveNotifications.customType` for a custom type).",
+        )
+    }
+
     companion object {
         const val NAME = "NativeCustomerIOLiveActivities"
 
@@ -166,6 +185,12 @@ class NativeLiveActivitiesModule(
         // The app's own identifier for the custom template, captured from config at SDK init.
         @Volatile
         private var customActivityType: String? = null
+
+        // Identifiers actually enabled at SDK init, built-in and custom. The native start call mints
+        // an id regardless of enablement and the handler then drops unenabled types at debug level,
+        // so this is what lets `start` fail loudly instead.
+        @Volatile
+        private var enabledActivityTypes: Set<String> = emptySet()
 
         // Host-app callback used to render custom (app-defined) live notifications. The native SDK
         // only accepts it at build time, so the app must register it before the SDK initializes
@@ -217,11 +242,20 @@ class NativeLiveActivitiesModule(
             // The custom template. Allowlisting the identifier is both necessary and sufficient:
             // LiveNotificationHandler drops any push whose activityType isn't in this set, and a type
             // with no built-in template falls through to the host app's render callback.
-            val customType = config.getTypedValue<String>("customType")?.trim()
-            if (!customType.isNullOrEmpty()) {
-                customActivityType = customType
+            //
+            // Assigned unconditionally: a re-initialize that drops `customType` must clear it, or
+            // `start` would keep minting notifications under an identifier no longer allowlisted —
+            // which the handler then discards, leaving the caller with an id and nothing on screen.
+            val customType = config.getTypedValue<String>("customType")?.trim()?.takeIf { it.isNotEmpty() }
+            customActivityType = customType
+            if (customType != null) {
                 builder.enableCustomLiveNotificationTypes(customType)
             }
+
+            // Remember what ended up enabled so `start` can refuse a type that isn't, instead of
+            // returning an id for a notification the handler will silently drop. iOS already rejects
+            // in this case; Android had no equivalent because the native call always mints an id.
+            enabledActivityTypes = templateTypes.map { it.identifier }.toSet() + setOfNotNull(customType)
 
             val branding = config.getTypedValue<Map<String, Any>>("branding")
             if (branding != null) {

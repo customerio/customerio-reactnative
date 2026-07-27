@@ -28,5 +28,10 @@ export interface Spec extends TurboModule {
   end(activityId: string, payload?: NativeBridgeObject): Promise<void>;
 }
 
-// Optional module — NativeModule may be null when Live Activities is not compiled in.
-export default TurboModuleRegistry.get<Spec>('NativeCustomerIOLiveActivities');
+// Registered unconditionally on both platforms — Android in CustomerIOReactNativePackage, iOS via
+// an ObjC bridge that is always compiled. When the Live Activities pods are absent the module is
+// still present and its methods reject with `live_activity_module_unavailable`, so `getEnforcing`
+// is accurate here (unlike Location, which really can be absent and uses `get`).
+export default TurboModuleRegistry.getEnforcing<Spec>(
+  'NativeCustomerIOLiveActivities'
+);

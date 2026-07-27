@@ -21,9 +21,9 @@ import io.customer.messagingpush.di.pushModuleConfig
 import io.customer.messagingpush.di.pushTrackingUtil
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingPushSpec
 import io.customer.reactnative.sdk.constant.Keys
-import io.customer.reactnative.sdk.liveactivities.NativeLiveActivitiesModule
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
+import io.customer.reactnative.sdk.liveactivities.NativeLiveActivitiesModule
 import io.customer.reactnative.sdk.util.unsupportedOnAndroid
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder

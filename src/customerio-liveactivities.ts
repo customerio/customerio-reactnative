@@ -15,28 +15,6 @@ interface NativeLiveActivitiesSpec extends Omit<
   keyof TurboModule
 > {}
 
-// Live Activities is an optional module — NativeModule may be null when it is not
-// compiled in. Promise-returning methods reject with a clear error in that case.
-let hasWarnedNotEnabled = false;
-const withNativeModule = <T>(
-  fn: (native: CodegenSpec) => Promise<T>
-): Promise<T> => {
-  if (NativeModule) {
-    return fn(NativeModule);
-  }
-  if (__DEV__ && !hasWarnedNotEnabled) {
-    hasWarnedNotEnabled = true;
-    console.warn(
-      'Customer.io: Live Activities module is not available. ' +
-        'On iOS, add the CustomerIO Live Activities pods and a Widget Extension; ' +
-        'on Android it ships with messaging-push-fcm.'
-    );
-  }
-  return Promise.reject(
-    new Error('Customer.io: Live Activities module is not available.')
-  );
-};
-
 /**
  * Live Activities (iOS) / Live Notifications (Android).
  *
@@ -54,7 +32,7 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
    * @returns The SDK-minted activity id, used for later `update`/`end`.
    */
   start(payload: LiveActivityPayload): Promise<string> {
-    return withNativeModule((native) => native.start(payload));
+    return NativeModule.start(payload);
   }
 
   /**
@@ -68,7 +46,7 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
    * @param payload - The complete desired state.
    */
   update(activityId: string, payload: LiveActivityPayload): Promise<void> {
-    return withNativeModule((native) => native.update(activityId, payload));
+    return NativeModule.update(activityId, payload);
   }
 
   /**
@@ -81,6 +59,6 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
    *   ignores this.
    */
   end(activityId: string, payload?: LiveActivityPayload): Promise<void> {
-    return withNativeModule((native) => native.end(activityId, payload));
+    return NativeModule.end(activityId, payload);
   }
 }
