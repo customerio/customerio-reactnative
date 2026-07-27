@@ -2,23 +2,8 @@ import { BodyText, Button, ButtonExperience } from '@components';
 import { Colors } from '@colors';
 import { CustomerIO, LiveActivityTemplate } from 'customerio-reactnative';
 import React, { useState } from 'react';
-import {
-  NativeModules,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-
-// Reverse-DNS identifier for the app-defined "rideshare" activity type. Must match the
-// value registered in the SDK config (`liveNotifications.customTypes`), the Android
-// `createLiveNotification` callback, and the iOS widget's `RideshareAttributes`.
-const RIDESHARE_TYPE = 'io.customer.livenotifications.custom.rideshare';
-
-// iOS custom Live Activities are app-owned: the sample ships its own native module
-// (SampleCustomLiveActivity) + Widget Extension rather than driving them from the wrapper.
-const { SampleCustomLiveActivity } = NativeModules;
 
 const SectionCard = ({ children }: { children: React.ReactNode }) => (
   <View style={styles.sectionCard}>{children}</View>
@@ -123,28 +108,23 @@ export const LiveActivitiesScreen = () => {
     }
   };
 
-  // Custom (app-defined) template — "Rideshare".
+  // Custom template — "Rideshare".
   //
-  // Android renders custom live notifications through the app's
-  // `CustomerIOPushNotificationCallback.createLiveNotification` (wired in MainApplication),
-  // so the wrapper's `startCustom`/`end` drive it directly.
-  //
-  // iOS custom activities require an app-owned Widget Extension + ActivityAttributes, so the
-  // wrapper can't data-drive them; the sample calls its own native module instead.
+  // One code path on both platforms. The SDK owns the attributes type, so the payload is just a
+  // map of strings: iOS renders it from `CIOCustomAttributes` in the Widget Extension, Android
+  // from the app's `createLiveNotification` callback (wired in MainApplication). The activity is
+  // named by `liveNotifications.customType` in the SDK config, not here.
+  const rideshare = (status: string, etaMinutes: number) => ({
+    type: LiveActivityTemplate.Custom as const,
+    // Values are strings — a bridge payload carries no schema, so the widget parses what it needs.
+    data: { driverName: 'Alex', status, etaMinutes: String(etaMinutes) },
+  });
+
   const startCustom = async () => {
     try {
-      const id =
-        Platform.OS === 'ios'
-          ? await SampleCustomLiveActivity.startRideshare(
-              'Alex',
-              'On the way',
-              5
-            )
-          : await CustomerIO.liveActivities.startCustom(RIDESHARE_TYPE, {
-              driverName: 'Alex',
-              status: 'On the way',
-              etaMinutes: 5,
-            });
+      const id = await CustomerIO.liveActivities.start(
+        rideshare('On the way', 5)
+      );
       setCustomId(id);
       showMessage({ message: `Rideshare started (${id})`, type: 'success' });
     } catch (e) {
@@ -155,24 +135,10 @@ export const LiveActivitiesScreen = () => {
   const updateCustom = async () => {
     if (!customId) return;
     try {
-      if (Platform.OS === 'ios') {
-        await SampleCustomLiveActivity.updateRideshare(
-          customId,
-          'Almost there',
-          2
-        );
-      } else {
-        // Android has no by-id update for custom types: `startCustom` always mints a new
-        // notification. End the current one first so we replace it in place instead of
-        // stacking a second notification and orphaning the previous one.
-        await CustomerIO.liveActivities.end(customId);
-        const id = await CustomerIO.liveActivities.startCustom(RIDESHARE_TYPE, {
-          driverName: 'Alex',
-          status: 'Almost there',
-          etaMinutes: 2,
-        });
-        setCustomId(id);
-      }
+      await CustomerIO.liveActivities.update(
+        customId,
+        rideshare('Almost there', 2)
+      );
       showMessage({ message: 'Rideshare updated', type: 'success' });
     } catch (e) {
       showMessage({ message: (e as Error).message, type: 'danger' });
@@ -182,11 +148,8 @@ export const LiveActivitiesScreen = () => {
   const endCustom = async () => {
     if (!customId) return;
     try {
-      if (Platform.OS === 'ios') {
-        await SampleCustomLiveActivity.endRideshare(customId);
-      } else {
-        await CustomerIO.liveActivities.end(customId);
-      }
+      // A final content-state so the card reads as finished rather than freezing mid-trip.
+      await CustomerIO.liveActivities.end(customId, rideshare('Arrived', 0));
       showMessage({ message: 'Rideshare ended', type: 'info' });
       setCustomId(null);
     } catch (e) {
@@ -266,10 +229,10 @@ export const LiveActivitiesScreen = () => {
         </SectionCard>
 
         <BodyText style={styles.note}>
-          Android renders live notifications in-SDK (custom types via the app's
-          createLiveNotification callback). iOS additionally requires a Widget
-          Extension in the app to render the built-in templates and app-owned
-          custom activities.
+          Android renders live notifications in-SDK; custom types go to the app's
+          createLiveNotification callback. iOS additionally requires a Widget
+          Extension — the SDK ships the SwiftUI for the built-in templates, and
+          the app supplies a view for the custom one.
         </BodyText>
       </View>
     </ScrollView>

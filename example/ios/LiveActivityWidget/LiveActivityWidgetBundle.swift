@@ -10,7 +10,7 @@ struct LiveActivityWidgetBundle: WidgetBundle {
     var body: some Widget {
         CIOSegmentsLiveActivity()
         CIOCountdownTimerLiveActivity()
-        // App-defined custom template (rendered by the app, not the SDK).
+        // Custom template: the SDK owns the attributes type, the app owns the view.
         RideshareLiveActivity()
     }
 }

@@ -1,39 +1,47 @@
 #if os(iOS)
 import ActivityKit
+import CioLiveActivities_Attributes
 import SwiftUI
 import WidgetKit
 
-/// SwiftUI rendering for the app-defined ``RideshareAttributes`` Live Activity.
+/// SwiftUI rendering for the app's custom "rideshare" Live Activity.
 ///
-/// Unlike the Customer.io built-in templates (whose SwiftUI ships in the SDK), a custom activity is
-/// rendered entirely by the app. Add it to the widget bundle alongside the built-in templates.
+/// The built-in templates ship their SwiftUI in the SDK; a custom activity is rendered entirely by
+/// the app. What the SDK does provide is the attributes *type*: ``CIOCustomAttributes`` carries an
+/// untyped `data` map, which is what lets JavaScript start and update this activity without the app
+/// defining a Swift type the bridge could never reach.
+///
+/// The keys read below are the ones the JS screen sends. Every value is a string, so parse whatever
+/// you need at render time.
 @available(iOS 16.2, *)
 struct RideshareLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: RideshareAttributes.self) { context in
+        ActivityConfiguration(for: CIOCustomAttributes.self) { context in
             // Lock screen / banner presentation.
             VStack(alignment: .leading, spacing: 4) {
                 Text("Rideshare").font(.headline)
-                Text(context.attributes.driverName).font(.subheadline)
-                Text(context.state.status).font(.body)
-                Text("ETA \(context.state.etaMinutes) min").font(.caption).foregroundColor(.secondary)
+                Text(context.state.data["driverName"] ?? "").font(.subheadline)
+                Text(context.state.data["status"] ?? "").font(.body)
+                Text("ETA \(context.state.data["etaMinutes"] ?? "—") min")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             .padding()
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text(context.attributes.driverName)
+                    Text(context.state.data["driverName"] ?? "")
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("\(context.state.etaMinutes) min")
+                    Text("\(context.state.data["etaMinutes"] ?? "—") min")
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text(context.state.status)
+                    Text(context.state.data["status"] ?? "")
                 }
             } compactLeading: {
                 Image(systemName: "car.fill")
             } compactTrailing: {
-                Text("\(context.state.etaMinutes)m")
+                Text("\(context.state.data["etaMinutes"] ?? "")m")
             } minimal: {
                 Image(systemName: "car.fill")
             }

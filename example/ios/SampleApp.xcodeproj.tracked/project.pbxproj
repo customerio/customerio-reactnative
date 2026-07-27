@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		022EF15D030121C0194AD117 /* SampleCustomLiveActivity.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0BEF378FD72961373BA2488F /* SampleCustomLiveActivity.mm */; };
-		3B49167E5B0E588CEE1910ED /* RideshareAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C8D1D51AFA6412CA9A9FDF /* RideshareAttributes.swift */; };
 		3F21DFC9CDA733A3E4C4576D /* LiveActivityWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6027E65D2DB84F1A002F3F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6027E6572DB84F1A002F3F8A /* Assets.xcassets */; };
 		6027E65F2DB84F1A002F3F8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6027E65A2DB84F1A002F3F8A /* LaunchScreen.storyboard */; };
@@ -21,8 +19,6 @@
 		A52CBC81C45FFD335A77686E /* RideshareLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */; };
 		B3308ADC4285759BC2F56637 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FB8D344F4C2D92F366D48B /* Foundation.framework */; };
 		D24313EAB27CE236230665DD /* LiveActivityWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */; };
-		DECE121536BE02C9E037F790 /* SampleCustomLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AE3420659D25AB406164DE /* SampleCustomLiveActivity.swift */; };
-		F28BF99EC07194599C39EFA4 /* RideshareAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C8D1D51AFA6412CA9A9FDF /* RideshareAttributes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +54,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0BEF378FD72961373BA2488F /* SampleCustomLiveActivity.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = SampleCustomLiveActivity.mm; sourceTree = SOURCE_ROOT; };
 		2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = LiveActivityWidget.appex; path = LiveActivityWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		46FB8D344F4C2D92F366D48B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		6027E62A2DB8477F002F3F8A /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,10 +72,8 @@
 		609C0BDC2DBE127100061E29 /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Release.xcconfig; sourceTree = "<group>"; };
 		609C0BDD2DBE12A300061E29 /* .Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Debug.xcconfig; sourceTree = "<group>"; };
 		609C0BDE2DBE12A300061E29 /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Release.xcconfig; sourceTree = "<group>"; };
-		65AE3420659D25AB406164DE /* SampleCustomLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SampleCustomLiveActivity.swift; sourceTree = SOURCE_ROOT; };
 		67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiveActivityWidgetBundle.swift; path = LiveActivityWidget/LiveActivityWidgetBundle.swift; sourceTree = "<group>"; };
 		9E54E1130F8A696F39C18A68 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = LiveActivityWidget/Info.plist; sourceTree = "<group>"; };
-		E8C8D1D51AFA6412CA9A9FDF /* RideshareAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RideshareAttributes.swift; path = LiveActivityWidget/RideshareAttributes.swift; sourceTree = SOURCE_ROOT; };
 		F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RideshareLiveActivity.swift; path = LiveActivityWidget/RideshareLiveActivity.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -138,7 +131,6 @@
 			children = (
 				67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */,
 				9E54E1130F8A696F39C18A68 /* Info.plist */,
-				E8C8D1D51AFA6412CA9A9FDF /* RideshareAttributes.swift */,
 				F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */,
 			);
 			name = LiveActivityWidget;
@@ -153,8 +145,6 @@
 				051D7405610CA163A106992D /* Pods */,
 				1C9CC8CC3496E6376044E945 /* Frameworks */,
 				38296FF0AB3FEE5CDEA5E4B4 /* LiveActivityWidget */,
-				65AE3420659D25AB406164DE /* SampleCustomLiveActivity.swift */,
-				0BEF378FD72961373BA2488F /* SampleCustomLiveActivity.mm */,
 			);
 			sourceTree = "<group>";
 		};
@@ -360,7 +350,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D24313EAB27CE236230665DD /* LiveActivityWidgetBundle.swift in Sources */,
-				3B49167E5B0E588CEE1910ED /* RideshareAttributes.swift in Sources */,
 				A52CBC81C45FFD335A77686E /* RideshareLiveActivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,9 +359,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6027E6602DB84F1A002F3F8A /* AppDelegate.swift in Sources */,
-				F28BF99EC07194599C39EFA4 /* RideshareAttributes.swift in Sources */,
-				DECE121536BE02C9E037F790 /* SampleCustomLiveActivity.swift in Sources */,
-				022EF15D030121C0194AD117 /* SampleCustomLiveActivity.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

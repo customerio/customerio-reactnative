@@ -31,7 +31,7 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
         LiveActivityTemplate.Segments,
         LiveActivityTemplate.CountdownTimer,
       ],
-      customTypes: ['io.customer.livenotifications.custom.rideshare'],
+      customType: 'io.customer.livenotifications.custom.rideshare',
     },
   };
 };
