@@ -64,7 +64,7 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
    * state — not just the changed fields. Static attributes (e.g. `header`) cannot
    * change after start and are ignored on iOS.
    *
-   * @param activityId - Id returned by {@link start}.
+   * @param activityId - Id returned by {@link CustomerIOLiveActivities.start}.
    * @param payload - The complete desired state.
    */
   update(activityId: string, payload: LiveActivityPayload): Promise<void> {
@@ -74,7 +74,7 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
   /**
    * End a running activity, optionally rendering a final content-state.
    *
-   * @param activityId - Id returned by {@link start}.
+   * @param activityId - Id returned by {@link CustomerIOLiveActivities.start}.
    * @param payload - **iOS only.** The final content-state to render as the activity ends.
    *   ActivityKit keeps the last content-state on screen when none is given, so pass one to show
    *   a terminal state (e.g. all segments complete). Android renders its own terminal state and

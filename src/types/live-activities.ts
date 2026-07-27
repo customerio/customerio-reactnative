@@ -4,8 +4,6 @@
  * Live Activities (iOS) / Live Notifications (Android) render live, updating
  * notifications from built-in templates. Two templates ship today: Segments and
  * Countdown Timer. Field names and identifiers are identical across platforms.
- *
- * @public
  */
 
 /**
@@ -18,6 +16,8 @@
  *
  * Use these enum members (not raw strings) for `LiveActivitiesConfig.types` and a
  * payload's `type` to avoid typos.
+ *
+ * @public
  */
 export enum LiveActivityTemplate {
   Segments = 'io.customer.livenotifications.segments',
@@ -27,6 +27,8 @@ export enum LiveActivityTemplate {
 /**
  * Segments template — a progress activity split into N segments.
  * `header` is a static attribute (fixed at start); the rest are content-state.
+ *
+ * @public
  */
 export interface LiveActivitySegmentsPayload {
   type: LiveActivityTemplate.Segments;
@@ -47,6 +49,8 @@ export interface LiveActivitySegmentsPayload {
 /**
  * Countdown Timer template — a live countdown to a target time.
  * `header` is a static attribute (fixed at start); the rest are content-state.
+ *
+ * @public
  */
 export interface LiveActivityCountdownTimerPayload {
   type: LiveActivityTemplate.CountdownTimer;
@@ -85,7 +89,8 @@ export interface LiveActivitiesBranding {
   accentColorHex?: string;
   /**
    * Bundled Android drawable resource name for the logo, resolved natively.
-   * Preferred over {@link logoUrl} when both are set — it needs no network.
+   * Preferred over {@link LiveActivitiesBranding.logoUrl} when both are set — it
+   * needs no network.
    */
   logoResource?: string;
   /** Remote logo URL (downloaded and cached natively). */
