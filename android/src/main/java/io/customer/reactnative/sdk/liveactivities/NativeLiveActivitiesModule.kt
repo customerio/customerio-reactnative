@@ -8,6 +8,7 @@ import com.facebook.react.module.annotations.ReactModule
 import io.customer.messagingpush.MessagingPushModuleConfig
 import io.customer.messagingpush.ModuleMessagingPushFCM
 import io.customer.messagingpush.data.communication.CustomerIOLiveNotificationsCallback
+import io.customer.messagingpush.di.pushModuleConfig
 import io.customer.messagingpush.livenotification.LiveNotificationAsset
 import io.customer.messagingpush.livenotification.LiveNotificationBranding
 import io.customer.messagingpush.livenotification.LiveNotificationData
@@ -56,7 +57,7 @@ class NativeLiveActivitiesModule(
             } else {
                 requireNotNull(map.getString("type")) { "payload.type is required" }
             }
-            if (activityType !in enabledActivityTypes) {
+            if (activityType !in enabledActivityTypes()) {
                 return promise.rejectNotRegistered(activityType)
             }
             val id = if (isCustom) {
@@ -106,7 +107,26 @@ class NativeLiveActivitiesModule(
      * without configuring `liveNotifications.customType` — say so, rather than starting a
      * notification the allowlist would silently drop.
      */
-    private fun requireCustomActivityType(): String = requireNotNull(customActivityType) {
+    /**
+     * Identifiers the SDK currently has enabled. Read from the live module config rather than cached
+     * at wrapper init: the config can also be built by generated native code that never calls
+     * [applyLiveActivitiesConfig] — the Expo config plugin does exactly that — and a cached set would
+     * be empty there, rejecting every start.
+     */
+    private fun enabledActivityTypes(): Set<String> =
+        SDKComponent.pushModuleConfig.liveNotificationTypes
+
+    /**
+     * The custom identifier, preferring what the wrapper saw and otherwise deriving it from the live
+     * config: exactly one custom type is supported, so it is the single enabled identifier that no
+     * built-in [LiveNotificationType] claims.
+     */
+    private fun customActivityTypeOrNull(): String? = customActivityType
+        ?: enabledActivityTypes().firstOrNull { identifier ->
+            LiveNotificationType.entries.none { it.identifier == identifier }
+        }
+
+    private fun requireCustomActivityType(): String = requireNotNull(customActivityTypeOrNull()) {
         "No custom Live Activity type is configured. Set `liveNotifications.customType` in your " +
             "Customer.io SDK config to your own reverse-DNS identifier, and render it from your " +
             "CustomerIOLiveNotificationsCallback."
@@ -186,12 +206,6 @@ class NativeLiveActivitiesModule(
         @Volatile
         private var customActivityType: String? = null
 
-        // Identifiers actually enabled at SDK init, built-in and custom. The native start call mints
-        // an id regardless of enablement and the handler then drops unenabled types at debug level,
-        // so this is what lets `start` fail loudly instead.
-        @Volatile
-        private var enabledActivityTypes: Set<String> = emptySet()
-
         // Host-app callback used to render custom (app-defined) live notifications. The native SDK
         // only accepts it at build time, so the app must register it before the SDK initializes
         // (e.g. in Application.onCreate before React Native starts). Stored statically because the
@@ -251,11 +265,6 @@ class NativeLiveActivitiesModule(
             if (customType != null) {
                 builder.enableCustomLiveNotificationTypes(customType)
             }
-
-            // Remember what ended up enabled so `start` can refuse a type that isn't, instead of
-            // returning an id for a notification the handler will silently drop. iOS already rejects
-            // in this case; Android had no equivalent because the native call always mints an id.
-            enabledActivityTypes = templateTypes.map { it.identifier }.toSet() + setOfNotNull(customType)
 
             val branding = config.getTypedValue<Map<String, Any>>("branding")
             if (branding != null) {

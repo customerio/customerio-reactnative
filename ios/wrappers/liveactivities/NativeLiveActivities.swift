@@ -20,11 +20,6 @@ public class NativeLiveActivities: NSObject {
         static let custom = "custom"
     }
 
-    /// The app's own identifier for the custom template, captured from config at init. Kept only so
-    /// `start` can explain *why* a custom payload was refused; the SDK resolves the identifier it
-    /// reports from the registration itself.
-    private static var customActivityType: String?
-
     /// Type-erased handles keyed by activity id. The native `start` returns a generic
     /// `CIOLiveActivity<Attributes>` that can't cross the bridge, so we keep closures that capture
     /// the concrete handle and rebuild its content-state from a JS map on update.
@@ -73,12 +68,9 @@ public class NativeLiveActivities: NSObject {
         // The custom template registers one SDK-owned Swift type under the app's own identifier.
         // That indirection is what lets a JavaScript app have a custom activity at all: the SDK needs
         // a metatype to register and to observe push-to-start for, and a metatype can't cross a bridge.
-        // Assigned unconditionally: a re-initialize that drops `customType` must clear it, or `start`
-        // would keep accepting custom payloads for a type that is no longer registered.
         let trimmedCustomType = (liveConfig["customType"] as? String)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
         let customType = (trimmedCustomType?.isEmpty == false) ? trimmedCustomType : nil
-        customActivityType = customType
         if let customType {
             builder = builder.register(CIOCustomAttributes.self, identifier: customType)
         }
@@ -124,20 +116,15 @@ public class NativeLiveActivities: NSObject {
                 Self.store(handle: handle, contentBuilder: Self.countdownState)
                 id = handle.id
             case TypeIdentifier.custom:
-                guard Self.customActivityType != nil else {
-                    return reject(
-                        Self.notRegisteredCode,
-                        "No custom Live Activity type is configured. Set `liveNotifications.customType` " +
-                            "in your Customer.io SDK config to your own reverse-DNS identifier, and render " +
-                            "CIOCustomAttributes in your Widget Extension.",
-                        nil
-                    )
-                }
+                // No pre-check on the stored identifier: the SDK config can also be built by generated
+                // native code that never calls `module(from:)` — the Expo config plugin does exactly
+                // that — so a nil stored value doesn't mean the type is unregistered. Attempt the start
+                // and let the SDK answer; a nil handle means it genuinely isn't registered.
                 guard let handle = try CustomerIO.liveActivities.start(
                     CIOCustomAttributes(),
                     contentState: Self.customState(from: map)
                 ) else {
-                    return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
+                    return reject(Self.notRegisteredCode, Self.customNotRegisteredMessage, nil)
                 }
                 Self.store(handle: handle, contentBuilder: Self.customState)
                 id = handle.id
@@ -323,6 +310,11 @@ public class NativeLiveActivities: NSObject {
     private static let unavailableCode = "live_activity_module_unavailable"
     private static let unavailableMessage =
         "Live Activities require iOS 16.2 or later."
+
+    private static let customNotRegisteredMessage =
+        "No custom Live Activity type is registered. Set `liveNotifications.customType` in your " +
+        "Customer.io SDK config to your own reverse-DNS identifier, and render CIOCustomAttributes " +
+        "in your Widget Extension."
 
     private static let notRegisteredCode = "live_activity_type_not_registered"
     private static func notRegisteredMessage(_ type: String) -> String {
