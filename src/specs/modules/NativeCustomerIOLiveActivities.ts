@@ -18,8 +18,13 @@ export interface Spec extends TurboModule {
   start(payload: NativeBridgeObject): Promise<string>;
   /** Replace the whole content-state of a running activity. Pass the full desired state. */
   update(activityId: string, payload: NativeBridgeObject): Promise<void>;
-  /** End a running activity. */
-  end(activityId: string): Promise<void>;
+  /**
+   * End a running activity, optionally rendering a final content-state.
+   *
+   * `payload` is iOS-only: ActivityKit keeps the last content-state on screen unless a final one
+   * is supplied. Android renders its own terminal state, so it ignores the payload.
+   */
+  end(activityId: string, payload?: NativeBridgeObject): Promise<void>;
   /**
    * Start a custom (app-defined) activity type. Android renders it via the host app's
    * `createLiveNotification` callback; on iOS custom types require a native `adopt` call,

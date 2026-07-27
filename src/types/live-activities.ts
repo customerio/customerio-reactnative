@@ -70,8 +70,7 @@ export interface LiveActivityCountdownTimerPayload {
  * @public
  */
 export type LiveActivityPayload =
-  | LiveActivitySegmentsPayload
-  | LiveActivityCountdownTimerPayload;
+  LiveActivitySegmentsPayload | LiveActivityCountdownTimerPayload;
 
 /**
  * Live Activities branding (Android only). On iOS, branding is compiled into the

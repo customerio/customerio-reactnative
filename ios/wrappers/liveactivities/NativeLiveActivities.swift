@@ -21,7 +21,7 @@ public class NativeLiveActivities: NSObject {
     /// the concrete handle and rebuild its content-state from a JS map on update.
     private struct ActivityBox {
         let update: ([String: Any]) async throws -> Void
-        let end: () async -> Void
+        let end: ([String: Any]?) async throws -> Void
     }
 
     private static var activities: [String: ActivityBox] = [:]
@@ -129,20 +129,26 @@ public class NativeLiveActivities: NSObject {
         }
     }
 
-    @objc(end:resolve:reject:)
+    @objc(end:payload:resolve:reject:)
     public func end(
         _ activityId: String,
+        payload: NSDictionary?,
         resolve: @escaping RCTPromiseResolveBlock,
-        reject _: @escaping RCTPromiseRejectBlock
+        reject: @escaping RCTPromiseRejectBlock
     ) {
         Self.lock.lock()
         let box = Self.activities.removeValue(forKey: activityId)
         Self.lock.unlock()
         // Unknown/already-ended id is treated as success (idempotent end).
         guard let box else { return resolve(nil) }
+        let map = payload as? [String: Any]
         Task {
-            await box.end()
-            resolve(nil)
+            do {
+                try await box.end(map)
+                resolve(nil)
+            } catch {
+                reject("live_activity_end_failed", error.localizedDescription, error)
+            }
         }
     }
 
@@ -183,8 +189,11 @@ public class NativeLiveActivities: NSObject {
         contentBuilder: @escaping ([String: Any]) throws -> A.ContentState
     ) {
         let box = ActivityBox(
+            // ActivityKit keeps the last content-state on screen when `end` is given none, so a
+            // final payload is what lets the activity show a terminal state rather than freezing
+            // mid-progress.
             update: { map in await handle.update(try contentBuilder(map)) },
-            end: { await handle.end() }
+            end: { map in await handle.end(try map.map(contentBuilder)) }
         )
         lock.lock()
         activities[handle.id] = box

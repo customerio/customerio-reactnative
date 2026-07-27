@@ -55,13 +55,14 @@ RCT_EXPORT_MODULE()
 }
 
 - (void)end:(NSString *)activityId
+    payload:(NSDictionary *)payload
     resolve:(RCTPromiseResolveBlock)resolve
      reject:(RCTPromiseRejectBlock)reject {
   if (!_swiftBridge) {
     reject(@"live_activity_module_unavailable", @"Live Activities are unavailable.", nil);
     return;
   }
-  [_swiftBridge end:activityId resolve:resolve reject:reject];
+  [_swiftBridge end:activityId payload:payload resolve:resolve reject:reject];
 }
 
 - (void)startCustom:(NSString *)activityType

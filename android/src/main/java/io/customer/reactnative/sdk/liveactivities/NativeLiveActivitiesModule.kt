@@ -61,7 +61,12 @@ class NativeLiveActivitiesModule(
         }
     }
 
-    override fun end(activityId: String?, promise: Promise?) {
+    /**
+     * Ends a live notification. [payload] is accepted for signature parity with iOS, where a final
+     * content-state is what makes ActivityKit render a terminal state; Android renders its own
+     * terminal state (the notification simply stops being ongoing), so it is ignored here.
+     */
+    override fun end(activityId: String?, payload: ReadableMap?, promise: Promise?) {
         val module = getPushModule() ?: return promise.rejectNotAvailable()
         try {
             module.endLiveNotification(requireNotNull(activityId) { "activityId is required" })
