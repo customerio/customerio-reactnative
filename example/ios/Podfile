@@ -60,7 +60,16 @@ target app_target_name do
     :path => config[:reactNativePath],
     :app_path => "#{installation_root}/..",
   )
-  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location"]
+  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location", "liveactivities"]
+  # TEMPORARY (REL-1): the Live Activities pods are not on CocoaPods trunk yet, so pull the whole
+  # Customer.io iOS SDK from the branch that carries their podspecs. Remove once they ship.
+  %w[
+    CustomerIO CustomerIOCommon CustomerIODataPipelines CustomerIOTrackingMigration
+    CustomerIOMessagingPush CustomerIOMessagingPushAPN CustomerIOMessagingInApp CustomerIOLocation
+    CustomerIOLiveActivities CustomerIOLiveActivitiesAttributes CustomerIOLiveActivitiesTemplates
+  ].each do |cio_pod|
+    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "live-activities-sdk-managed-module"
+  end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 

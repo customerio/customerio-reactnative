@@ -24,6 +24,8 @@ allprojects {
       google()  // Google's Maven repository
       mavenLocal() // Only required for using locally deployed versions of the SDK
       maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' } // Only required for using SNAPSHOT versions of the SDK
+      // TEMPORARY (REL-1): Live Notifications branch snapshots live on the new Central host.
+      maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
    }
 }
 
