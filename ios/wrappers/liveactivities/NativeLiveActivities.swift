@@ -158,13 +158,19 @@ public class NativeLiveActivities: NSObject {
         Self.lock.lock()
         let box = Self.activities[activityId]
         Self.lock.unlock()
-        // An id this process didn't start resolves rather than rejects, matching `end` here and both
-        // methods on Android (which routes the id to the native SDK and never learns it was unknown).
-        // "Unknown" is not proof of caller error: the map is process-local, so an activity started
-        // before an app restart, or started by a push, legitimately isn't in it. Logged, not thrown.
+        // An unknown id means the update did not happen, so it must not report success. Unlike `end`
+        // — where re-ending an already-ended activity is a legitimate no-op — there is nothing
+        // idempotent about an update that never applied. Android *does* perform it (it routes the id
+        // straight to the native SDK), so resolving here would make the same call report success on
+        // both platforms while only one of them did anything.
         guard let box else {
             Self.logUnknownActivity(activityId, method: "update")
-            return resolve(nil)
+            return reject(
+                "live_activity_update_failed",
+                "No live activity found for id \(activityId). On iOS only activities started in this " +
+                    "app session can be updated.",
+                nil
+            )
         }
         guard let map = payload as? [String: Any] else {
             return reject("live_activity_update_failed", "payload is required", nil)
