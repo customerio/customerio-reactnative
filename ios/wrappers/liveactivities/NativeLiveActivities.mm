@@ -65,17 +65,6 @@ RCT_EXPORT_MODULE()
   [_swiftBridge end:activityId payload:payload resolve:resolve reject:reject];
 }
 
-- (void)startCustom:(NSString *)activityType
-            payload:(NSDictionary *)payload
-            resolve:(RCTPromiseResolveBlock)resolve
-             reject:(RCTPromiseRejectBlock)reject {
-  if (!_swiftBridge) {
-    reject(@"live_activity_module_unavailable", @"Live Activities are unavailable.", nil);
-    return;
-  }
-  [_swiftBridge startCustom:activityType payload:payload resolve:resolve reject:reject];
-}
-
 // Export class factory function for React Native component registration
 Class<RCTBridgeModule> NativeCustomerIOLiveActivitiesCls(void) {
   return RCTNativeLiveActivities.class;

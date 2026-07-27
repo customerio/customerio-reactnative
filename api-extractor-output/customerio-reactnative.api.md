@@ -127,7 +127,6 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
 export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
     end(activityId: string, payload?: LiveActivityPayload): Promise<void>;
     start(payload: LiveActivityPayload): Promise<string>;
-    startCustom(activityType: string, payload: Record<string, unknown>): Promise<string>;
     update(activityId: string, payload: LiveActivityPayload): Promise<void>;
 }
 
@@ -238,7 +237,7 @@ export interface LiveActivitiesBranding {
 // @public
 export interface LiveActivitiesConfig {
     branding?: LiveActivitiesBranding;
-    customTypes?: string[];
+    customType?: string;
     types?: LiveActivityTemplate[];
 }
 
@@ -253,7 +252,14 @@ export interface LiveActivityCountdownTimerPayload {
 }
 
 // @public
-export type LiveActivityPayload = LiveActivitySegmentsPayload | LiveActivityCountdownTimerPayload;
+export interface LiveActivityCustomPayload {
+    data: Record<string, string>;
+    // (undocumented)
+    type: LiveActivityTemplate.Custom;
+}
+
+// @public
+export type LiveActivityPayload = LiveActivitySegmentsPayload | LiveActivityCountdownTimerPayload | LiveActivityCustomPayload;
 
 // @public
 export interface LiveActivitySegmentsPayload {
@@ -271,6 +277,7 @@ export interface LiveActivitySegmentsPayload {
 export enum LiveActivityTemplate {
     // (undocumented)
     CountdownTimer = "io.customer.livenotifications.countdowntimer",
+    Custom = "custom",
     // (undocumented)
     Segments = "io.customer.livenotifications.segments"
 }

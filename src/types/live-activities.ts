@@ -22,6 +22,14 @@
 export enum LiveActivityTemplate {
   Segments = 'io.customer.livenotifications.segments',
   CountdownTimer = 'io.customer.livenotifications.countdowntimer',
+  /**
+   * Your own activity type, rendered by SwiftUI you write.
+   *
+   * Unlike the members above, this value is a marker rather than an identifier — your activity is
+   * named by {@link LiveActivitiesConfig.customType}, and the SDK reports it under that name. It
+   * belongs in a payload's `type`, never in {@link LiveActivitiesConfig.types}.
+   */
+  Custom = 'custom',
 }
 
 /**
@@ -44,6 +52,28 @@ export interface LiveActivitySegmentsPayload {
   segmentsComplete: number;
   /** Optional trailing text (e.g. an ETA). */
   trailingText?: string;
+}
+
+/**
+ * Custom template — your own activity type, rendered by SwiftUI you write.
+ *
+ * Unlike the built-in templates there is no schema: `data` is an untyped map, because a bridge
+ * payload carries nothing for the SDK to validate against. Every value is a string, so your widget
+ * parses whichever ones it needs.
+ *
+ * Requires {@link LiveActivitiesConfig.customType} to be set. On iOS you must also render
+ * `CIOCustomAttributes` in your Widget Extension; on Android your `createLiveNotification`
+ * callback receives the same map.
+ *
+ * @public
+ */
+export interface LiveActivityCustomPayload {
+  type: LiveActivityTemplate.Custom;
+  /**
+   * The full content-state, re-sent in its entirety on every update. Neither platform keeps a
+   * static/dynamic split for custom types, so include anything your widget needs each time.
+   */
+  data: Record<string, string>;
 }
 
 /**
@@ -74,7 +104,9 @@ export interface LiveActivityCountdownTimerPayload {
  * @public
  */
 export type LiveActivityPayload =
-  LiveActivitySegmentsPayload | LiveActivityCountdownTimerPayload;
+  | LiveActivitySegmentsPayload
+  | LiveActivityCountdownTimerPayload
+  | LiveActivityCustomPayload;
 
 /**
  * Live Activities branding (Android only). On iOS, branding is compiled into the
@@ -112,14 +144,20 @@ export interface LiveActivitiesConfig {
    */
   types?: LiveActivityTemplate[];
   /**
-   * Reverse-DNS identifiers for custom (app-defined) activity types.
+   * Your own reverse-DNS identifier for the custom activity type, e.g.
+   * `'com.myapp.rideshare'`. Setting it enables the custom template on both platforms.
    *
-   * **Android only in practice.** Android renders these through the app's
-   * `createLiveNotification` callback. On iOS a custom type needs a native Widget
-   * Extension and an `adopt()` call, so it cannot be started from JavaScript —
-   * `startCustom` always rejects there and this list is ignored.
+   * Start one with `{ type: LiveActivityTemplate.Custom, data: { … } }`; the SDK reports it
+   * under this identifier, and your campaigns target it by the same name.
+   *
+   * Singular by design: iOS resolves an activity's type from its Swift attributes type, and
+   * every custom activity shares one. A second identifier could not be told apart, so one
+   * identifier is the limit rather than a silent mis-attribution.
+   *
+   * You must also render it yourself — `CIOCustomAttributes` in an iOS Widget Extension, and
+   * the `createLiveNotification` callback on Android.
    */
-  customTypes?: string[];
+  customType?: string;
   /** Android Live Notification branding (ignored on iOS). */
   branding?: LiveActivitiesBranding;
 }

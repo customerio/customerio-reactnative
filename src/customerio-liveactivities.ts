@@ -83,24 +83,4 @@ export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
   end(activityId: string, payload?: LiveActivityPayload): Promise<void> {
     return withNativeModule((native) => native.end(activityId, payload));
   }
-
-  /**
-   * Start a custom (app-defined) activity type.
-   *
-   * On **Android**, the host app renders it via its `createLiveNotification` callback.
-   * On **iOS**, custom types require a native `adopt` call, so this rejects — use a
-   * native Widget Extension + `ActivityAttributes` for custom iOS activities.
-   *
-   * @param activityType - Reverse-DNS identifier registered via config `customTypes`.
-   * @param payload - Flat key/value data passed to the native template/callback.
-   * @returns The SDK-minted activity id.
-   */
-  startCustom(
-    activityType: string,
-    payload: Record<string, unknown>
-  ): Promise<string> {
-    return withNativeModule((native) =>
-      native.startCustom(activityType, payload)
-    );
-  }
 }

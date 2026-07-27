@@ -15,7 +15,15 @@ public class NativeLiveActivities: NSObject {
     enum TypeIdentifier {
         static let segments = "io.customer.livenotifications.segments"
         static let countdownTimer = "io.customer.livenotifications.countdowntimer"
+        /// Discriminator JavaScript sends for the custom template. Not a wire identifier — the
+        /// activity is reported under the app's own `liveNotifications.customType`.
+        static let custom = "custom"
     }
+
+    /// The app's own identifier for the custom template, captured from config at init. Kept only so
+    /// `start` can explain *why* a custom payload was refused; the SDK resolves the identifier it
+    /// reports from the registration itself.
+    private static var customActivityType: String?
 
     /// Type-erased handles keyed by activity id. The native `start` returns a generic
     /// `CIOLiveActivity<Attributes>` that can't cross the bridge, so we keep closures that capture
@@ -62,6 +70,14 @@ public class NativeLiveActivities: NSObject {
                 continue
             }
         }
+        // The custom template registers one SDK-owned Swift type under the app's own identifier.
+        // That indirection is what lets a JavaScript app have a custom activity at all: the SDK needs
+        // a metatype to register and to observe push-to-start for, and a metatype can't cross a bridge.
+        if let customType = (liveConfig["customType"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !customType.isEmpty {
+            customActivityType = customType
+            builder = builder.register(CIOCustomAttributes.self, identifier: customType)
+        }
         return LiveActivitiesModule(config: builder.build())
     }
 
@@ -102,6 +118,24 @@ public class NativeLiveActivities: NSObject {
                     return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
                 }
                 Self.store(handle: handle, contentBuilder: Self.countdownState)
+                id = handle.id
+            case TypeIdentifier.custom:
+                guard Self.customActivityType != nil else {
+                    return reject(
+                        Self.notRegisteredCode,
+                        "No custom Live Activity type is configured. Set `liveNotifications.customType` " +
+                            "in your Customer.io SDK config to your own reverse-DNS identifier, and render " +
+                            "CIOCustomAttributes in your Widget Extension.",
+                        nil
+                    )
+                }
+                guard let handle = try CustomerIO.liveActivities.start(
+                    CIOCustomAttributes(),
+                    contentState: Self.customState(from: map)
+                ) else {
+                    return reject(Self.notRegisteredCode, Self.notRegisteredMessage(type), nil)
+                }
+                Self.store(handle: handle, contentBuilder: Self.customState)
                 id = handle.id
             default:
                 // A newer native SDK may know this type even though this wrapper build doesn't.
@@ -172,22 +206,6 @@ public class NativeLiveActivities: NSObject {
         }
     }
 
-    @objc(startCustom:payload:resolve:reject:)
-    public func startCustom(
-        _: String,
-        payload _: NSDictionary,
-        resolve _: @escaping RCTPromiseResolveBlock,
-        reject: @escaping RCTPromiseRejectBlock
-    ) {
-        // Custom activity types on iOS require a native Widget Extension + ActivityAttributes and an
-        // `adopt(_:)` call; they cannot be data-driven across the bridge.
-        reject(
-            "live_activity_custom_unsupported_ios",
-            "Custom live activity types are not supported from JavaScript on iOS. Use a native Widget Extension and adopt().",
-            nil
-        )
-    }
-
     /// Report an `opened` metric for a tapped Live Activity and return the deep link to route to.
     ///
     /// Not exposed to JavaScript: a Live Activity tap arrives through the app's native URL/scene
@@ -242,6 +260,25 @@ public class NativeLiveActivities: NSObject {
             statusMessage: map["statusMessage"] as? String,
             endTime: endTime
         )
+    }
+
+    /// Builds the custom template's content-state from the JS payload's `data` map.
+    ///
+    /// Values are coerced to strings rather than rejected: JavaScript numbers and booleans arrive as
+    /// `NSNumber`, and refusing them would make `{ eta: 5 }` fail for no reason a caller can see.
+    /// Anything without a sensible text form is dropped instead of stringifying as gibberish.
+    @available(iOS 16.2, *)
+    private static func customState(from map: [String: Any]) throws -> CIOCustomAttributes.ContentState {
+        let raw = map["data"] as? [String: Any] ?? [:]
+        var data: [String: String] = [:]
+        for (key, value) in raw {
+            switch value {
+            case let string as String: data[key] = string
+            case let number as NSNumber: data[key] = number.stringValue
+            default: continue
+            }
+        }
+        return CIOCustomAttributes.ContentState(data: data)
     }
 
     private static func intValue(_ any: Any?) -> Int {

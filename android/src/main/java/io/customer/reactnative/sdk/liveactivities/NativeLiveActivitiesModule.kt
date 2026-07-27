@@ -47,8 +47,15 @@ class NativeLiveActivitiesModule(
     override fun start(payload: ReadableMap?, promise: Promise?) {
         val module = getPushModule() ?: return promise.rejectNotAvailable()
         try {
-            val data = parseData(requireNotNull(payload) { "payload is required" })
-            promise?.resolve(module.startLiveNotification(data))
+            val map = requireNotNull(payload) { "payload is required" }
+            // Custom types have no built-in template, so they take the SDK's untyped map path and are
+            // rendered by the app's own callback. Built-ins keep the typed path.
+            val id = if (map.getString("type") == CUSTOM_TYPE_DISCRIMINATOR) {
+                module.startLiveNotification(requireCustomActivityType(), customData(map))
+            } else {
+                module.startLiveNotification(parseData(map))
+            }
+            promise?.resolve(id)
         } catch (ex: Throwable) {
             promise?.reject("live_activity_start_failed", ex.message, ex)
         }
@@ -58,8 +65,12 @@ class NativeLiveActivitiesModule(
         val module = getPushModule() ?: return promise.rejectNotAvailable()
         try {
             val id = requireNotNull(activityId) { "activityId is required" }
-            val data = parseData(requireNotNull(payload) { "payload is required" })
-            module.updateLiveNotification(id, data)
+            val map = requireNotNull(payload) { "payload is required" }
+            if (map.getString("type") == CUSTOM_TYPE_DISCRIMINATOR) {
+                module.updateLiveNotification(id, requireCustomActivityType(), customData(map))
+            } else {
+                module.updateLiveNotification(id, parseData(map))
+            }
             promise?.resolve(null)
         } catch (ex: Throwable) {
             promise?.reject("live_activity_update_failed", ex.message, ex)
@@ -81,20 +92,20 @@ class NativeLiveActivitiesModule(
         }
     }
 
-    override fun startCustom(
-        activityType: String?,
-        payload: ReadableMap?,
-        promise: Promise?,
-    ) {
-        val module = getPushModule() ?: return promise.rejectNotAvailable()
-        try {
-            val type = requireNotNull(activityType) { "activityType is required" }
-            val data = payload?.toHashMap() ?: emptyMap<String, Any?>()
-            promise?.resolve(module.startLiveNotification(type, data))
-        } catch (ex: Throwable) {
-            promise?.reject("live_activity_start_custom_failed", ex.message, ex)
-        }
+    /**
+     * The app's own identifier for the custom template. Absent means the app sent a custom payload
+     * without configuring `liveNotifications.customType` — say so, rather than starting a
+     * notification the allowlist would silently drop.
+     */
+    private fun requireCustomActivityType(): String = requireNotNull(customActivityType) {
+        "No custom Live Activity type is configured. Set `liveNotifications.customType` in your " +
+            "Customer.io SDK config to your own reverse-DNS identifier, and render it from your " +
+            "CustomerIOLiveNotificationsCallback."
     }
+
+    /** Flattens the payload's `data` map. Android stringifies every value downstream anyway. */
+    private fun customData(payload: ReadableMap): Map<String, Any?> =
+        payload.getMap("data")?.toHashMap() ?: emptyMap()
 
     private fun parseData(payload: ReadableMap): LiveNotificationData {
         return when (val type = payload.getString("type")) {
@@ -148,6 +159,14 @@ class NativeLiveActivitiesModule(
         // The SDK's ModuleMessagingPushFCM.MODULE_NAME is `internal`, so we mirror its value here.
         private const val PUSH_FCM_MODULE_NAME = "MessagingPushFCM"
 
+        // Discriminator JavaScript sends for the custom template. Not a wire identifier — the
+        // notification is started under the app's own `liveNotifications.customType`.
+        private const val CUSTOM_TYPE_DISCRIMINATOR = "custom"
+
+        // The app's own identifier for the custom template, captured from config at SDK init.
+        @Volatile
+        private var customActivityType: String? = null
+
         // Host-app callback used to render custom (app-defined) live notifications. The native SDK
         // only accepts it at build time, so the app must register it before the SDK initializes
         // (e.g. in Application.onCreate before React Native starts). Stored statically because the
@@ -195,11 +214,13 @@ class NativeLiveActivitiesModule(
                 builder.enableLiveNotificationTypes(*templateTypes.toTypedArray())
             }
 
-            val customTypes = config.getTypedValue<List<*>>("customTypes")
-                ?.mapNotNull { it as? String }
-                .orEmpty()
-            if (customTypes.isNotEmpty()) {
-                builder.enableCustomLiveNotificationTypes(*customTypes.toTypedArray())
+            // The custom template. Allowlisting the identifier is both necessary and sufficient:
+            // LiveNotificationHandler drops any push whose activityType isn't in this set, and a type
+            // with no built-in template falls through to the host app's render callback.
+            val customType = config.getTypedValue<String>("customType")?.trim()
+            if (!customType.isNullOrEmpty()) {
+                customActivityType = customType
+                builder.enableCustomLiveNotificationTypes(customType)
             }
 
             val branding = config.getTypedValue<Map<String, Any>>("branding")
