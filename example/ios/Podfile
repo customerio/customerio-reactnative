@@ -92,3 +92,14 @@ target nse_target_name do
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
 end
+
+# Live Activities Widget Extension: renders the built-in SDK templates plus the app-owned custom
+# one. The widget links the attributes + templates pods directly; it does not inherit the app
+# target's pods.
+target "LiveActivityWidget" do
+  # TEMPORARY (REL-1): these pods are not on CocoaPods trunk yet, so pull them from the branch that
+  # carries their podspecs. Remove the :git/:branch overrides once Live Activities ships.
+  %w[CustomerIOLiveActivitiesTemplates CustomerIOLiveActivitiesAttributes].each do |cio_pod|
+    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "live-activities-sdk-managed-module"
+  end
+end

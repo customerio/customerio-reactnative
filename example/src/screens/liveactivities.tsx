@@ -2,7 +2,13 @@ import { BodyText, Button, ButtonExperience } from '@components';
 import { Colors } from '@colors';
 import { CustomerIO, LiveActivityTemplate } from 'customerio-reactnative';
 import React, { useState } from 'react';
-import { NativeModules, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 // Reverse-DNS identifier for the app-defined "rideshare" activity type. Must match the
@@ -55,7 +61,10 @@ export const LiveActivitiesScreen = () => {
         segmentsComplete: next,
       });
       setSegmentsComplete(next);
-      showMessage({ message: `Segments → ${next}/${segmentsTotal}`, type: 'success' });
+      showMessage({
+        message: `Segments → ${next}/${segmentsTotal}`,
+        type: 'success',
+      });
     } catch (e) {
       showMessage({ message: (e as Error).message, type: 'danger' });
     }
@@ -126,7 +135,11 @@ export const LiveActivitiesScreen = () => {
     try {
       const id =
         Platform.OS === 'ios'
-          ? await SampleCustomLiveActivity.startRideshare('Alex', 'On the way', 5)
+          ? await SampleCustomLiveActivity.startRideshare(
+              'Alex',
+              'On the way',
+              5
+            )
           : await CustomerIO.liveActivities.startCustom(RIDESHARE_TYPE, {
               driverName: 'Alex',
               status: 'On the way',
@@ -143,7 +156,11 @@ export const LiveActivitiesScreen = () => {
     if (!customId) return;
     try {
       if (Platform.OS === 'ios') {
-        await SampleCustomLiveActivity.updateRideshare(customId, 'Almost there', 2);
+        await SampleCustomLiveActivity.updateRideshare(
+          customId,
+          'Almost there',
+          2
+        );
       } else {
         // Android has no by-id update for custom types: `startCustom` always mints a new
         // notification. End the current one first so we replace it in place instead of
@@ -250,8 +267,9 @@ export const LiveActivitiesScreen = () => {
 
         <BodyText style={styles.note}>
           Android renders live notifications in-SDK (custom types via the app's
-          createLiveNotification callback). iOS additionally requires a Widget Extension in
-          the app to render the built-in templates and app-owned custom activities.
+          createLiveNotification callback). iOS additionally requires a Widget
+          Extension in the app to render the built-in templates and app-owned
+          custom activities.
         </BodyText>
       </View>
     </ScrollView>
