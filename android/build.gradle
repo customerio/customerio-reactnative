@@ -59,6 +59,10 @@ repositories {
   mavenCentral()
   google()
 
+  // TEMPORARY (REL-1): remove once Live Notifications ships in a released Android SDK.
+  // Live Notifications are only available from the unreleased branch snapshot.
+  maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
+
   def found = false
   def defaultDir = null
   def androidSourcesName = 'React Native sources'
