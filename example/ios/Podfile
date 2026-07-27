@@ -68,7 +68,7 @@ target app_target_name do
     CustomerIOMessagingPush CustomerIOMessagingPushAPN CustomerIOMessagingInApp CustomerIOLocation
     CustomerIOLiveActivities CustomerIOLiveActivitiesAttributes CustomerIOLiveActivitiesTemplates
   ].each do |cio_pod|
-    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "live-activities-sdk-managed-module"
+    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "feat/live-activities"
   end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
@@ -100,6 +100,6 @@ target "LiveActivityWidget" do
   # TEMPORARY (REL-1): these pods are not on CocoaPods trunk yet, so pull them from the branch that
   # carries their podspecs. Remove the :git/:branch overrides once Live Activities ships.
   %w[CustomerIOLiveActivitiesTemplates CustomerIOLiveActivitiesAttributes].each do |cio_pod|
-    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "live-activities-sdk-managed-module"
+    pod cio_pod, :git => "https://github.com/customerio/customerio-ios.git", :branch => "feat/live-activities"
   end
 end
