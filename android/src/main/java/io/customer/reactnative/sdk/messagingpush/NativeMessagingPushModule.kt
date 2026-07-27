@@ -259,7 +259,7 @@ class NativeMessagingPushModule(
         internal fun addNativeModuleFromConfig(
             builder: CustomerIOBuilder,
             config: Map<String, Any>,
-            liveActivitiesConfig: Map<String, Any>? = null,
+            liveNotificationsConfig: Map<String, Any>? = null,
         ) {
             val androidConfig =
                 config.getTypedValue<Map<String, Any>>(key = "android") ?: emptyMap()
@@ -279,7 +279,7 @@ class NativeMessagingPushModule(
                     setPushClickBehavior(pushClickBehavior = pushClickBehavior)
                     // Live Notifications are hosted by the FCM push module, so their config is
                     // applied to the same MessagingPushModuleConfig.
-                    liveActivitiesConfig?.let { liveConfig ->
+                    liveNotificationsConfig?.let { liveConfig ->
                         NativeLiveActivitiesModule.applyLiveActivitiesConfig(
                             builder = this,
                             config = liveConfig,

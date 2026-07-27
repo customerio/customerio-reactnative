@@ -33,11 +33,16 @@ class NativeLiveActivitiesModule(
 
     // Live Notifications are hosted by the FCM push module. Reach it via the module registry
     // (the wrapper can't reference the SDK-internal MODULE_NAME constant, so use the literal).
-    private fun getPushModule(): ModuleMessagingPushFCM? = runCatching {
-        SDKComponent.modules[PUSH_FCM_MODULE_NAME] as? ModuleMessagingPushFCM
-    }.onFailure {
-        logger.error("Live Notifications: push module is not initialized. Ensure the SDK is initialized with live activity templates enabled.")
-    }.getOrNull()
+    //
+    // Deliberately not runCatching: `as?` yields null instead of throwing, so a failure branch keyed
+    // on a thrown error would never run and the message below would never be logged.
+    private fun getPushModule(): ModuleMessagingPushFCM? {
+        val module = SDKComponent.modules[PUSH_FCM_MODULE_NAME] as? ModuleMessagingPushFCM
+        if (module == null) {
+            logger.error("Live Notifications: push module is not initialized. Ensure the SDK is initialized with live activity templates enabled.")
+        }
+        return module
+    }
 
     override fun start(payload: ReadableMap?, promise: Promise?) {
         val module = getPushModule() ?: return promise.rejectNotAvailable()
@@ -169,7 +174,7 @@ class NativeLiveActivitiesModule(
          * custom types, branding) is set on the same [MessagingPushModuleConfig].
          *
          * @param builder the push module's config builder.
-         * @param config the `liveActivities` config map from the customer app.
+         * @param config the `liveNotifications` config map from the customer app.
          */
         internal fun applyLiveActivitiesConfig(
             builder: MessagingPushModuleConfig.Builder,

@@ -90,13 +90,13 @@ class NativeCustomerIOModule(
                     ?.let { cdnHost(it) }
 
                 // Configure push messaging module based on config provided by customer app.
-                // Live Activities are hosted by the FCM push module, so the `liveActivities`
+                // Live Activities are hosted by the FCM push module, so the `liveNotifications`
                 // config is applied to the same module.
                 packageConfig.getTypedValue<Map<String, Any>>(key = "push").let { pushConfig ->
                     NativeMessagingPushModule.addNativeModuleFromConfig(
                         builder = this,
                         config = pushConfig ?: emptyMap(),
-                        liveActivitiesConfig = packageConfig.getTypedValue<Map<String, Any>>(key = "liveNotifications")
+                        liveNotificationsConfig = packageConfig.getTypedValue<Map<String, Any>>(key = "liveNotifications")
                     )
                 }
                 // Configure in-app messaging module based on config provided by customer app

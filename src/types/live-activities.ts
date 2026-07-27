@@ -111,7 +111,14 @@ export interface LiveActivitiesConfig {
    * ignored, so a newer native template can't break an older wrapper build.
    */
   types?: LiveActivityTemplate[];
-  /** Reverse-DNS identifiers for custom (app-defined) activity types. */
+  /**
+   * Reverse-DNS identifiers for custom (app-defined) activity types.
+   *
+   * **Android only in practice.** Android renders these through the app's
+   * `createLiveNotification` callback. On iOS a custom type needs a native Widget
+   * Extension and an `adopt()` call, so it cannot be started from JavaScript —
+   * `startCustom` always rejects there and this list is ignored.
+   */
   customTypes?: string[];
   /** Android Live Notification branding (ignored on iOS). */
   branding?: LiveActivitiesBranding;

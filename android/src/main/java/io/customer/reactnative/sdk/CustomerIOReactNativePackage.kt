@@ -34,6 +34,12 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             InlineInAppMessageViewManager.NAME -> InlineInAppMessageViewManager()
             NativeCustomerIOLoggingModule.NAME -> NativeCustomerIOLoggingModule(reactContext)
             NativeCustomerIOModule.NAME -> NativeCustomerIOModule(reactContext = reactContext)
+            // Unconditional on purpose, unlike Location below. Location has its own artifact
+            // (io.customer.android:location) that the flag switches between `api` and `compileOnly`,
+            // so gating it genuinely keeps a dependency off the consumer's classpath. Live
+            // Notifications ship inside messaging-push-fcm, already a hard dependency here, so a flag
+            // would remove nothing — and the module is inert until `liveNotifications` config enables
+            // a type. iOS gates its equivalent only because the subspec pulls in extra pods.
             NativeLiveActivitiesModule.NAME -> NativeLiveActivitiesModule(reactContext)
             NativeLocationModule.NAME -> if (BuildConfig.CIO_LOCATION_ENABLED) {
                 NativeLocationModule(reactContext)
