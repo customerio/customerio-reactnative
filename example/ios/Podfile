@@ -31,12 +31,13 @@ push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
 
 app_target_name = "SampleApp"
 nse_target_name = "NotificationServiceExtension"
+widget_target_name = "LiveActivityWidget"
 installation_root = Pod::Config.instance.installation_root
 
 # This function is very specific to the sample app setup
 # and is not part of the SDK or its usage.
 create_project_file_if_not_exists(installation_root, app_target_name)
-update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
+update_project_build_settings(installation_root, app_target_name, nse_target_name, widget_target_name, push_provider)
 
 # React Native 0.82 (New Architecture only) does not support dynamic frameworks yet
 # Use static frameworks instead when using FCM

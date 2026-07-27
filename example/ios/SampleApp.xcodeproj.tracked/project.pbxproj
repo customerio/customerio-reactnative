@@ -74,6 +74,8 @@
 		609C0BDE2DBE12A300061E29 /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Release.xcconfig; sourceTree = "<group>"; };
 		67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiveActivityWidgetBundle.swift; path = LiveActivityWidget/LiveActivityWidgetBundle.swift; sourceTree = "<group>"; };
 		9E54E1130F8A696F39C18A68 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = LiveActivityWidget/Info.plist; sourceTree = "<group>"; };
+		CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = .Debug.xcconfig; path = LiveActivityWidget/BuildSettings/.Debug.xcconfig; sourceTree = "<group>"; };
+		CI0LAW1RELEASE00000000AA /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = .Release.xcconfig; path = LiveActivityWidget/BuildSettings/.Release.xcconfig; sourceTree = "<group>"; };
 		F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RideshareLiveActivity.swift; path = LiveActivityWidget/RideshareLiveActivity.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -132,6 +134,8 @@
 				67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */,
 				9E54E1130F8A696F39C18A68 /* Info.plist */,
 				F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */,
+				CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */,
+				CI0LAW1RELEASE00000000AA /* .Release.xcconfig */,
 			);
 			name = LiveActivityWidget;
 			sourceTree = SOURCE_ROOT;
@@ -401,9 +405,9 @@
 /* Begin XCBuildConfiguration section */
 		53F519B219C11356495E50A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = LiveActivityWidget/Info.plist;
@@ -414,7 +418,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.customer.ami.LiveActivityWidget;
 				PRODUCT_NAME = LiveActivityWidget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -696,9 +699,9 @@
 		};
 		E46988A20C9404BDC3521A5E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CI0LAW1RELEASE00000000AA /* .Release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGNING_ALLOWED = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = LiveActivityWidget/Info.plist;
@@ -709,7 +712,6 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.customer.ami.LiveActivityWidget;
 				PRODUCT_NAME = LiveActivityWidget;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
