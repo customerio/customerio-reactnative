@@ -3,32 +3,24 @@ import {
   CustomerIO,
   InboxEventType,
   NotificationInboxBellView,
-  NotificationInboxOverlayView,
   NotificationInboxView,
 } from 'customerio-reactnative';
-import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 /**
- * Demonstrates the three native Visual Notification Inbox UI components exposed by the SDK:
+ * Demonstrates the two native Visual Notification Inbox UI components exposed by the SDK:
  *
- * 1. NotificationInboxOverlayView — drop-in floating bell + slide-out panel.
- * 2. NotificationInboxBellView    — just the bell; this screen opens its own modal.
- * 3. NotificationInboxView        — the Jist-rendered message list embedded inline.
+ * 1. NotificationInboxBellView — the branded bell; tapping it opens the SDK's own inbox panel.
+ * 2. NotificationInboxView     — the Jist-rendered message list, placed by this screen.
+ *
+ * The host places both wherever it likes; the SDK owns the panel and all rendering.
  *
  * Message actions are handled by the global InboxEventListener (configured elsewhere), so these
  * components take no per-message action callbacks.
  */
 export const VisualInboxScreen = ({}: NavigationScreenProps<'Visual Inbox'>) => {
-  const [showBellModal, setShowBellModal] = useState(false);
 
   // Register a global inbox event listener while this screen is mounted.
   // While registered, the host (this app) owns action navigation: the native
@@ -44,6 +36,20 @@ export const VisualInboxScreen = ({}: NavigationScreenProps<'Visual Inbox'>) => 
               }`,
               type: 'success',
             });
+            // While a listener is registered the SDK suppresses its own deep-link handling and
+            // treats the action as host-handled, so nothing navigates unless the host does it.
+            // Hand the value to the OS exactly as the SDK would: our own scheme round-trips back
+            // through the NavigationContainer `linking` config, anything else opens externally.
+            if (event.actionValue) {
+              Linking.openURL(event.actionValue).catch((error) => {
+                showMessage({
+                  message: `Could not open ${event.actionValue}`,
+                  type: 'danger',
+                });
+                // eslint-disable-next-line no-console
+                console.warn('Failed to open inbox action deep link', error);
+              });
+            }
             break;
           case InboxEventType.messageShown:
             showMessage({ message: 'Inbox message shown', type: 'info' });
@@ -67,61 +73,43 @@ export const VisualInboxScreen = ({}: NavigationScreenProps<'Visual Inbox'>) => 
 
   return (
     <View style={styles.root}>
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* 2. Bell only — host presents its own UI on tap. */}
-        <Text style={styles.sectionTitle}>NotificationInboxBellView</Text>
-        <Text style={styles.sectionBody}>
-          Just the bell. Tapping it opens a modal hosting the message list.
-        </Text>
+      {/*
+        Deliberately NOT a ScrollView. NotificationInboxView scrolls its own message list, and a parent
+        ScrollView intercepts the vertical drag before the native list sees it. These components are
+        meant to own their screen (or a fixed region of one), not to sit in a scrolling page.
+      */}
+      <View style={styles.content}>
+        {/* 1. Branded bell — tapping it opens the SDK's inbox panel. Host owns placement. */}
         <View style={styles.bellRow}>
+          <Text style={styles.sectionTitle}>NotificationInboxBellView</Text>
           <NotificationInboxBellView
             style={styles.bell}
             onTap={() => {
+              // Observational only: the SDK is already opening its panel.
               showMessage({ message: 'Bell tapped', type: 'info' });
-              setShowBellModal(true);
             }}
           />
         </View>
+        <Text style={styles.sectionBody}>
+          Tapping the bell opens the SDK's inbox panel — this screen presents nothing.
+        </Text>
 
-        {/* 3. Embedded message list. */}
+        {/* 2. The message list, placed inline by this screen. */}
         <Text style={styles.sectionTitle}>NotificationInboxView</Text>
         <Text style={styles.sectionBody}>
-          The Jist-rendered message list embedded directly in this screen.
+          The Jist-rendered message list, filling the rest of the screen.
         </Text>
         <View style={styles.embeddedList}>
           <NotificationInboxView style={styles.fill} />
         </View>
-      </ScrollView>
-
-      {/* 1. Drop-in overlay (floating bell + slide-out panel) layered over the whole screen. */}
-      <NotificationInboxOverlayView
-        style={StyleSheet.absoluteFill}
-        pointerEvents="box-none"
-      />
-
-      {/* Modal opened by the standalone bell. */}
-      <Modal
-        visible={showBellModal}
-        animationType="slide"
-        onRequestClose={() => setShowBellModal(false)}
-      >
-        <View style={styles.modalRoot}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Inbox</Text>
-            <TouchableOpacity onPress={() => setShowBellModal(false)}>
-              <Text style={styles.modalClose}>Close</Text>
-            </TouchableOpacity>
-          </View>
-          <NotificationInboxView style={styles.fill} />
-        </View>
-      </Modal>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#f5f5f5' },
-  content: { padding: 16, gap: 8 },
+  content: { flex: 1, padding: 16, gap: 8 },
   fill: { flex: 1 },
   sectionTitle: {
     fontSize: 16,
@@ -132,25 +120,17 @@ const styles = StyleSheet.create({
   sectionBody: { fontSize: 13, color: '#666', marginBottom: 4 },
   bellRow: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 8,
   },
-  bell: { width: 56, height: 56 },
+  // 88 not 56: the native composition insets the 56dp bell by 16 on each side, so a
+  // 56-square box squeezes the circle down onto the glyph.
+  bell: { width: 88, height: 88 },
   embeddedList: {
-    height: 360,
+    flex: 1,
     backgroundColor: '#fff',
     borderRadius: 8,
     overflow: 'hidden',
   },
-  modalRoot: { flex: 1, backgroundColor: '#fff' },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ddd',
-  },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  modalClose: { fontSize: 16, color: '#2196F3', fontWeight: '600' },
 });
