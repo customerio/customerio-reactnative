@@ -71,6 +71,16 @@ RCT_EXPORT_MODULE()
   [_swiftBridge setupInboxListener];
 }
 
+- (void)registerInboxEventListener {
+  [self assertBridgeAvailable:@"during registerInboxEventListener"];
+  [_swiftBridge registerInboxEventListener];
+}
+
+- (void)unregisterInboxEventListener {
+  [self assertBridgeAvailable:@"during unregisterInboxEventListener"];
+  [_swiftBridge unregisterInboxEventListener];
+}
+
 - (void)getMessages:(NSString *)topic
             resolve:(RCTPromiseResolveBlock)resolve
              reject:(RCTPromiseRejectBlock)reject {
@@ -108,6 +118,10 @@ RCT_EXPORT_MODULE()
 
 - (void)emitOnInAppEventReceived:(NSDictionary *)value {
   [super emitOnInAppEventReceived:value];
+}
+
+- (void)emitOnInboxEventReceived:(NSDictionary *)value {
+  [super emitOnInboxEventReceived:value];
 }
 
 - (void)emitSubscribeToMessagesChanged:(NSDictionary *)value {

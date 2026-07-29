@@ -33,6 +33,7 @@ class NativeMessagingInAppModule(
 
     private val inAppEventListener = ReactInAppEventListener.instance
     private val inboxChangeListener = ReactNotificationInboxChangeListener.instance
+    private val inboxEventListener = ReactInboxEventListener.instance
 
     // Dedicated lock for inbox listener setup to avoid blocking other operations
     private val inboxListenerLock = Any()
@@ -63,6 +64,7 @@ class NativeMessagingInAppModule(
     override fun invalidate() {
         inAppEventListener.clearEventEmitter()
         clearInboxChangeListener()
+        clearInboxEventListener()
         super.invalidate()
     }
 
@@ -72,6 +74,32 @@ class NativeMessagingInAppModule(
 
     override fun setupInboxListener() {
         setupInboxChangeListener()
+    }
+
+    /**
+     * Registers the native inbox event forwarder with the SDK and wires it to the React Native
+     * event emitter. Called when a JS inbox event listener is registered.
+     */
+    override fun registerInboxEventListener() {
+        inboxEventListener.setEventEmitter { data ->
+            emitOnInboxEventReceived(data)
+        }
+        inAppMessagingModule?.setInboxEventListener(inboxEventListener)
+    }
+
+    /**
+     * Unregisters the native inbox event forwarder by installing a no-op listener (the native API is
+     * non-null), restoring the SDK's default action handling. Called when the JS inbox event
+     * listener is removed.
+     */
+    override fun unregisterInboxEventListener() {
+        inAppMessagingModule?.setInboxEventListener(NoOpInboxEventListener)
+        inboxEventListener.clearEventEmitter()
+    }
+
+    private fun clearInboxEventListener() {
+        inAppMessagingModule?.setInboxEventListener(NoOpInboxEventListener)
+        inboxEventListener.clearEventEmitter()
     }
 
     override fun getMessages(topic: String?, promise: Promise?) {

@@ -11,6 +11,10 @@ enum CustomerioConstants {
     static let errorWithMessage = "errorWithMessage"
     static let messageActionTaken = "messageActionTaken"
 
+    // Notification Inbox event listener
+    static let messageOpened = "messageOpened"
+    static let inboxMessage = "message"
+
     // Push Messaging
     static let CioDeliveryId = "CIO-Delivery-ID"
     static let CioDeliveryToken = "CIO-Delivery-Token"

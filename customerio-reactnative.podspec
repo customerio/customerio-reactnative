@@ -28,6 +28,19 @@ Pod::Spec.new do |s|
   # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
   s.dependency "CustomerIO/DataPipelines", package["cioNativeiOSSdkVersion"]
   s.dependency "CustomerIO/MessagingInApp", package["cioNativeiOSSdkVersion"]
+  # Visual Notification Inbox UI (SwiftUI).
+  #
+  # TODO(inbox-release): this cannot resolve from the CocoaPods trunk until the native inbox ships —
+  # `CustomerIOMessagingInbox` exists only on customerio-ios `feat/overlay-inbox`, so `pod lib lint`
+  # and any plain `pod install` of this pod stay red until then. The sample app resolves it by
+  # branch-overriding in example/ios/Podfile. Jist is NO LONGER a blocker (published as `Jist 0.1.0`).
+  #
+  # Declared on the standalone pod rather than a `CustomerIO/MessagingInbox` subspec because the
+  # umbrella CustomerIO.podspec has no MessagingInbox subspec (every other module has one). Either
+  # native adds it — preferred, for consistency — or this line stays as-is. Cannot be commented out:
+  # the bridge in ios/wrappers/inbox/* imports CioMessagingInbox, and a pod target only sees the
+  # modules its podspec declares.
+  s.dependency "CustomerIOMessagingInbox", package["cioNativeiOSSdkVersion"]
 
   # If we do not specify a default_subspec, then *all* dependencies inside of *all* the subspecs will be downloaded by cocoapods.
   # We want customers to opt into push dependencies especially because the FCM subpsec downloads Firebase dependencies. APN customers should not install Firebase dependencies at all.

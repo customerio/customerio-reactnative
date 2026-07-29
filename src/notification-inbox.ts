@@ -46,7 +46,7 @@ export type NotificationInboxSpec =
  * Helper function to parse raw inbox message from native layer
  * @internal
  */
-function parseInboxMessage(raw: any): InboxMessage {
+export function parseInboxMessage(raw: any): InboxMessage {
   return {
     queueId: raw.queueId,
     deliveryId: raw.deliveryId ?? undefined,
