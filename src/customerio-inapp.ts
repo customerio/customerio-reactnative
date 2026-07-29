@@ -44,6 +44,13 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
 class CustomerIOInAppMessaging implements NativeInAppSpec {
   private _notificationInbox?: NotificationInbox;
 
+  /**
+   * Live inbox subscriptions. The SDK's inbox forwarder is a SINGLE global listener, so it is
+   * registered when the first subscription is created and unregistered when the last one goes away —
+   * never per subscription, or one `remove()` would tear it out from under the others.
+   */
+  private _inboxListenerCount = 0;
+
   registerEventsListener(
     listener: (event: InAppMessageEvent) => void
   ): EventSubscription {
@@ -108,22 +115,49 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
     };
 
     return withNativeModule((native) => {
+      let registeredNativeForwarder = false;
       try {
         // Register the native forwarder with the SDK, then subscribe to the
         // codegen-generated event emitter.
         // Wrapped in try-catch due to previous reports of crashes on certain Android architectures.
-        native.registerInboxEventListener();
+        if (this._inboxListenerCount === 0) {
+          native.registerInboxEventListener();
+          registeredNativeForwarder = true;
+        }
         const subscription = native.onInboxEventReceived(emitter);
+        this._inboxListenerCount += 1;
 
-        // Wrap remove() so unregistering the JS listener also unregisters the
-        // native forwarder (restoring the SDK's default action handling).
+        // Wrap remove() so unregistering the LAST JS listener also unregisters the native forwarder
+        // (restoring the SDK's default action handling). Guarded so a double remove() cannot
+        // unbalance the count and drop the forwarder while other subscriptions are still live.
         const originalRemove = subscription.remove.bind(subscription);
+        let removed = false;
         subscription.remove = () => {
+          if (removed) {
+            return;
+          }
+          removed = true;
           originalRemove();
-          withNativeModule((n) => n.unregisterInboxEventListener());
+          this._inboxListenerCount -= 1;
+          if (this._inboxListenerCount === 0) {
+            withNativeModule((n) => n.unregisterInboxEventListener());
+          }
         };
         return subscription;
       } catch (error) {
+        // If the forwarder was registered and subscribing then failed, roll it back. Otherwise the
+        // SDK keeps suppressing its own action handling while nothing in JS is listening, so inbox
+        // actions are reported as handled and silently go nowhere.
+        if (registeredNativeForwarder) {
+          try {
+            native.unregisterInboxEventListener();
+          } catch (rollbackError) {
+            NativeLoggerListener.warn(
+              'Failed to roll back inbox listener registration:',
+              rollbackError
+            );
+          }
+        }
         NativeLoggerListener.warn(
           'Failed to attach inbox event listener:',
           error

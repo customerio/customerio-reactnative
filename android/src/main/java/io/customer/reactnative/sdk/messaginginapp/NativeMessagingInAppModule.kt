@@ -84,7 +84,18 @@ class NativeMessagingInAppModule(
         inboxEventListener.setEventEmitter { data ->
             emitOnInboxEventReceived(data)
         }
-        inAppMessagingModule?.setInboxEventListener(inboxEventListener)
+        val module = inAppMessagingModule
+        if (module == null) {
+            // Without this the failure is invisible: the JS subscription reports success while the SDK
+            // never forwards anything, so inbox callbacks silently never arrive. Matches the guidance
+            // used by getMessages() for the same situation.
+            logger.error(
+                "Cannot register inbox event listener: in-app messaging is not available. " +
+                    "Ensure CustomerIO SDK is initialized before registering the listener."
+            )
+            return
+        }
+        module.setInboxEventListener(inboxEventListener)
     }
 
     /**

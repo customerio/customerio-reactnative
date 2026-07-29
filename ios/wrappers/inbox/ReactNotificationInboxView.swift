@@ -42,6 +42,12 @@ class ReactNotificationInboxView: NSObject {
 
     @objc
     func prepareForRecycle() {
-        hostingController.view.removeFromSuperview()
+        // Deliberately does NOT remove the hosted view from its container.
+        //
+        // Fabric recycles the component view, and the previous version detached the SwiftUI view here
+        // with nothing to re-attach it, so a reused view came back blank. `ReactInlineMessageView`
+        // does not touch the hierarchy either — it detaches observers (`onViewDetached`) and
+        // re-attaches in `setupForReuse`. These hosts have no props and no observers to reset, so
+        // there is nothing to undo: the hosted view stays mounted and is reused as-is.
     }
 }
