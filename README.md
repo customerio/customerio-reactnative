@@ -73,20 +73,30 @@ This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-n
 
 ## 🔴 Live Activities
 
-Enable the activity types you use under the `liveNotifications` key of your SDK config. On iOS, also add the `liveactivities` pod subspec and a Widget Extension that renders the SDK's built-in templates.
+Enable the activity types you use under the `liveNotifications` key of your SDK config. On iOS, also add `NSSupportsLiveActivities` to your app's `Info.plist`, the `liveactivities` pod subspec, and a Widget Extension that renders the SDK's built-in templates. Without the `Info.plist` key, iOS refuses to start any activity:
+
+```xml
+<key>NSSupportsLiveActivities</key>
+<true/>
+```
 
 **One manual step is required on iOS.** Forward every opened URL to the SDK from your `AppDelegate`, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it — and note this only compiles once the `liveactivities` subspec is installed:
 
 ```swift
 import customerio_reactnative
+import React
 
-override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-  // Reports an `opened` metric and returns the deep link to route to. A non-Customer.io URL comes
-  // back unchanged; `nil` means the activity carried no deep link, so there is nothing to open.
-  guard let routableUrl = NativeLiveActivities.handleWidgetUrl(url) else { return true }
-  return super.application(app, open: routableUrl, options: options)
+extension AppDelegate {
+  func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    // Reports an `opened` metric and returns the deep link to route to. A non-Customer.io URL comes
+    // back unchanged; `nil` means the activity carried no deep link, so there is nothing to open.
+    guard let routableUrl = NativeLiveActivities.handleWidgetUrl(url) else { return true }
+    return RCTLinkingManager.application(app, open: routableUrl, options: options)
+  }
 }
 ```
+
+A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
 Android needs no equivalent step. Expo apps need none either — the [config plugin](https://github.com/customerio/customerio-expo-plugin) injects this for you.
 
