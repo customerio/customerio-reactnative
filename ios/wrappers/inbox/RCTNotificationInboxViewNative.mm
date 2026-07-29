@@ -47,6 +47,20 @@ using namespace facebook::react;
   [self.bridge updateLayout:[NSValue valueWithCGRect:self.bounds]];
 }
 
+// Containment can only happen once the view is in a window: React Native creates component views
+// before mounting them, so at init there is no parent view controller to attach the host to. The list
+// presents nothing, but containment is what gives the hosted SwiftUI a correct trait/safe-area chain
+// and lifecycle callbacks.
+- (void)didMoveToWindow {
+  [super didMoveToWindow];
+  [self assertBridgeAvailable:@"during didMoveToWindow"];
+  if (self.window != nil) {
+    [self.bridge attachToParentViewController];
+  } else {
+    [self.bridge detachFromParentViewController];
+  }
+}
+
 - (void)prepareForRecycle {
   [super prepareForRecycle];
   [self assertBridgeAvailable:@"during prepareForRecycle"];

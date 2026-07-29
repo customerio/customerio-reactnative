@@ -253,10 +253,10 @@ export class NotificationInbox implements NotificationInboxPublicSpec {
 // @public (undocumented)
 export const NotificationInboxBellView: React_2.FC<NotificationInboxBellViewProps>;
 
-// Warning: (ae-forgotten-export) The symbol "NativeProps_3" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "NativeProps_2" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export interface NotificationInboxBellViewProps extends Omit<NativeProps_3, 'onTap'> {
+export interface NotificationInboxBellViewProps extends Omit<NativeProps_2, 'onTap'> {
     onTap?: () => void;
 }
 
@@ -266,21 +266,12 @@ export type NotificationInboxChangeListener = {
 };
 
 // @public (undocumented)
-export const NotificationInboxOverlayView: React_2.FC<NotificationInboxOverlayViewProps>;
-
-// Warning: (ae-forgotten-export) The symbol "NativeProps_2" needs to be exported by the entry point index.d.ts
-//
-// @public (undocumented)
-export interface NotificationInboxOverlayViewProps extends NativeProps_2 {
-}
-
-// @public (undocumented)
 export const NotificationInboxView: React_2.FC<NotificationInboxViewProps>;
 
-// Warning: (ae-forgotten-export) The symbol "NativeProps_4" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "NativeProps_3" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export interface NotificationInboxViewProps extends NativeProps_4 {
+export interface NotificationInboxViewProps extends NativeProps_3 {
 }
 
 // @public

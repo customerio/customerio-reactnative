@@ -10,10 +10,12 @@ import UIKit
 /// so the pod's own floor (`min_ios_version_supported`) governs.
 @objc(ReactNotificationInboxView)
 class ReactNotificationInboxView: NSObject {
+    private weak var containerView: UIView?
     private let hostingController: UIHostingController<NotificationInboxView>
 
     @objc
     init(containerView: UIView) {
+        self.containerView = containerView
         self.hostingController = UIHostingController(rootView: NotificationInboxView())
         super.init()
 
@@ -33,6 +35,19 @@ class ReactNotificationInboxView: NSObject {
     @objc
     func setEventEmitter(_ eventEmitter: AnyObject?) {}
 
+    /// Adds the hosting controller to the view-controller hierarchy once the view is in a window, so the
+    /// hosted SwiftUI gets a correct trait/safe-area chain and lifecycle callbacks instead of being
+    /// driven by an orphaned controller.
+    @objc
+    func attachToParentViewController() {
+        InboxHostContainment.attach(hostingController, hostedIn: containerView)
+    }
+
+    @objc
+    func detachFromParentViewController() {
+        InboxHostContainment.detach(hostingController)
+    }
+
     @objc
     func updateLayout(_ boundsValue: NSValue) {
         hostingController.view.frame = boundsValue.cgRectValue
@@ -42,6 +57,7 @@ class ReactNotificationInboxView: NSObject {
 
     @objc
     func prepareForRecycle() {
+        detachFromParentViewController()
         // Deliberately does NOT remove the hosted view from its container.
         //
         // Fabric recycles the component view, and the previous version detached the SwiftUI view here

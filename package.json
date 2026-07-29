@@ -153,8 +153,7 @@
     "ios": {
       "componentProvider": {
         "InlineMessageNative": "RCTInlineMessageNative",
-        "NotificationInboxOverlayNative": "RCTNotificationInboxOverlayNative",
-        "NotificationInboxBellNative": "RCTNotificationInboxBellNative",
+          "NotificationInboxBellNative": "RCTNotificationInboxBellNative",
         "NotificationInboxViewNative": "RCTNotificationInboxViewNative"
       },
       "modulesProvider": {

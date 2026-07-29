@@ -30,11 +30,16 @@ using namespace facebook::react;
   if (self = [super initWithFrame:frame]) {
     _props = NotificationInboxBellNativeShadowNode::defaultSharedProps();
 
-    Class bridgeClass = NSClassFromString(@"ReactNotificationInboxBellView");
-    if (bridgeClass) {
-      self.bridge = [[bridgeClass alloc] initWithContainerView:self];
-      [self assertBridgeAvailable:@"creating ReactNotificationInboxBellView bridge instance"];
-      [self.bridge setEventEmitter:self];
+    // The Swift bridge is @available(iOS 16.0, *) because the bell opens the SDK's inbox sheet, which
+    // uses system detents. Below iOS 16 the class exists but must not be instantiated, so the view
+    // stays empty rather than crashing — every method below therefore tolerates a nil bridge.
+    if (@available(iOS 16.0, *)) {
+      Class bridgeClass = NSClassFromString(@"ReactNotificationInboxBellView");
+      if (bridgeClass) {
+        self.bridge = [[bridgeClass alloc] initWithContainerView:self];
+        [self assertBridgeAvailable:@"creating ReactNotificationInboxBellView bridge instance"];
+        [self.bridge setEventEmitter:self];
+      }
     }
   }
   return self;
@@ -42,13 +47,31 @@ using namespace facebook::react;
 
 - (void)layoutSubviews {
   [super layoutSubviews];
-  [self assertBridgeAvailable:@"during layoutSubviews"];
+  if (self.bridge == nil) {
+    return;
+  }
   [self.bridge updateLayout:[NSValue valueWithCGRect:self.bounds]];
+}
+
+// Containment can only happen once the view is in a window: React Native creates component views
+// before mounting them, so at init there is no parent view controller to attach the host to.
+- (void)didMoveToWindow {
+  [super didMoveToWindow];
+  if (self.bridge == nil) {
+    return;
+  }
+  if (self.window != nil) {
+    [self.bridge attachToParentViewController];
+  } else {
+    [self.bridge detachFromParentViewController];
+  }
 }
 
 - (void)prepareForRecycle {
   [super prepareForRecycle];
-  [self assertBridgeAvailable:@"during prepareForRecycle"];
+  if (self.bridge == nil) {
+    return;
+  }
   [self.bridge prepareForRecycle];
 }
 

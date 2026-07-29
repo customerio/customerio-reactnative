@@ -37,8 +37,22 @@ abstract class ReactComposeHostView(context: Context) : FrameLayout(context) {
     @Composable
     protected abstract fun content()
 
-    init {
-        addView(composeView)
+    /**
+     * The Compose child is attached here rather than in `init`, gating setup on attachment the same
+     * way [io.customer.messaginginapp.ui.core.BaseInlineInAppMessageView] gates its subscription.
+     *
+     * Fabric measures a newly created view before the mount batch's INSERT attaches it to the
+     * window ([com.facebook.react.fabric.mounting.SurfaceMountingManager.updateLayout]), and
+     * `AbstractComposeView.onMeasure` unconditionally creates its composition, which needs a window
+     * to resolve the recomposer. Adding the child in `init` therefore threw
+     * `IllegalStateException: Cannot locate windowRecomposer` during that measure; the mount batch
+     * aborted and the half-mounted hierarchy crashed the host app.
+     */
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (composeView.parent == null) {
+            addView(composeView)
+        }
     }
 
     /**
@@ -63,6 +77,12 @@ abstract class ReactComposeHostView(context: Context) : FrameLayout(context) {
     }
 
     private val measureAndLayout = Runnable {
+        // The callback is posted for the next frame, by which point the view may have been detached
+        // (Fabric recycles these). Measuring the Compose child without a window throws, so skip it —
+        // a later attach re-runs layout anyway.
+        if (!isAttachedToWindow) {
+            return@Runnable
+        }
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)

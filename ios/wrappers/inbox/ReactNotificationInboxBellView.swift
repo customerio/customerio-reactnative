@@ -3,28 +3,29 @@ import Foundation
 import SwiftUI
 import UIKit
 
-/// React Native wrapper hosting the SwiftUI `NotificationInboxBell` (just the bell) inside a
-/// `UIHostingController`. Emits `onTap` to JS; the host presents its own inbox UI.
+/// React Native wrapper hosting the SwiftUI `NotificationInboxOverlay` inside a `UIHostingController`.
 ///
-/// No `@available` annotation, matching `ReactInlineMessageView`: the native bell is iOS 13+, so the
-/// pod's own floor (`min_ios_version_supported`) governs. Only the overlay carries a higher floor.
+/// Despite the name, the hosted composition is the overlay rather than the bare `NotificationInboxBell`:
+/// only the overlay ties the bell to the SDK's own inbox sheet, and the wrapper deliberately does not
+/// reimplement panel presentation. Sized to the frame React Native assigns, that composition *is* a bell
+/// that opens the inbox — the component wrappers expose.
+///
+/// Remote branding still styles the bell (colors, icon). Branding's bell *position* has no effect here:
+/// alignment resolves inside this view's frame, so the host owns placement via `style`.
+///
+/// iOS 16+ because the panel is a sheet with system detents.
+@available(iOS 16.0, *)
 @objc(ReactNotificationInboxBellView)
 class ReactNotificationInboxBellView: NSObject {
     private weak var eventEmitter: AnyObject?
-    private let hostingController: UIHostingController<NotificationInboxBell>
+    private weak var containerView: UIView?
+    private let hostingController: UIHostingController<NotificationInboxOverlay>
 
     @objc
     init(containerView: UIView) {
-        var emitClosure: (() -> Void)?
-        let bell = NotificationInboxBell(onTap: {
-            emitClosure?()
-        })
-        self.hostingController = UIHostingController(rootView: bell)
+        self.containerView = containerView
+        self.hostingController = UIHostingController(rootView: NotificationInboxOverlay())
         super.init()
-
-        emitClosure = { [weak self] in
-            self?.sendTap()
-        }
 
         let hostedView = hostingController.view!
         hostedView.backgroundColor = .clear
@@ -36,11 +37,33 @@ class ReactNotificationInboxBellView: NSObject {
             hostedView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             hostedView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
+
+        // Observational tap reporting. The SDK owns presentation, so this recognizer must not consume
+        // the touch: `cancelsTouchesInView = false` lets SwiftUI still receive it and open the sheet.
+        // It reports any tap inside this view's frame, which is the bell when the view is sized to it.
+        let tapObserver = UITapGestureRecognizer(target: self, action: #selector(handleObservedTap))
+        tapObserver.cancelsTouchesInView = false
+        tapObserver.delaysTouchesEnded = false
+        containerView.addGestureRecognizer(tapObserver)
     }
 
     @objc
     func setEventEmitter(_ eventEmitter: AnyObject?) {
         self.eventEmitter = eventEmitter
+    }
+
+    /// Adds the hosting controller to the view-controller hierarchy once the view is in a window.
+    ///
+    /// Without this the controller is orphaned, and the sheet it presents resolves its safe-area insets
+    /// against the wrong container — which showed up as a phantom top margin when dragging the sheet.
+    @objc
+    func attachToParentViewController() {
+        InboxHostContainment.attach(hostingController, hostedIn: containerView)
+    }
+
+    @objc
+    func detachFromParentViewController() {
+        InboxHostContainment.detach(hostingController)
     }
 
     @objc
@@ -54,14 +77,18 @@ class ReactNotificationInboxBellView: NSObject {
     func prepareForRecycle() {
         // Deliberately does NOT remove the hosted view from its container.
         //
-        // Fabric recycles the component view, and the previous version detached the SwiftUI view here
-        // with nothing to re-attach it, so a reused view came back blank. `ReactInlineMessageView`
-        // does not touch the hierarchy either — it detaches observers (`onViewDetached`) and
-        // re-attaches in `setupForReuse`. These hosts have no props and no observers to reset, so
-        // there is nothing to undo: the hosted view stays mounted and is reused as-is.
+        // Fabric recycles the component view, and detaching the SwiftUI view here with nothing to
+        // re-attach it made a reused view come back blank. `ReactInlineMessageView` does not touch the
+        // hierarchy either. Containment is released here because a recycled view is leaving its parent.
+        detachFromParentViewController()
     }
 
-    // MARK: - Event Emission Helper
+    // MARK: - Event Emission
+
+    @objc
+    private func handleObservedTap() {
+        emitEvent("emitOnTapEvent:", payload: [:])
+    }
 
     /// Mirrors `ReactInlineMessageView.emitEvent`: asserts rather than returning silently, so a
     /// mis-wired emitter surfaces in debug instead of the tap simply never reaching JS.
@@ -78,9 +105,5 @@ class ReactNotificationInboxBellView: NSObject {
         }
 
         _ = emitter.perform(selector, with: payload as NSDictionary)
-    }
-
-    private func sendTap() {
-        emitEvent("emitOnTapEvent:", payload: [:])
     }
 }

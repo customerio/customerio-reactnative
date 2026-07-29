@@ -11,7 +11,6 @@ import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
 import io.customer.reactnative.sdk.messaginginapp.NativeMessagingInAppModule
 import io.customer.reactnative.sdk.messaginginbox.NotificationInboxBellViewManager
-import io.customer.reactnative.sdk.messaginginbox.NotificationInboxOverlayViewManager
 import io.customer.reactnative.sdk.messaginginbox.NotificationInboxViewManager
 import io.customer.reactnative.sdk.messagingpush.NativeMessagingPushModule
 import io.customer.reactnative.sdk.util.assertNotNull
@@ -27,7 +26,6 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
         return listOf(
             InlineInAppMessageViewManager(),
-            NotificationInboxOverlayViewManager(),
             NotificationInboxBellViewManager(),
             NotificationInboxViewManager()
         )
@@ -39,7 +37,6 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
         // See: https://reactnative.dev/docs/fabric-native-components-introduction?platforms=android#4-write-the-reactwebviewpackage
         return when (name) {
             InlineInAppMessageViewManager.NAME -> InlineInAppMessageViewManager()
-            NotificationInboxOverlayViewManager.NAME -> NotificationInboxOverlayViewManager()
             NotificationInboxBellViewManager.NAME -> NotificationInboxBellViewManager()
             NotificationInboxViewManager.NAME -> NotificationInboxViewManager()
             NativeCustomerIOLoggingModule.NAME -> NativeCustomerIOLoggingModule(reactContext)
@@ -80,7 +77,6 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
         // doesn't crash at import time. getModule() returns null when disabled.
         val moduleNames: List<String> = listOf(
             InlineInAppMessageViewManager.NAME,
-            NotificationInboxOverlayViewManager.NAME,
             NotificationInboxBellViewManager.NAME,
             NotificationInboxViewManager.NAME,
             NativeCustomerIOLoggingModule.NAME,

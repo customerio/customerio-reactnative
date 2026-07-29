@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithContainerView:(UIView *)containerView;
 - (void)setEventEmitter:(id)eventEmitter;
 - (void)updateLayout:(NSValue *)boundsValue;
+- (void)attachToParentViewController;
+- (void)detachFromParentViewController;
 - (void)prepareForRecycle;
 
 @end

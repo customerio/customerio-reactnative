@@ -222,15 +222,10 @@ class InAppMessageEvent {
 // Export in-app messaging types and components for simplified imports
 export type { InlineInAppMessageViewProps } from './components';
 export type {
-  NotificationInboxOverlayViewProps,
   NotificationInboxBellViewProps,
   NotificationInboxViewProps,
 } from './components';
-export {
-  NotificationInboxOverlayView,
-  NotificationInboxBellView,
-  NotificationInboxView,
-} from './components';
+export { NotificationInboxBellView, NotificationInboxView } from './components';
 export { NotificationInbox } from './notification-inbox';
 export type { InboxMessage, NotificationInboxChangeListener } from './types';
 export { InboxEventType, InboxMessageEvent } from './types';

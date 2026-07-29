@@ -12,25 +12,31 @@ export interface NotificationInboxBellViewProps extends Omit<
   'onTap'
 > {
   /**
-   * Called when the user taps the bell. The host is responsible for presenting
-   * its own inbox UI (e.g. navigate to a screen embedding
-   * {@link NotificationInboxView}).
+   * Called when the user taps the bell.
+   *
+   * Observational only — the SDK opens the inbox itself, so there is nothing the
+   * host has to do in response. Reports any tap inside this view's frame, which
+   * is the bell when the view is sized to it as recommended.
    */
   onTap?: () => void;
 }
 
 /**
- * Just the Visual Notification Inbox bell (with unread badge). The host opens
- * its own UI in response to {@link NotificationInboxBellViewProps.onTap}.
+ * The Visual Notification Inbox bell (with unread badge). Tapping it opens the
+ * SDK's own inbox panel — the host presents nothing.
  *
- * The bell renders nothing when the inbox has nothing to show, so give it a
- * fixed size via `style` for predictable layout.
+ * Place it wherever the app's layout calls for it. Remote branding still styles
+ * the bell itself (colors, icon), but branding's *position* is not applied: the
+ * host owns placement via `style`. The bell renders nothing when the inbox has
+ * nothing to show, so give it a fixed size for predictable layout — at least 88
+ * points/dp square, since the native composition insets the 56pt bell by 16 on
+ * each side and a smaller box squeezes the circle onto the glyph.
  *
  * @example
  * ```tsx
  * <NotificationInboxBellView
- *   style={{ width: 56, height: 56 }}
- *   onTap={() => navigation.navigate('Inbox')}
+ *   style={{ width: 88, height: 88 }}
+ *   onTap={() => analytics.track('inbox_bell_tapped')}
  * />
  * ```
  */
