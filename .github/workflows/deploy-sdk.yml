@@ -138,8 +138,11 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
+      # Pinned to the 11.x line rather than @latest. OIDC needs >= 11.5.1, which 11.x satisfies,
+      # while npm 12 requires node >= 22.22.2 and so fails EBADENGINE against the node 20 above.
+      # Raise this deliberately alongside node-version, not by drifting with @latest.
       - name: Install npm 11.5.1+ for OIDC support
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Install dependencies
         run: npm ci
