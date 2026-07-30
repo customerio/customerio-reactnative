@@ -5,6 +5,7 @@ import {
   InboxMessagesScreenName,
   InlineExamplesScreenName,
   InternalSettingsScreenName,
+  LiveActivitiesScreenName,
   LocationScreenName,
   LoginScreenName,
   NavigationCallbackContext,
@@ -24,6 +25,7 @@ import {
   InboxMessagesScreen,
   InlineExamplesScreen,
   InternalSettingsScreen,
+  LiveActivitiesScreen,
   LocationScreen,
   LogingScreen,
   SettingsScreen,
@@ -136,6 +138,15 @@ export const ContentNavigator = ({ appName }: { appName: string }) => {
           name={VisualInboxScreenName}
           component={VisualInboxScreen}
           options={{
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackVisible: true,
+          }}
+        />
+        <Stack.Screen
+          name={LiveActivitiesScreenName}
+          component={LiveActivitiesScreen}
+          options={{
+            title: 'Live Activities',
             headerBackButtonDisplayMode: 'minimal',
             headerBackVisible: true,
           }}

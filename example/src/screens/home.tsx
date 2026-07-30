@@ -4,6 +4,7 @@ import {
   CustomProfileAttrScreenName,
   InboxMessagesScreenName,
   InlineExamplesScreenName,
+  LiveActivitiesScreenName,
   LocationScreenName,
   NavigationCallbackContext,
   NavigationScreenProps,
@@ -87,6 +88,10 @@ export const HomeScreen = ({
           <Button
             title="Location (test)"
             onPress={() => navigation.navigate(LocationScreenName)}
+          />
+          <Button
+            title="Live Activities"
+            onPress={() => navigation.navigate(LiveActivitiesScreenName)}
           />
         </View>
       </ScrollView>

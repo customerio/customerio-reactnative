@@ -6,6 +6,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
+import io.customer.reactnative.sdk.liveactivities.NativeLiveActivitiesModule
 import io.customer.reactnative.sdk.location.NativeLocationModule
 import io.customer.reactnative.sdk.logging.NativeCustomerIOLoggingModule
 import io.customer.reactnative.sdk.messaginginapp.InlineInAppMessageViewManager
@@ -41,6 +42,13 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             NotificationInboxViewManager.NAME -> NotificationInboxViewManager()
             NativeCustomerIOLoggingModule.NAME -> NativeCustomerIOLoggingModule(reactContext)
             NativeCustomerIOModule.NAME -> NativeCustomerIOModule(reactContext = reactContext)
+            // Unconditional on purpose, unlike Location below. Location has its own artifact
+            // (io.customer.android:location) that the flag switches between `api` and `compileOnly`,
+            // so gating it genuinely keeps a dependency off the consumer's classpath. Live
+            // Notifications ship inside messaging-push-fcm, already a hard dependency here, so a flag
+            // would remove nothing — and the module is inert until `liveNotifications` config enables
+            // a type. iOS gates its equivalent only because the subspec pulls in extra pods.
+            NativeLiveActivitiesModule.NAME -> NativeLiveActivitiesModule(reactContext)
             NativeLocationModule.NAME -> if (BuildConfig.CIO_LOCATION_ENABLED) {
                 NativeLocationModule(reactContext)
             } else null
@@ -81,6 +89,7 @@ class CustomerIOReactNativePackage : BaseReactPackage() {
             NotificationInboxViewManager.NAME,
             NativeCustomerIOLoggingModule.NAME,
             NativeCustomerIOModule.NAME,
+            NativeLiveActivitiesModule.NAME,
             NativeLocationModule.NAME,
             NativeMessagingInAppModule.NAME,
             NativeMessagingPushModule.NAME,

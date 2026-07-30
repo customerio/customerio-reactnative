@@ -1,9 +1,9 @@
 
-# Updates the symlinks in the BuildSettings folder for the app and NSE targets
-# based on the push provider.
+# Updates the symlinks in the BuildSettings folder for the app, NSE and Live Activity widget
+# targets based on the push provider.
 # The symlinks point to the xcconfig files that contain the app name, app id, provisioning profile, etc.
 
-def update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
+def update_project_build_settings(installation_root, app_target_name, nse_target_name, widget_target_name, push_provider)
 
   # Create a symlink to the GoogleService-Info.plist file in the root of the project
   # This file contains the configs for Firebase app distribution
@@ -11,7 +11,10 @@ def update_project_build_settings(installation_root, app_target_name, nse_target
   dest_google_service_info = "#{installation_root}/#{app_target_name}/GoogleService-Info.plist"
   system("ln -f #{src_google_service_info} #{dest_google_service_info}")
 
-  [app_target_name, nse_target_name].each do |target|
+  # The Live Activity widget is included: like the NSE it is an app extension, so its bundle id has
+  # to track the host app's per push provider — an extension id that isn't prefixed by its host's is
+  # rejected at signing.
+  [app_target_name, nse_target_name, widget_target_name].each do |target|
     ["Debug", "Release"].each do |config|
       # This will create a symlink to the xcconfig file in the build settings folder
       # The xcconfig file contains the app id, provisioning profile, and other settings

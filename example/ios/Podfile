@@ -31,21 +31,23 @@ push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
 
 app_target_name = "SampleApp"
 nse_target_name = "NotificationServiceExtension"
+widget_target_name = "LiveActivityWidget"
 installation_root = Pod::Config.instance.installation_root
 
 # This function is very specific to the sample app setup
 # and is not part of the SDK or its usage.
 create_project_file_if_not_exists(installation_root, app_target_name)
-update_project_build_settings(installation_root, app_target_name, nse_target_name, push_provider)
+update_project_build_settings(installation_root, app_target_name, nse_target_name, widget_target_name, push_provider)
 
-# React Native 0.82 (New Architecture only) does not support dynamic frameworks yet
-# Use static frameworks instead when using FCM
+# React Native 0.82 (New Architecture only) does not support dynamic frameworks yet, so where a
+# framework build type is needed it has to be the static one.
 # See: https://github.com/reactwg/react-native-new-architecture/discussions/115
-if push_provider == "fcm"
-  linkage = "static"
-else
-  linkage = ENV["USE_FRAMEWORKS"]
-end
+#
+# Both providers use it, not just FCM: the Live Activity widget links Swift pods, and CocoaPods
+# requires a host target and the target it embeds to agree on use_frameworks!. Leaving APN on plain
+# static libraries builds the shared pods without a framework module layout, and the app then fails
+# with "could not build module 'customerio_reactnative'".
+linkage = ENV["USE_FRAMEWORKS"] || "static"
 
 if linkage != nil
   Pod::UI.puts "Configuring the app for #{push_provider.upcase} setup with #{linkage}ally linked Frameworks".green
@@ -60,7 +62,7 @@ target app_target_name do
     :path => config[:reactNativePath],
     :app_path => "#{installation_root}/..",
   )
-  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location"]
+  pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location", "liveactivities"]
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 
@@ -82,4 +84,15 @@ target nse_target_name do
   pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
+end
+
+# Live Activities Widget Extension: renders the built-in SDK templates plus the app-owned custom
+# one. The widget links the attributes + templates pods directly; it does not inherit the app
+# target's pods.
+target "LiveActivityWidget" do
+  # A widget extension cannot link the wrapper pod, so it names the rendering pods itself.
+  # Keep the version in step with package.json's cioNativeiOSSdkVersion.
+  %w[CustomerIOLiveActivitiesTemplates CustomerIOLiveActivitiesAttributes].each do |cio_pod|
+    pod cio_pod, '4.7.0'
+  end
 end
