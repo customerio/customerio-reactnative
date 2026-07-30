@@ -10,11 +10,14 @@ buildscript {
   dependencies {
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    // Compose compiler plugin (Kotlin 2.x) for hosting the Visual Notification Inbox composables.
+    classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlin_version"
   }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: "com.facebook.react"
 
 def getExtOrDefault(name) {
@@ -39,6 +42,8 @@ android {
 
   buildFeatures {
     buildConfig true
+    // Required to host the Visual Notification Inbox Compose UI components.
+    compose true
   }
 
   buildTypes {
@@ -58,6 +63,14 @@ android {
 repositories {
   mavenCentral()
   google()
+
+  // WIP (visual-inbox-wrappers): the native `messaging-inbox` module is unreleased, so the inbox
+  // components are consumed from the snapshot customerio-android CI publishes for its base feature
+  // branch on every push (see `cioSDKVersionAndroid` in gradle.properties). Remove on native release.
+  maven {
+    url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    mavenContent { snapshotsOnly() }
+  }
 
   def found = false
   def defaultDir = null
@@ -152,4 +165,12 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+  // Jetpack Compose — needed because the Visual Notification Inbox view managers host
+  // the native `@Composable` inbox components inside a ComposeView.
+  def composeBom = platform('androidx.compose:compose-bom:2025.10.00')
+  implementation composeBom
+  implementation 'androidx.compose.ui:ui'
+  implementation 'androidx.compose.foundation:foundation'
+  implementation 'androidx.compose.runtime:runtime'
 }

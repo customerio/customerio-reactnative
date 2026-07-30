@@ -116,6 +116,7 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
     inbox(): NotificationInbox;
     // (undocumented)
     registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
+    registerInboxEventListener(listener: (event: InboxMessageEvent) => void): EventSubscription;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeLocationSpec" needs to be exported by the entry point index.d.ts
@@ -186,6 +187,14 @@ export enum InAppMessageEventType {
 }
 
 // @public
+export enum InboxEventType {
+    messageActionTaken = "messageActionTaken",
+    messageDismissed = "messageDismissed",
+    messageOpened = "messageOpened",
+    messageShown = "messageShown"
+}
+
+// @public
 export interface InboxMessage {
     deliveryId?: string;
     expiry?: number;
@@ -196,6 +205,15 @@ export interface InboxMessage {
     sentAt: number;
     topics: string[];
     type: string;
+}
+
+// @public
+export class InboxMessageEvent {
+    constructor(eventType: InboxEventType, message: InboxMessage, actionName?: string, actionValue?: string);
+    actionName?: string;
+    actionValue?: string;
+    eventType: InboxEventType;
+    message: InboxMessage;
 }
 
 // @public (undocumented)
@@ -232,10 +250,29 @@ export class NotificationInbox implements NotificationInboxPublicSpec {
     trackMessageClicked(message: InboxMessage, actionName?: string): void;
 }
 
+// @public (undocumented)
+export const NotificationInboxBellView: React_2.FC<NotificationInboxBellViewProps>;
+
+// Warning: (ae-forgotten-export) The symbol "NativeProps_2" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export interface NotificationInboxBellViewProps extends Omit<NativeProps_2, 'onTap'> {
+    onTap?: () => void;
+}
+
 // @public
 export type NotificationInboxChangeListener = {
     onMessagesChanged: (messages: InboxMessage[]) => void;
 };
+
+// @public (undocumented)
+export const NotificationInboxView: React_2.FC<NotificationInboxViewProps>;
+
+// Warning: (ae-forgotten-export) The symbol "NativeProps_3" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export interface NotificationInboxViewProps extends NativeProps_3 {
+}
 
 // @public
 export enum PushClickBehaviorAndroid {

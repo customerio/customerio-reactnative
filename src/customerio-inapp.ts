@@ -3,12 +3,14 @@ import { InlineInAppMessageView } from './components';
 import { NativeLoggerListener } from './native-logger-listener';
 import {
   NotificationInbox,
+  parseInboxMessage,
   type NotificationInboxSpec,
 } from './notification-inbox';
 import NativeCustomerIOMessagingInApp, {
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOMessagingInApp';
 import type { InAppMessageEventType } from './types';
+import { InboxEventType, InboxMessageEvent } from './types';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 
 /**
@@ -18,7 +20,12 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
  */
 interface NativeInAppSpec extends Omit<
   CodegenSpec,
-  keyof TurboModule | NotificationInboxSpec | 'onInAppEventReceived'
+  | keyof TurboModule
+  | NotificationInboxSpec
+  | 'onInAppEventReceived'
+  | 'registerInboxEventListener'
+  | 'unregisterInboxEventListener'
+  | 'onInboxEventReceived'
 > {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
@@ -36,6 +43,13 @@ const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
  */
 class CustomerIOInAppMessaging implements NativeInAppSpec {
   private _notificationInbox?: NotificationInbox;
+
+  /**
+   * Live inbox subscriptions. The SDK's inbox forwarder is a SINGLE global listener, so it is
+   * registered when the first subscription is created and unregistered when the last one goes away —
+   * never per subscription, or one `remove()` would tear it out from under the others.
+   */
+  private _inboxListenerCount = 0;
 
   registerEventsListener(
     listener: (event: InAppMessageEvent) => void
@@ -61,6 +75,91 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
       } catch (error) {
         NativeLoggerListener.warn(
           'Failed to attach in-app event listener:',
+          error
+        );
+        // Return a no-op subscription to maintain backwards compatibility
+        return {
+          remove: () => {},
+          eventType: '',
+          key: 0,
+          subscriber: null as any,
+        } as EventSubscription;
+      }
+    });
+  }
+
+  /**
+   * Registers a listener for Visual Notification Inbox events (action taken,
+   * shown, opened, dismissed).
+   *
+   * While a listener is registered the host owns action navigation: the native
+   * SDK suppresses its default action handling and forwards the event here.
+   * Call `.remove()` on the returned subscription to unregister and restore the
+   * SDK's default behavior.
+   *
+   * @param listener - callback invoked with an {@link InboxMessageEvent}
+   * @returns an EventSubscription; call `.remove()` to stop listening
+   */
+  registerInboxEventListener(
+    listener: (event: InboxMessageEvent) => void
+  ): EventSubscription {
+    const emitter = (data: any) => {
+      // Convert raw native payload to InboxMessageEvent with a parsed message
+      const event = new InboxMessageEvent(
+        data.eventType as InboxEventType,
+        parseInboxMessage(data.message),
+        data.actionName,
+        data.actionValue
+      );
+      listener(event);
+    };
+
+    return withNativeModule((native) => {
+      let registeredNativeForwarder = false;
+      try {
+        // Register the native forwarder with the SDK, then subscribe to the
+        // codegen-generated event emitter.
+        // Wrapped in try-catch due to previous reports of crashes on certain Android architectures.
+        if (this._inboxListenerCount === 0) {
+          native.registerInboxEventListener();
+          registeredNativeForwarder = true;
+        }
+        const subscription = native.onInboxEventReceived(emitter);
+        this._inboxListenerCount += 1;
+
+        // Wrap remove() so unregistering the LAST JS listener also unregisters the native forwarder
+        // (restoring the SDK's default action handling). Guarded so a double remove() cannot
+        // unbalance the count and drop the forwarder while other subscriptions are still live.
+        const originalRemove = subscription.remove.bind(subscription);
+        let removed = false;
+        subscription.remove = () => {
+          if (removed) {
+            return;
+          }
+          removed = true;
+          originalRemove();
+          this._inboxListenerCount -= 1;
+          if (this._inboxListenerCount === 0) {
+            withNativeModule((n) => n.unregisterInboxEventListener());
+          }
+        };
+        return subscription;
+      } catch (error) {
+        // If the forwarder was registered and subscribing then failed, roll it back. Otherwise the
+        // SDK keeps suppressing its own action handling while nothing in JS is listening, so inbox
+        // actions are reported as handled and silently go nowhere.
+        if (registeredNativeForwarder) {
+          try {
+            native.unregisterInboxEventListener();
+          } catch (rollbackError) {
+            NativeLoggerListener.warn(
+              'Failed to roll back inbox listener registration:',
+              rollbackError
+            );
+          }
+        }
+        NativeLoggerListener.warn(
+          'Failed to attach inbox event listener:',
           error
         );
         // Return a no-op subscription to maintain backwards compatibility
@@ -122,6 +221,12 @@ class InAppMessageEvent {
 
 // Export in-app messaging types and components for simplified imports
 export type { InlineInAppMessageViewProps } from './components';
+export type {
+  NotificationInboxBellViewProps,
+  NotificationInboxViewProps,
+} from './components';
+export { NotificationInboxBellView, NotificationInboxView } from './components';
 export { NotificationInbox } from './notification-inbox';
 export type { InboxMessage, NotificationInboxChangeListener } from './types';
+export { InboxEventType, InboxMessageEvent } from './types';
 export { CustomerIOInAppMessaging, InAppMessageEvent, InlineInAppMessageView };

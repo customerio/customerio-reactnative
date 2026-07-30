@@ -64,6 +64,25 @@ target app_target_name do
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 
+  # -------------------------------------------------------------------------
+  # WIP (visual-inbox-wrappers): the native Visual Notification Inbox is unreleased, so the CIO iOS
+  # pods come from the base feature branch instead of the trunk. Unlike the local path this replaces,
+  # it resolves on CI and on any machine.
+  #
+  # REMOVE this block once the native inbox ships, and revert package.json
+  # "cioNativeiOSSdkVersion" to the released version.
+  cio_ios_branch = ENV["CIO_IOS_BRANCH"] || 'feat/overlay-inbox'
+  # Standard CIO pods (Common, DataPipelines, MessagingPush[APN], Location, MessagingInApp) from the
+  # branch. Note this helper is fetched from customerio-ios `main`, so its pod list does not include
+  # the inbox — hence the explicit pods below.
+  install_non_production_ios_sdk_git_branch(branch_name: cio_ios_branch, is_app_extension: false, push_service: push_provider)
+  # The inbox pod itself. Jist is NOT listed here: CustomerIOMessagingInbox.podspec on the branch
+  # depends on `Jist 0.1.0`, which is on the CocoaPods trunk, so it resolves on its own now.
+  pod 'CustomerIOMessagingInbox', :git => 'https://github.com/customerio/customerio-ios.git', :branch => cio_ios_branch
+  # DataPipelines depends on this; the helper above does not install it.
+  pod 'CustomerIOTrackingMigration', :git => 'https://github.com/customerio/customerio-ios.git', :branch => cio_ios_branch
+  # -------------------------------------------------------------------------
+
   post_install do |installer|
     react_native_post_install(
       installer,
