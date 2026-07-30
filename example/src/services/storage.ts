@@ -5,6 +5,7 @@ import {
   CioLocationTrackingMode,
   CioLogLevel,
   CioRegion,
+  LiveActivityTemplate,
 } from 'customerio-reactnative';
 import { Env } from '../env';
 
@@ -24,6 +25,13 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     trackApplicationLifecycleEvents: true,
     location: {
       trackingMode: CioLocationTrackingMode.OnAppStart,
+    },
+    liveNotifications: {
+      types: [
+        LiveActivityTemplate.Segments,
+        LiveActivityTemplate.CountdownTimer,
+      ],
+      customType: 'io.customer.livenotifications.custom.rideshare',
     },
   };
 };
