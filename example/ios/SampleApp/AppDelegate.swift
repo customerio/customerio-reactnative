@@ -7,6 +7,10 @@ import UserNotifications
 // Wrapper pod module — exposes NativeLiveActivities for reporting a Live Activity deep-link open.
 import customerio_reactnative
 
+#if canImport(CioLocationGeofence)
+import CioLocationGeofence
+#endif
+
 #if USE_FCM
 import FirebaseMessaging
 import FirebaseCore
@@ -38,6 +42,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    #if canImport(CioLocationGeofence)
+    // Geofence cold-wake delivery: iOS can launch the app into the background for a
+    // geofence transition without starting the JS runtime, so the SDK can't rely on
+    // CustomerIO.initialize running. Bootstrapping here wires up region monitoring and
+    // flushes queued transitions on every launch; it is safe alongside normal init.
+    GeofenceModule.bootstrapForBackgroundDelivery(launchOptions: launchOptions)
+    #endif
+
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()

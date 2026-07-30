@@ -39,8 +39,20 @@ export type CioConfig = {
     location?: {
         trackingMode?: CioLocationTrackingMode;
     };
+    geofence?: {
+        locationMode?: CioGeofenceLocationMode;
+    };
+    ios?: {
+        allowBackgroundDelivery?: boolean;
+    };
     liveNotifications?: LiveActivitiesConfig;
 };
+
+// @public
+export enum CioGeofenceLocationMode {
+    Automatic = "AUTOMATIC",
+    Manual = "MANUAL"
+}
 
 // @public
 export enum CioLocationTrackingMode {
@@ -87,6 +99,8 @@ export type CustomAttributes = Record<string, any>;
 export class CustomerIO {
     static readonly clearIdentify: () => Promise<any>;
     static readonly deleteDeviceToken: () => Promise<void>;
+    // (undocumented)
+    static readonly geofence: CustomerIOGeofence;
     static readonly identify: (input?: IdentifyParams) => Promise<any>;
     // (undocumented)
     static readonly inAppMessaging: CustomerIOInAppMessaging;
@@ -109,6 +123,13 @@ export class CustomerIO {
         deviceToken: string;
         event: MetricEvent;
     }) => Promise<void>;
+}
+
+// Warning: (ae-forgotten-export) The symbol "NativeGeofenceSpec" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class CustomerIOGeofence implements NativeGeofenceSpec {
+    refreshFromCurrentLocation(): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeInAppSpec" needs to be exported by the entry point index.d.ts

@@ -49,8 +49,25 @@ public class NativeCustomerIO: NSObject {
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
 
             #if CIO_LOCATION_ENABLED
-            if let locationModule = NativeLocation.module(from: config) {
+            // Geofence implies location: register the location module whenever location
+            // config is provided or geofence is enabled, since geofence relies on the
+            // location module's fixes.
+            #if CIO_GEOFENCE_ENABLED
+            // Match NativeGeofence.module(from:): only a dictionary counts as configured,
+            // so a non-map value (e.g. null bridged from JS) doesn't imply location.
+            let geofenceConfigured = config["geofence"] as? [String: Any] != nil
+            #else
+            let geofenceConfigured = false
+            #endif
+            if let locationModule = NativeLocation.module(from: config, geofenceEnabled: geofenceConfigured) {
                 _ = sdkConfigBuilder.addModule(locationModule)
+            }
+            #endif
+
+            #if CIO_GEOFENCE_ENABLED
+            // Geofence runs automatically once registered; relies on the location module above.
+            if let geofenceModule = NativeGeofence.module(from: config) {
+                _ = sdkConfigBuilder.addModule(geofenceModule)
             }
             #endif
 
@@ -59,6 +76,17 @@ public class NativeCustomerIO: NSObject {
                 _ = sdkConfigBuilder.addModule(liveActivitiesModule)
             }
             #endif
+
+            // Customer value wins; default on when the geofence module is added, off otherwise.
+            #if CIO_GEOFENCE_ENABLED
+            // Match NativeGeofence.module(from:): only a dictionary adds the module, so
+            // background delivery shouldn't default on for a non-map geofence value.
+            let geofenceAdded = config["geofence"] as? [String: Any] != nil
+            #else
+            let geofenceAdded = false
+            #endif
+            let allowBackgroundDelivery = (config["ios"] as? [String: Any])?["allowBackgroundDelivery"] as? Bool
+            _ = sdkConfigBuilder.allowBackgroundDelivery(allowBackgroundDelivery ?? geofenceAdded)
 
             let builtConfig = sdkConfigBuilder.build()
 

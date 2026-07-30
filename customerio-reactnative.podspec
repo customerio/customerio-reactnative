@@ -61,6 +61,16 @@ Pod::Spec.new do |s|
     }
   end
 
+  # Geofence module is optional - customers must opt in by adding this subspec.
+  # It pulls in Location transitively (CustomerIO/LocationGeofence depends on it).
+  # Geofence implies Location, so this subspec also enables the Location wrapper code.
+  s.subspec "geofence" do |ss|
+    ss.dependency "CustomerIO/LocationGeofence", package["cioNativeiOSSdkVersion"]
+    ss.pod_target_xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '$(inherited) -DCIO_GEOFENCE_ENABLED -DCIO_LOCATION_ENABLED'
+    }
+  end
+
   # Live Activities module is optional - customers must opt in by adding this subspec, and must
   # also add a Widget Extension target that renders the built-in templates. See the docs.
   s.subspec "liveactivities" do |ss|
