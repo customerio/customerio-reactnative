@@ -1,6 +1,6 @@
 {
   "name": "customerio-reactnative",
-  "version": "6.5.2",
+  "version": "6.6.0",
   "description": "Official Customer.io SDK using React Native. Track customers and send messages to your iOS/Android apps.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
@@ -153,7 +153,7 @@
     "ios": {
       "componentProvider": {
         "InlineMessageNative": "RCTInlineMessageNative",
-          "NotificationInboxBellNative": "RCTNotificationInboxBellNative",
+        "NotificationInboxBellNative": "RCTNotificationInboxBellNative",
         "NotificationInboxViewNative": "RCTNotificationInboxViewNative"
       },
       "modulesProvider": {
