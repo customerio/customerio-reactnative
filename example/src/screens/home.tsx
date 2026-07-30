@@ -8,6 +8,7 @@ import {
   LocationScreenName,
   NavigationCallbackContext,
   NavigationScreenProps,
+  VisualInboxScreenName,
 } from '@navigation';
 import { Storage } from '@services';
 import { CioPushPermissionStatus } from 'customerio-reactnative';
@@ -76,6 +77,12 @@ export const HomeScreen = ({
             title="Inbox Messages"
             onPress={() => {
               navigation.navigate(InboxMessagesScreenName);
+            }}
+          />
+          <Button
+            title="Visual Inbox (UI)"
+            onPress={() => {
+              navigation.navigate(VisualInboxScreenName);
             }}
           />
           <Button

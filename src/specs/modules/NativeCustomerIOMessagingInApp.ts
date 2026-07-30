@@ -15,6 +15,13 @@ import type {
 export interface Spec extends TurboModule {
   dismissMessage(): void;
   readonly onInAppEventReceived: EventEmitter<UnsafeObject>;
+  // Notification Inbox event listener methods.
+  // Registers/unregisters a native forwarder with the SDK so inbox events
+  // (action taken, shown, opened, dismissed) are emitted to JS. Distinct from
+  // onInAppEventReceived so inbox events never collide with in-app events.
+  registerInboxEventListener(): void;
+  unregisterInboxEventListener(): void;
+  readonly onInboxEventReceived: EventEmitter<UnsafeObject>;
   // Notification Inbox related methods
   setupInboxListener(): void;
   readonly subscribeToMessagesChanged: EventEmitter<UnsafeObject>;

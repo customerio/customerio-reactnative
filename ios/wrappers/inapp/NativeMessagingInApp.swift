@@ -50,6 +50,48 @@ public class NativeMessagingInApp: NSObject {
         // Clear in-app event listener to prevent leaks
         clearInAppEventListener()
         clearInboxChangeListener()
+        clearInboxEventListener()
+    }
+
+    // MARK: - Inbox Event Listener
+
+    /// Registers the native inbox event forwarder with the SDK and wires it to the ObjC event
+    /// emitter. Called by React Native when a JS inbox event listener is registered.
+    @objc(registerInboxEventListener)
+    public func registerInboxEventListener() {
+        ReactInboxEventListener.shared.setEventEmitter { [weak self] data in
+            guard let self else { return }
+            // Filter out nil values to convert [String: Any?] to [String: Any]
+            let body = data.compactMapValues { $0 }
+            self.sendInboxEvent(body: body)
+        }
+        MessagingInApp.shared.setInboxEventListener(ReactInboxEventListener.shared)
+    }
+
+    /// Unregisters the native inbox event forwarder from the SDK, restoring the SDK's default action
+    /// handling. Called by React Native when the JS inbox event listener is removed.
+    @objc(unregisterInboxEventListener)
+    public func unregisterInboxEventListener() {
+        MessagingInApp.shared.setInboxEventListener(nil)
+        ReactInboxEventListener.shared.clearEventEmitter()
+    }
+
+    private func clearInboxEventListener() {
+        MessagingInApp.shared.setInboxEventListener(nil)
+        ReactInboxEventListener.shared.clearEventEmitter()
+    }
+
+    // Send inbox event to React Native layer using ObjC event emitter
+    private func sendInboxEvent(body: [String: Any]) {
+        guard let emitter = objcEventEmitter else {
+            return
+        }
+
+        let selector = Selector(("emitOnInboxEventReceived:"))
+        guard emitter.responds(to: selector) else {
+            return
+        }
+        _ = emitter.perform(selector, with: body as NSDictionary)
     }
 
     /// Dismisses any currently displayed in-app message

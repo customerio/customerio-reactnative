@@ -36,6 +36,10 @@ export default function App({ appName }: { appName: string }) {
     ? {
       Home: 'home',
       Settings: 'settings',
+      // Inbox screens are signed-in only: the inbox is per-profile, so an anonymous
+      // deep link should land on Login rather than an empty inbox.
+      'Inbox Messages': 'inbox-messages',
+      'Visual Inbox': 'visual-inbox',
     }
     : {
       Login: 'login',

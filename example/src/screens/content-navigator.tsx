@@ -12,6 +12,7 @@ import {
   NavigationStackParamList,
   SettingsScreenName,
   TrackScreenName,
+  VisualInboxScreenName,
 } from '@navigation';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { screenStylingOptions } from '@utils';
@@ -29,6 +30,7 @@ import {
   LogingScreen,
   SettingsScreen,
   TrackScreen,
+  VisualInboxScreen,
 } from '@screens';
 
 import { Storage } from '@services';
@@ -127,6 +129,14 @@ export const ContentNavigator = ({ appName }: { appName: string }) => {
         <Stack.Screen
           name={InboxMessagesScreenName}
           component={InboxMessagesScreen}
+          options={{
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackVisible: true,
+          }}
+        />
+        <Stack.Screen
+          name={VisualInboxScreenName}
+          component={VisualInboxScreen}
           options={{
             headerBackButtonDisplayMode: 'minimal',
             headerBackVisible: true,

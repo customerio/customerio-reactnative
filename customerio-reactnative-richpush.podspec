@@ -15,7 +15,10 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  # Dependency-only pod: installed into the NSE target, whose job is purely to pull in the minimal
+  # CIO push dependency below. It must NOT compile any sources — everything under ios/ is the React
+  # Native bridge (React + DataPipelines + InApp + Inbox), none of which the NSE target has or should
+  # have. Globbing them here made the NSE compile the whole bridge and fail on React headers.
 
   # Careful when declaring dependencies here. All dependencies will be included in the App Extension target in Xcode, not the host iOS app.   
 

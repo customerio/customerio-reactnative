@@ -9,3 +9,4 @@ export * from './location';
 export * from './login';
 export * from './settings';
 export * from './track';
+export * from './visual-inbox';
