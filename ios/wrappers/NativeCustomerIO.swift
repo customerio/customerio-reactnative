@@ -71,6 +71,12 @@ public class NativeCustomerIO: NSObject {
             }
             #endif
 
+            #if CIO_LIVEACTIVITIES_ENABLED
+            if let liveActivitiesModule = NativeLiveActivities.module(from: config) {
+                _ = sdkConfigBuilder.addModule(liveActivitiesModule)
+            }
+            #endif
+
             // Customer value wins; default on when the geofence module is added, off otherwise.
             #if CIO_GEOFENCE_ENABLED
             // Match NativeGeofence.module(from:): only a dictionary adds the module, so

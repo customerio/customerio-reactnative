@@ -1,5 +1,6 @@
 import { CustomerIOGeofence } from './customerio-geofence';
 import { CustomerIOInAppMessaging } from './customerio-inapp';
+import { CustomerIOLiveActivities } from './customerio-liveactivities';
 import { CustomerIOLocation } from './customerio-location';
 import { CustomerIOPushMessaging } from './customerio-push';
 import { NativeLoggerListener } from './native-logger-listener';
@@ -181,6 +182,7 @@ export class CustomerIO {
 
   static readonly geofence = new CustomerIOGeofence();
   static readonly inAppMessaging = new CustomerIOInAppMessaging();
+  static readonly liveActivities = new CustomerIOLiveActivities();
   static readonly location = new CustomerIOLocation();
   static readonly pushMessaging = new CustomerIOPushMessaging();
 }

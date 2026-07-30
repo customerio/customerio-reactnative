@@ -45,6 +45,7 @@ export type CioConfig = {
     ios?: {
         allowBackgroundDelivery?: boolean;
     };
+    liveNotifications?: LiveActivitiesConfig;
 };
 
 // @public
@@ -107,6 +108,8 @@ export class CustomerIO {
     // @deprecated
     static readonly isInitialized: () => boolean;
     // (undocumented)
+    static readonly liveActivities: CustomerIOLiveActivities;
+    // (undocumented)
     static readonly location: CustomerIOLocation;
     // (undocumented)
     static readonly pushMessaging: CustomerIOPushMessaging;
@@ -137,6 +140,15 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
     inbox(): NotificationInbox;
     // (undocumented)
     registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
+}
+
+// Warning: (ae-forgotten-export) The symbol "NativeLiveActivitiesSpec" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
+    end(activityId: string, payload?: LiveActivityPayload): Promise<void>;
+    start(payload: LiveActivityPayload): Promise<string>;
+    update(activityId: string, payload: LiveActivityPayload): Promise<void>;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeLocationSpec" needs to be exported by the entry point index.d.ts
@@ -232,6 +244,63 @@ export interface InlineInAppMessageViewProps extends Omit<NativeProps, 'onSizeCh
         minimumHeight?: number;
     };
     onActionClick?: (message: InAppMessage, actionValue: string, actionName: string) => void;
+}
+
+// @public
+export interface LiveActivitiesBranding {
+    accentColorHex?: string;
+    companyName?: string;
+    logoResource?: string;
+    logoUrl?: string;
+    smallIconResource?: string;
+}
+
+// @public
+export interface LiveActivitiesConfig {
+    branding?: LiveActivitiesBranding;
+    customType?: string;
+    types?: Exclude<LiveActivityTemplate, LiveActivityTemplate.Custom>[];
+}
+
+// @public
+export interface LiveActivityCountdownTimerPayload {
+    endTime?: number;
+    header: string;
+    statusMessage?: string;
+    title: string;
+    // (undocumented)
+    type: LiveActivityTemplate.CountdownTimer;
+}
+
+// @public
+export interface LiveActivityCustomPayload {
+    data: Record<string, string>;
+    // (undocumented)
+    type: LiveActivityTemplate.Custom;
+}
+
+// @public
+export type LiveActivityPayload = LiveActivitySegmentsPayload | LiveActivityCountdownTimerPayload | LiveActivityCustomPayload;
+
+// @public
+export interface LiveActivitySegmentsPayload {
+    header: string;
+    segmentsComplete: number;
+    segmentsTotal: number;
+    status: string;
+    substatus?: string;
+    trailingText?: string;
+    // (undocumented)
+    type: LiveActivityTemplate.Segments;
+}
+
+// @public
+export enum LiveActivityTemplate {
+    // (undocumented)
+    CountdownTimer = "io.customer.livenotifications.countdowntimer",
+    Custom = "custom",
+    // (undocumented)
+    Segments = "io.customer.livenotifications.segments"
 }
 
 // @public

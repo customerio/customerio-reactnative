@@ -1,6 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '@utils';
-import { CioConfig, CioLocationTrackingMode, CioLogLevel, CioRegion } from 'customerio-reactnative';
+import {
+  CioConfig,
+  CioLocationTrackingMode,
+  CioLogLevel,
+  CioRegion,
+  LiveActivityTemplate,
+} from 'customerio-reactnative';
 import { Env } from '../env';
 
 const USER_STORAGE_KEY = 'user';
@@ -23,6 +29,13 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     // Opt into geofence monitoring. Runs automatically once enabled and implies the
     // Location module above.
     geofence: {},
+    liveNotifications: {
+      types: [
+        LiveActivityTemplate.Segments,
+        LiveActivityTemplate.CountdownTimer,
+      ],
+      customType: 'io.customer.livenotifications.custom.rideshare',
+    },
   };
 };
 

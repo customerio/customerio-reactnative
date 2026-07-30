@@ -1,3 +1,4 @@
+import type { LiveActivitiesConfig } from './live-activities';
 import type { PushClickBehaviorAndroid } from './push';
 
 /**
@@ -98,6 +99,8 @@ export type CioConfig = {
      */
     allowBackgroundDelivery?: boolean;
   };
+  /** Live Activities (iOS) / Live Notifications (Android) configuration. */
+  liveNotifications?: LiveActivitiesConfig;
 };
 
 /**

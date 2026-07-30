@@ -4,6 +4,7 @@
 export * from './customerio-cdp';
 export * from './customerio-geofence';
 export * from './customerio-inapp';
+export * from './customerio-liveactivities';
 export * from './customerio-location';
 export * from './customerio-push';
 export * from './types';

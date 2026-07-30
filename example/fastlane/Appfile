@@ -1,10 +1,13 @@
-# Include all of the bundle identifiers for your iOS app and for your rich push target. 
+# Include all of the bundle identifiers for your iOS app and for its app extensions (rich push
+# and the Live Activity widget), for each push provider.
 
 app_identifier([
   "io.customer.ami",
   "io.customer.ami.richpush",
+  "io.customer.ami.LiveActivityWidget",
   "io.customer.rn-sample.fcm",
-  "io.customer.rn-sample.fcm.richpush"
+  "io.customer.rn-sample.fcm.richpush",
+  "io.customer.rn-sample.fcm.LiveActivityWidget"
 ])
 
 package_name("io.customer.rn_sample.fcm")

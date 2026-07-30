@@ -154,6 +154,7 @@
       "modulesProvider": {
         "NativeCustomerIOLogging": "RCTNativeCustomerIOLogging",
         "NativeCustomerIO": "RCTNativeCustomerIO",
+        "NativeCustomerIOLiveActivities": "RCTNativeLiveActivities",
         "NativeCustomerIOLocation": "RCTNativeCustomerIOLocation",
         "NativeCustomerIOGeofence": "RCTNativeCustomerIOGeofence",
         "NativeCustomerIOMessagingInApp": "RCTNativeMessagingInApp",
