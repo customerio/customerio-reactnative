@@ -1,3 +1,5 @@
+## [6.6.1](https://github.com/customerio/customerio-reactnative/compare/6.6.0...6.6.1) (2026-07-30)
+
 ## [6.6.0](https://github.com/customerio/customerio-reactnative/compare/6.5.2...6.6.0) (2026-07-30)
 
 ## [6.5.2](https://github.com/customerio/customerio-reactnative/compare/6.5.1...6.5.2) (2026-06-23)
