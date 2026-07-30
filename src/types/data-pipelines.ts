@@ -1,3 +1,4 @@
+import type { LiveActivitiesConfig } from './live-activities';
 import type { PushClickBehaviorAndroid } from './push';
 
 /**
@@ -76,6 +77,8 @@ export type CioConfig = {
     /** Location tracking mode. Defaults to 'manual' if location config is provided. */
     trackingMode?: CioLocationTrackingMode;
   };
+  /** Live Activities (iOS) / Live Notifications (Android) configuration. */
+  liveNotifications?: LiveActivitiesConfig;
 };
 
 /**

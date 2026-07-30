@@ -23,6 +23,7 @@ import io.customer.reactnative.sdk.NativeCustomerIOMessagingPushSpec
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
 import io.customer.reactnative.sdk.extension.takeIfNotBlank
+import io.customer.reactnative.sdk.liveactivities.NativeLiveActivitiesModule
 import io.customer.reactnative.sdk.util.unsupportedOnAndroid
 import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
@@ -257,7 +258,8 @@ class NativeMessagingPushModule(
          */
         internal fun addNativeModuleFromConfig(
             builder: CustomerIOBuilder,
-            config: Map<String, Any>
+            config: Map<String, Any>,
+            liveNotificationsConfig: Map<String, Any>? = null,
         ) {
             val androidConfig =
                 config.getTypedValue<Map<String, Any>>(key = "android") ?: emptyMap()
@@ -275,6 +277,14 @@ class NativeMessagingPushModule(
             val module = ModuleMessagingPushFCM(
                 moduleConfig = MessagingPushModuleConfig.Builder().apply {
                     setPushClickBehavior(pushClickBehavior = pushClickBehavior)
+                    // Live Notifications are hosted by the FCM push module, so their config is
+                    // applied to the same MessagingPushModuleConfig.
+                    liveNotificationsConfig?.let { liveConfig ->
+                        NativeLiveActivitiesModule.applyLiveActivitiesConfig(
+                            builder = this,
+                            config = liveConfig,
+                        )
+                    }
                 }.build(),
             )
             builder.addCustomerIOModule(module)

@@ -1,0 +1,4 @@
+#include "Pods/Target Support Files/Pods-LiveActivityWidget/Pods-LiveActivityWidget.debug.xcconfig"
+
+#include "fcm/Common.xcconfig"
+PROVISIONING_PROFILE_SPECIFIER=match Development io.customer.rn-sample.fcm.LiveActivityWidget

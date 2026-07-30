@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F21DFC9CDA733A3E4C4576D /* LiveActivityWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6027E65D2DB84F1A002F3F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6027E6572DB84F1A002F3F8A /* Assets.xcassets */; };
 		6027E65F2DB84F1A002F3F8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6027E65A2DB84F1A002F3F8A /* LaunchScreen.storyboard */; };
 		6027E6602DB84F1A002F3F8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6027E6562DB84F1A002F3F8A /* AppDelegate.swift */; };
@@ -15,9 +16,19 @@
 		6027E67E2DB8507B002F3F8A /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6027E6782DB8507B002F3F8A /* Env.swift */; };
 		6027E6802DB8507B002F3F8A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6027E67B2DB8507B002F3F8A /* NotificationService.swift */; };
 		6027E6822DB85145002F3F8A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6027E6812DB85145002F3F8A /* GoogleService-Info.plist */; };
+		A52CBC81C45FFD335A77686E /* RideshareLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */; };
+		B3308ADC4285759BC2F56637 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46FB8D344F4C2D92F366D48B /* Foundation.framework */; };
+		D24313EAB27CE236230665DD /* LiveActivityWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3970D3BF398DC5FDA02BD8E5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6027E6222DB8477F002F3F8A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 639DAFF193923EF6076C8D2E;
+			remoteInfo = LiveActivityWidget;
+		};
 		6027E66C2DB84F97002F3F8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6027E6222DB8477F002F3F8A /* Project object */;
@@ -35,6 +46,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				6027E66E2DB84F97002F3F8A /* NotificationServiceExtension.appex in Embed Foundation Extensions */,
+				3F21DFC9CDA733A3E4C4576D /* LiveActivityWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -42,6 +54,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = LiveActivityWidget.appex; path = LiveActivityWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		46FB8D344F4C2D92F366D48B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		6027E62A2DB8477F002F3F8A /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6027E6562DB84F1A002F3F8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6027E6572DB84F1A002F3F8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -58,9 +72,22 @@
 		609C0BDC2DBE127100061E29 /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Release.xcconfig; sourceTree = "<group>"; };
 		609C0BDD2DBE12A300061E29 /* .Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Debug.xcconfig; sourceTree = "<group>"; };
 		609C0BDE2DBE12A300061E29 /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = .Release.xcconfig; sourceTree = "<group>"; };
+		67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LiveActivityWidgetBundle.swift; path = LiveActivityWidget/LiveActivityWidgetBundle.swift; sourceTree = "<group>"; };
+		9E54E1130F8A696F39C18A68 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = LiveActivityWidget/Info.plist; sourceTree = "<group>"; };
+		CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = .Debug.xcconfig; path = LiveActivityWidget/BuildSettings/.Debug.xcconfig; sourceTree = "<group>"; };
+		CI0LAW1RELEASE00000000AA /* .Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = .Release.xcconfig; path = LiveActivityWidget/BuildSettings/.Release.xcconfig; sourceTree = "<group>"; };
+		F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RideshareLiveActivity.swift; path = LiveActivityWidget/RideshareLiveActivity.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		17BE8E1B6435D664A2B281DE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3308ADC4285759BC2F56637 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6027E6272DB8477F002F3F8A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -85,6 +112,34 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		1C9CC8CC3496E6376044E945 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2374E649184F62C01522BD53 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2374E649184F62C01522BD53 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				46FB8D344F4C2D92F366D48B /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		38296FF0AB3FEE5CDEA5E4B4 /* LiveActivityWidget */ = {
+			isa = PBXGroup;
+			children = (
+				67464F634D3D1DD1B66802C5 /* LiveActivityWidgetBundle.swift */,
+				9E54E1130F8A696F39C18A68 /* Info.plist */,
+				F5D51740CB2F3D1F7968BFDC /* RideshareLiveActivity.swift */,
+				CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */,
+				CI0LAW1RELEASE00000000AA /* .Release.xcconfig */,
+			);
+			name = LiveActivityWidget;
+			sourceTree = SOURCE_ROOT;
+		};
 		6027E6212DB8477F002F3F8A = {
 			isa = PBXGroup;
 			children = (
@@ -92,6 +147,8 @@
 				6027E67C2DB8507B002F3F8A /* NotificationServiceExtension */,
 				6027E62B2DB8477F002F3F8A /* Products */,
 				051D7405610CA163A106992D /* Pods */,
+				1C9CC8CC3496E6376044E945 /* Frameworks */,
+				38296FF0AB3FEE5CDEA5E4B4 /* LiveActivityWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,6 +157,7 @@
 			children = (
 				6027E62A2DB8477F002F3F8A /* SampleApp.app */,
 				6027E6672DB84F97002F3F8A /* NotificationServiceExtension.appex */,
+				2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,6 +223,7 @@
 			);
 			dependencies = (
 				6027E66D2DB84F97002F3F8A /* PBXTargetDependency */,
+				9B9D3D7484CF1C38EC435FF3 /* PBXTargetDependency */,
 			);
 			name = SampleApp;
 			productName = SampleApp;
@@ -186,6 +245,23 @@
 			name = NotificationServiceExtension;
 			productName = NotificationServiceExtension;
 			productReference = 6027E6672DB84F97002F3F8A /* NotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		639DAFF193923EF6076C8D2E /* LiveActivityWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 780D80B378E95F0D60DF6BB8 /* Build configuration list for PBXNativeTarget "LiveActivityWidget" */;
+			buildPhases = (
+				34D44E8C89C0DD93D09651F9 /* Sources */,
+				17BE8E1B6435D664A2B281DE /* Frameworks */,
+				34953B5F12CEE3CBD17B0EF8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LiveActivityWidget;
+			productName = LiveActivityWidget;
+			productReference = 2FA91E07A031C20270FC9492 /* LiveActivityWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -222,11 +298,19 @@
 			targets = (
 				6027E6292DB8477F002F3F8A /* SampleApp */,
 				6027E6662DB84F97002F3F8A /* NotificationServiceExtension */,
+				639DAFF193923EF6076C8D2E /* LiveActivityWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		34953B5F12CEE3CBD17B0EF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6027E6282DB8477F002F3F8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -265,6 +349,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		34D44E8C89C0DD93D09651F9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24313EAB27CE236230665DD /* LiveActivityWidgetBundle.swift in Sources */,
+				A52CBC81C45FFD335A77686E /* RideshareLiveActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6027E6262DB8477F002F3F8A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -290,6 +383,12 @@
 			target = 6027E6662DB84F97002F3F8A /* NotificationServiceExtension */;
 			targetProxy = 6027E66C2DB84F97002F3F8A /* PBXContainerItemProxy */;
 		};
+		9B9D3D7484CF1C38EC435FF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = LiveActivityWidget;
+			target = 639DAFF193923EF6076C8D2E /* LiveActivityWidget */;
+			targetProxy = 3970D3BF398DC5FDA02BD8E5 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -304,6 +403,31 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		53F519B219C11356495E50A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CI0LAW1DEBUG0000000000AA /* .Debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiveActivityWidget/Info.plist;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 2YC97BQN3N;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = LiveActivityWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		6027E63E2DB84781002F3F8A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 609C0BDB2DBE127100061E29 /* .Debug.xcconfig */;
@@ -575,6 +699,33 @@
 			};
 			name = Release;
 		};
+		E46988A20C9404BDC3521A5E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CI0LAW1RELEASE00000000AA /* .Release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiveActivityWidget/Info.plist;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 2YC97BQN3N;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = LiveActivityWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -601,6 +752,15 @@
 			buildConfigurations = (
 				6027E6712DB84F97002F3F8A /* Debug */,
 				6027E6722DB84F97002F3F8A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		780D80B378E95F0D60DF6BB8 /* Build configuration list for PBXNativeTarget "LiveActivityWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E46988A20C9404BDC3521A5E /* Release */,
+				53F519B219C11356495E50A4 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

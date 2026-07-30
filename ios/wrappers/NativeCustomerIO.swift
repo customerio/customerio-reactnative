@@ -54,6 +54,12 @@ public class NativeCustomerIO: NSObject {
             }
             #endif
 
+            #if CIO_LIVEACTIVITIES_ENABLED
+            if let liveActivitiesModule = NativeLiveActivities.module(from: config) {
+                _ = sdkConfigBuilder.addModule(liveActivitiesModule)
+            }
+            #endif
+
             let builtConfig = sdkConfigBuilder.build()
 
             // Only CustomerIO.initialize must run on the main thread (e.g. for Location module).

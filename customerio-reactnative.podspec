@@ -57,4 +57,14 @@ Pod::Spec.new do |s|
       'OTHER_SWIFT_FLAGS' => '$(inherited) -DCIO_LOCATION_ENABLED'
     }
   end
+
+  # Live Activities module is optional - customers must opt in by adding this subspec, and must
+  # also add a Widget Extension target that renders the built-in templates. See the docs.
+  s.subspec "liveactivities" do |ss|
+    ss.dependency "CustomerIO/LiveActivities", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CustomerIO/LiveActivitiesTemplates", package["cioNativeiOSSdkVersion"]
+    ss.pod_target_xcconfig = {
+      'OTHER_SWIFT_FLAGS' => '$(inherited) -DCIO_LIVEACTIVITIES_ENABLED'
+    }
+  end
 end
