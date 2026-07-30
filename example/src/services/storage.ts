@@ -24,8 +24,11 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     logLevel: CioLogLevel.Debug,
     trackApplicationLifecycleEvents: true,
     location: {
-      trackingMode: CioLocationTrackingMode.OnAppStart,
+      trackingMode: CioLocationTrackingMode.Manual,
     },
+    // Opt into geofence monitoring. Runs automatically once enabled and implies the
+    // Location module above.
+    geofence: {},
     liveNotifications: {
       types: [
         LiveActivityTemplate.Segments,
@@ -62,8 +65,10 @@ export class Storage {
     );
 
     this.user = userJsonPayload ? JSON.parse(userJsonPayload) : null;
+    // Merge persisted config over defaults so newly added default keys (e.g. the
+    // geofence opt-in) are present for installs saved before those keys existed.
     this.config = cioConfigJsonPayload
-      ? JSON.parse(cioConfigJsonPayload)
+      ? { ...Storage.defaultConfig, ...JSON.parse(cioConfigJsonPayload) }
       : null;
   };
 
