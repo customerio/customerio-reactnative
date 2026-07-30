@@ -2,7 +2,7 @@ dependencies {
     api "io.customer.android:datapipelines:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-push-fcm:$cioAndroidSDKVersion"
     api "io.customer.android:messaging-in-app:$cioAndroidSDKVersion"
-    // Visual Notification Inbox UI (Compose-based). SPIKE: served from mavenLocal at version `local`.
+    // Visual Notification Inbox UI (Compose-based).
     api "io.customer.android:messaging-inbox:$cioAndroidSDKVersion"
     // Location module is optional - customers enable it by adding
     // customerio_location_enabled=true in their gradle.properties

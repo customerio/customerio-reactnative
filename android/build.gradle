@@ -64,14 +64,6 @@ repositories {
   mavenCentral()
   google()
 
-  // WIP (visual-inbox-wrappers): the native `messaging-inbox` module is unreleased, so the inbox
-  // components are consumed from the snapshot customerio-android CI publishes for its base feature
-  // branch on every push (see `cioSDKVersionAndroid` in gradle.properties). Remove on native release.
-  maven {
-    url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-    mavenContent { snapshotsOnly() }
-  }
-
   def found = false
   def defaultDir = null
   def androidSourcesName = 'React Native sources'
