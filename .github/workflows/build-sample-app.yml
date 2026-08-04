@@ -52,7 +52,7 @@ env:
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: macos-15
+    runs-on: macos-26
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
@@ -238,7 +238,7 @@ jobs:
 
       - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
         if: ${{ inputs.platform == 'ios' }}
-        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@MacOS-15+iOS-26
+        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@macos-26
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         id: build_app
