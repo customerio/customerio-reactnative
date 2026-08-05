@@ -239,7 +239,9 @@ jobs:
             echo "📝 Updating iOS SDK version to $IOS_VERSION"
             # Update the cioNativeiOSSdkVersion in package.json
             sed -i "s/\"cioNativeiOSSdkVersion\": *\".*\"/\"cioNativeiOSSdkVersion\": \"= $IOS_VERSION\"/" package.json
-            echo "✅ iOS version updated"
+            # Keep the sample app's Live Activities widget pods in sync with cioNativeiOSSdkVersion
+            sed -i "s/pod cio_pod, '.*'/pod cio_pod, '$IOS_VERSION'/" example/ios/Podfile
+            echo "✅ iOS version updated in package.json and the sample app"
           fi
           
           # Update Android version if needed  
@@ -384,6 +386,7 @@ jobs:
           
           if [[ "$IOS_UPDATED" == "true" ]]; then
             DESCRIPTION+="- \`package.json\` - Updated \`cioNativeiOSSdkVersion\` to \`= $NEW_IOS\`
+          - \`example/ios/Podfile\` - Updated the Live Activities widget pods to \`$NEW_IOS\`
           "
           fi
           
