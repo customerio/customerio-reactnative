@@ -18,7 +18,10 @@ env:
 jobs:
   deploy-cocoapods:
     name: Deploy SDK to Cocoapods 
-    runs-on: macos-26
+    # Despite the job name, nothing here touches CocoaPods: the steps are checkout, npm ci and
+    # an npm publish. It does not need a macOS runner, and the macOS pool is capped org-wide.
+    # Job id left alone on purpose — renaming it would change the check name.
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Checkout existing tag if manually running CI task  
