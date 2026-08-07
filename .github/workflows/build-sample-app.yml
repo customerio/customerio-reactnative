@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: Check out code with conditional fetch-depth
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
 
@@ -117,7 +117,7 @@ jobs:
           brew install xcbeautify # used by fastlane for output
 
       - name: Install Ruby
-        uses: ruby/setup-ruby@354a1ad156761f5ee2b7b13fa8e09943a5e8d252 # v1.229.0
+        uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true # cache tools to make builds faster in future
@@ -126,7 +126,7 @@ jobs:
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: 'generate_new_version'
@@ -150,7 +150,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update React Native SDK Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: "update_react_native_sdk_version"
@@ -160,7 +160,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update ${{ inputs.platform_name }} ${{ inputs.app_name }} Sample App Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: "update_react_native_app_version"
@@ -201,7 +201,7 @@ jobs:
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -209,7 +209,7 @@ jobs:
             **/package-lock.json
 
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: example/Pods
           key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
@@ -242,7 +242,7 @@ jobs:
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         id: build_app
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: '${{ inputs.platform }} build'
