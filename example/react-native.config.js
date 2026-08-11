@@ -8,9 +8,16 @@ module.exports = {
       root: path.join(__dirname, '..'),
 
       platforms: {
-        // Codegen script incorrectly fails without this
-        // So we explicitly specify the platforms with empty object
-        ios: {},
+        // Codegen fails without explicitly configured platforms. The package
+        // also publishes a rich-push podspec, so pin the primary podspec to
+        // keep React Native autolinking deterministic.
+        ios: {
+          podspecPath: path.join(
+            __dirname,
+            '..',
+            'customerio-reactnative.podspec'
+          ),
+        },
         android: {},
       },
     },

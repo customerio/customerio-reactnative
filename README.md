@@ -26,6 +26,9 @@ The official Customer.io SDK for React Native enables you to integrate mobile me
 npm install customerio-reactnative
 ```
 
+If a CocoaPods build reports that a generated dependency target is below the deployment range
+supported by Xcode, follow the [deployment-target normalization guide](docs/cocoapods-deployment-target-normalization.md).
+
 ---
 
 ## SDK Initialization
