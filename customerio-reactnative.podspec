@@ -11,7 +11,11 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  minimum_ios_version = [min_ios_version_supported, "15.0"]
+    .map { |version| Pod::Version.new(version) }
+    .max
+    .to_s
+  s.platforms    = { :ios => minimum_ios_version }
   s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/wrappers/**/*.{h,m,mm,swift}"
