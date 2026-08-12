@@ -103,8 +103,14 @@ contract version rather than a manifest-only claim.
 The selected Swift aggregate member is the integration-specific native
 forwarding seat, never the raw OS callback. The complete capture must also
 contain the earlier raw ingress with matching safe facts/correlation. Warm runs
-may rely on an engine/runtime initialized before recording; cold runs record
-Flutter engine creation before plugin registration, or Expo subscriber
+may rely on an engine/runtime initialized before recording. Flutter icon-cold
+uses the real `flutter.dart-main-entered` Dart application receipt, never a
+synthesized `wrapper.app-lifecycle-state`. Its legacy topology is engine ->
+plugin -> raw application did-finish -> Flutter application forward -> UIKit
+did-finish notification -> UIKit active notification -> Dart main. Its scene
+topology is raw application did-finish -> Flutter application forward -> UIKit
+did-finish notification -> engine -> plugin -> raw scene will-connect -> Flutter
+scene forward -> UIKit active notification -> Dart main. Cold Expo records subscriber
 registration before app-delegate will-finish forwarding. In a cold Expo run,
 the `application.did-finish-launching` entry then precedes both the exact RCT
 load notification and Expo did-finish forward, matching the pinned Expo 57
@@ -118,10 +124,15 @@ forward, including unselected alternatives and optional foreground
 allowed at most once per one-stimulus run.
 Notification origin/class/response and URL/activity/action classifications must
 reconcile across the selected handoff records. Background/foreground lifecycle
-transitions reconcile by class. Icon launch is an explicit progression from an
+transitions reconcile by class. Legacy Flutter icon launch preserves inactive
+on raw and forwarded application launch; scene-enabled Flutter preserves the
+empirically observed background state. Dart main must be captured strictly
+after UIKit's active notification. The scene raw/forward pair is exactly once,
+preserves its complete safe payload summary, and records
+`app_state=pre-application` plus the actual scene state and session role. Expo
+remains an explicit progression from an
 inactive raw application entry through an inactive native launch forward to an
-active wrapper receipt, not equal app state at different lifecycle instants.
-The wrapper receipt must be captured after the native forward. Expo additionally
+active lifecycle receipt. Expo additionally
 proves its active subscriber and RCT bundle-load seats occurred before that
 wrapper receipt. Scene
 aliases are stream-local and cannot be used as cross-stream identity. Cold

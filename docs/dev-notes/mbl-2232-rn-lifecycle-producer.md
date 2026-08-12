@@ -1,8 +1,9 @@
 # MBL-2232 React Native iOS lifecycle producer
 
-Status: source and build evidence only. No canonical L2 capture is claimed.
+Status: L0 source inspection and L1 compile/link evidence only. No canonical L2/L3
+capture is claimed.
 
-The example app contains one optional native Swift lifecycle stream. It is disabled unless
+The example app contains exactly one optional native Swift lifecycle stream. It is disabled unless
 the harness supplies the complete `CIO_LIFECYCLE_*` context required by the canonical
 contract. It writes canonical NDJSON to `CIO_LIFECYCLE_OUTPUT_PATH` and writes the stream
 receipt to the sibling `.receipt.json` path.
@@ -68,13 +69,12 @@ duplicate or partially port MBL-2278's normalization work.
 
 The checked-in example at the contract's audited standalone repository commit resolves
 React Native 0.83.6. Canonical source commit
-`25ed84cdf6c8b582fad44e755b49321fe5236bba` contains the reviewed contract. Its
-ancestor `096f7770ce694c1c356b08c7498b87d0e52cdced` corrected the earlier validator
-defect that mistakenly required Expo's transitive React Native 0.86.2 version for this
-standalone topology. This work keeps the restored 0.83.6 dependency graph. Until a
-simulator capture passes the corrected relational validator with a valid manifest and
-receipt, the evidence remains source and compilation only. APNs delivery and registration
-on a physical device remain L3-only.
+`5b8c02e4c85203d073a85da8abb2212b19867e68` contains the reviewed 18-file
+contract. Native checkout `93b63e81f1a5544342393abe219e701f8dcd0657` supplies its
+final relocked bundle and verifier. This work keeps the restored 0.83.6 dependency graph.
+Until a simulator capture passes the relational validator with a valid manifest and
+receipt, the evidence remains L0 source inspection and L1 compilation only. APNs delivery
+and registration on a physical device remain L3-only.
 
 Use Node 20 for the focused source test:
 

@@ -486,10 +486,17 @@ records also reconcile notification origin/class/response or the applicable
 URL, user-activity, quick-action, or lifecycle transition safe facts. Scene
 aliases remain stream-local and are deliberately excluded from cross-stream
 handoff comparison. Icon launch handoff is narrowed to the defining
-`application.did-finish-launching` seat. It requires `app_state=inactive` at the
-raw application entry and native launch forward, then `app_state=active` at the
-terminal wrapper lifecycle receipt; equal state would collapse distinct
-lifecycle instants. For Expo,
+`application.did-finish-launching` seat. Flutter uses the real Dart application
+receipt `flutter.dart-main-entered`, with owner `flutter-dart`, runtime `dart`,
+kind `app-received`, and phase `entry`; `wrapper.app-lifecycle-state` remains
+reserved for genuine lifecycle callbacks. Legacy Flutter requires inactive raw
+and forwarded application launch seats. Scene-enabled Flutter requires those
+two seats to preserve the empirically observed background state. In both
+topologies, Dart main must be captured strictly after UIKit's active
+notification. The scene raw/forward pair is exactly once, preserves the full
+safe payload summary, and records `app_state=pre-application` with the actual
+scene state and session role. Expo retains the inactive native launch to active wrapper
+lifecycle progression. For Expo,
 one active application seat and one active subscriber forward must occur after
 the did-finish forward, and both that active forward and the RCT bundle-load
 seat must be captured before the wrapper receipt. Unrelated initialization callbacks cannot substitute
@@ -503,8 +510,13 @@ the raw ingress, then proves raw ingress -> later native forward using matching
 safe facts and the applicable stream-local alias, then reconciles that forward
 with the Dart/JavaScript receipt. A warm scenario assumes the engine/bridge was
 initialized before the recorder armed and does not invent historical bootstrap
-records. A cold run instead requires in-process bootstrap seats before the
-forward: Flutter implicit-engine creation before plugin registration; Expo
+records. A cold run instead requires in-process bootstrap seats. Flutter
+icon-cold is topology-specific: legacy requires engine -> plugin -> raw
+application did-finish -> Flutter application forward -> UIKit did-finish
+notification -> UIKit active notification -> Dart main; scene-enabled requires
+raw application did-finish -> Flutter application forward -> UIKit did-finish
+notification -> engine -> plugin -> raw scene will-connect -> Flutter scene
+forward -> UIKit active notification -> Dart main. Expo requires
 subscriber registration before app-delegate will-finish forwarding, followed
 by the `application.did-finish-launching` entry. That application entry must
 precede both the exact RCT load notification and Expo's did-finish forward,

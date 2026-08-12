@@ -1,16 +1,16 @@
 {
   "schema": "cio-lifecycle-contract-lock/1",
   "source_repository": "customerio/customerio-ios",
-  "source_commit": "25ed84cdf6c8b582fad44e755b49321fe5236bba",
+  "source_commit": "5b8c02e4c85203d073a85da8abb2212b19867e68",
   "algorithm": "sha256",
   "files": [
     {
       "path": "docs/dev-notes/IOS27-LIFECYCLE-CALLBACK-CONTRACT.md",
-      "sha256": "e3b7e36fce415574639b088692e67b931de2268edb225676be1ec225028404bd"
+      "sha256": "67fa4c05853c499e0c8a1fb0e777004c0f114d6ce7dda3797ed2b1cb80588381"
     },
     {
       "path": "docs/dev-notes/IOS27-LIFECYCLE-TRACE-V1.md",
-      "sha256": "142e87996fb27cb2976c7908e287b6e38e1e493c82b5ab88f0b912be8d4421a4"
+      "sha256": "ffc18d3e1d189ebe8db481a095840cc3b6684dab1b2cb165ee9f888f7c186a43"
     },
     {
       "path": "docs/dev-notes/ios27-lifecycle-capture-manifest-v1.schema.json",
@@ -66,15 +66,15 @@
     },
     {
       "path": "docs/dev-notes/ios27-lifecycle-trace-v1.schema.json",
-      "sha256": "8d270b2ece0d89521bb4149cb41c3d26994d5efd34df859bdc2405852cc56340"
+      "sha256": "b639d04654b0bed75f7816a8bc6fd99ff3da2385badc0a0124cf2d078ebdbfbc"
     },
     {
       "path": "docs/dev-notes/test_validate_ios27_lifecycle_trace.py",
-      "sha256": "d68b1919ce3aa5a0f6b0d0117c9780f5b2ddeb949a8a5d9344d04bf7e8fda7be"
+      "sha256": "9dbdbb50072f58195efa8365ab90b65a51948b94a0fa9ea313bf99e657765b28"
     },
     {
       "path": "docs/dev-notes/validate_ios27_lifecycle_trace.py",
-      "sha256": "51eb21d47c38c13fc876da31e05893f7b47303ccf98c11b0a85d2fc12284153b"
+      "sha256": "60b82e66bb40bcad8fad9da94015b049350230443ddbc4a5e8a141b3087394f4"
     }
   ]
 }

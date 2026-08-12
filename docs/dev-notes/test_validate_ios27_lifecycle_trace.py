@@ -334,6 +334,112 @@ class LifecycleTraceContractTests(unittest.TestCase):
         self.normalize_capture(manifest, [native, wrapper])
         return manifest, native, wrapper
 
+    def flutter_icon_capture(
+        self, scene: bool
+    ) -> tuple[dict, list[dict], list[dict]]:
+        """Build the two empirically observed Flutter icon-cold topologies."""
+        manifest = _load_json(VECTORS / "manifest.valid.json")
+        manifest["scenario"] = "icon-cold-launch"
+        manifest["stimulus"].update({"scenario": "icon-cold-launch", "source": "app-icon"})
+        manifest["provider_provenance"].update({
+            "provider": "none", "source": "none", "environment": "none",
+            "receipt_result": "not-applicable", "receipt_recorded_at": None,
+            "provider_sdk": None,
+        })
+        for stream in manifest["streams"]:
+            stream["provider"] = "none"
+        native_id = manifest["streams"][0]["stream_id"]
+        wrapper_id = manifest["streams"][1]["stream_id"]
+        manifest["aggregate_assertions"] = [{
+            "name": "icon-launch-handoff", "relation": "equal-exact-count",
+            "expected_count": 1,
+            "members": [
+                {
+                    "stream_id": native_id,
+                    "callback": "flutter.application.did-finish-launching-forwarded",
+                    "phase": "entry",
+                },
+                {
+                    "stream_id": wrapper_id,
+                    "callback": "flutter.dart-main-entered",
+                    "phase": "entry",
+                },
+            ],
+        }]
+        inactive = {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}}
+        background = {"flags": {}, "counts": {}, "enums": {"app_state": "background"}}
+        active = {"flags": {}, "counts": {}, "enums": {"app_state": "active"}}
+        empty = {"flags": {}, "counts": {}, "enums": {}}
+
+        application = self.runtime_record(
+            "application.did-finish-launching", "application-delegate", "os-callback",
+            "entry", background if scene else inactive,
+        )
+        application_forward = self.runtime_record(
+            "flutter.application.did-finish-launching-forwarded", "flutter-plugin",
+            "framework-callback", "entry", background if scene else inactive,
+        )
+        did_finish_notification = self.runtime_record(
+            "uikit.application-did-finish-launching-notification", "uikit-notification",
+            "observer-notification", "entry", background if scene else inactive,
+        )
+        engine = self.runtime_record(
+            "flutter.implicit-engine-created", "flutter-engine", "framework-callback",
+            "result", empty,
+        )
+        plugin = self.runtime_record(
+            "flutter.plugin-registered", "flutter-plugin", "framework-callback",
+            "result", empty,
+        )
+        active_notification = self.runtime_record(
+            "uikit.application-did-become-active-notification", "uikit-notification",
+            "observer-notification", "state-change", active,
+        )
+        if scene:
+            scene_payload = {
+                "flags": {
+                    "has_scene": True, "has_url": False, "has_user_activity": False,
+                    "has_shortcut": False, "has_notification": False,
+                    "has_notification_response": False,
+                },
+                "counts": {
+                    "connected_scenes": 1, "url_contexts": 0, "user_activities": 0,
+                },
+                "enums": {
+                    "app_state": "pre-application", "scene_state": "unattached",
+                    "scene_role": "application",
+                },
+            }
+            scene_raw = self.runtime_record(
+                "scene.will-connect", "scene-delegate", "os-callback", "entry",
+                scene_payload, {"scene": "scene-1"},
+            )
+            scene_forward = self.runtime_record(
+                "flutter.scene.will-connect-forwarded", "flutter-plugin",
+                "framework-callback", "entry", scene_payload, {"scene": "scene-1"},
+            )
+            body = [
+                application, application_forward, did_finish_notification, engine, plugin,
+                scene_raw, scene_forward, active_notification,
+            ]
+        else:
+            body = [
+                engine, plugin, application, application_forward,
+                did_finish_notification, active_notification,
+            ]
+        native = [copy.deepcopy(self.native[0]), *body, copy.deepcopy(self.native[-1])]
+        wrapper = [
+            copy.deepcopy(self.wrapper[0]),
+            self.runtime_record(
+                "flutter.dart-main-entered", "flutter-dart", "app-received", "entry",
+                empty, wrapper=True,
+            ),
+            copy.deepcopy(self.wrapper[-1]),
+        ]
+        self.normalize_capture(manifest, [native, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        return manifest, native, wrapper
+
     def test_valid_two_stream_exact_handoff(self) -> None:
         validate_capture(
             VECTORS / "manifest.valid.json",
@@ -2061,7 +2167,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
         background["correlation"] = None
         _validate_scenario_acceptance(manifest, records)
 
-    def test_icon_launch_handoff_requires_inactive_to_active_transition(self) -> None:
+    def test_icon_launch_partial_handoffs_are_integration_specific(self) -> None:
         manifest = copy.deepcopy(self.manifest)
         manifest["scenario"] = "icon-cold-launch"
         native_id = manifest["streams"][0]["stream_id"]
@@ -2071,7 +2177,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
             "expected_count": 1,
             "members": [
                 {"stream_id": native_id, "callback": "application.did-finish-launching", "phase": "entry"},
-                {"stream_id": wrapper_id, "callback": "wrapper.app-lifecycle-state", "phase": "state-change"},
+                {"stream_id": wrapper_id, "callback": "flutter.dart-main-entered", "phase": "entry"},
             ],
         }]
         native = {
@@ -2079,108 +2185,212 @@ class LifecycleTraceContractTests(unittest.TestCase):
             "payload_summary": {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}},
         }
         wrapper = {
-            "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
-            "payload_summary": {"flags": {}, "counts": {}, "enums": {"app_state": "active"}},
+            "callback": "flutter.dart-main-entered", "phase": "entry",
+            "payload_summary": {"flags": {}, "counts": {}, "enums": {}},
         }
         records = {native_id: [native], wrapper_id: [wrapper]}
         _validate_scenario_acceptance(manifest, records)
-        wrapper["payload_summary"]["enums"]["app_state"] = "inactive"
-        with self.assertRaisesRegex(ContractError, "wrapper lifecycle receipt requires app_state=active"):
+        native["payload_summary"]["enums"]["app_state"] = "background"
+        with self.assertRaisesRegex(
+            ContractError, "requires app_state=inactive for flutter topology"
+        ):
             _validate_scenario_acceptance(manifest, records)
+        native["payload_summary"]["enums"]["app_state"] = "inactive"
+        wrapper["callback"] = "wrapper.app-lifecycle-state"
+        wrapper["phase"] = "state-change"
         wrapper["payload_summary"]["enums"]["app_state"] = "active"
-        native["payload_summary"]["enums"]["app_state"] = "active"
-        with self.assertRaisesRegex(ContractError, "native launch forwarding requires app_state=inactive"):
+        manifest["aggregate_assertions"][0]["members"][1].update({
+            "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
+        })
+        with self.assertRaisesRegex(ContractError, "unrelated to scenario"):
             _validate_scenario_acceptance(manifest, records)
 
-    def test_cold_flutter_icon_launch_requires_inactive_raw_and_forwarded_launch(self) -> None:
-        manifest = _load_json(VECTORS / "manifest.valid.json")
-        manifest["scenario"] = "icon-cold-launch"
-        manifest["stimulus"].update({"scenario": "icon-cold-launch", "source": "app-icon"})
-        manifest["provider_provenance"].update({
-            "provider": "none", "source": "none", "environment": "none",
-            "receipt_result": "not-applicable", "receipt_recorded_at": None,
-            "provider_sdk": None,
+        for declaration in manifest["streams"]:
+            declaration["integration"] = "expo"
+        manifest["streams"][1].update({"runtime": "javascript", "process_id": None})
+        wrapper["callback"] = "wrapper.app-lifecycle-state"
+        wrapper["phase"] = "state-change"
+        manifest["aggregate_assertions"][0]["members"][1].update({
+            "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
         })
-        for stream in manifest["streams"]:
-            stream["provider"] = "none"
-        native_id = manifest["streams"][0]["stream_id"]
-        wrapper_id = manifest["streams"][1]["stream_id"]
-        manifest["aggregate_assertions"] = [{
-            "name": "icon-launch-handoff", "relation": "equal-exact-count",
-            "expected_count": 1,
-            "members": [
-                {
-                    "stream_id": native_id,
-                    "callback": "flutter.application.did-finish-launching-forwarded",
-                    "phase": "entry",
-                },
-                {
-                    "stream_id": wrapper_id,
-                    "callback": "wrapper.app-lifecycle-state",
-                    "phase": "state-change",
-                },
-            ],
-        }]
-        inactive = {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}}
-        active = {"flags": {}, "counts": {}, "enums": {"app_state": "active"}}
-        empty = {"flags": {}, "counts": {}, "enums": {}}
-        native = [
-            copy.deepcopy(self.native[0]),
-            self.runtime_record(
-                "application.did-finish-launching", "application-delegate", "os-callback",
-                "entry", inactive,
-            ),
-            self.runtime_record(
-                "flutter.implicit-engine-created", "flutter-engine", "framework-callback",
-                "result", empty,
-            ),
-            self.runtime_record(
-                "flutter.plugin-registered", "flutter-plugin", "framework-callback",
-                "result", empty,
-            ),
-            self.runtime_record(
-                "flutter.application.did-finish-launching-forwarded", "flutter-plugin",
-                "framework-callback", "entry", inactive,
-            ),
-            copy.deepcopy(self.native[-1]),
-        ]
-        wrapper = [
-            copy.deepcopy(self.wrapper[0]),
-            self.runtime_record(
-                "wrapper.app-lifecycle-state", "flutter-dart", "app-received",
-                "state-change", active, wrapper=True,
-            ),
-            copy.deepcopy(self.wrapper[-1]),
-        ]
+        _validate_scenario_acceptance(manifest, records)
+        wrapper["callback"] = "flutter.dart-main-entered"
+        wrapper["phase"] = "entry"
+        manifest["aggregate_assertions"][0]["members"][1].update({
+            "callback": "flutter.dart-main-entered", "phase": "entry",
+        })
+        with self.assertRaisesRegex(ContractError, "unrelated to scenario"):
+            _validate_scenario_acceptance(manifest, records)
+
+    def test_cold_flutter_icon_launch_accepts_empirical_legacy_and_scene_topologies(self) -> None:
+        for scene in (False, True):
+            with self.subTest(scene=scene):
+                manifest, native, wrapper = self.flutter_icon_capture(scene)
+                self.validate_temp(manifest, [native, wrapper])
+
+    def test_cold_flutter_icon_launch_rejects_missing_duplicate_and_fake_receipts(self) -> None:
+        for scene in (False, True):
+            manifest, native, wrapper = self.flutter_icon_capture(scene)
+            missing = [
+                record for record in copy.deepcopy(native)
+                if record["callback"] != "uikit.application-did-become-active-notification"
+            ]
+            self.normalize_capture(manifest, [missing, wrapper])
+            wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+            self.validate_temp(
+                manifest, [missing, wrapper], "requires exactly one uikit.application"
+            )
+
+            manifest, native, wrapper = self.flutter_icon_capture(scene)
+            duplicate = copy.deepcopy(native)
+            engine = next(
+                record for record in duplicate
+                if record["callback"] == "flutter.implicit-engine-created"
+            )
+            duplicate.insert(duplicate.index(engine) + 1, copy.deepcopy(engine))
+            self.normalize_capture(manifest, [duplicate, wrapper])
+            wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+            self.validate_temp(
+                manifest, [duplicate, wrapper],
+                "requires exactly one .*flutter.implicit-engine-created",
+            )
+
+        manifest, native, wrapper = self.flutter_icon_capture(False)
+        missing_dart = [wrapper[0], wrapper[-1]]
+        self.normalize_capture(manifest, [native, missing_dart])
+        self.validate_temp(
+            manifest, [native, missing_dart],
+            "non-control runtime observation|canonical flutter forwarding chain|required",
+        )
+
+        manifest, native, wrapper = self.flutter_icon_capture(False)
+        duplicate_dart = copy.deepcopy(wrapper)
+        duplicate_dart.insert(2, copy.deepcopy(duplicate_dart[1]))
+        self.normalize_capture(manifest, [native, duplicate_dart])
+        duplicate_dart[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        duplicate_dart[2]["captured_at"] = "2026-08-11T16:00:21Z"
+        self.validate_temp(
+            manifest, [native, duplicate_dart],
+            "requires integration-forwarded aggregate handoffs|expected exact count 1|required exactly one",
+        )
+
+        manifest, native, wrapper = self.flutter_icon_capture(False)
+        wrapper[1].update({
+            "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
+            "payload_summary": {"flags": {}, "counts": {}, "enums": {"app_state": "active"}},
+        })
+        manifest["aggregate_assertions"][0]["members"][1].update({
+            "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
+        })
         self.normalize_capture(manifest, [native, wrapper])
-        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
-        self.validate_temp(manifest, [native, wrapper])
+        self.validate_temp(manifest, [native, wrapper], "unrelated to scenario|canonical flutter")
 
-        equal_forward_time = copy.deepcopy(wrapper)
-        self.normalize_capture(manifest, [native, equal_forward_time])
-        equal_forward_time[1]["captured_at"] = native[4]["captured_at"]
+    def test_cold_flutter_scene_icon_requires_exact_preserved_scene_pair(self) -> None:
+        for callback in ("scene.will-connect", "flutter.scene.will-connect-forwarded"):
+            manifest, native, wrapper = self.flutter_icon_capture(True)
+            missing = [record for record in native if record["callback"] != callback]
+            self.normalize_capture(manifest, [missing, wrapper])
+            wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+            self.validate_temp(
+                manifest, [missing, wrapper],
+                "matching flutter native forward|scene connection seats|unselected or duplicate",
+            )
+
+            manifest, native, wrapper = self.flutter_icon_capture(True)
+            duplicate = copy.deepcopy(native)
+            seat = next(record for record in duplicate if record["callback"] == callback)
+            duplicate.insert(duplicate.index(seat) + 1, copy.deepcopy(seat))
+            self.normalize_capture(manifest, [duplicate, wrapper])
+            wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+            self.validate_temp(
+                manifest, [duplicate, wrapper],
+                "matching flutter native forward|scene connection seats|unselected|cannot forward multiple",
+            )
+
+        manifest, native, wrapper = self.flutter_icon_capture(True)
+        forwarded = next(
+            record for record in native
+            if record["callback"] == "flutter.scene.will-connect-forwarded"
+        )
+        forwarded["payload_summary"]["counts"]["connected_scenes"] = 2
         self.validate_temp(
-            manifest, [native, equal_forward_time],
-            "native to wrapper progression requires causal capture-time ordering",
+            manifest, [native, wrapper], "scene forwarding must preserve payload summary"
         )
 
-        pre_application_raw = copy.deepcopy(native)
-        pre_application_raw[1]["payload_summary"]["enums"]["app_state"] = "pre-application"
-        self.normalize_capture(manifest, [pre_application_raw, wrapper])
+    def test_cold_flutter_icon_launch_rejects_swapped_and_mixed_topologies(self) -> None:
+        for scene in (False, True):
+            manifest, native, wrapper = self.flutter_icon_capture(scene)
+            body_indexes = range(1, len(native) - 2)
+            for index in body_indexes:
+                with self.subTest(scene=scene, swap=index):
+                    swapped = copy.deepcopy(native)
+                    swapped[index], swapped[index + 1] = swapped[index + 1], swapped[index]
+                    self.normalize_capture(manifest, [swapped, wrapper])
+                    wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+                    self.validate_temp(manifest, [swapped, wrapper], "requires causal sequence ordering")
+
+        manifest, native, wrapper = self.flutter_icon_capture(True)
+        mixed = copy.deepcopy(native)
+        engine = next(record for record in mixed if record["callback"] == "flutter.implicit-engine-created")
+        mixed.remove(engine)
+        mixed.insert(1, engine)
+        self.normalize_capture(manifest, [mixed, wrapper])
         wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(manifest, [mixed, wrapper], "scene icon topology requires causal sequence ordering")
+
+    def test_cold_flutter_icon_launch_requires_dart_main_strictly_after_active(self) -> None:
+        for scene in (False, True):
+            for offset in (0, -1):
+                manifest, native, wrapper = self.flutter_icon_capture(scene)
+                active = next(
+                    record for record in native
+                    if record["callback"] == "uikit.application-did-become-active-notification"
+                )
+                seconds = int(active["captured_at"][17:19]) + offset
+                wrapper[1]["captured_at"] = f"2026-08-11T16:00:{seconds:02d}Z"
+                self.validate_temp(
+                    manifest, [native, wrapper],
+                    "UIKit active notification to Dart main requires causal capture-time ordering",
+                )
+
+    def test_cold_flutter_icon_launch_requires_topology_specific_states(self) -> None:
+        for scene, wrong_state in ((False, "background"), (True, "inactive")):
+            manifest, native, wrapper = self.flutter_icon_capture(scene)
+            for record in native:
+                if record["callback"] in {
+                    "application.did-finish-launching",
+                    "flutter.application.did-finish-launching-forwarded",
+                    "uikit.application-did-finish-launching-notification",
+                }:
+                    record["payload_summary"]["enums"]["app_state"] = wrong_state
+            self.validate_temp(
+                manifest, [native, wrapper],
+                "requires .*app_state=|requires app_state=",
+            )
+
+        manifest, native, wrapper = self.flutter_icon_capture(True)
+        for record in native:
+            if record["callback"] in {
+                "scene.will-connect", "flutter.scene.will-connect-forwarded",
+            }:
+                record["payload_summary"]["enums"]["app_state"] = "inactive"
         self.validate_temp(
-            manifest, [pre_application_raw, wrapper],
-            "raw application entry requires app_state=inactive",
+            manifest, [native, wrapper],
+            "scene .*requires .*app_state=pre-application",
         )
 
-        pre_application_forward = copy.deepcopy(native)
-        pre_application_forward[4]["payload_summary"]["enums"]["app_state"] = "pre-application"
-        self.normalize_capture(manifest, [pre_application_forward, wrapper])
-        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
-        self.validate_temp(
-            manifest, [pre_application_forward, wrapper],
-            "native launch forwarding requires app_state=inactive",
-        )
+    def test_flutter_dart_main_callback_requires_exact_owner_and_runtime(self) -> None:
+        _, _, wrapper = self.flutter_icon_capture(False)
+        record = wrapper[1]
+        _validate_callback_rule(record)
+        wrong_owner = copy.deepcopy(record)
+        wrong_owner["owner"] = "host"
+        with self.assertRaisesRegex(ContractError, "owner"):
+            _validate_callback_rule(wrong_owner)
+        wrong_runtime = copy.deepcopy(record)
+        wrong_runtime["runtime"] = "swift"
+        with self.assertRaisesRegex(ContractError, "runtime"):
+            _validate_callback_rule(wrong_runtime)
 
     def test_cold_expo_icon_launch_requires_real_active_and_rct_progression(self) -> None:
         manifest = _load_json(VECTORS / "manifest.valid.json")

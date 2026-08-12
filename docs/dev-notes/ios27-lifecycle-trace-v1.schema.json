@@ -129,6 +129,7 @@
         "flutter.notification-center.will-present-forwarded",
         "flutter.notification-center.did-receive-response-forwarded",
         "flutter.app-lifecycle-state",
+        "flutter.dart-main-entered",
         "flutter.notification-response",
         "expo.subscriber-registered",
         "expo.app-delegate-will-finish-launching-forwarded",

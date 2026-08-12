@@ -132,9 +132,6 @@ APP_STATE_NATIVE = {
 }
 
 SCENARIO_HANDOFF = {
-    "icon-cold-launch": (
-        {"application.did-finish-launching"}, {"wrapper.app-lifecycle-state"},
-    ),
     "push-foreground": (REMOTE_NOTIFICATION_FOREGROUND_NATIVE, {"wrapper.app-received-notification"}),
     "push-tap-warm": (NOTIFICATION_TAP_NATIVE, {"wrapper.app-received-notification"}),
     "push-tap-cold": (NOTIFICATION_TAP_COLD_NATIVE, {"wrapper.app-received-notification"}),
@@ -157,6 +154,23 @@ SCENARIO_HANDOFF = {
     "live-activity-tap-cold": (URL_COLD_NATIVE, {"wrapper.app-received-url"}),
     "app-background-foreground": (APP_STATE_NATIVE, {"wrapper.app-lifecycle-state"}),
 }
+
+ICON_LAUNCH_HANDOFF = {
+    "flutter": (
+        {"application.did-finish-launching"}, {"flutter.dart-main-entered"},
+    ),
+    "expo": (
+        {"application.did-finish-launching"}, {"wrapper.app-lifecycle-state"},
+    ),
+}
+
+
+def _scenario_handoff(
+    scenario: str, integration: str
+) -> tuple[set[str], set[str]] | None:
+    if scenario == "icon-cold-launch":
+        return ICON_LAUNCH_HANDOFF.get(integration)
+    return SCENARIO_HANDOFF.get(scenario)
 WRAPPER_RUNTIME_BY_INTEGRATION = {
     "flutter": "dart",
     "expo": "javascript",
@@ -224,6 +238,7 @@ _bind_scenarios(
     },
     COLD_START_SCENARIOS,
 )
+_bind_scenarios({"flutter.dart-main-entered"}, {"icon-cold-launch"})
 _bind_scenarios(
     {
         "application.open-url", "scene.open-url-contexts", "swiftui.on-open-url",
@@ -1125,6 +1140,10 @@ _rule(
 )
 _rule(("flutter.app-lifecycle-state",), ("flutter",), ("swift",), ("framework-callback",), ("flutter-engine", "flutter-plugin"), ("state-change",))
 _rule(
+    ("flutter.dart-main-entered",), ("flutter",), ("dart",),
+    ("app-received",), ("flutter-dart",), ("entry",),
+)
+_rule(
     (
         "flutter.application.did-become-active-forwarded", "flutter.application.will-resign-active-forwarded",
         "flutter.application.did-enter-background-forwarded", "flutter.application.will-enter-foreground-forwarded",
@@ -1484,6 +1503,18 @@ def _validate_payload(record: dict[str, Any], target_os_version: str | None = No
     else:
         app_state = enums.get("app_state")
     allowed_app_states = _allowed_app_states(callback)
+    if (
+        record["integration"] == "flutter"
+        and record["scenario"] == "icon-cold-launch"
+        and callback in {
+            "application.did-finish-launching",
+            "flutter.application.did-finish-launching-forwarded",
+            "uikit.application-did-finish-launching-notification",
+        }
+    ):
+        # The empirical scene-enabled Flutter launch enters while UIKit reports
+        # background; the legacy app-delegate topology reports inactive.
+        allowed_app_states = set(allowed_app_states or ()).union({"background"})
     if allowed_app_states is not None:
         app_state = _require(summary, "enums", "app_state", callback)
         if app_state not in allowed_app_states:
@@ -2020,33 +2051,60 @@ def _handoff_facts(record: dict[str, Any], scenario: str) -> dict[str, Any]:
 
 
 def _validate_icon_launch_handoff(
-    native_record: dict[str, Any], wrapper_record: dict[str, Any]
+    native_record: dict[str, Any],
+    wrapper_record: dict[str, Any],
+    integration: str,
+    native_records: list[dict[str, Any]],
 ) -> None:
     native_state = native_record["payload_summary"]["enums"].get("app_state")
-    wrapper_state = wrapper_record["payload_summary"]["enums"].get("app_state")
-    if native_state != "inactive":
+    has_scene = any(
+        record["callback"] in {"scene.will-connect", "flutter.scene.will-connect-forwarded"}
+        for record in native_records
+    )
+    expected_native_state = (
+        "background" if integration == "flutter" and has_scene else "inactive"
+    )
+    if native_state != expected_native_state:
         raise ContractError(
-            "icon-cold-launch native launch forwarding requires app_state=inactive"
+            "icon-cold-launch native launch forwarding requires "
+            f"app_state={expected_native_state} for {integration} topology"
         )
-    if wrapper_state != "active":
-        raise ContractError(
-            "icon-cold-launch wrapper lifecycle receipt requires app_state=active"
-        )
+    if integration == "expo":
+        wrapper_state = wrapper_record["payload_summary"]["enums"].get("app_state")
+        if wrapper_state != "active":
+            raise ContractError(
+                "icon-cold-launch wrapper lifecycle receipt requires app_state=active"
+            )
     _require_capture_time_order(
         native_record, wrapper_record, "icon-cold-launch native to wrapper progression"
     )
 
 
 def _validate_icon_launch_native_forward(
-    raw_record: dict[str, Any], forwarded_record: dict[str, Any]
+    raw_record: dict[str, Any], forwarded_record: dict[str, Any], integration: str
 ) -> None:
-    if raw_record["payload_summary"]["enums"].get("app_state") != "inactive":
+    raw_state = raw_record["payload_summary"]["enums"].get("app_state")
+    forwarded_state = forwarded_record["payload_summary"]["enums"].get("app_state")
+    if raw_record["callback"] == "scene.will-connect":
+        if integration == "flutter" and (
+            raw_state != "pre-application" or forwarded_state != "pre-application"
+        ):
+            raise ContractError(
+                "icon-cold-launch Flutter scene forwarding requires app_state=pre-application"
+            )
+        if raw_record["payload_summary"] != forwarded_record["payload_summary"]:
+            raise ContractError(
+                "icon-cold-launch scene forwarding must preserve payload summary"
+            )
+        return
+    allowed_states = {"inactive", "background"} if integration == "flutter" else {"inactive"}
+    if raw_state not in allowed_states:
         raise ContractError(
-            "icon-cold-launch raw application entry requires app_state=inactive"
+            "icon-cold-launch raw application entry has incompatible app_state"
         )
-    if forwarded_record["payload_summary"]["enums"].get("app_state") != "inactive":
+    if forwarded_state != raw_state:
         raise ContractError(
-            "icon-cold-launch native launch forwarding requires app_state=inactive"
+            "icon-cold-launch native launch forwarding must preserve app_state"
         )
 
 
@@ -2080,6 +2138,107 @@ def _require_capture_time_order(
         after_value, f"{label} target"
     ):
         raise ContractError(f"{label} requires causal capture-time ordering")
+
+
+def _validate_cold_flutter_icon_topology(
+    native_records: list[dict[str, Any]], wrapper_records: list[dict[str, Any]]
+) -> None:
+    """Require one of the two empirically observed Flutter icon-launch orders."""
+
+    def exact(
+        records: list[dict[str, Any]], callback: str, phase: str
+    ) -> dict[str, Any]:
+        matches = [
+            record for record in records
+            if record["callback"] == callback and record["phase"] == phase
+        ]
+        if len(matches) != 1:
+            raise ContractError(
+                "cold Flutter icon launch requires exactly one "
+                f"{callback} phase={phase}, observed {len(matches)}"
+            )
+        return matches[0]
+
+    application = exact(native_records, "application.did-finish-launching", "entry")
+    application_forward = exact(
+        native_records, "flutter.application.did-finish-launching-forwarded", "entry"
+    )
+    application_notification = exact(
+        native_records, "uikit.application-did-finish-launching-notification", "entry"
+    )
+    engine = exact(native_records, "flutter.implicit-engine-created", "result")
+    plugin = exact(native_records, "flutter.plugin-registered", "result")
+    application_active = exact(
+        native_records, "uikit.application-did-become-active-notification", "state-change"
+    )
+    dart_main = exact(wrapper_records, "flutter.dart-main-entered", "entry")
+
+    scene_entries = [
+        record for record in native_records
+        if record["callback"] == "scene.will-connect" and record["phase"] == "entry"
+    ]
+    scene_forwards = [
+        record for record in native_records
+        if record["callback"] == "flutter.scene.will-connect-forwarded"
+        and record["phase"] == "entry"
+    ]
+    if len(scene_entries) != len(scene_forwards) or len(scene_entries) > 1:
+        raise ContractError(
+            "cold Flutter icon launch requires either no scene connection seats or "
+            "exactly one raw and forwarded scene connection seat"
+        )
+
+    if scene_entries:
+        ordered = (
+            application,
+            application_forward,
+            application_notification,
+            engine,
+            plugin,
+            scene_entries[0],
+            scene_forwards[0],
+            application_active,
+        )
+        label = "cold Flutter scene icon topology"
+        expected_launch_state = "background"
+        for record in (scene_entries[0], scene_forwards[0]):
+            app_state = record["payload_summary"]["enums"].get("app_state")
+            if app_state != "pre-application":
+                raise ContractError(
+                    f"{label} requires {record['callback']} "
+                    f"app_state=pre-application, observed {app_state}"
+                )
+        if scene_entries[0]["payload_summary"] != scene_forwards[0]["payload_summary"]:
+            raise ContractError(
+                "cold Flutter scene icon forwarding must preserve payload summary"
+            )
+    else:
+        ordered = (
+            engine,
+            plugin,
+            application,
+            application_forward,
+            application_notification,
+            application_active,
+        )
+        label = "cold Flutter legacy icon topology"
+        expected_launch_state = "inactive"
+
+    for record in (application, application_forward, application_notification):
+        app_state = record["payload_summary"]["enums"].get("app_state")
+        if app_state != expected_launch_state:
+            raise ContractError(
+                f"{label} requires {record['callback']} "
+                f"app_state={expected_launch_state}, observed {app_state}"
+            )
+
+    for before, after in zip(ordered, ordered[1:]):
+        _require_order(before, after, label)
+    _require_capture_time_order(
+        application_active,
+        dart_main,
+        "cold Flutter UIKit active notification to Dart main",
+    )
 
 
 def _require_same_correlation(
@@ -2349,7 +2508,7 @@ def _validate_wrapper_forwarding_chain(
     native_records = records_by_stream[native_declaration["stream_id"]]
     wrapper_records = records_by_stream[wrapper_declaration["stream_id"]]
     assertions = manifest["aggregate_assertions"]
-    handoff = SCENARIO_HANDOFF.get(scenario)
+    handoff = _scenario_handoff(scenario, integration)
     if handoff is None:
         raise ContractError(f"multi-stream L2/L3 scenario {scenario} has no canonical wrapper handoff")
     wrapper_callbacks = handoff[1]
@@ -2404,7 +2563,9 @@ def _validate_wrapper_forwarding_chain(
         ]
         if len(selected_native) == 1 and len(selected_wrapper) == 1:
             if scenario == "icon-cold-launch":
-                _validate_icon_launch_handoff(selected_native[0], selected_wrapper[0])
+                _validate_icon_launch_handoff(
+                    selected_native[0], selected_wrapper[0], integration, native_records
+                )
             if _handoff_facts(selected_native[0], scenario) != _handoff_facts(
                 selected_wrapper[0], scenario
             ):
@@ -2467,7 +2628,7 @@ def _validate_wrapper_forwarding_chain(
             )
         forwarded = candidates[0]
         if scenario == "icon-cold-launch":
-            _validate_icon_launch_native_forward(raw, forwarded)
+            _validate_icon_launch_native_forward(raw, forwarded, integration)
         forward_sequence = forwarded["sequence"]
         if forward_sequence in assigned_forward_to_raw:
             raise ContractError(
@@ -2516,22 +2677,25 @@ def _validate_wrapper_forwarding_chain(
                     f"{sorted(group)}, observed {len(matches)}"
                 )
             bootstrap_records.append(matches[0])
-        for before, after in zip(bootstrap_records, bootstrap_records[1:]):
-            _require_order(before, after, f"cold {integration} bootstrap")
-        for bootstrap in bootstrap_records:
-            for _, forwarded, _ in selected_pairs:
-                if (
-                    integration == "expo"
-                    and scenario == "icon-cold-launch"
-                    and bootstrap["callback"] in {
-                        "rct.javascript-did-load-notification",
-                        "rct.instance-did-load-bundle-notification",
-                    }
-                ):
-                    # Expo's did-finish forward returns before the asynchronous
-                    # React Native bundle-load notification in the pinned graph.
-                    continue
-                _require_order(bootstrap, forwarded, f"cold {integration} bootstrap")
+        if not (integration == "flutter" and scenario == "icon-cold-launch"):
+            for before, after in zip(bootstrap_records, bootstrap_records[1:]):
+                _require_order(before, after, f"cold {integration} bootstrap")
+            for bootstrap in bootstrap_records:
+                for _, forwarded, _ in selected_pairs:
+                    if (
+                        integration == "expo"
+                        and scenario == "icon-cold-launch"
+                        and bootstrap["callback"] in {
+                            "rct.javascript-did-load-notification",
+                            "rct.instance-did-load-bundle-notification",
+                        }
+                    ):
+                        # Expo's did-finish forward returns before the asynchronous
+                        # React Native bundle-load notification in the pinned graph.
+                        continue
+                    _require_order(bootstrap, forwarded, f"cold {integration} bootstrap")
+        if integration == "flutter" and scenario == "icon-cold-launch":
+            _validate_cold_flutter_icon_topology(native_records, wrapper_records)
         if integration == "expo":
             launches = [
                 record for record in native_records
@@ -2637,11 +2801,20 @@ def _validate_wrapper_forwarding_chain(
 
 
 def _validate_partial_test_handoff(
-    manifest: dict[str, Any], records_by_stream: dict[str, list[dict[str, Any]]]
+    manifest: dict[str, Any],
+    records_by_stream: dict[str, list[dict[str, Any]]],
+    topology: tuple[dict[str, Any], dict[str, Any]],
 ) -> None:
     """Exercise fact matching for schema-less unit fixtures; captures always use the full chain."""
     scenario = manifest["scenario"]
-    native_callbacks, wrapper_callbacks = SCENARIO_HANDOFF[scenario]
+    native_declaration, wrapper_declaration = topology
+    integration = native_declaration["integration"]
+    handoff = _scenario_handoff(scenario, integration)
+    if handoff is None:
+        raise ContractError(
+            f"multi-stream L2/L3 scenario {scenario} has no canonical wrapper handoff"
+        )
+    native_callbacks, wrapper_callbacks = handoff
     declarations = {item["stream_id"]: item for item in manifest["streams"]}
     accepted = native_callbacks.union(wrapper_callbacks)
     found = False
@@ -2683,7 +2856,23 @@ def _validate_partial_test_handoff(
         ]
         if len(native_records) == len(wrapper_records) == 1:
             if scenario == "icon-cold-launch":
-                _validate_icon_launch_handoff(native_records[0], wrapper_records[0])
+                all_native_records = records_by_stream[native_declaration["stream_id"]]
+                _validate_icon_launch_handoff(
+                    native_records[0], wrapper_records[0], integration, all_native_records
+                )
+                if integration == "flutter":
+                    raw_scene = [
+                        record for record in all_native_records
+                        if record["callback"] == "scene.will-connect"
+                    ]
+                    forwarded_scene = [
+                        record for record in all_native_records
+                        if record["callback"] == "flutter.scene.will-connect-forwarded"
+                    ]
+                    if len(raw_scene) == len(forwarded_scene) == 1:
+                        _validate_icon_launch_native_forward(
+                            raw_scene[0], forwarded_scene[0], integration
+                        )
             if _handoff_facts(native_records[0], scenario) != _handoff_facts(
                 wrapper_records[0], scenario
             ):
@@ -2773,7 +2962,7 @@ def _validate_scenario_acceptance(
         or record.get("runtime") != declarations[stream_id]["runtime"]
         for stream_id, records in records_by_stream.items() for record in records
     ):
-        _validate_partial_test_handoff(manifest, records_by_stream)
+        _validate_partial_test_handoff(manifest, records_by_stream, topology)
         return
     _validate_wrapper_forwarding_chain(manifest, records_by_stream, topology)
 
