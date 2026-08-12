@@ -36,10 +36,10 @@ files. The focused Node test pins their SHA-256 values:
 
 | File | SHA-256 |
 | --- | --- |
-| `LifecycleTraceEvidence.swift` | `9d9b644e73b54fec66a4ae91e516b747ae8d610b30cbb8706c441a153e6d8110` |
+| `LifecycleTraceEvidence.swift` | `1db44862654643a5feb6209a87e6f7980e8f723e734f713a2f2902812e3f6215` |
 | `LifecycleTraceModel.swift` | `cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1` |
-| `LifecycleTraceProbe.swift` | `19d4bee544376fa5c3e95c6d1ad66b9c654a288bafdef5e45d99f1a0757e0783` |
-| `LifecycleTraceRecorder.swift` | `d494411f8a4f286c679b67dae70f7df2ccbcb02882598e3b2a6219ebdf7c9af8` |
+| `LifecycleTraceProbe.swift` | `eceb1a3f70791c8f4163759019068abd5ccdd94bc91d217367a79606941858aa` |
+| `LifecycleTraceRecorder.swift` | `5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588` |
 
 The killed-state workaround remains behaviorally unchanged, including its inner
 `launchOptions` shadow. The outer dictionary passed to `startReactNative` is not repaired or
@@ -68,7 +68,8 @@ duplicate or partially port MBL-2278's normalization work.
 
 The checked-in example at the contract's audited standalone repository commit resolves
 React Native 0.83.6. Canonical source commit
-`342eabf17ea7eef258c256ff2138279bfa15bc9a` corrects the earlier validator defect that
+`096f7770ce694c1c356b08c7498b87d0e52cdced` contains the reviewed contract and
+corrects the earlier validator defect that
 mistakenly required Expo's transitive React Native 0.86.2 version for this standalone
 topology. This work keeps the restored 0.83.6 dependency graph. Until a simulator capture
 passes the corrected relational validator with a valid manifest and receipt, the evidence
