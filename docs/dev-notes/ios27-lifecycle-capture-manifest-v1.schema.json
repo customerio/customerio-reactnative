@@ -1,0 +1,413 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://customer.io/schemas/ios27-lifecycle-capture-manifest-v1.schema.json",
+  "$vocabulary": {
+    "https://json-schema.org/draft/2020-12/vocab/core": true,
+    "https://json-schema.org/draft/2020-12/vocab/applicator": true,
+    "https://json-schema.org/draft/2020-12/vocab/validation": true,
+    "https://json-schema.org/draft/2020-12/vocab/meta-data": true,
+    "https://json-schema.org/draft/2020-12/vocab/format-assertion": true
+  },
+  "title": "Customer.io iOS lifecycle capture manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "manifest_id",
+    "run_id",
+    "run_started_at",
+    "run_ended_at",
+    "created_at",
+    "evidence_level",
+    "scenario",
+    "repositories",
+    "toolchain",
+    "sdk",
+    "build",
+    "target",
+    "frameworks",
+    "provider_provenance",
+    "stimulus",
+    "streams",
+    "aggregate_assertions"
+  ],
+  "properties": {
+    "schema": { "const": "cio-lifecycle-capture-manifest/1" },
+    "manifest_id": { "$ref": "#/$defs/uuid" },
+    "run_id": { "$ref": "#/$defs/uuid" },
+    "run_started_at": { "$ref": "#/$defs/date_time" },
+    "run_ended_at": { "$ref": "#/$defs/date_time" },
+    "created_at": { "$ref": "#/$defs/date_time" },
+    "evidence_level": { "enum": ["diagnostic", "L2", "L3"] },
+    "scenario": { "$ref": "ios27-lifecycle-trace-v1.schema.json#/$defs/scenario" },
+    "repositories": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/repository" }
+    },
+    "toolchain": { "$ref": "#/$defs/toolchain" },
+    "sdk": { "$ref": "#/$defs/sdk" },
+    "build": { "$ref": "#/$defs/build" },
+    "target": { "$ref": "#/$defs/target" },
+    "frameworks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/framework" }
+    },
+    "provider_provenance": { "$ref": "#/$defs/provider_provenance" },
+    "stimulus": { "$ref": "#/$defs/stimulus" },
+    "streams": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/stream" }
+    },
+    "aggregate_assertions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/aggregate_assertion" }
+    }
+  },
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "date_time": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "safe_label": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._+()-]{0,127}$",
+      "not": {
+        "anyOf": [
+          { "pattern": "[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}" },
+          { "pattern": "[0-9A-Fa-f]{40}" },
+          { "pattern": "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{16}" },
+          { "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" },
+          { "pattern": "(?:^|[^A-Z0-9])[CFG][A-Z0-9]{9,11}(?:$|[^A-Z0-9])" }
+        ]
+      }
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9A-Za-z][0-9A-Za-z.+_-]{0,63}$",
+      "not": {
+        "anyOf": [
+          { "pattern": "[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}" },
+          { "pattern": "[0-9A-Fa-f]{40}" },
+          { "pattern": "[0-9A-Fa-f]{8}-[0-9A-Fa-f]{16}" },
+          { "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" }
+        ]
+      }
+    },
+    "device_model": {
+      "allOf": [
+        { "$ref": "#/$defs/safe_label" },
+        {
+          "pattern": "^(?:iPhone|iPad|iPod touch)(?: [A-Za-z0-9][A-Za-z0-9 ._+()-]{0,95})?$"
+        }
+      ]
+    },
+    "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "content_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "tree_hash", "diff_hash"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "tree_hash": { "$ref": "#/$defs/content_hash" },
+        "diff_hash": { "$ref": "#/$defs/content_hash" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "commit_sha", "dirty", "source_snapshot"],
+      "properties": {
+        "name": {
+          "enum": ["customerio-ios", "customerio-flutter", "customerio-expo-plugin", "customerio-reactnative"]
+        },
+        "commit_sha": { "$ref": "#/$defs/commit_sha" },
+        "dirty": { "type": "boolean" },
+        "source_snapshot": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/source_snapshot" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "dirty": { "const": true } }, "required": ["dirty"] },
+          "then": { "properties": { "source_snapshot": { "$ref": "#/$defs/source_snapshot" } } },
+          "else": { "properties": { "source_snapshot": { "type": "null" } } }
+        }
+      ]
+    },
+    "toolchain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xcode_version", "xcode_build", "swift_version", "flutter_version",
+        "dart_version", "node_version", "expo_cli_version"
+      ],
+      "properties": {
+        "xcode_version": { "$ref": "#/$defs/version" },
+        "xcode_build": { "$ref": "#/$defs/version" },
+        "swift_version": {
+          "oneOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+        },
+        "flutter_version": {
+          "oneOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+        },
+        "dart_version": {
+          "oneOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+        },
+        "node_version": {
+          "oneOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+        },
+        "expo_cli_version": {
+          "oneOf": [{ "$ref": "#/$defs/version" }, { "type": "null" }]
+        }
+      }
+    },
+    "sdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "name", "version", "build"],
+      "properties": {
+        "platform": { "const": "ios" },
+        "name": { "enum": ["iphoneos", "iphonesimulator"] },
+        "version": { "type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+){1,2}$" },
+        "build": { "$ref": "#/$defs/version" }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["configuration", "scheme", "target_name", "product_kind", "deployment_target"],
+      "properties": {
+        "configuration": { "enum": ["Debug", "Release"] },
+        "scheme": { "$ref": "#/$defs/safe_label" },
+        "target_name": { "$ref": "#/$defs/safe_label" },
+        "product_kind": { "enum": ["application", "unit-test", "ui-test"] },
+        "deployment_target": { "type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+){1,2}$" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "model", "architecture", "os_name", "os_version", "os_build"],
+      "properties": {
+        "kind": { "enum": ["simulator", "physical-device"] },
+        "model": { "$ref": "#/$defs/device_model" },
+        "architecture": { "enum": ["arm64", "x86_64"] },
+        "os_name": { "enum": ["iOS", "iPadOS"] },
+        "os_version": { "type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+){1,2}$" },
+        "os_build": { "$ref": "#/$defs/version" }
+      }
+    },
+    "framework_name": {
+      "enum": [
+        "customerio-ios",
+        "customerio-messaging-push",
+        "customerio-flutter",
+        "flutter",
+        "firebase-ios-sdk-messaging",
+        "flutterfire-firebase-messaging",
+        "flutter-local-notifications",
+        "quick-actions-ios",
+        "customerio-expo-plugin",
+        "expo",
+        "expo-notifications",
+        "expo-modules-core",
+        "customerio-reactnative",
+        "react-native",
+        "react-native-push-notification",
+        "apple-usernotifications",
+        "apns-provider-sdk",
+        "fcm-provider-sdk"
+      ]
+    },
+    "framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "version", "commit_sha"],
+      "properties": {
+        "name": { "$ref": "#/$defs/framework_name" },
+        "role": { "enum": ["sdk", "wrapper", "runtime", "plugin", "peer", "platform-framework", "provider-sdk"] },
+        "version": { "$ref": "#/$defs/version" },
+        "commit_sha": {
+          "oneOf": [{ "$ref": "#/$defs/commit_sha" }, { "type": "null" }]
+        }
+      }
+    },
+    "provider_sdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "enum": ["apns-provider-sdk", "fcm-provider-sdk"] },
+        "version": { "$ref": "#/$defs/version" }
+      }
+    },
+    "provider_provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider", "source", "environment", "receipt_result",
+        "receipt_recorded_at", "provider_sdk"
+      ],
+      "properties": {
+        "provider": { "enum": ["apn", "fcm", "local", "none", "unknown"] },
+        "source": {
+          "enum": [
+            "provider-api", "provider-console", "simulator-control", "system-registration",
+            "local-scheduler", "system-scheduler", "app-ui", "none", "unknown"
+          ]
+        },
+        "environment": { "enum": ["sandbox", "production", "simulator", "local", "none", "unknown"] },
+        "receipt_result": {
+          "enum": ["accepted", "scheduled", "injected", "registered", "failed", "not-applicable", "unknown"]
+        },
+        "receipt_recorded_at": {
+          "oneOf": [{ "$ref": "#/$defs/date_time" }, { "type": "null" }]
+        },
+        "provider_sdk": {
+          "oneOf": [{ "$ref": "#/$defs/provider_sdk" }, { "type": "null" }]
+        }
+      }
+    },
+    "stimulus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scenario", "source", "initiated_at"],
+      "properties": {
+        "scenario": { "$ref": "ios27-lifecycle-trace-v1.schema.json#/$defs/scenario" },
+        "source": {
+          "enum": [
+            "app-icon", "notification-center", "app-ui", "simulator-control", "provider",
+            "system-registration", "local-scheduler", "system-quick-action", "live-activity",
+            "background-fetch-control", "system-settings", "unit-fixture", "unknown"
+          ]
+        },
+        "initiated_at": { "$ref": "#/$defs/date_time" }
+      }
+    },
+    "alias_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delivery", "request", "scene", "url", "closure"],
+      "properties": {
+        "delivery": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "request": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "scene": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "url": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "closure": { "type": "integer", "minimum": 0, "maximum": 256 }
+      }
+    },
+    "stream_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "drained_at", "last_assigned_sequence", "last_emitted_sequence", "emitted_records",
+        "dropped_records_total", "buffer_high_watermark", "buffer_capacity", "alias_counts",
+        "alias_overflow", "alias_overflow_namespaces"
+      ],
+      "properties": {
+        "drained_at": { "$ref": "#/$defs/date_time" },
+        "last_assigned_sequence": { "type": "integer", "minimum": 1 },
+        "last_emitted_sequence": { "type": "integer", "minimum": 1 },
+        "emitted_records": { "type": "integer", "minimum": 1 },
+        "dropped_records_total": { "type": "integer", "minimum": 0 },
+        "buffer_high_watermark": { "type": "integer", "minimum": 0 },
+        "buffer_capacity": { "type": "integer", "minimum": 1 },
+        "alias_counts": { "$ref": "#/$defs/alias_counts" },
+        "alias_overflow": { "type": "boolean" },
+        "alias_overflow_namespaces": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["delivery", "request", "scene", "url", "closure"] }
+        }
+      }
+    },
+    "stream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stream_id", "integration", "runtime", "provider", "process_id",
+        "process_instance_id", "receipt"
+      ],
+      "properties": {
+        "stream_id": { "$ref": "#/$defs/uuid" },
+        "integration": { "enum": ["native-ios", "flutter", "expo", "react-native"] },
+        "runtime": { "enum": ["swift", "dart", "javascript"] },
+        "provider": { "enum": ["apn", "fcm", "local", "none", "unknown"] },
+        "process_id": {
+          "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+        },
+        "process_instance_id": { "$ref": "#/$defs/uuid" },
+        "receipt": { "$ref": "#/$defs/stream_receipt" }
+      }
+    },
+    "selector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stream_id", "callback", "phase"],
+      "properties": {
+        "stream_id": { "$ref": "#/$defs/uuid" },
+        "callback": {
+          "allOf": [
+            { "$ref": "ios27-lifecycle-trace-v1.schema.json#/properties/callback" },
+            { "not": { "pattern": "^(?:trace|fixture)\\." } }
+          ]
+        },
+        "phase": { "$ref": "ios27-lifecycle-trace-v1.schema.json#/properties/phase" },
+        "app_state": {
+          "enum": ["pre-application", "active", "inactive", "background"]
+        }
+      }
+    },
+    "aggregate_assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "relation", "expected_count", "members"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+        "relation": { "const": "equal-exact-count" },
+        "expected_count": { "const": 1 },
+        "members": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/selector" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "evidence_level": { "const": "L2" } }, "required": ["evidence_level"] },
+      "then": {
+        "properties": {
+          "scenario": { "not": { "enum": ["unscoped", "unit-fixture"] } },
+          "target": { "properties": { "kind": { "const": "simulator" } } },
+          "sdk": { "properties": { "name": { "const": "iphonesimulator" } } },
+          "build": { "properties": { "product_kind": { "const": "application" } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "evidence_level": { "const": "L3" } }, "required": ["evidence_level"] },
+      "then": {
+        "properties": {
+          "scenario": { "not": { "enum": ["unscoped", "unit-fixture"] } },
+          "target": { "properties": { "kind": { "const": "physical-device" } } },
+          "sdk": { "properties": { "name": { "const": "iphoneos" } } },
+          "build": { "properties": { "product_kind": { "const": "application" } } }
+        }
+      }
+    }
+  ]
+}

@@ -11,6 +11,10 @@
 		6027E65D2DB84F1A002F3F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6027E6572DB84F1A002F3F8A /* Assets.xcassets */; };
 		6027E65F2DB84F1A002F3F8A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6027E65A2DB84F1A002F3F8A /* LaunchScreen.storyboard */; };
 		6027E6602DB84F1A002F3F8A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6027E6562DB84F1A002F3F8A /* AppDelegate.swift */; };
+		FA2B2232000000000000C002 /* LifecycleTraceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2B2232000000000000C001 /* LifecycleTraceModel.swift */; };
+		FA2B2232000000000000C004 /* LifecycleTraceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2B2232000000000000C003 /* LifecycleTraceRecorder.swift */; };
+		FA2B2232000000000000C006 /* LifecycleTraceProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2B2232000000000000C005 /* LifecycleTraceProbe.swift */; };
+		FA2B2232000000000000C008 /* LifecycleTraceEvidence.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2B2232000000000000C007 /* LifecycleTraceEvidence.swift */; };
 		6027E6622DB84F66002F3F8A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6027E6612DB84F66002F3F8A /* PrivacyInfo.xcprivacy */; };
 		6027E66E2DB84F97002F3F8A /* NotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6027E6672DB84F97002F3F8A /* NotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6027E67E2DB8507B002F3F8A /* Env.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6027E6782DB8507B002F3F8A /* Env.swift */; };
@@ -58,6 +62,10 @@
 		46FB8D344F4C2D92F366D48B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		6027E62A2DB8477F002F3F8A /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6027E6562DB84F1A002F3F8A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FA2B2232000000000000C001 /* LifecycleTraceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LifecycleTraceModel.swift; path = Fixtures/LifecycleTraceModel.swift; sourceTree = "<group>"; };
+		FA2B2232000000000000C003 /* LifecycleTraceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LifecycleTraceRecorder.swift; path = Fixtures/LifecycleTraceRecorder.swift; sourceTree = "<group>"; };
+		FA2B2232000000000000C005 /* LifecycleTraceProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LifecycleTraceProbe.swift; path = Fixtures/LifecycleTraceProbe.swift; sourceTree = "<group>"; };
+		FA2B2232000000000000C007 /* LifecycleTraceEvidence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LifecycleTraceEvidence.swift; path = Fixtures/LifecycleTraceEvidence.swift; sourceTree = "<group>"; };
 		6027E6572DB84F1A002F3F8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6027E6582DB84F1A002F3F8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6027E6592DB84F1A002F3F8A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -166,6 +174,10 @@
 			isa = PBXGroup;
 			children = (
 				6027E6562DB84F1A002F3F8A /* AppDelegate.swift */,
+				FA2B2232000000000000C007 /* LifecycleTraceEvidence.swift */,
+				FA2B2232000000000000C001 /* LifecycleTraceModel.swift */,
+				FA2B2232000000000000C005 /* LifecycleTraceProbe.swift */,
+				FA2B2232000000000000C003 /* LifecycleTraceRecorder.swift */,
 				6027E6572DB84F1A002F3F8A /* Assets.xcassets */,
 				6027E6582DB84F1A002F3F8A /* Info.plist */,
 				6027E65A2DB84F1A002F3F8A /* LaunchScreen.storyboard */,
@@ -363,6 +375,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				6027E6602DB84F1A002F3F8A /* AppDelegate.swift in Sources */,
+				FA2B2232000000000000C008 /* LifecycleTraceEvidence.swift in Sources */,
+				FA2B2232000000000000C002 /* LifecycleTraceModel.swift in Sources */,
+				FA2B2232000000000000C006 /* LifecycleTraceProbe.swift in Sources */,
+				FA2B2232000000000000C004 /* LifecycleTraceRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

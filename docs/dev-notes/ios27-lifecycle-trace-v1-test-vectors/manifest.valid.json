@@ -1,0 +1,154 @@
+{
+  "schema": "cio-lifecycle-capture-manifest/1",
+  "manifest_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+  "run_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+  "run_started_at": "2026-08-11T15:59:59Z",
+  "run_ended_at": "2026-08-11T16:00:10Z",
+  "created_at": "2026-08-11T16:00:11Z",
+  "evidence_level": "L2",
+  "scenario": "push-tap-warm",
+  "repositories": [
+    {
+      "name": "customerio-ios",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "dirty": false,
+      "source_snapshot": null
+    },
+    {
+      "name": "customerio-flutter",
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "dirty": false,
+      "source_snapshot": null
+    }
+  ],
+  "toolchain": {
+    "xcode_version": "26.6",
+    "xcode_build": "17F113",
+    "swift_version": "6.2.4",
+    "flutter_version": "3.41.6",
+    "dart_version": "3.11.4",
+    "node_version": null,
+    "expo_cli_version": null
+  },
+  "sdk": {
+    "platform": "ios",
+    "name": "iphonesimulator",
+    "version": "26.5",
+    "build": "23F77"
+  },
+  "build": {
+    "configuration": "Debug",
+    "scheme": "Runner",
+    "target_name": "Runner",
+    "product_kind": "application",
+    "deployment_target": "13.0"
+  },
+  "target": {
+    "kind": "simulator",
+    "model": "iPhone 17 Pro",
+    "architecture": "arm64",
+    "os_name": "iOS",
+    "os_version": "26.5",
+    "os_build": "23F77"
+  },
+  "frameworks": [
+    {
+      "name": "customerio-ios",
+      "role": "sdk",
+      "version": "3.13.1",
+      "commit_sha": "1111111111111111111111111111111111111111"
+    },
+    {
+      "name": "customerio-flutter",
+      "role": "wrapper",
+      "version": "4.2.1",
+      "commit_sha": "2222222222222222222222222222222222222222"
+    },
+    {
+      "name": "flutter",
+      "role": "runtime",
+      "version": "3.41.6",
+      "commit_sha": null
+    },
+    {
+      "name": "apple-usernotifications",
+      "role": "platform-framework",
+      "version": "26.5",
+      "commit_sha": null
+    }
+  ],
+  "provider_provenance": {
+    "provider": "apn",
+    "source": "simulator-control",
+    "environment": "simulator",
+    "receipt_result": "injected",
+    "receipt_recorded_at": "2026-08-11T16:00:02.500Z",
+    "provider_sdk": null
+  },
+  "stimulus": {
+    "scenario": "push-tap-warm",
+    "source": "simulator-control",
+    "initiated_at": "2026-08-11T16:00:02Z"
+  },
+  "streams": [
+    {
+      "stream_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      "integration": "flutter",
+      "runtime": "swift",
+      "provider": "apn",
+      "process_id": 321,
+      "process_instance_id": "99999999-9999-4999-8999-999999999999",
+      "receipt": {
+        "drained_at": "2026-08-11T16:00:05Z",
+        "last_assigned_sequence": 5,
+        "last_emitted_sequence": 5,
+        "emitted_records": 5,
+        "dropped_records_total": 0,
+        "buffer_high_watermark": 1,
+        "buffer_capacity": 256,
+        "alias_counts": { "delivery": 1, "request": 0, "scene": 0, "url": 0, "closure": 0 },
+        "alias_overflow": false,
+        "alias_overflow_namespaces": []
+      }
+    },
+    {
+      "stream_id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      "integration": "flutter",
+      "runtime": "dart",
+      "provider": "apn",
+      "process_id": 321,
+      "process_instance_id": "99999999-9999-4999-8999-999999999999",
+      "receipt": {
+        "drained_at": "2026-08-11T16:00:05Z",
+        "last_assigned_sequence": 3,
+        "last_emitted_sequence": 3,
+        "emitted_records": 3,
+        "dropped_records_total": 0,
+        "buffer_high_watermark": 1,
+        "buffer_capacity": 256,
+        "alias_counts": { "delivery": 0, "request": 0, "scene": 0, "url": 0, "closure": 0 },
+        "alias_overflow": false,
+        "alias_overflow_namespaces": []
+      }
+    }
+  ],
+  "aggregate_assertions": [
+    {
+      "name": "notification-response-handoff",
+      "relation": "equal-exact-count",
+      "expected_count": 1,
+      "members": [
+        {
+          "stream_id": "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+          "callback": "flutter.notification-center.did-receive-response-forwarded",
+          "phase": "entry"
+        },
+        {
+          "stream_id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          "callback": "wrapper.app-received-notification",
+          "phase": "entry"
+        }
+      ]
+    }
+  ]
+}

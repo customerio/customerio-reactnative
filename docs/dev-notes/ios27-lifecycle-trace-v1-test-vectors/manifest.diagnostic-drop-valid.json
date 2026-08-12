@@ -1,0 +1,104 @@
+{
+  "schema": "cio-lifecycle-capture-manifest/1",
+  "manifest_id": "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+  "run_id": "ffffffff-ffff-4fff-8fff-ffffffffffff",
+  "run_started_at": "2026-08-11T16:59:59Z",
+  "run_ended_at": "2026-08-11T17:00:10Z",
+  "created_at": "2026-08-11T17:00:11Z",
+  "evidence_level": "diagnostic",
+  "scenario": "unit-fixture",
+  "repositories": [
+    {
+      "name": "customerio-ios",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "dirty": false,
+      "source_snapshot": null
+    }
+  ],
+  "toolchain": {
+    "xcode_version": "26.6",
+    "xcode_build": "17F113",
+    "swift_version": "6.2.4",
+    "flutter_version": null,
+    "dart_version": null,
+    "node_version": null,
+    "expo_cli_version": null
+  },
+  "sdk": {
+    "platform": "ios",
+    "name": "iphonesimulator",
+    "version": "26.5",
+    "build": "23F77"
+  },
+  "build": {
+    "configuration": "Debug",
+    "scheme": "APN UIKit",
+    "target_name": "APN UIKitTests",
+    "product_kind": "unit-test",
+    "deployment_target": "13.0"
+  },
+  "target": {
+    "kind": "simulator",
+    "model": "iPhone 17 Pro",
+    "architecture": "arm64",
+    "os_name": "iOS",
+    "os_version": "26.5",
+    "os_build": "23F77"
+  },
+  "frameworks": [
+    {
+      "name": "customerio-ios",
+      "role": "sdk",
+      "version": "3.13.1",
+      "commit_sha": "1111111111111111111111111111111111111111"
+    },
+    {
+      "name": "apple-usernotifications",
+      "role": "platform-framework",
+      "version": "26.5",
+      "commit_sha": null
+    }
+  ],
+  "provider_provenance": {
+    "provider": "none",
+    "source": "none",
+    "environment": "none",
+    "receipt_result": "not-applicable",
+    "receipt_recorded_at": null,
+    "provider_sdk": null
+  },
+  "stimulus": {
+    "scenario": "unit-fixture",
+    "source": "unit-fixture",
+    "initiated_at": "2026-08-11T17:00:01Z"
+  },
+  "streams": [
+    {
+      "stream_id": "01234567-89ab-4cde-8f01-23456789abcd",
+      "integration": "native-ios",
+      "runtime": "swift",
+      "provider": "none",
+      "process_id": 500,
+      "process_instance_id": "88888888-8888-4888-8888-888888888888",
+      "receipt": {
+        "drained_at": "2026-08-11T17:00:05Z",
+        "last_assigned_sequence": 5,
+        "last_emitted_sequence": 5,
+        "emitted_records": 4,
+        "dropped_records_total": 1,
+        "buffer_high_watermark": 2,
+        "buffer_capacity": 2,
+        "alias_counts": {
+          "delivery": 2,
+          "request": 0,
+          "scene": 0,
+          "url": 0,
+          "closure": 1
+        },
+        "alias_overflow": false,
+        "alias_overflow_namespaces": []
+      }
+    }
+  ],
+  "aggregate_assertions": []
+}

@@ -1,0 +1,413 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://customer.io/schemas/ios27-lifecycle-trace-v1.schema.json",
+  "$vocabulary": {
+    "https://json-schema.org/draft/2020-12/vocab/core": true,
+    "https://json-schema.org/draft/2020-12/vocab/applicator": true,
+    "https://json-schema.org/draft/2020-12/vocab/validation": true,
+    "https://json-schema.org/draft/2020-12/vocab/meta-data": true,
+    "https://json-schema.org/draft/2020-12/vocab/format-assertion": true
+  },
+  "title": "Customer.io iOS lifecycle trace v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "manifest_id", "run_id", "stream_id", "sequence", "monotonic_ms",
+    "captured_at", "process_id", "integration", "runtime", "provider", "scenario",
+    "evidence_level", "owner", "kind", "callback", "phase", "main_thread",
+    "payload_summary", "correlation", "completion", "recorder"
+  ],
+  "properties": {
+    "schema": { "const": "cio-lifecycle-trace/1" },
+    "manifest_id": { "$ref": "#/$defs/uuid" },
+    "run_id": { "$ref": "#/$defs/uuid" },
+    "stream_id": { "$ref": "#/$defs/uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "monotonic_ms": { "type": "integer", "minimum": 0 },
+    "captured_at": { "$ref": "#/$defs/date_time" },
+    "process_id": {
+      "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }]
+    },
+    "integration": { "enum": ["native-ios", "flutter", "expo", "react-native"] },
+    "runtime": { "enum": ["swift", "dart", "javascript"] },
+    "provider": { "enum": ["apn", "fcm", "local", "none", "unknown"] },
+    "scenario": { "$ref": "#/$defs/scenario" },
+    "evidence_level": { "enum": ["diagnostic", "L2", "L3"] },
+    "owner": {
+      "enum": [
+        "application-delegate", "scene-delegate", "swiftui-scene",
+        "notification-center-delegate", "uikit-notification", "rct-notification",
+        "flutter-engine", "flutter-plugin", "flutter-dart", "expo-framework",
+        "expo-subscriber", "expo-notifications", "expo-javascript",
+        "react-native-framework", "react-native-javascript", "fcm-messaging-delegate", "host",
+        "customerio-sdk", "trace-recorder", "fixture"
+      ]
+    },
+    "kind": {
+      "enum": [
+        "os-callback", "framework-callback", "observer-notification", "host-routing",
+        "sdk-routing", "app-received", "trace-control", "fixture-control", "completion-fixture"
+      ]
+    },
+    "callback": {
+      "enum": [
+        "application.did-finish-launching",
+        "application.configuration-for-connecting",
+        "application.did-discard-scene-sessions",
+        "application.did-become-active",
+        "application.will-resign-active",
+        "application.did-enter-background",
+        "application.will-enter-foreground",
+        "application.will-terminate",
+        "application.open-url",
+        "application.continue-user-activity",
+        "application.perform-quick-action",
+        "application.did-register-for-remote-notifications",
+        "application.did-fail-to-register-for-remote-notifications",
+        "application.did-receive-remote-notification",
+        "application.perform-background-fetch",
+        "scene.will-connect",
+        "scene.did-disconnect",
+        "scene.did-become-active",
+        "scene.will-resign-active",
+        "scene.did-enter-background",
+        "scene.will-enter-foreground",
+        "scene.open-url-contexts",
+        "scene.continue-user-activity",
+        "scene.perform-quick-action",
+        "swiftui.on-open-url",
+        "swiftui.scene-phase-change",
+        "notification-center.will-present",
+        "notification-center.did-receive-response",
+        "notification-center.settings",
+        "apns.device-token-registered",
+        "apns.device-token-registration-failed",
+        "fcm.registration-token-refreshed",
+        "uikit.application-did-finish-launching-notification",
+        "uikit.application-did-become-active-notification",
+        "uikit.application-will-resign-active-notification",
+        "uikit.application-did-enter-background-notification",
+        "uikit.application-will-enter-foreground-notification",
+        "uikit.application-will-terminate-notification",
+        "uikit.scene-will-connect-notification",
+        "uikit.scene-did-disconnect-notification",
+        "uikit.scene-did-activate-notification",
+        "uikit.scene-will-deactivate-notification",
+        "uikit.scene-did-enter-background-notification",
+        "uikit.scene-will-enter-foreground-notification",
+        "rct.javascript-will-start-loading-notification",
+        "rct.javascript-did-load-notification",
+        "rct.javascript-did-fail-to-load-notification",
+        "rct.did-initialize-module-notification",
+        "rct.bridge-will-reload-notification",
+        "rct.bridge-did-invalidate-modules-notification",
+        "rct.instance-did-load-bundle-notification",
+        "flutter.implicit-engine-created",
+        "flutter.plugin-registered",
+        "flutter.application.did-finish-launching-forwarded",
+        "flutter.application.did-become-active-forwarded",
+        "flutter.application.will-resign-active-forwarded",
+        "flutter.application.did-enter-background-forwarded",
+        "flutter.application.will-enter-foreground-forwarded",
+        "flutter.application.will-terminate-forwarded",
+        "flutter.application.open-url-forwarded",
+        "flutter.application.continue-user-activity-forwarded",
+        "flutter.application.perform-quick-action-forwarded",
+        "flutter.application.did-register-for-remote-notifications-forwarded",
+        "flutter.application.did-fail-to-register-for-remote-notifications-forwarded",
+        "flutter.application.did-receive-remote-notification-forwarded",
+        "flutter.application.perform-background-fetch-forwarded",
+        "flutter.scene.will-connect-forwarded",
+        "flutter.scene.did-disconnect-forwarded",
+        "flutter.scene.did-become-active-forwarded",
+        "flutter.scene.will-resign-active-forwarded",
+        "flutter.scene.did-enter-background-forwarded",
+        "flutter.scene.will-enter-foreground-forwarded",
+        "flutter.scene.open-url-contexts-forwarded",
+        "flutter.scene.continue-user-activity-forwarded",
+        "flutter.scene.perform-quick-action-forwarded",
+        "flutter.notification-center.will-present-forwarded",
+        "flutter.notification-center.did-receive-response-forwarded",
+        "flutter.app-lifecycle-state",
+        "flutter.notification-response",
+        "expo.subscriber-registered",
+        "expo.app-delegate-will-finish-launching-forwarded",
+        "expo.app-delegate-did-finish-launching-forwarded",
+        "expo.subscriber.did-become-active-forwarded",
+        "expo.subscriber.will-resign-active-forwarded",
+        "expo.subscriber.did-enter-background-forwarded",
+        "expo.subscriber.will-enter-foreground-forwarded",
+        "expo.subscriber.will-terminate-forwarded",
+        "expo.subscriber.open-url-forwarded",
+        "expo.subscriber.continue-user-activity-forwarded",
+        "expo.subscriber.perform-quick-action-forwarded",
+        "expo.subscriber.did-register-for-remote-notifications-forwarded",
+        "expo.subscriber.did-fail-to-register-for-remote-notifications-forwarded",
+        "expo.subscriber.did-receive-remote-notification-forwarded",
+        "expo.subscriber.perform-background-fetch-forwarded",
+        "expo.notification-center-manager.will-present-forwarded",
+        "expo.notification-center-manager.did-receive-response-forwarded",
+        "expo.notifications-emitter-created",
+        "expo.notifications-emitter.notification-received-event-sent",
+        "expo.notifications-emitter.notification-response-event-sent",
+        "expo.last-notification-response-pulled",
+        "host.route-url",
+        "host.route-user-activity",
+        "host.route-quick-action",
+        "host.route-notification",
+        "host.present-notification",
+        "host.background-fetch-completion-result",
+        "customerio.route-deep-link",
+        "customerio.handle-notification-response",
+        "customerio.register-device-token",
+        "wrapper.app-received-url",
+        "wrapper.app-received-user-activity",
+        "wrapper.app-received-notification",
+        "wrapper.app-received-quick-action",
+        "wrapper.app-lifecycle-state",
+        "trace.scenario-start",
+        "trace.scenario-end",
+        "fixture.completion-created",
+        "fixture.completion-observed"
+      ]
+    },
+    "phase": { "enum": ["entry", "intent", "result", "state-change", "completion"] },
+    "main_thread": { "type": "boolean" },
+    "payload_summary": { "$ref": "#/$defs/payload_summary" },
+    "correlation": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/correlation" }]
+    },
+    "completion": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/completion" }]
+    },
+    "recorder": { "$ref": "#/$defs/recorder" }
+  },
+  "$defs": {
+    "date_time": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    },
+    "scenario": {
+      "enum": [
+        "unscoped", "icon-cold-launch", "push-foreground", "push-tap-warm", "push-tap-cold",
+        "local-notification-foreground", "local-notification-tap-warm", "local-notification-tap-cold",
+        "custom-url-warm", "custom-url-cold", "universal-link-warm", "universal-link-cold",
+        "quick-action-warm", "quick-action-cold", "live-activity-tap-warm", "live-activity-tap-cold",
+        "token-registration", "registration-failure", "background-fetch", "app-background-foreground",
+        "notification-settings", "unit-fixture"
+      ]
+    },
+    "payload_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flags", "counts", "enums"],
+      "properties": {
+        "flags": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "has_launch_options": { "type": "boolean" },
+            "has_url": { "type": "boolean" },
+            "has_user_activity": { "type": "boolean" },
+            "has_scene": { "type": "boolean" },
+            "has_notification": { "type": "boolean" },
+            "has_notification_response": { "type": "boolean" },
+            "has_shortcut": { "type": "boolean" },
+            "has_aps": { "type": "boolean" },
+            "has_delivery_id": { "type": "boolean" },
+            "has_delivery_token": { "type": "boolean" },
+            "has_redirect": { "type": "boolean" },
+            "has_device_token": { "type": "boolean" },
+            "has_fcm_token": { "type": "boolean" },
+            "handled": { "type": "boolean" },
+            "scene_manifest_active": { "type": "boolean" },
+            "presentation_alert": { "type": "boolean" },
+            "presentation_badge": { "type": "boolean" },
+            "presentation_sound": { "type": "boolean" },
+            "presentation_banner": { "type": "boolean" },
+            "presentation_list": { "type": "boolean" }
+          }
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "launch_option_keys": { "type": "integer", "minimum": 0 },
+            "url_contexts": { "type": "integer", "minimum": 0 },
+            "user_activities": { "type": "integer", "minimum": 0 },
+            "payload_top_level_keys": { "type": "integer", "minimum": 0 },
+            "notification_user_info_keys": { "type": "integer", "minimum": 0 },
+            "device_token_bytes": { "type": "integer", "minimum": 0 },
+            "fcm_token_characters": { "type": "integer", "minimum": 0 },
+            "url_path_components": { "type": "integer", "minimum": 0 },
+            "url_query_items": { "type": "integer", "minimum": 0 },
+            "connected_scenes": { "type": "integer", "minimum": 0 },
+            "discarded_scenes": { "type": "integer", "minimum": 0 },
+            "presentation_options": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "enums": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "app_state": {
+              "enum": ["pre-application", "active", "inactive", "background", "unknown", "off-main-thread"]
+            },
+            "url_scheme": { "enum": ["https", "http", "custom", "unknown", "none"] },
+            "url_class": { "enum": ["cio-live-activity", "web", "custom-scheme", "other", "none"] },
+            "action_class": { "enum": ["default", "dismiss", "custom", "none"] },
+            "activity_class": { "enum": ["web-browsing", "custom", "none"] },
+            "scene_role": { "enum": ["application", "external-display", "unknown", "none"] },
+            "scene_state": {
+              "enum": ["unattached", "foreground-active", "foreground-inactive", "background", "unknown", "none"]
+            },
+            "result": {
+              "enum": ["handled", "unhandled", "redirect", "success", "failure", "new-data", "no-data", "none", "unknown"]
+            },
+            "notification_origin": { "enum": ["remote", "local", "unknown", "none"] },
+            "notification_class": { "enum": ["customerio", "non-customerio", "unknown", "none"] },
+            "delegate_peer": {
+              "enum": [
+                "host", "customerio-messaging-push", "expo-notifications",
+                "flutter-local-notifications", "react-native-push-notification",
+                "framework-other", "unknown", "none"
+              ]
+            },
+            "presentation_class": { "enum": ["visible", "suppressed", "unknown", "none"] },
+            "error_class": { "enum": ["registration", "configuration", "routing", "other", "none"] }
+          }
+        }
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "delivery": { "type": "string", "pattern": "^delivery-[1-9][0-9]*$" },
+        "request": { "type": "string", "pattern": "^request-[1-9][0-9]*$" },
+        "scene": { "type": "string", "pattern": "^scene-[1-9][0-9]*$" },
+        "url": { "type": "string", "pattern": "^url-[1-9][0-9]*$" },
+        "closure": { "type": "string", "pattern": "^closure-[1-9][0-9]*$" }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "closure", "parent_sequence", "observed_call_count", "result"],
+      "properties": {
+        "owner": { "const": "fixture" },
+        "closure": { "type": "string", "pattern": "^closure-[1-9][0-9]*$" },
+        "parent_sequence": { "type": "integer", "minimum": 1 },
+        "observed_call_count": { "type": "integer", "minimum": 0 },
+        "call_index": { "type": "integer", "minimum": 1 },
+        "result": { "enum": ["invoked", "not-invoked"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "result": { "const": "invoked" } }, "required": ["result"] },
+          "then": { "required": ["call_index"], "properties": { "observed_call_count": { "minimum": 1 } } },
+          "else": {
+            "properties": { "observed_call_count": { "const": 0 } },
+            "not": { "required": ["call_index"] }
+          }
+        }
+      ]
+    },
+    "alias_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["delivery", "request", "scene", "url", "closure"],
+      "properties": {
+        "delivery": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "request": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "scene": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "url": { "type": "integer", "minimum": 0, "maximum": 256 },
+        "closure": { "type": "integer", "minimum": 0, "maximum": 256 }
+      }
+    },
+    "recorder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dropped_records_total", "alias_counts", "alias_overflow", "alias_overflow_namespaces",
+        "buffer_high_watermark", "buffer_capacity"
+      ],
+      "properties": {
+        "dropped_records_total": { "type": "integer", "minimum": 0 },
+        "alias_counts": { "$ref": "#/$defs/alias_counts" },
+        "alias_overflow": { "type": "boolean" },
+        "alias_overflow_namespaces": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["delivery", "request", "scene", "url", "closure"] }
+        },
+        "buffer_high_watermark": { "type": "integer", "minimum": 0 },
+        "buffer_capacity": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "runtime": { "enum": ["swift", "dart"] } }, "required": ["runtime"] },
+      "then": { "properties": { "process_id": { "type": "integer", "minimum": 1 } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "completion-fixture" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "scenario": { "const": "unit-fixture" }, "evidence_level": { "const": "diagnostic" },
+          "owner": { "const": "fixture" }, "callback": { "const": "fixture.completion-observed" },
+          "phase": { "const": "completion" }, "completion": { "$ref": "#/$defs/completion" }
+        }
+      },
+      "else": { "properties": { "completion": { "type": "null" } }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "fixture-control" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "scenario": { "const": "unit-fixture" }, "evidence_level": { "const": "diagnostic" },
+          "owner": { "const": "fixture" }, "callback": { "const": "fixture.completion-created" },
+          "phase": { "const": "entry" },
+          "correlation": {
+            "type": "object",
+            "required": ["closure"],
+            "properties": { "closure": { "type": "string", "pattern": "^closure-[1-9][0-9]*$" } }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "trace-control" } }, "required": ["kind"] },
+      "then": {
+        "properties": {
+          "owner": { "const": "trace-recorder" },
+          "callback": { "enum": ["trace.scenario-start", "trace.scenario-end"] },
+          "phase": { "const": "state-change" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "evidence_level": { "enum": ["L2", "L3"] } }, "required": ["evidence_level"] },
+      "then": {
+        "properties": {
+          "scenario": { "not": { "enum": ["unscoped", "unit-fixture"] } },
+          "recorder": {
+            "properties": {
+              "dropped_records_total": { "const": 0 },
+              "alias_overflow": { "const": false },
+              "alias_overflow_namespaces": { "maxItems": 0 }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

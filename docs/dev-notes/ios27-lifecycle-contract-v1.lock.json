@@ -1,0 +1,80 @@
+{
+  "schema": "cio-lifecycle-contract-lock/1",
+  "source_repository": "customerio/customerio-ios",
+  "source_commit": "342eabf17ea7eef258c256ff2138279bfa15bc9a",
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "docs/dev-notes/IOS27-LIFECYCLE-CALLBACK-CONTRACT.md",
+      "sha256": "39ff2984622329e5e647f2c297cb003b37e79fbc0e55c7efc014c68488f1f4a8"
+    },
+    {
+      "path": "docs/dev-notes/IOS27-LIFECYCLE-TRACE-V1.md",
+      "sha256": "f243f8ffc5a6c185131feac7a7a7e4394c43e739da17f937aa34c6ab6d2ae5e2"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-capture-manifest-v1.schema.json",
+      "sha256": "fda332a4749454a4987cb6f2b887bb69c92f702d5cbb5c0ef49db0feba0dc83e"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/aggregate.invalid-counts.json",
+      "sha256": "feb6dc698f5f98400a72e92a7074801e5f73cf40c4b870d176629cb2731dfa26"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/completion.invalid-drop-without-full-buffer.ndjson",
+      "sha256": "b69550634cb6c8076518a0086642ad488bba4511468d9cd3f097b5fff0d1fe05"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/completion.valid-diagnostic-drop.ndjson",
+      "sha256": "5499eb6a36b7ba54c1def794d4da7d3142a71f2114d23983cdd11087d52c05ba"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/completion.valid-zero-call.ndjson",
+      "sha256": "7d1fa422389acbda9e7d63da2f5c6b6c85205c8cca6ee100e56026f31c9e3d62"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/manifest.completion-valid.json",
+      "sha256": "335b521f69c668d7a8bb2ff87ba757c38104dd9eb420ab28b07ac5b19ac479cd"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/manifest.diagnostic-drop-valid.json",
+      "sha256": "42a14fcee5d0d257041b95b79ffdb450367f5b0984d131e82e4277abb9fa4b8e"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/manifest.valid.json",
+      "sha256": "41b2bc7db0038812a45aeb79e457a0637d2544795a589a2ef7d66116ef7ae510"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/native.invalid-aggregate-zero.ndjson",
+      "sha256": "1142573f8882f5afde58f0bb8936716b21a9608970e030a09c28f2f3a82e9db9"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/native.valid.ndjson",
+      "sha256": "c1f45c2a3603083f367c1a5f2ffc2711ace874da332a901422b259815dea0d57"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/wrapper.invalid-aggregate-zero.ndjson",
+      "sha256": "61371a38bac5b5a0fb7ff2f3869d3ad843f78ec4faf39c74cd5eb09a5130b2c6"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/wrapper.invalid-handoff-classification.ndjson",
+      "sha256": "7d4fdccd8a8429c9ef22d04a56365599153c0a5c2934422552e9be6b961382c8"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1-test-vectors/wrapper.valid.ndjson",
+      "sha256": "0dd2b57fd7fc1e93f609cd57880f0b40b685890ff4f0a64633010b6d4ab33faa"
+    },
+    {
+      "path": "docs/dev-notes/ios27-lifecycle-trace-v1.schema.json",
+      "sha256": "8d270b2ece0d89521bb4149cb41c3d26994d5efd34df859bdc2405852cc56340"
+    },
+    {
+      "path": "docs/dev-notes/test_validate_ios27_lifecycle_trace.py",
+      "sha256": "04c5a2739918f2e18951b09906e51013865036bf2231a41d5696b676f1c72ec9"
+    },
+    {
+      "path": "docs/dev-notes/validate_ios27_lifecycle_trace.py",
+      "sha256": "42ed1138f47fd6bda3ef56a1b16b25f4e2515703d7768dd47c44dc437cce0ffb"
+    }
+  ]
+}

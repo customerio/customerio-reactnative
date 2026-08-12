@@ -1,0 +1,17 @@
+{
+  "description": "Mutation vectors applied to both aggregate members by the contract test.",
+  "cases": [
+    {
+      "name": "zero-equals-zero",
+      "observed_count_per_member": 0,
+      "expected_count": 1,
+      "expected_valid": false
+    },
+    {
+      "name": "two-equals-two",
+      "observed_count_per_member": 2,
+      "expected_count": 1,
+      "expected_valid": false
+    }
+  ]
+}

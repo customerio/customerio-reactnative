@@ -29,6 +29,13 @@ typealias CioMessagingPushHandler = MessagingPushAPN
 let UNIVERSAL_LINK_URL = URL(string: "http://www.amiapp-reactnative-apns.com")!
 #endif
 
+private let sampleLifecycleTraceRecorder = LifecycleTraceHarness.configureFromEnvironment(
+  sink: ConsoleLifecycleTraceSink()
+)
+private let sampleLifecycleTraceProbeObserver = sampleLifecycleTraceRecorder.map { _ in
+  LifecycleTracePlatformProbeObserver()
+}
+
 @main
 class AppDelegateWithCioIntegration: CioAppDelegateWrapper<AppDelegate> {}
 
@@ -42,6 +49,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    _ = sampleLifecycleTraceRecorder
+    _ = sampleLifecycleTraceProbeObserver
+    LifecycleTraceHarness.startScenario()
+    recordColdStartLaunch(application, launchOptions: launchOptions)
+
     #if canImport(CioLocationGeofence)
     // Geofence cold-wake delivery: iOS can launch the app into the background for a
     // geofence transition without starting the JS runtime, so the SDK can't rely on
@@ -97,31 +109,138 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: Deep linking
 extension AppDelegate {
   func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+    let routeEvidence = LifecycleTraceEvidence.observe(url: url)
+    LifecycleTraceProbe.post(
+      callback: .applicationOpenURL,
+      owner: .applicationDelegate,
+      kind: .osCallback,
+      phase: .entry,
+      observations: LifecycleTraceEvidence.observe(applicationState: app.applicationState), routeEvidence
+    )
+    LifecycleTraceProbe.post(
+      callback: .hostRouteURL,
+      owner: .host,
+      kind: .hostRouting,
+      phase: .intent,
+      observations: routeEvidence
+    )
+
     // Reference pattern: report the "opened" metric when the app is launched from a tapped Live
     // Activity. A Live Activity tap arrives here (the app's URL entry point), not through JS, so the
     // host app forwards the URL to the wrapper. For a Customer.io widget URL this returns the
     // customer's redirect target to route to (nil when it carries none); any other URL comes back
     // unchanged, so existing deep links keep working.
-    guard let routableUrl = NativeLiveActivities.handleWidgetUrl(url) else { return true }
+    let isCustomerIOLiveActivityURL = LifecycleTraceEvidence.isCustomerIOLiveActivityRoute(url)
+    if isCustomerIOLiveActivityURL {
+      LifecycleTraceProbe.post(
+        callback: .customerIORouteDeepLink,
+        owner: .customerIOSDK,
+        kind: .sdkRouting,
+        phase: .intent,
+        observations: routeEvidence
+      )
+    }
+    let routableUrl = NativeLiveActivities.handleWidgetUrl(url)
+    if isCustomerIOLiveActivityURL {
+      LifecycleTraceProbe.post(
+        callback: .customerIORouteDeepLink,
+        owner: .customerIOSDK,
+        kind: .sdkRouting,
+        phase: .result,
+        observations: routeEvidence,
+        LifecycleTraceEvidence.observe(
+          routingResult: Self.liveActivityRoutingResult(original: url, destination: routableUrl)
+        )
+      )
+    }
+    guard let routableUrl else {
+      recordHostURLResult(evidence: routeEvidence, handled: true)
+      return true
+    }
 
-    return RCTLinkingManager.application(app, open: routableUrl, options: options)
+    let handled = RCTLinkingManager.application(app, open: routableUrl, options: options)
+    recordHostURLResult(evidence: routeEvidence, handled: handled)
+    return handled
   }
   
   func application(
     _ application: UIApplication,
     continue userActivity: NSUserActivity,
     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+      let routeEvidence = LifecycleTraceEvidence.observe(userActivity: userActivity)
+      LifecycleTraceProbe.post(
+        callback: .applicationContinueUserActivity,
+        owner: .applicationDelegate,
+        kind: .osCallback,
+        phase: .entry,
+        observations: LifecycleTraceEvidence.observe(applicationState: application.applicationState), routeEvidence
+      )
+      LifecycleTraceProbe.post(
+        callback: .hostRouteUserActivity,
+        owner: .host,
+        kind: .hostRouting,
+        phase: .intent,
+        observations: routeEvidence
+      )
+
+      let handled: Bool
       if let url = userActivity.webpageURL, (url.scheme == "http" || url.scheme == "https") && url.host() == UNIVERSAL_LINK_URL.host() {
-        return RCTLinkingManager.application(
+        handled = RCTLinkingManager.application(
           application,
           continue: userActivity,
           restorationHandler: restorationHandler
         )
+      } else {
+        handled = false
       }
-      
-      return false
-      
+
+      LifecycleTraceProbe.post(
+        callback: .hostRouteUserActivity,
+        owner: .host,
+        kind: .hostRouting,
+        phase: .result,
+        observations: routeEvidence,
+        LifecycleTraceEvidence.observe(routingResult: handled ? .handled : .unhandled)
+      )
+      LifecycleTraceHarness.endScenario(after: .hostUserActivityRoute)
+      return handled
     }
+
+  private static func liveActivityRoutingResult(
+    original: URL,
+    destination: URL?
+  ) -> LifecycleTraceRoutingResult {
+    guard let destination else { return .handled }
+    return destination == original ? .unhandled : .redirect
+  }
+
+  private func recordColdStartLaunch(
+    _ application: UIApplication,
+    launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) {
+    guard LifecycleTraceHarness.sharedRecorder?.scenario.isColdStart == true else { return }
+    LifecycleTraceProbe.post(
+      callback: .applicationDidFinishLaunching,
+      owner: .applicationDelegate,
+      kind: .osCallback,
+      phase: .entry,
+      observations:
+        LifecycleTraceEvidence.observe(applicationState: application.applicationState),
+        LifecycleTraceEvidence.observe(launchOptions: launchOptions)
+    )
+  }
+
+  private func recordHostURLResult(evidence: LifecycleTraceObservation, handled: Bool) {
+    LifecycleTraceProbe.post(
+      callback: .hostRouteURL,
+      owner: .host,
+      kind: .hostRouting,
+      phase: .result,
+      observations: evidence,
+      LifecycleTraceEvidence.observe(routingResult: handled ? .handled : .unhandled)
+    )
+    LifecycleTraceHarness.endScenario(after: .hostURLRoute)
+  }
 }
 
 // MARK: Push setup
