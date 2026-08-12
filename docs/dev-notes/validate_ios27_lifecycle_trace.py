@@ -939,12 +939,27 @@ def _validate_manifest_relations(manifest: dict[str, Any]) -> tuple[datetime, da
                     f"{expected_integration} callback topology requires audited "
                     f"repository {name}@{expected_sha}"
                 )
+            if repositories[name]["dirty"]:
+                raise ContractError(
+                    f"{expected_integration} audited production repository {name} "
+                    "must be clean"
+                )
         for name, expected_version in audited_topology["frameworks"].items():
             if frameworks[name]["version"] != expected_version:
                 raise ContractError(
                     f"{expected_integration} callback topology requires audited "
                     f"framework {name}@{expected_version}"
                 )
+    fixture_source = manifest.get("fixture_source")
+    if expected_integration == "expo" and manifest["evidence_level"] in ("L2", "L3"):
+        if fixture_source is None:
+            raise ContractError("Expo L2/L3 requires exact fixture_source provenance")
+        if fixture_source["name"] != "customerio-expo-plugin":
+            raise ContractError(
+                "Expo fixture_source.name must equal customerio-expo-plugin"
+            )
+    elif fixture_source is not None:
+        raise ContractError("fixture_source provenance is supported only for Expo L2/L3")
     if frameworks["apple-usernotifications"]["version"] != manifest["sdk"]["version"]:
         raise ContractError("apple-usernotifications version must equal the build SDK version")
 
@@ -1997,10 +2012,42 @@ def _handoff_facts(record: dict[str, Any], scenario: str) -> dict[str, Any]:
     if scenario == "app-background-foreground":
         return {"lifecycle_transition": _lifecycle_transition(record)}
     if scenario == "icon-cold-launch":
-        return {
-            "app_state": enums.get("app_state"),
-        }
+        # The native launch forward is observed while UIKit is inactive. The
+        # wrapper receipt is deliberately terminal and therefore active. State
+        # progression is validated explicitly instead of requiring equality.
+        return {}
     return {}
+
+
+def _validate_icon_launch_handoff(
+    native_record: dict[str, Any], wrapper_record: dict[str, Any]
+) -> None:
+    native_state = native_record["payload_summary"]["enums"].get("app_state")
+    wrapper_state = wrapper_record["payload_summary"]["enums"].get("app_state")
+    if native_state != "inactive":
+        raise ContractError(
+            "icon-cold-launch native launch forwarding requires app_state=inactive"
+        )
+    if wrapper_state != "active":
+        raise ContractError(
+            "icon-cold-launch wrapper lifecycle receipt requires app_state=active"
+        )
+    _require_capture_time_order(
+        native_record, wrapper_record, "icon-cold-launch native to wrapper progression"
+    )
+
+
+def _validate_icon_launch_native_forward(
+    raw_record: dict[str, Any], forwarded_record: dict[str, Any]
+) -> None:
+    if raw_record["payload_summary"]["enums"].get("app_state") != "inactive":
+        raise ContractError(
+            "icon-cold-launch raw application entry requires app_state=inactive"
+        )
+    if forwarded_record["payload_summary"]["enums"].get("app_state") != "inactive":
+        raise ContractError(
+            "icon-cold-launch native launch forwarding requires app_state=inactive"
+        )
 
 
 def _record_matches_member(record: dict[str, Any], member: dict[str, Any]) -> bool:
@@ -2019,6 +2066,20 @@ def _require_order(before: dict[str, Any], after: dict[str, Any], label: str) ->
     if before.get("sequence") is not None and after.get("sequence") is not None:
         if before["sequence"] >= after["sequence"]:
             raise ContractError(f"{label} requires causal sequence ordering")
+
+
+def _require_capture_time_order(
+    before: dict[str, Any], after: dict[str, Any], label: str
+) -> None:
+    """Require wall-clock order for two streams in one declared process instance."""
+    before_value = before.get("captured_at")
+    after_value = after.get("captured_at")
+    if before_value is None or after_value is None:
+        return
+    if _parse_time(before_value, f"{label} source") >= _parse_time(
+        after_value, f"{label} target"
+    ):
+        raise ContractError(f"{label} requires causal capture-time ordering")
 
 
 def _require_same_correlation(
@@ -2342,6 +2403,8 @@ def _validate_wrapper_forwarding_chain(
             record for record in wrapper_records if _record_matches_member(record, wrapper_member)
         ]
         if len(selected_native) == 1 and len(selected_wrapper) == 1:
+            if scenario == "icon-cold-launch":
+                _validate_icon_launch_handoff(selected_native[0], selected_wrapper[0])
             if _handoff_facts(selected_native[0], scenario) != _handoff_facts(
                 selected_wrapper[0], scenario
             ):
@@ -2403,6 +2466,8 @@ def _validate_wrapper_forwarding_chain(
                 f"observed {len(candidates)}"
             )
         forwarded = candidates[0]
+        if scenario == "icon-cold-launch":
+            _validate_icon_launch_native_forward(raw, forwarded)
         forward_sequence = forwarded["sequence"]
         if forward_sequence in assigned_forward_to_raw:
             raise ContractError(
@@ -2455,6 +2520,17 @@ def _validate_wrapper_forwarding_chain(
             _require_order(before, after, f"cold {integration} bootstrap")
         for bootstrap in bootstrap_records:
             for _, forwarded, _ in selected_pairs:
+                if (
+                    integration == "expo"
+                    and scenario == "icon-cold-launch"
+                    and bootstrap["callback"] in {
+                        "rct.javascript-did-load-notification",
+                        "rct.instance-did-load-bundle-notification",
+                    }
+                ):
+                    # Expo's did-finish forward returns before the asynchronous
+                    # React Native bundle-load notification in the pinned graph.
+                    continue
                 _require_order(bootstrap, forwarded, f"cold {integration} bootstrap")
         if integration == "expo":
             launches = [
@@ -2475,6 +2551,43 @@ def _validate_wrapper_forwarding_chain(
             _require_order(
                 launches[0], did_finish_forwards[0], "cold Expo application forwarding"
             )
+            if scenario == "icon-cold-launch":
+                if launches[0]["payload_summary"]["enums"].get("app_state") != "inactive":
+                    raise ContractError(
+                        "icon-cold-launch application entry requires app_state=inactive"
+                    )
+                application_active = [
+                    record for record in native_records
+                    if record["callback"] == "application.did-become-active"
+                    and record["payload_summary"]["enums"].get("app_state") == "active"
+                ]
+                expo_active = [
+                    record for record in native_records
+                    if record["callback"] == "expo.subscriber.did-become-active-forwarded"
+                    and record["payload_summary"]["enums"].get("app_state") == "active"
+                ]
+                if len(application_active) != 1 or len(expo_active) != 1:
+                    raise ContractError(
+                        "cold Expo icon launch requires exactly one active application seat "
+                        "and one active Expo subscriber forward"
+                    )
+                _require_order(
+                    did_finish_forwards[0], application_active[0],
+                    "cold Expo did-finish to application active",
+                )
+                _require_order(
+                    application_active[0], expo_active[0],
+                    "cold Expo application active forwarding",
+                )
+                for _, _, wrapper_receipt in selected_pairs:
+                    _require_capture_time_order(
+                        expo_active[0], wrapper_receipt,
+                        "cold Expo active forward to wrapper receipt",
+                    )
+                    _require_capture_time_order(
+                        bootstrap_records[2], wrapper_receipt,
+                        "cold Expo RCT load to wrapper receipt",
+                    )
 
     if integration == "expo" and scenario in REMOTE_SCENARIOS.union(LOCAL_SCENARIOS):
         manager_callback = (
@@ -2569,6 +2682,8 @@ def _validate_partial_test_handoff(
             if _record_matches_member(record, wrapper_member)
         ]
         if len(native_records) == len(wrapper_records) == 1:
+            if scenario == "icon-cold-launch":
+                _validate_icon_launch_handoff(native_records[0], wrapper_records[0])
             if _handoff_facts(native_records[0], scenario) != _handoff_facts(
                 wrapper_records[0], scenario
             ):

@@ -47,7 +47,7 @@ public final class FileLifecycleTraceSink: LifecycleTraceSink {
     public func writeReceipt(json: String) -> Bool {
         guard let data = (json + "\n").data(using: .utf8) else { return false }
         do {
-            try data.write(to: receiptURL, options: [.atomic, .withoutOverwriting])
+            try data.write(to: receiptURL, options: .withoutOverwriting)
             return true
         } catch {
             return false

@@ -116,8 +116,14 @@ with a registered integration mapping maps to exactly one matching native
 forward, including unselected alternatives and optional foreground
 `application.did-receive-remote-notification` delivery. That optional entry is
 allowed at most once per one-stimulus run.
-Notification origin/class/response, URL/activity/action classifications, and
-lifecycle app state must reconcile across the selected handoff records. Scene
+Notification origin/class/response and URL/activity/action classifications must
+reconcile across the selected handoff records. Background/foreground lifecycle
+transitions reconcile by class. Icon launch is an explicit progression from an
+inactive raw application entry through an inactive native launch forward to an
+active wrapper receipt, not equal app state at different lifecycle instants.
+The wrapper receipt must be captured after the native forward. Expo additionally
+proves its active subscriber and RCT bundle-load seats occurred before that
+wrapper receipt. Scene
 aliases are stream-local and cannot be used as cross-stream identity. Cold
 scene connection-options seats must record only their scenario's defining
 URL/activity/action/notification safe facts,

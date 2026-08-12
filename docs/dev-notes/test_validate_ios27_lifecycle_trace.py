@@ -182,6 +182,12 @@ class LifecycleTraceContractTests(unittest.TestCase):
         })
         manifest["streams"][0]["integration"] = integration
         if integration == "expo":
+            manifest["fixture_source"] = {
+                "name": "customerio-expo-plugin",
+                "commit_sha": "5635e80e69eaed39f4b2dfff01d1a01104766abe",
+                "dirty": False,
+                "source_snapshot": None,
+            }
             repositories = (
                 ("customerio-expo-plugin", "3637028bfa4c5c66752697b346ad826266e6ae03"),
                 ("customerio-reactnative", "1edc94769359dfd992d6622884561d448d3f8dd9"),
@@ -527,6 +533,25 @@ class LifecycleTraceContractTests(unittest.TestCase):
                     f"expo callback topology requires audited repository {repository_name}",
                 )
 
+            with self.subTest(repository=f"{repository_name}-dirty"):
+                mutated = copy.deepcopy(manifest)
+                repository = next(
+                    item for item in mutated["repositories"]
+                    if item["name"] == repository_name
+                )
+                repository.update({
+                    "dirty": True,
+                    "source_snapshot": {
+                        "algorithm": "sha256",
+                        "tree_hash": "1" * 64,
+                        "diff_hash": "2" * 64,
+                    },
+                })
+                self.validate_temp(
+                    mutated, [native, wrapper],
+                    f"expo audited production repository {repository_name} must be clean",
+                )
+
         pinned_frameworks = (
             "customerio-expo-plugin", "expo", "expo-notifications",
             "expo-modules-core", "customerio-reactnative", "react-native",
@@ -568,6 +593,24 @@ class LifecycleTraceContractTests(unittest.TestCase):
         )
 
         mutated = copy.deepcopy(rn_manifest)
+        rn_repository = next(
+            item for item in mutated["repositories"]
+            if item["name"] == "customerio-reactnative"
+        )
+        rn_repository.update({
+            "dirty": True,
+            "source_snapshot": {
+                "algorithm": "sha256",
+                "tree_hash": "1" * 64,
+                "diff_hash": "2" * 64,
+            },
+        })
+        self.validate_temp(
+            mutated, [rn_native],
+            "react-native audited production repository customerio-reactnative must be clean",
+        )
+
+        mutated = copy.deepcopy(rn_manifest)
         next(
             item for item in mutated["frameworks"]
             if item["name"] == "customerio-reactnative"
@@ -588,6 +631,52 @@ class LifecycleTraceContractTests(unittest.TestCase):
                     mutated, [rn_native],
                     "react-native callback topology requires audited framework react-native",
                 )
+
+    def test_expo_runtime_fixture_source_is_separate_from_audited_production(self) -> None:
+        manifest = _load_json(VECTORS / "manifest.valid.json")
+        native = load_records("native.valid.ndjson")
+        wrapper = load_records("wrapper.valid.ndjson")
+        self.convert_wrapper_integration(manifest, native, wrapper, "expo")
+        self.normalize_capture(manifest, [native, wrapper])
+        self.validate_temp(manifest, [native, wrapper])
+
+        missing = copy.deepcopy(manifest)
+        missing.pop("fixture_source")
+        self.validate_temp(
+            missing, [native, wrapper], "Expo L2/L3 requires exact fixture_source provenance"
+        )
+
+        wrong_name = copy.deepcopy(manifest)
+        wrong_name["fixture_source"]["name"] = "customerio-reactnative"
+        self.validate_temp(
+            wrong_name, [native, wrapper],
+            "Expo fixture_source.name must equal customerio-expo-plugin",
+        )
+
+        dirty_without_snapshot = copy.deepcopy(manifest)
+        dirty_without_snapshot["fixture_source"]["dirty"] = True
+        self.validate_temp(
+            dirty_without_snapshot, [native, wrapper], "is not valid under any of the given schemas"
+        )
+
+        clean_with_snapshot = copy.deepcopy(manifest)
+        clean_with_snapshot["fixture_source"]["source_snapshot"] = {
+            "algorithm": "sha256", "tree_hash": "1" * 64, "diff_hash": "2" * 64,
+        }
+        self.validate_temp(
+            clean_with_snapshot, [native, wrapper], "is not valid under any of the given schemas"
+        )
+
+        different_clean_fixture = copy.deepcopy(manifest)
+        different_clean_fixture["fixture_source"]["commit_sha"] = "9" * 40
+        self.validate_temp(different_clean_fixture, [native, wrapper])
+
+        non_expo = copy.deepcopy(self.manifest)
+        non_expo["fixture_source"] = copy.deepcopy(manifest["fixture_source"])
+        self.validate_temp(
+            non_expo, [self.native, self.wrapper],
+            "fixture_source provenance is supported only for Expo L2/L3",
+        )
 
     def test_wrapper_receipt_callbacks_are_scenario_bound_in_full_capture(self) -> None:
         mutations = (
@@ -1972,7 +2061,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
         background["correlation"] = None
         _validate_scenario_acceptance(manifest, records)
 
-    def test_icon_launch_handoff_reconciles_app_state(self) -> None:
+    def test_icon_launch_handoff_requires_inactive_to_active_transition(self) -> None:
         manifest = copy.deepcopy(self.manifest)
         manifest["scenario"] = "icon-cold-launch"
         native_id = manifest["streams"][0]["stream_id"]
@@ -1991,13 +2080,249 @@ class LifecycleTraceContractTests(unittest.TestCase):
         }
         wrapper = {
             "callback": "wrapper.app-lifecycle-state", "phase": "state-change",
-            "payload_summary": {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}},
+            "payload_summary": {"flags": {}, "counts": {}, "enums": {"app_state": "active"}},
         }
         records = {native_id: [native], wrapper_id: [wrapper]}
         _validate_scenario_acceptance(manifest, records)
-        wrapper["payload_summary"]["enums"]["app_state"] = "active"
-        with self.assertRaisesRegex(ContractError, "payload facts do not reconcile"):
+        wrapper["payload_summary"]["enums"]["app_state"] = "inactive"
+        with self.assertRaisesRegex(ContractError, "wrapper lifecycle receipt requires app_state=active"):
             _validate_scenario_acceptance(manifest, records)
+        wrapper["payload_summary"]["enums"]["app_state"] = "active"
+        native["payload_summary"]["enums"]["app_state"] = "active"
+        with self.assertRaisesRegex(ContractError, "native launch forwarding requires app_state=inactive"):
+            _validate_scenario_acceptance(manifest, records)
+
+    def test_cold_flutter_icon_launch_requires_inactive_raw_and_forwarded_launch(self) -> None:
+        manifest = _load_json(VECTORS / "manifest.valid.json")
+        manifest["scenario"] = "icon-cold-launch"
+        manifest["stimulus"].update({"scenario": "icon-cold-launch", "source": "app-icon"})
+        manifest["provider_provenance"].update({
+            "provider": "none", "source": "none", "environment": "none",
+            "receipt_result": "not-applicable", "receipt_recorded_at": None,
+            "provider_sdk": None,
+        })
+        for stream in manifest["streams"]:
+            stream["provider"] = "none"
+        native_id = manifest["streams"][0]["stream_id"]
+        wrapper_id = manifest["streams"][1]["stream_id"]
+        manifest["aggregate_assertions"] = [{
+            "name": "icon-launch-handoff", "relation": "equal-exact-count",
+            "expected_count": 1,
+            "members": [
+                {
+                    "stream_id": native_id,
+                    "callback": "flutter.application.did-finish-launching-forwarded",
+                    "phase": "entry",
+                },
+                {
+                    "stream_id": wrapper_id,
+                    "callback": "wrapper.app-lifecycle-state",
+                    "phase": "state-change",
+                },
+            ],
+        }]
+        inactive = {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}}
+        active = {"flags": {}, "counts": {}, "enums": {"app_state": "active"}}
+        empty = {"flags": {}, "counts": {}, "enums": {}}
+        native = [
+            copy.deepcopy(self.native[0]),
+            self.runtime_record(
+                "application.did-finish-launching", "application-delegate", "os-callback",
+                "entry", inactive,
+            ),
+            self.runtime_record(
+                "flutter.implicit-engine-created", "flutter-engine", "framework-callback",
+                "result", empty,
+            ),
+            self.runtime_record(
+                "flutter.plugin-registered", "flutter-plugin", "framework-callback",
+                "result", empty,
+            ),
+            self.runtime_record(
+                "flutter.application.did-finish-launching-forwarded", "flutter-plugin",
+                "framework-callback", "entry", inactive,
+            ),
+            copy.deepcopy(self.native[-1]),
+        ]
+        wrapper = [
+            copy.deepcopy(self.wrapper[0]),
+            self.runtime_record(
+                "wrapper.app-lifecycle-state", "flutter-dart", "app-received",
+                "state-change", active, wrapper=True,
+            ),
+            copy.deepcopy(self.wrapper[-1]),
+        ]
+        self.normalize_capture(manifest, [native, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(manifest, [native, wrapper])
+
+        equal_forward_time = copy.deepcopy(wrapper)
+        self.normalize_capture(manifest, [native, equal_forward_time])
+        equal_forward_time[1]["captured_at"] = native[4]["captured_at"]
+        self.validate_temp(
+            manifest, [native, equal_forward_time],
+            "native to wrapper progression requires causal capture-time ordering",
+        )
+
+        pre_application_raw = copy.deepcopy(native)
+        pre_application_raw[1]["payload_summary"]["enums"]["app_state"] = "pre-application"
+        self.normalize_capture(manifest, [pre_application_raw, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(
+            manifest, [pre_application_raw, wrapper],
+            "raw application entry requires app_state=inactive",
+        )
+
+        pre_application_forward = copy.deepcopy(native)
+        pre_application_forward[4]["payload_summary"]["enums"]["app_state"] = "pre-application"
+        self.normalize_capture(manifest, [pre_application_forward, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(
+            manifest, [pre_application_forward, wrapper],
+            "native launch forwarding requires app_state=inactive",
+        )
+
+    def test_cold_expo_icon_launch_requires_real_active_and_rct_progression(self) -> None:
+        manifest = _load_json(VECTORS / "manifest.valid.json")
+        native = load_records("native.valid.ndjson")
+        wrapper = load_records("wrapper.valid.ndjson")
+        self.convert_wrapper_integration(manifest, native, wrapper, "expo")
+        manifest["scenario"] = "icon-cold-launch"
+        manifest["stimulus"].update({"scenario": "icon-cold-launch", "source": "app-icon"})
+        manifest["provider_provenance"].update({
+            "provider": "none", "source": "none", "environment": "none",
+            "receipt_result": "not-applicable", "receipt_recorded_at": None,
+            "provider_sdk": None,
+        })
+        for stream in manifest["streams"]:
+            stream["provider"] = "none"
+        native_id = manifest["streams"][0]["stream_id"]
+        wrapper_id = manifest["streams"][1]["stream_id"]
+        manifest["aggregate_assertions"] = [{
+            "name": "icon-launch-handoff", "relation": "equal-exact-count",
+            "expected_count": 1,
+            "members": [
+                {
+                    "stream_id": native_id,
+                    "callback": "expo.app-delegate-did-finish-launching-forwarded",
+                    "phase": "entry",
+                },
+                {
+                    "stream_id": wrapper_id,
+                    "callback": "wrapper.app-lifecycle-state",
+                    "phase": "state-change",
+                },
+            ],
+        }]
+        inactive = {"flags": {}, "counts": {}, "enums": {"app_state": "inactive"}}
+        active = {"flags": {}, "counts": {}, "enums": {"app_state": "active"}}
+        empty = {"flags": {}, "counts": {}, "enums": {}}
+        native = [
+            copy.deepcopy(native[0]),
+            self.runtime_record(
+                "expo.subscriber-registered", "expo-subscriber", "framework-callback",
+                "result", empty,
+            ),
+            self.runtime_record(
+                "expo.app-delegate-will-finish-launching-forwarded", "expo-framework",
+                "framework-callback", "entry", inactive,
+            ),
+            self.runtime_record(
+                "application.did-finish-launching", "application-delegate", "os-callback",
+                "entry", inactive,
+            ),
+            self.runtime_record(
+                "expo.app-delegate-did-finish-launching-forwarded", "expo-framework",
+                "framework-callback", "entry", inactive,
+            ),
+            self.runtime_record(
+                "application.did-become-active", "application-delegate", "os-callback",
+                "state-change", active,
+            ),
+            self.runtime_record(
+                "expo.subscriber.did-become-active-forwarded", "expo-subscriber",
+                "framework-callback", "state-change", active,
+            ),
+            self.runtime_record(
+                "rct.instance-did-load-bundle-notification", "rct-notification",
+                "observer-notification", "state-change", empty,
+            ),
+            copy.deepcopy(native[-1]),
+        ]
+        wrapper = [
+            copy.deepcopy(wrapper[0]),
+            self.runtime_record(
+                "wrapper.app-lifecycle-state", "expo-javascript", "app-received",
+                "state-change", active, wrapper=True,
+            ),
+            copy.deepcopy(wrapper[-1]),
+        ]
+        self.normalize_capture(manifest, [native, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(manifest, [native, wrapper])
+
+        missing_rct = [
+            copy.deepcopy(record) for record in native
+            if record["callback"] != "rct.instance-did-load-bundle-notification"
+        ]
+        self.normalize_capture(manifest, [missing_rct, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(
+            manifest, [missing_rct, wrapper],
+            "cold expo acceptance requires exactly one bootstrap seat",
+        )
+
+        inactive_wrapper = copy.deepcopy(wrapper)
+        inactive_wrapper[1]["payload_summary"]["enums"]["app_state"] = "inactive"
+        self.normalize_capture(manifest, [native, inactive_wrapper])
+        inactive_wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(
+            manifest, [native, inactive_wrapper],
+            "wrapper lifecycle receipt requires app_state=active",
+        )
+
+        missing_expo_active = [
+            copy.deepcopy(record) for record in native
+            if record["callback"] != "expo.subscriber.did-become-active-forwarded"
+        ]
+        self.normalize_capture(manifest, [missing_expo_active, wrapper])
+        wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
+        self.validate_temp(
+            manifest, [missing_expo_active, wrapper],
+            "requires exactly one active application seat and one active Expo subscriber forward",
+        )
+
+        early_wrapper = copy.deepcopy(wrapper)
+        self.normalize_capture(manifest, [native, early_wrapper])
+        early_wrapper[1]["captured_at"] = "2026-08-11T16:00:08.500Z"
+        self.validate_temp(
+            manifest, [native, early_wrapper],
+            "cold Expo active forward to wrapper receipt requires causal capture-time ordering",
+        )
+
+        equal_expo_active_wrapper = copy.deepcopy(wrapper)
+        self.normalize_capture(manifest, [native, equal_expo_active_wrapper])
+        equal_expo_active_wrapper[1]["captured_at"] = native[6]["captured_at"]
+        self.validate_temp(
+            manifest, [native, equal_expo_active_wrapper],
+            "cold Expo active forward to wrapper receipt requires causal capture-time ordering",
+        )
+
+        before_rct_wrapper = copy.deepcopy(wrapper)
+        self.normalize_capture(manifest, [native, before_rct_wrapper])
+        before_rct_wrapper[1]["captured_at"] = "2026-08-11T16:00:09.500Z"
+        self.validate_temp(
+            manifest, [native, before_rct_wrapper],
+            "cold Expo RCT load to wrapper receipt requires causal capture-time ordering",
+        )
+
+        equal_rct_wrapper = copy.deepcopy(wrapper)
+        self.normalize_capture(manifest, [native, equal_rct_wrapper])
+        equal_rct_wrapper[1]["captured_at"] = native[7]["captured_at"]
+        self.validate_temp(
+            manifest, [native, equal_rct_wrapper],
+            "cold Expo RCT load to wrapper receipt requires causal capture-time ordering",
+        )
 
     def test_remote_provider_must_be_compatible(self) -> None:
         self.manifest["provider_provenance"].update({

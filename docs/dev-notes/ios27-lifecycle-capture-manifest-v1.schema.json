@@ -45,6 +45,12 @@
       "minItems": 1,
       "items": { "$ref": "#/$defs/repository" }
     },
+    "fixture_source": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/repository" }
+      ]
+    },
     "toolchain": { "$ref": "#/$defs/toolchain" },
     "sdk": { "$ref": "#/$defs/sdk" },
     "build": { "$ref": "#/$defs/build" },

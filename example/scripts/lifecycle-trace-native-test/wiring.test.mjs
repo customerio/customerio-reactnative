@@ -70,7 +70,7 @@ test('wires each byte-copied shared support source exactly once', () => {
     'LifecycleTraceModel.swift':
       'cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1',
     'LifecycleTraceProbe.swift':
-      'eceb1a3f70791c8f4163759019068abd5ccdd94bc91d217367a79606941858aa',
+      '9d48ad49e5fe116e66e0c924bd1aafd3764709d9865115ba5491836d03927956',
     'LifecycleTraceRecorder.swift':
       '5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588',
   };

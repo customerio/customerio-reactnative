@@ -38,7 +38,7 @@ files. The focused Node test pins their SHA-256 values:
 | --- | --- |
 | `LifecycleTraceEvidence.swift` | `1db44862654643a5feb6209a87e6f7980e8f723e734f713a2f2902812e3f6215` |
 | `LifecycleTraceModel.swift` | `cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1` |
-| `LifecycleTraceProbe.swift` | `eceb1a3f70791c8f4163759019068abd5ccdd94bc91d217367a79606941858aa` |
+| `LifecycleTraceProbe.swift` | `9d48ad49e5fe116e66e0c924bd1aafd3764709d9865115ba5491836d03927956` |
 | `LifecycleTraceRecorder.swift` | `5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588` |
 
 The killed-state workaround remains behaviorally unchanged, including its inner
@@ -68,13 +68,13 @@ duplicate or partially port MBL-2278's normalization work.
 
 The checked-in example at the contract's audited standalone repository commit resolves
 React Native 0.83.6. Canonical source commit
-`096f7770ce694c1c356b08c7498b87d0e52cdced` contains the reviewed contract and
-corrects the earlier validator defect that
-mistakenly required Expo's transitive React Native 0.86.2 version for this standalone
-topology. This work keeps the restored 0.83.6 dependency graph. Until a simulator capture
-passes the corrected relational validator with a valid manifest and receipt, the evidence
-remains source and compilation only. APNs delivery and registration on a physical device
-remain L3-only.
+`25ed84cdf6c8b582fad44e755b49321fe5236bba` contains the reviewed contract. Its
+ancestor `096f7770ce694c1c356b08c7498b87d0e52cdced` corrected the earlier validator
+defect that mistakenly required Expo's transitive React Native 0.86.2 version for this
+standalone topology. This work keeps the restored 0.83.6 dependency graph. Until a
+simulator capture passes the corrected relational validator with a valid manifest and
+receipt, the evidence remains source and compilation only. APNs delivery and registration
+on a physical device remain L3-only.
 
 Use Node 20 for the focused source test:
 

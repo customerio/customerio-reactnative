@@ -37,9 +37,13 @@ The harness writes the final manifest only after every declared recorder has
 logically drained. It records:
 
 - `manifest_id`, the shared harness `run_id`, and run start/end/creation times;
-- exact lowercase repository commits and whether each worktree was dirty;
-- for a dirty repository, SHA-256 hashes of both the source tree snapshot and
-  diff snapshot used for the build;
+- exact lowercase production repository commits and whether each production
+  checkout was dirty;
+- for a dirty production repository, SHA-256 hashes of both the source tree
+  snapshot and diff snapshot used for the build;
+- when a fixture checkout differs from the audited production repository,
+  separate `fixture_source` provenance with its exact commit, actual checkout
+  dirty state, and required snapshot hashes when dirty;
 - Xcode version/build, Swift, Flutter, Dart, Node, and Expo CLI versions;
 - iOS SDK name/version/build, scheme, target, configuration, product kind, and
   deployment target;
@@ -77,6 +81,17 @@ coherent package version; a module cannot claim an unrelated version.
 Flutter's runtime framework version must equal the Flutter toolchain version.
 A dirty repository cannot omit its source snapshot hashes, and a clean
 repository must use `source_snapshot=null`.
+`repositories` and their owning framework commits identify the production code
+whose callback topology is being exercised. `fixture_source` identifies the
+harness checkout that generated and instrumented that topology; it does not own
+a framework and is never substituted for production repository provenance.
+Every audited production repository in a wrapper topology must be clean;
+arbitrary local changes cannot retain an audited callback-topology claim.
+Expo L2/L3 captures require `fixture_source.name=customerio-expo-plugin` so a
+clean committed fixture branch remains reproducible without falsely attributing
+its fixture-only commit to the installed Expo plugin. Its `dirty` flag always
+describes the actual fixture checkout status, not whether its commit differs
+from the audited production commit.
 
 Every Swift stream requires `swift_version`, every Dart stream requires Flutter
 and Dart versions, and every JavaScript stream requires Node. Integration-level
@@ -468,11 +483,17 @@ stream cannot claim Flutter/Expo wrapper acceptance. Standalone React Native is
 the explicit exception: it is a native Swift pass-through capture because the
 pinned iOS wrapper has no automatic JavaScript receipt. The two selected
 records also reconcile notification origin/class/response or the applicable
-URL, user-activity, quick-action, or lifecycle `app_state` safe facts. Scene
+URL, user-activity, quick-action, or lifecycle transition safe facts. Scene
 aliases remain stream-local and are deliberately excluded from cross-stream
 handoff comparison. Icon launch handoff is narrowed to the defining
-`application.did-finish-launching` seat and reconciles `app_state`; unrelated
-initialization callbacks cannot substitute for it. Equal counts with contradictory
+`application.did-finish-launching` seat. It requires `app_state=inactive` at the
+raw application entry and native launch forward, then `app_state=active` at the
+terminal wrapper lifecycle receipt; equal state would collapse distinct
+lifecycle instants. For Expo,
+one active application seat and one active subscriber forward must occur after
+the did-finish forward, and both that active forward and the RCT bundle-load
+seat must be captured before the wrapper receipt. Unrelated initialization callbacks cannot substitute
+for this progression. Equal counts with contradictory
 payload classifications are not a handoff. A multi-stream L2/L3 manifest cannot
 mix unrelated integrations outside that shared topology.
 
