@@ -180,6 +180,7 @@ public enum LifecycleTraceProbe {
     public static let deviceTokenKey = "device_token"
     public static let fcmTokenKey = "fcm_token"
     public static let handledKey = "handled"
+    public static let processInstanceIDKey = "process_instance_id"
 
     @discardableResult
     public static func post(

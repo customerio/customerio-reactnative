@@ -45,6 +45,22 @@ public enum LifecycleTraceEvidence {
             && URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems != nil
     }
 
+    /// Returns false when a Customer.io Live Activity route has no usable delivery/redirect fact,
+    /// or when its redirect cannot be parsed by the SDK.
+    /// The host must still execute the production route, but the fixture cannot claim a coherent
+    /// Customer.io redirect result for that malformed stimulus.
+    public static func isTraceableURLRoute(_ url: URL) -> Bool {
+        guard isCustomerIOLiveActivityRoute(url),
+              let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems else {
+            return true
+        }
+        let deliveryID = items.first(where: { $0.name == "cio_delivery_id" })?.value
+        let redirect = items.first(where: { $0.name == "cio_redirect" })?.value
+        guard deliveryID?.isEmpty == false || redirect?.isEmpty == false else { return false }
+        guard let redirect, !redirect.isEmpty else { return true }
+        return URL(string: redirect) != nil
+    }
+
     public static func observe(applicationState: UIApplication.State) -> LifecycleTraceObservation {
         let value: String
         switch applicationState {
@@ -268,7 +284,7 @@ public enum LifecycleTraceEvidence {
     ) -> LifecycleTraceObservation {
         let userInfo = notificationRequest.content.userInfo
         let deliveryID = userInfo["CIO-Delivery-ID"] as? String
-        let hasDeliveryToken = userInfo["CIO-Delivery-Token"] != nil
+        let deliveryToken = userInfo["CIO-Delivery-Token"] as? String
         var correlations: [LifecycleTraceAliasNamespace: LifecycleTraceCorrelationValue] = [
             .request: .string(notificationRequest.identifier)
         ]
@@ -280,12 +296,12 @@ public enum LifecycleTraceEvidence {
                 .hasNotification: true,
                 .hasAPS: userInfo["aps"] != nil,
                 .hasDeliveryID: deliveryID != nil,
-                .hasDeliveryToken: hasDeliveryToken
+                .hasDeliveryToken: deliveryToken != nil
             ],
             counts: [.notificationUserInfoKeys: userInfo.count],
             enums: [
                 .notificationOrigin: notificationOrigin(notificationRequest.trigger),
-                .notificationClass: deliveryID != nil && hasDeliveryToken ? "customerio" : "non-customerio",
+                .notificationClass: deliveryID != nil && deliveryToken != nil ? "customerio" : "non-customerio",
                 .delegatePeer: delegatePeer.rawValue
             ],
             correlations: correlations
@@ -406,7 +422,7 @@ public final class LifecycleTracePlatformProbeObserver: @unchecked Sendable {
         self.center = center
         self.token = center.addObserver(
             forName: LifecycleTraceProbe.notificationName,
-            object: nil,
+            object: center,
             queue: nil
         ) { [weak self] notification in
             self?.receive(notification)
@@ -426,7 +442,10 @@ public final class LifecycleTracePlatformProbeObserver: @unchecked Sendable {
         lock.lock()
         let shouldReceive = isActive
         lock.unlock()
-        guard shouldReceive else { return }
+        guard shouldReceive,
+              notification.object as AnyObject? === center,
+              notification.userInfo?[LifecycleTraceProbe.processInstanceIDKey] as? String
+              == LifecycleTraceHarness.sharedRecorder?.processInstanceID else { return }
         guard let seat = notification.userInfo?[LifecycleTraceProbe.seatKey] as? String else { return }
         switch seat {
         case "notification-center.will-present.entry":
@@ -498,7 +517,7 @@ public final class LifecycleTracePlatformProbeObserver: @unchecked Sendable {
                 kind: .sdkRouting,
                 phase: .result,
                 observations: LifecycleTraceEvidence.observe(deviceToken: value),
-                LifecycleTraceEvidence.observe(routingResult: .success)
+                LifecycleTraceEvidence.observe(routingResult: .unknown)
             )
             LifecycleTraceHarness.endScenario(after: .tokenRegistration)
         case "customerio.register-device-token.fcm.result":
@@ -509,7 +528,7 @@ public final class LifecycleTracePlatformProbeObserver: @unchecked Sendable {
                 kind: .sdkRouting,
                 phase: .result,
                 observations: LifecycleTraceEvidence.observe(fcmToken: value), requestCorrelation(),
-                LifecycleTraceEvidence.observe(routingResult: .success)
+                LifecycleTraceEvidence.observe(routingResult: .unknown)
             )
             LifecycleTraceHarness.endScenario(after: .tokenRegistration)
         default:

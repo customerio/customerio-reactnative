@@ -1,8 +1,8 @@
 # iOS 27 native callback producer audit (MBL-2232)
 
-Status: producer draft is not conformant with the canonical v1 capture
-contract. It is observer-only sample instrumentation, not production SDK code
-and not L2/L3 evidence.
+Status: the sample-only native producer implements the canonical v1 wire
+contract and fail-closed validation path. It is not production SDK code and is
+not L2/L3 evidence without a complete accepted runtime capture.
 
 The authoritative contract is the complete package:
 
@@ -11,9 +11,8 @@ The authoritative contract is the complete package:
 - `ios27-lifecycle-capture-manifest-v1.schema.json`;
 - `validate_ios27_lifecycle_trace.py` and its checked vectors.
 
-This note records the current native producer gap honestly. It does not define a
-second callback vocabulary and it makes no schema-conformance, build, runtime,
-or evidence claim.
+This note records the producer scope honestly. It does not define a second
+callback vocabulary or turn source/compile checks into runtime evidence.
 
 ## Canonical callback corrections
 
@@ -40,34 +39,23 @@ and L1 compile/link results belong in review/build artifacts, never in trace
 records. There is no default that turns an unscoped producer record into
 canonical evidence.
 
-## Current producer incompatibilities
+## Implemented producer boundary
 
-The frozen draft under `Apps/Common/Source/Diagnostics/` cannot currently emit
-a record accepted by canonical v1:
+The recorder emits the required manifest/run/stream identity, pristine start
+and final end controls, canonical callback/owner/kind/phase tuples, bounded
+aliases, FIFO output, and a post-drain receipt. Encoding failure, buffer drop,
+alias overflow in L2/L3, unsupported scenario closure, source-patch drift, and
+validator drift fail closed. Fixture-owned completion checks remain available
+only to focused unit tests and never wrap production completion handlers.
 
-- `LifecycleTraceRecorder.encode` omits required `manifest_id` and `recorder`
-  state;
-- it has no leading/final `trace-control` records or post-drain manifest stream
-  receipt;
-- `LifecycleTraceKind` lacks `trace-control` and `fixture-control`;
-- `LifecycleTraceOwner` lacks canonical owners including `swiftui-scene`,
-  `trace-recorder`, and host/SDK owners;
-- `LifecycleTraceEvidenceLevel` emits forbidden `L0`/`L1` values;
-- its scenario enum omits local-notification, quick-action,
-  registration-failure, and background-fetch scenarios;
-- its alias model lacks the `closure` namespace, cumulative counts, overflow
-  state, high-water state, and bounded-drop accounting required by v1;
-- its completion object lacks `closure`, `parent_sequence`, and
-  `observed_call_count`, and no exact fixture-creation record owns the parent;
-- the draft `trace_dropped` flag and `dropped_records` payload count are not
-  canonical v1 payload fields;
-- several sample call sites still use callback/owner/kind/phase combinations
-  outside the closed registry.
-
-Consequently, earlier statements that seven synthetic L0 records validated, or
-that the producer implemented canonical v1, are withdrawn. No such checked
-records are part of this package. The Python vectors are the only current
-executable contract examples.
+The existing native sample seats cover icon launch, app/scene background and
+foreground transitions, URL and user-activity routing, Live Activity routing,
+notification taps, APNs/FCM token registration, and registration failure. The
+fixture rejects foreground presentation, notification settings, quick actions,
+and background fetch because the sample apps do not own the required result or
+completion seats. The disposable source patch instruments four exact Customer.io
+source paths only inside a hash-guarded checkout and preserves all delegate,
+completion, and routing behavior.
 
 For any later producer, buffer evidence must be physically attainable as well
 as monotonic. Each record has `buffer_high_watermark <= sequence`; after a
@@ -78,8 +66,8 @@ claiming an impossible capacity-64 high water after three assignments.
 
 ## Acceptance and handoff boundary
 
-Do not use output from the frozen Swift draft as MBL-2232 acceptance evidence.
-Before a later producer-propagation pass can claim conformance, it must:
+Do not use source or compile output from the Swift producer as MBL-2232 runtime
+acceptance evidence. A runtime capture must:
 
 1. take a validated manifest identity and stable stream metadata from the
    harness;
@@ -152,12 +140,8 @@ and notification settings are currently canonical native-side single-stream
 acceptance scenarios because there is no real Dart/JavaScript app-received seat
 for them.
 
-Until that propagation and runtime validation are performed, the only honest
-claim is that the canonical schemas, documentation, validator, and vectors
-define the intended contract. Actual iOS delivery, sample buildability, Xcode
-27 behavior, provider behavior, and wrapper handoff remain unproven.
-
-The canonical package currently exists only in this iOS MBL-2232 worktree.
-No byte-identity assertion or Swift schema guard exists for sibling
-repositories. Any copied wrapper contract or current producer fixture is stale
-and non-conforming until the later propagation pass.
+The native and wrapper fixtures use a shared byte-identity lock and closed Swift
+schema guard. Actual iOS callback delivery, Xcode 27 runtime behavior, real
+APNs/FCM provider behavior, and complete wrapper handoff remain unproven until
+their scenario manifests, streams, and post-drain receipts pass the canonical
+validator at the claimed L2 or L3 evidence level.

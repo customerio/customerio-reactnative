@@ -66,13 +66,13 @@ test('instruments only existing application and routing seats', () => {
 test('wires each byte-copied shared support source exactly once', () => {
   const supportHashes = {
     'LifecycleTraceEvidence.swift':
-      '9d9b644e73b54fec66a4ae91e516b747ae8d610b30cbb8706c441a153e6d8110',
+      '1db44862654643a5feb6209a87e6f7980e8f723e734f713a2f2902812e3f6215',
     'LifecycleTraceModel.swift':
       'cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1',
     'LifecycleTraceProbe.swift':
-      '19d4bee544376fa5c3e95c6d1ad66b9c654a288bafdef5e45d99f1a0757e0783',
+      'eceb1a3f70791c8f4163759019068abd5ccdd94bc91d217367a79606941858aa',
     'LifecycleTraceRecorder.swift':
-      'd494411f8a4f286c679b67dae70f7df2ccbcb02882598e3b2a6219ebdf7c9af8',
+      '5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588',
   };
   for (const [file, expectedHash] of Object.entries(supportHashes)) {
     assert.equal(

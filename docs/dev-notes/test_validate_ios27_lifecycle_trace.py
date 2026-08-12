@@ -1456,12 +1456,12 @@ class LifecycleTraceContractTests(unittest.TestCase):
             HERE,
         )
 
-    def test_native_producer_note_withdraws_false_conformance_claims(self) -> None:
+    def test_native_producer_note_separates_wire_conformance_from_runtime_evidence(self) -> None:
         note = (HERE / "IOS27-LIFECYCLE-CALLBACK-CONTRACT.md").read_text(encoding="utf-8")
-        self.assertIn("producer draft is not conformant", note)
-        self.assertIn("earlier statements that seven synthetic L0 records validated", note)
-        self.assertIn("are withdrawn", note)
-        self.assertIn("Do not use output from the frozen Swift draft", note)
+        self.assertIn("implements the canonical v1 wire", note)
+        self.assertIn("not L2/L3 evidence", note)
+        self.assertIn("Do not use source or compile output", note)
+        self.assertIn("complete accepted runtime capture", note)
 
     def test_callback_enum_has_relational_rule(self) -> None:
         schema = _load_json(HERE / "ios27-lifecycle-trace-v1.schema.json")

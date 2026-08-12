@@ -557,16 +557,15 @@ python3 docs/dev-notes/validate_ios27_lifecycle_trace.py \
   path/to/manifest.json path/to/native.ndjson path/to/wrapper.ndjson
 ```
 
-This unaccepted v1 package is canonical only in this MBL-2232 iOS worktree.
-Flutter, Expo, React Native, and producer drafts have not received
-byte-identical artifacts, and there is no Swift schema guard proving identity.
-Those stale copies and producers are non-conforming until a later coordinated
-propagation pass installs the finalized package and independently validates its
-bytes. A field, seat, or enum change will require coordinated propagation and,
-after v1 acceptance, a schema version change. There is no compatibility parser
-for rejected pre-v1 formats.
+This v1 package is the byte-locked MBL-2232 contract. Native iOS and wrapper
+fixtures vendor the complete 18-file package and verify it before invoking the
+non-overridable canonical validator. A field, seat, or enum change requires
+coordinated propagation and a schema version change. There is no compatibility
+parser for rejected pre-v1 formats.
 
-The frozen native draft under `Apps/Common/Source/Diagnostics/` does not yet
-emit this contract and must not be used as acceptance evidence. Its exact gaps
-and the later producer-propagation boundary are recorded in
-`IOS27-LIFECYCLE-CALLBACK-CONTRACT.md`.
+The native sample-only producer under `Apps/Common/Source/Diagnostics/` emits
+this wire shape, but compile/link proof remains L1. It is not L2/L3 evidence
+until an external scenario controller performs the documented simulator or
+device stimulus, app-container output handoff, zero-drop receipt collection,
+exact provenance construction, and complete validator pass. Producer scope and
+unsupported seats are recorded in `IOS27-LIFECYCLE-CALLBACK-CONTRACT.md`.

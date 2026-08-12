@@ -118,7 +118,8 @@
       "properties": {
         "algorithm": { "const": "sha256" },
         "tree_hash": { "$ref": "#/$defs/content_hash" },
-        "diff_hash": { "$ref": "#/$defs/content_hash" }
+        "diff_hash": { "$ref": "#/$defs/content_hash" },
+        "ignored_build_inputs_excluded": { "type": "boolean" }
       }
     },
     "repository": {

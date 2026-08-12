@@ -183,8 +183,10 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
     private var negativeFixtureDropFloors: [String: Int] = [:]
     private var endCompletion: ((LifecycleTraceStreamReceipt?) -> Void)?
     private var observedBackgroundSeat = false
+    private var captureFailed = false
 
     public var scenario: LifecycleTraceScenario { context.scenario }
+    public var processInstanceID: String { context.processInstanceID }
 
     // Used only by focused tests to create deterministic overflow. Production code never pauses.
     var isDrainSchedulingPausedForTesting = false
@@ -225,6 +227,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             completion: nil,
             prealiasedCorrelation: nil
         )
+        guard !captureFailed else { return false }
         scheduleDrainLocked()
         return true
     }
@@ -241,6 +244,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard case .recording = state,
+              !captureFailed,
               observation.correlations[.closure] == nil,
               callback != .traceScenarioStart,
               callback != .traceScenarioEnd,
@@ -262,6 +266,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             completion: nil,
             prealiasedCorrelation: nil
         )
+        guard !captureFailed else { return false }
         scheduleDrainLocked()
         return true
     }
@@ -276,7 +281,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
 
         stateLock.lock()
         defer { stateLock.unlock() }
-        guard case .recording = state, context.scenario == .unitFixture else { return nil }
+        guard case .recording = state, !captureFailed, context.scenario == .unitFixture else { return nil }
 
         let pending = enqueueLocked(
             owner: .fixture,
@@ -287,6 +292,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             completion: nil,
             prealiasedCorrelation: nil
         )
+        guard !captureFailed else { return nil }
         guard let closureAlias = pending.correlation?[LifecycleTraceAliasNamespace.closure.rawValue] else {
             return nil
         }
@@ -310,6 +316,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard case .recording = state,
+              !captureFailed,
               context.scenario == .unitFixture,
               var fixture = fixtureStates[handle.closureAlias] else {
             return false
@@ -349,6 +356,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             completion: completion,
             prealiasedCorrelation: [.closure: handle.closureAlias]
         )
+        guard !captureFailed else { return false }
         scheduleDrainLocked()
         return true
     }
@@ -426,19 +434,11 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         )
 
         pendingRecords.append(record)
-        bufferHighWatermark = max(bufferHighWatermark, min(bufferCapacity, pendingRecords.count))
+        bufferHighWatermark = max(bufferHighWatermark, pendingRecords.count)
         if pendingRecords.count > bufferCapacity {
-            let protectedCallbacks: Set<LifecycleTraceCallback> = [.traceScenarioStart, .traceScenarioEnd]
-            let dropIndex = pendingRecords.firstIndex { !protectedCallbacks.contains($0.callback) }
-            if let dropIndex {
-                let droppedSequence = pendingRecords[dropIndex].sequence
-                pendingRecords.remove(at: dropIndex)
-                droppedRecordsTotal += 1
-                let updatedSnapshot = snapshotLocked()
-                for index in pendingRecords.indices where pendingRecords[index].sequence > droppedSequence {
-                    pendingRecords[index].recorder = updatedSnapshot
-                }
-            }
+            droppedRecordsTotal += pendingRecords.count
+            captureFailed = true
+            pendingRecords.removeAll()
         }
 
         record.recorder = snapshotLocked()
@@ -508,8 +508,15 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             stateLock.unlock()
 
             guard let line = encode(record) else {
-                // Encoding failure leaves the stream incomplete. It must never be promoted to evidence.
-                continue
+                stateLock.lock()
+                captureFailed = true
+                state = .ended
+                pendingRecords.removeAll()
+                let completion = endCompletion
+                endCompletion = nil
+                stateLock.unlock()
+                completion?(nil)
+                return
             }
             sink.write(line: Self.linePrefix + line)
 
@@ -576,7 +583,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
     }
 
     private func canEndScenarioLocked() -> Bool {
-        guard case .recording = state else { return false }
+        guard case .recording = state, !captureFailed else { return false }
         return negativeFixtureDropFloors.values.allSatisfy { $0 == droppedRecordsTotal }
             && (context.scenario != .unitFixture || !fixtureStates.isEmpty)
             && fixtureStates.values.allSatisfy { $0.observedCallCount > 0 || $0.hasNotInvokedOutcome }
@@ -594,6 +601,12 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             completion: nil,
             prealiasedCorrelation: nil
         )
+        if captureFailed {
+            state = .ended
+            endCompletion = nil
+            sinkQueue.async { completion(nil) }
+            return
+        }
         scheduleDrainLocked()
     }
 
