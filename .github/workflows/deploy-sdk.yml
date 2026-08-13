@@ -121,6 +121,14 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
+  # The only job that publishes to npm, and it cannot be started by hand: this workflow
+  # runs on push to main, and nothing in the repo exposes a dispatchable publish.
+  #
+  # To publish a version whose release failed, re-run THIS job from the Actions UI on the
+  # `Deploy SDK` run for that version — it checks out the release commit
+  # (`new_release_git_head`) and authenticates via OIDC through `environment: release`.
+  # Prefer that over adding a `workflow_dispatch` publish: a standalone publish workflow
+  # needs a long-lived NPM_TOKEN, which is the thing OIDC is here to avoid.
   deploy-npm:
     name: Deploy to npm
     needs: [deploy-git-tag]
