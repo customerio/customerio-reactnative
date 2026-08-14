@@ -371,6 +371,38 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
     end
   end
 
+  def test_target_xcconfig_skips_an_unreadable_lower_precedence_project_xcconfig
+    Dir.mktmpdir do |directory|
+      target_xcconfig = Pathname(directory).join("Target.xcconfig")
+      File.write(target_xcconfig, "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING} = 17.0\n")
+      project_configuration = OpaqueConfiguration.new(
+        "Debug",
+        {},
+        ConfigurationReference.new(Pathname(directory).join("MissingProject.xcconfig"))
+      )
+      project = Project.new(Pathname("App.xcodeproj"), [], 0, [project_configuration])
+      configuration = OpaqueConfiguration.new(
+        "Debug",
+        {},
+        ConfigurationReference.new(target_xcconfig)
+      )
+      app = Target.new("App", "App-uuid", project, [configuration])
+      project.targets << app
+      installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+      records = CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+        installer,
+        minimum_ios_version: "15.0",
+        io: nil
+      )
+
+      assert_equal ["17.0"], records.map(&:current)
+      assert_nil records.first.project_value
+      assert_equal 0, records.count(&:changed)
+      assert_equal 0, project.save_count
+    end
+  end
+
   def test_normalize_uses_public_xcodeproj_config_parser_with_real_project_objects
     skip "Xcodeproj is unavailable" unless xcodeproj_available?
 

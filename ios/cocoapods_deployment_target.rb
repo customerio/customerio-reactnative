@@ -174,13 +174,17 @@ module CustomerIO
               configuration,
               context: context
             )
-            project_configuration = matching_project_configuration(project, configuration.name)
-            project_value = effective_configuration_value(project_configuration, context: context)
-            effective_value = if target_configuration_present
-                                target_configuration_value
-                              else
-                                project_value
-                              end
+            if target_configuration_present
+              project_value = nil
+              effective_value = target_configuration_value
+            else
+              project_configuration = matching_project_configuration(project, configuration.name)
+              project_value = effective_configuration_value(
+                project_configuration,
+                context: context
+              )
+              effective_value = project_value
+            end
           end
           Record.new(
             project: project_path(project),

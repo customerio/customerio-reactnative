@@ -22,8 +22,7 @@ end
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
-customer_io_package_root = File.dirname(node_resolve('customerio-reactnative/package.json'))
-require File.join(customer_io_package_root, 'ios', 'cocoapods_deployment_target')
+require_relative '../../ios/cocoapods_deployment_target'
 
 require_relative "../scripts/ios_project_setup_utils.rb"
 

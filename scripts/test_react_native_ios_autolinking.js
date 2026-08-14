@@ -24,6 +24,18 @@ const expectedPodspec = path.join(
   repositoryRoot,
   'customerio-reactnative.podspec'
 );
+const podfile = fs.readFileSync(
+  path.join(exampleRoot, 'ios', 'Podfile'),
+  'utf8'
+);
+
+if (
+  !podfile.includes("require_relative '../../ios/cocoapods_deployment_target'")
+) {
+  throw new Error(
+    'Expected the sample Podfile to load deployment-target tooling from the current checkout'
+  );
+}
 
 if (actualPodspec !== expectedPodspec) {
   throw new Error(
