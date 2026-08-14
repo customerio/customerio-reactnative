@@ -20,8 +20,9 @@ jobs:
       # publish also runs the registry-side preflight, so it fails with "cannot publish over the
       # previously published versions" on any branch whose version semantic-release has not bumped
       # yet -- which is every PR. npm 10 skipped that check, which is why node 20 never tripped it.
-      # Packing still runs prepare/prepack and builds the real tarball, which is what this job is for.
-      - name: Publish test
+      # This validates the package's lifecycle scripts and file contents, not the registry
+      # handshake -- the deploy workflow remains the actual publish boundary.
+      - name: Package test
         run: npm pack --dry-run
 
   assert-lint:
