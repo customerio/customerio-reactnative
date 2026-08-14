@@ -63,17 +63,21 @@ post_install do |installer|
 end
 ```
 
-Remove the generated `ios/Pods` directory and run `pod install` again. The helper resolves target
-xcconfig settings and the matching project configuration before adding an override. For each
-change, it prints a stable project, target, and configuration line with the original effective
-value and final value. It fails the install if the selected effective value is non-numeric, such as
-`$(CUSTOM_IOS_FLOOR)`, because the generated-project audit cannot prove its resolved value. A
-non-numeric value at a lower precedence does not fail when an explicit numeric target setting
-already determines the effective value.
+Remove the generated `ios/Pods` directory and run `pod install` again. When a target build-setting
+key is absent, the helper resolves the target xcconfig and matching project configuration before
+adding an override. A present target key is authoritative, so lower-precedence xcconfig and project
+values are not inspected. This matches Xcode's treatment of an explicitly empty target value: it
+is missing and must be normalized, rather than inherited from a lower-precedence value. For each
+change, the helper prints a stable project, target, and configuration line with the original
+effective value and final value. It fails the install if the selected effective value is
+non-numeric, such as `$(CUSTOM_IOS_FLOOR)`, because the generated-project audit cannot prove its
+resolved value. A non-numeric value at a lower precedence does not fail when an explicit target
+setting already determines the effective value.
 
-If an error says an xcconfig cannot be read or parsed, repair or remove the reported base
-configuration file reference for the reported project, target, and configuration. Run the helper
-in the CocoaPods Ruby environment so the public `Xcodeproj::Config` parser is available.
+If an error says a selected xcconfig cannot be read or parsed, repair or remove the reported base
+configuration file reference for the reported project, target, and configuration. Lower-precedence
+xcconfigs are not parsed when the target build-setting key is present. Run the helper in the
+CocoaPods Ruby environment so the public `Xcodeproj::Config` parser is available.
 Synchronized-group xcconfig references are not resolved by that public parser; if the helper
 reports one, replace it with a standard xcconfig file reference, then run `pod install` again.
 These cases fail before any project mutation.

@@ -217,6 +217,85 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
     assert_equal 0, project.save_count
   end
 
+  def test_explicit_target_setting_skips_an_unreadable_lower_precedence_xcconfig
+    project = project_with_floor("App.xcodeproj", "$(CUSTOM_IOS_FLOOR)")
+    configuration = OpaqueConfiguration.new(
+      "Debug",
+      { CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING => "16.0" },
+      ConfigurationReference.new(Pathname("Missing.xcconfig"))
+    )
+    app = Target.new("App", "App-uuid", project, [configuration])
+    project.targets << app
+    installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+    records = CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+      installer,
+      minimum_ios_version: "15.0",
+      io: nil
+    )
+
+    assert_equal ["16.0"], records.map(&:current)
+    assert_nil records.first.target_configuration_value
+    assert_nil records.first.project_value
+    assert_equal 0, records.count(&:changed)
+    assert_equal 0, project.save_count
+  end
+
+  def test_explicit_target_setting_skips_a_synchronized_lower_precedence_xcconfig
+    project = project_with_floor("App.xcodeproj", "$(CUSTOM_IOS_FLOOR)")
+    configuration = OpaqueSynchronizedConfiguration.new(
+      "Debug",
+      { CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING => "16.0" },
+      Object.new,
+      "App.xcconfig"
+    )
+    app = Target.new("App", "App-uuid", project, [configuration])
+    project.targets << app
+    installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+    records = CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+      installer,
+      minimum_ios_version: "15.0",
+      io: nil
+    )
+
+    assert_equal ["16.0"], records.map(&:current)
+    assert_nil records.first.target_configuration_value
+    assert_nil records.first.project_value
+    assert_equal 0, records.count(&:changed)
+    assert_equal 0, project.save_count
+  end
+
+  def test_blank_explicit_target_is_normalized_instead_of_inheriting_lower_precedence_values
+    Dir.mktmpdir do |directory|
+      xcconfig_path = Pathname(directory).join("Target.xcconfig")
+      File.write(xcconfig_path, "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING} = 17.0\n")
+      project = project_with_floor("App.xcodeproj", "18.0")
+      configuration = OpaqueConfiguration.new(
+        "Debug",
+        { CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING => "" },
+        ConfigurationReference.new(xcconfig_path)
+      )
+      app = Target.new("App", "App-uuid", project, [configuration])
+      project.targets << app
+      installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+      records = CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+        installer,
+        minimum_ios_version: "15.0",
+        io: nil
+      )
+
+      assert_nil records.first.original_effective
+      assert_equal "15.0", records.first.current
+      assert_nil records.first.target_configuration_value
+      assert_nil records.first.project_value
+      assert records.first.changed
+      assert_equal "15.0", deployment_target(app)
+      assert_equal 1, project.save_count
+    end
+  end
+
   def test_standalone_audit_reports_the_effective_inherited_project_floor
     project = project_with_floor("App.xcodeproj", "16.0")
     app = target(project, "App", nil)

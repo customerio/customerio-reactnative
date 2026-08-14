@@ -165,19 +165,23 @@ module CustomerIO
           target_setting_present = configuration.build_settings.key?(BUILD_SETTING)
           target_value = normalized_setting(configuration.build_settings[BUILD_SETTING])
           context = configuration_context(project, target, configuration)
-          target_configuration_present, target_configuration_value = configuration_file_setting(
-            configuration,
-            context: context
-          )
-          project_configuration = matching_project_configuration(project, configuration.name)
-          project_value = effective_configuration_value(project_configuration, context: context)
-          effective_value = if target_setting_present
-                              target_value
-                            elsif target_configuration_present
-                              target_configuration_value
-                            else
-                              project_value
-                            end
+          if target_setting_present
+            target_configuration_value = nil
+            project_value = nil
+            effective_value = target_value
+          else
+            target_configuration_present, target_configuration_value = configuration_file_setting(
+              configuration,
+              context: context
+            )
+            project_configuration = matching_project_configuration(project, configuration.name)
+            project_value = effective_configuration_value(project_configuration, context: context)
+            effective_value = if target_configuration_present
+                                target_configuration_value
+                              else
+                                project_value
+                              end
+          end
           Record.new(
             project: project_path(project),
             target: target.name.to_s,
