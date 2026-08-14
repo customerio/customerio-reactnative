@@ -35,8 +35,7 @@ jobs:
 
       # If using sd on macos, "brew install" works great. for Linux, this is the recommended way.
       - name: Install sd CLI to use later in the workflow
-        # uses: kenji-miyake/setup-sd@59a1bd7bba077f6c491f04cd9d24b524ea2db4b6 # v1.1.1
-        uses: levibostian/setup-sd@cbdeed93d4fe03f9e36b73bb6d9e7c3c4805e1f9 # add-file-extension # Using fork until upstream Action has bug fixed in it.
+        uses: kenji-miyake/setup-sd@08c14e27d65a1c215342ef00c81583ae67f4c5ef # v2.0.0
 
       - name: Deploy git tag via semantic release
         uses: cycjimmy/semantic-release-action@0a51e81a6baff2acad3ee88f4121c589c73d0f0e # v4.2.0
@@ -142,13 +141,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
-      # Pinned to the 11.x line rather than @latest. OIDC needs >= 11.5.1, which 11.x satisfies,
-      # while npm 12 requires node >= 22.22.2 and so fails EBADENGINE against the node 20 above.
-      # Raise this deliberately alongside node-version, not by drifting with @latest.
+      # Pinned to the 11.x line rather than @latest. OIDC needs >= 11.5.1, which 11.x satisfies.
+      # Node 24 no longer caps us at 11.x the way node 20 did, but the npm that node 24 bundles
+      # varies by patch release and is not guaranteed to clear 11.5.1 — so keep publishing on an
+      # explicit pin rather than on whatever npm the runner happens to ship.
+      # Raise this deliberately, not by drifting with @latest.
       - name: Install npm 11.5.1+ for OIDC support
         run: npm install -g npm@11
 
