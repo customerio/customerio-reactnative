@@ -6,7 +6,7 @@ const path = require('path');
 const repositoryRoot = path.resolve(__dirname, '..');
 const exampleRoot = path.join(repositoryRoot, 'example');
 const reactNativeCli = path.join(
-  repositoryRoot,
+  exampleRoot,
   'node_modules',
   '.bin',
   'react-native'

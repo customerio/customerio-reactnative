@@ -100,14 +100,16 @@ The repository also includes a deterministic CI audit that prints the target, ma
 and effective value for every generated target/configuration pair in stable order. It examines
 every target in each passed project, including non-integrated targets that the normalizer
 intentionally does not change; set those targets to the host minimum explicitly. Pass the `Pods`
-directory so the audit recursively discovers every `.xcodeproj`, including CocoaPods multi-project
-output. It fails if a supplied path is missing or contains no projects.
+directory so the audit discovers every `.xcodeproj` directly under it, including CocoaPods
+multi-project output, while ignoring unrelated example projects vendored inside downloaded pod
+sources. It fails if a supplied path is missing or contains no projects.
 
 ```sh
-bundle exec ruby scripts/audit_cocoapods_deployment_targets.rb \
+cd example
+bundle exec ruby ../scripts/audit_cocoapods_deployment_targets.rb \
   --minimum 15.1 \
-  example/ios/Pods \
-  example/ios/SampleApp.xcodeproj
+  ios/Pods \
+  ios/SampleApp.xcodeproj
 ```
 
 Keep this audit next to the React Native simulator build and unsigned generic-device archive.

@@ -30,7 +30,10 @@ begin
     if File.extname(path) == ".xcodeproj"
       [path]
     else
-      Dir.glob(File.join(path, "**", "*.xcodeproj")).sort
+      # CocoaPods writes both Pods.xcodeproj and generate_multiple_pod_projects
+      # output directly under the sandbox root. Do not descend into downloaded pod
+      # sources, where a vendored example project may have unrelated settings.
+      Dir.glob(File.join(path, "*.xcodeproj")).sort
     end
   end.uniq
   if project_paths.empty?
