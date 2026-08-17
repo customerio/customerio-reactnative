@@ -74,6 +74,13 @@ non-numeric, such as `$(CUSTOM_IOS_FLOOR)`, because the generated-project audit 
 resolved value. A non-numeric value at a lower precedence does not fail when an explicit target
 setting already determines the effective value.
 
+If the helper reports a non-numeric selected value, use the project, target, and configuration in
+the error to locate the authoritative `IPHONEOS_DEPLOYMENT_TARGET`. Replace the macro or inherited
+expression at that precedence with its intended numeric version, then run `pod install` again. Do
+not skip that target: continuing with an unresolved expression would leave the generated project
+outside the deterministic audit. The helper validates every selected value before changing any
+project, so this failure does not leave a partially normalized installation.
+
 If an error says a selected xcconfig cannot be read or parsed, repair or remove the reported base
 configuration file reference for the reported project, target, and configuration. Lower-precedence
 xcconfigs are not parsed when the target build-setting key is present. Run the helper in the
