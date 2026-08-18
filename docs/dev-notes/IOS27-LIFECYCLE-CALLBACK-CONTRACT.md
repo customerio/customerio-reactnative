@@ -48,7 +48,7 @@ alias overflow in L2/L3, unsupported scenario closure, source-patch drift, and
 validator drift fail closed. Fixture-owned completion checks remain available
 only to focused unit tests and never wrap production completion handlers.
 
-The existing native sample seats cover icon launch, app/scene background and
+The existing native sample seats cover icon launch, topology-specific background and
 foreground transitions, URL and user-activity routing, Live Activity routing,
 notification taps, APNs/FCM token registration, and registration failure. The
 fixture rejects foreground presentation, notification settings, quick actions,
@@ -108,8 +108,8 @@ uses the real `flutter.dart-main-entered` Dart application receipt, never a
 synthesized `wrapper.app-lifecycle-state`. Its legacy topology is engine ->
 plugin -> raw application did-finish -> Flutter application forward -> UIKit
 did-finish notification -> UIKit active notification -> Dart main. Its scene
-topology is raw application did-finish -> Flutter application forward -> UIKit
-did-finish notification -> engine -> plugin -> raw scene will-connect -> Flutter
+topology is raw application did-finish -> plugin -> Flutter application forward
+-> UIKit did-finish notification -> engine -> raw scene will-connect -> Flutter
 scene forward -> UIKit active notification -> Dart main. Cold Expo records subscriber
 registration before app-delegate will-finish forwarding. In a cold Expo run,
 the `application.did-finish-launching` entry then precedes both the exact RCT
@@ -147,10 +147,12 @@ Customer.io redirect is exactly `true`/`true`/`redirect`, and its handled
 outcome agrees with the terminal host outcome.
 Remote push-tap additionally requires `action_class=default` and one later
 `customerio.handle-notification-response` result with Customer.io classification
-and a preserved delivery/request alias. FCM token registration preserves one
+and a preserved occurrence plus delivery/request alias. FCM token registration preserves one
 request alias across APNs, Firebase, and Customer.io. Application and scene
-lifecycle ingress may both occur, but each must have its own state-qualified
-Flutter forward.
+lifecycle ingress are mutually exclusive according to the manifest's explicit
+`host_topology`; AppDelegate-only is a native control, not an inferred fallback.
+The v1 evidence fixture accepts one participating scene and one URL context per
+activation, and fails closed before terminal routing if either becomes ambiguous.
 
 Token registration, registration failure, background fetch,
 and notification settings are currently canonical native-side single-stream

@@ -19,6 +19,7 @@
     "run_ended_at",
     "created_at",
     "evidence_level",
+    "host_topology",
     "scenario",
     "repositories",
     "toolchain",
@@ -39,6 +40,9 @@
     "run_ended_at": { "$ref": "#/$defs/date_time" },
     "created_at": { "$ref": "#/$defs/date_time" },
     "evidence_level": { "enum": ["diagnostic", "L2", "L3"] },
+    "host_topology": {
+      "enum": ["app-delegate-only", "ui-scene", "swiftui-lifecycle"]
+    },
     "scenario": { "$ref": "ios27-lifecycle-trace-v1.schema.json#/$defs/scenario" },
     "repositories": {
       "type": "array",
@@ -306,8 +310,9 @@
     "alias_counts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["delivery", "request", "scene", "url", "closure"],
+      "required": ["occurrence", "delivery", "request", "scene", "url", "closure"],
       "properties": {
+        "occurrence": { "type": "integer", "minimum": 0, "maximum": 256 },
         "delivery": { "type": "integer", "minimum": 0, "maximum": 256 },
         "request": { "type": "integer", "minimum": 0, "maximum": 256 },
         "scene": { "type": "integer", "minimum": 0, "maximum": 256 },
@@ -336,7 +341,7 @@
         "alias_overflow_namespaces": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "enum": ["delivery", "request", "scene", "url", "closure"] }
+          "items": { "enum": ["occurrence", "delivery", "request", "scene", "url", "closure"] }
         }
       }
     },

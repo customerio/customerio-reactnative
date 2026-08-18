@@ -290,6 +290,7 @@
       "additionalProperties": false,
       "minProperties": 1,
       "properties": {
+        "occurrence": { "type": "string", "pattern": "^occurrence-[1-9][0-9]*$" },
         "delivery": { "type": "string", "pattern": "^delivery-[1-9][0-9]*$" },
         "request": { "type": "string", "pattern": "^request-[1-9][0-9]*$" },
         "scene": { "type": "string", "pattern": "^scene-[1-9][0-9]*$" },
@@ -323,8 +324,9 @@
     "alias_counts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["delivery", "request", "scene", "url", "closure"],
+      "required": ["occurrence", "delivery", "request", "scene", "url", "closure"],
       "properties": {
+        "occurrence": { "type": "integer", "minimum": 0, "maximum": 256 },
         "delivery": { "type": "integer", "minimum": 0, "maximum": 256 },
         "request": { "type": "integer", "minimum": 0, "maximum": 256 },
         "scene": { "type": "integer", "minimum": 0, "maximum": 256 },
@@ -346,7 +348,7 @@
         "alias_overflow_namespaces": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "enum": ["delivery", "request", "scene", "url", "closure"] }
+          "items": { "enum": ["occurrence", "delivery", "request", "scene", "url", "closure"] }
         },
         "buffer_high_watermark": { "type": "integer", "minimum": 0 },
         "buffer_capacity": { "type": "integer", "minimum": 1 }

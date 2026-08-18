@@ -6,6 +6,7 @@
   "run_ended_at": "2026-08-11T17:00:10Z",
   "created_at": "2026-08-11T17:00:11Z",
   "evidence_level": "diagnostic",
+  "host_topology": "app-delegate-only",
   "scenario": "unit-fixture",
   "repositories": [
     {
@@ -89,6 +90,7 @@
         "buffer_high_watermark": 2,
         "buffer_capacity": 2,
         "alias_counts": {
+          "occurrence": 0,
           "delivery": 2,
           "request": 0,
           "scene": 0,

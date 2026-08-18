@@ -65,6 +65,12 @@ public enum LifecycleTraceEvidenceLevel: String, Codable, Sendable {
     case l3 = "L3"
 }
 
+public enum LifecycleTraceHostTopology: String, Codable, Sendable {
+    case appDelegateOnly = "app-delegate-only"
+    case uiScene = "ui-scene"
+    case swiftUILifecycle = "swiftui-lifecycle"
+}
+
 public enum LifecycleTraceOwner: String, Codable, Sendable {
     case applicationDelegate = "application-delegate"
     case sceneDelegate = "scene-delegate"
@@ -110,6 +116,7 @@ public enum LifecycleTracePhase: String, Codable, Sendable {
 
 /// Existing terminal seats that may close a harness scenario after their trace record is queued.
 public enum LifecycleTraceTerminal: Sendable {
+    case activeApplication
     case activeScene
     case notificationResponse
     case hostURLRoute
@@ -241,6 +248,7 @@ public enum LifecycleTraceCallback: String, Codable, CaseIterable, Sendable {
 }
 
 public enum LifecycleTraceAliasNamespace: String, Codable, CaseIterable, Sendable {
+    case occurrence
     case delivery
     case request
     case scene
@@ -347,6 +355,8 @@ public struct LifecycleTraceContext: Equatable, Sendable {
     public let provider: LifecycleTraceProvider
     public let scenario: LifecycleTraceScenario
     public let evidenceLevel: LifecycleTraceEvidenceLevel
+    public let hostTopology: LifecycleTraceHostTopology
+    public let activationOccurrenceIdentity: String
 
     public init?(
         manifestID: String,
@@ -358,12 +368,15 @@ public struct LifecycleTraceContext: Equatable, Sendable {
         runtime: LifecycleTraceRuntime,
         provider: LifecycleTraceProvider,
         scenario: LifecycleTraceScenario,
-        evidenceLevel: LifecycleTraceEvidenceLevel
+        evidenceLevel: LifecycleTraceEvidenceLevel,
+        hostTopology: LifecycleTraceHostTopology = .uiScene,
+        activationOccurrenceIdentity: String = UUID().uuidString.lowercased()
     ) {
         guard Self.isCanonicalUUID(manifestID),
               Self.isCanonicalUUID(runID),
               Self.isCanonicalUUID(streamID),
               Self.isCanonicalUUID(processInstanceID),
+              Self.isCanonicalUUID(activationOccurrenceIdentity),
               processID == nil || (processID ?? 0) > 0 else {
             return nil
         }
@@ -377,6 +390,8 @@ public struct LifecycleTraceContext: Equatable, Sendable {
         self.provider = provider
         self.scenario = scenario
         self.evidenceLevel = evidenceLevel
+        self.hostTopology = hostTopology
+        self.activationOccurrenceIdentity = activationOccurrenceIdentity
     }
 
     private static func isCanonicalUUID(_ value: String) -> Bool {
@@ -386,13 +401,16 @@ public struct LifecycleTraceContext: Equatable, Sendable {
 }
 
 public struct LifecycleTraceAliasCounts: Codable, Equatable, Sendable {
+    public let occurrence: Int
     public let delivery: Int
     public let request: Int
     public let scene: Int
     public let url: Int
     public let closure: Int
 
-    public static let zero = LifecycleTraceAliasCounts(delivery: 0, request: 0, scene: 0, url: 0, closure: 0)
+    public static let zero = LifecycleTraceAliasCounts(
+        occurrence: 0, delivery: 0, request: 0, scene: 0, url: 0, closure: 0
+    )
 }
 
 public struct LifecycleTraceRecorderSnapshot: Codable, Equatable, Sendable {

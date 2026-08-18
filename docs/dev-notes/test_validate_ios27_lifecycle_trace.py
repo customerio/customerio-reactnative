@@ -117,7 +117,14 @@ class LifecycleTraceContractTests(unittest.TestCase):
         cold = manifest["scenario"].endswith("-cold") or manifest["scenario"] == "icon-cold-launch"
         for stream_index, records in enumerate(streams):
             declaration = manifest["streams"][stream_index]
-            alias_counts = {name: 0 for name in ("delivery", "request", "scene", "url", "closure")}
+            if declaration["runtime"] == "swift" and records:
+                records[0]["payload_summary"]["flags"]["scene_manifest_active"] = (
+                    manifest["host_topology"] == "ui-scene"
+                )
+            alias_counts = {
+                name: 0
+                for name in ("occurrence", "delivery", "request", "scene", "url", "closure")
+            }
             for index, record in enumerate(records, 1):
                 record.update({
                     "manifest_id": manifest["manifest_id"], "run_id": manifest["run_id"],
@@ -159,9 +166,13 @@ class LifecycleTraceContractTests(unittest.TestCase):
         wrapper: bool = False,
     ) -> dict:
         record = copy.deepcopy(self.wrapper[1] if wrapper else self.native[1])
+        occurrence_correlation = {"occurrence": "occurrence-1"}
+        if correlation:
+            occurrence_correlation.update(correlation)
         record.update({
             "callback": callback, "owner": owner, "kind": kind, "phase": phase,
-            "payload_summary": copy.deepcopy(payload), "correlation": correlation,
+            "payload_summary": copy.deepcopy(payload),
+            "correlation": occurrence_correlation,
             "completion": None,
         })
         return record
@@ -339,6 +350,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
     ) -> tuple[dict, list[dict], list[dict]]:
         """Build the two empirically observed Flutter icon-cold topologies."""
         manifest = _load_json(VECTORS / "manifest.valid.json")
+        manifest["host_topology"] = "ui-scene" if scene else "app-delegate-only"
         manifest["scenario"] = "icon-cold-launch"
         manifest["stimulus"].update({"scenario": "icon-cold-launch", "source": "app-icon"})
         manifest["provider_provenance"].update({
@@ -419,7 +431,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
                 "framework-callback", "entry", scene_payload, {"scene": "scene-1"},
             )
             body = [
-                application, application_forward, did_finish_notification, engine, plugin,
+                application, plugin, application_forward, did_finish_notification, engine,
                 scene_raw, scene_forward, active_notification,
             ]
         else:
@@ -478,7 +490,9 @@ class LifecycleTraceContractTests(unittest.TestCase):
         manifest = _load_json(VECTORS / "manifest.valid.json")
         native = load_records("native.valid.ndjson")
         wrapper = load_records("wrapper.valid.ndjson")
-        native[3]["correlation"] = {"delivery": "delivery-2"}
+        native[3]["correlation"] = {
+            "occurrence": "occurrence-1", "delivery": "delivery-2",
+        }
         self.normalize_capture(manifest, [native, wrapper])
         self.validate_temp(manifest, [native, wrapper], "must preserve correlation.delivery")
 
@@ -937,7 +951,9 @@ class LifecycleTraceContractTests(unittest.TestCase):
 
     def test_url_route_requires_non_null_stable_correlation(self) -> None:
         manifest, native, wrapper = self.url_capture()
-        native[2]["correlation"] = {"url": "url-2"}
+        native[2]["correlation"] = {
+            "occurrence": "occurrence-1", "url": "url-2",
+        }
         self.normalize_capture(manifest, [native, wrapper])
         self.validate_temp(manifest, [native, wrapper], "must preserve correlation.url")
 
@@ -1049,9 +1065,13 @@ class LifecycleTraceContractTests(unittest.TestCase):
 
         two_deliveries = copy.deepcopy(with_remote_delivery)
         second_entry = copy.deepcopy(remote_entry)
-        second_entry["correlation"] = {"delivery": "delivery-2"}
+        second_entry["correlation"] = {
+            "occurrence": "occurrence-1", "delivery": "delivery-2",
+        }
         second_forward = copy.deepcopy(remote_forward)
-        second_forward["correlation"] = {"delivery": "delivery-2"}
+        second_forward["correlation"] = {
+            "occurrence": "occurrence-1", "delivery": "delivery-2",
+        }
         two_deliveries[-1:-1] = [second_entry, second_forward]
         self.normalize_capture(manifest, [two_deliveries, wrapper])
         self.validate_temp(
@@ -1129,9 +1149,13 @@ class LifecycleTraceContractTests(unittest.TestCase):
 
         expo_two_deliveries = copy.deepcopy(expo_native)
         expo_second_entry = copy.deepcopy(remote_entry)
-        expo_second_entry["correlation"] = {"delivery": "delivery-2"}
+        expo_second_entry["correlation"] = {
+            "occurrence": "occurrence-1", "delivery": "delivery-2",
+        }
         expo_second_forward = copy.deepcopy(expo_remote_forward)
-        expo_second_forward["correlation"] = {"delivery": "delivery-2"}
+        expo_second_forward["correlation"] = {
+            "occurrence": "occurrence-1", "delivery": "delivery-2",
+        }
         expo_two_deliveries[-1:-1] = [expo_second_entry, expo_second_forward]
         self.normalize_capture(expo_manifest, [expo_two_deliveries, expo_wrapper])
         self.validate_temp(
@@ -1218,8 +1242,12 @@ class LifecycleTraceContractTests(unittest.TestCase):
         self.normalize_capture(manifest, [records])
         self.validate_temp(manifest, [records])
         mismatched_identity = copy.deepcopy(records)
-        mismatched_identity[2]["correlation"] = {"request": "request-2"}
-        mismatched_identity[3]["correlation"] = {"request": "request-2"}
+        mismatched_identity[2]["correlation"] = {
+            "occurrence": "occurrence-1", "request": "request-2",
+        }
+        mismatched_identity[3]["correlation"] = {
+            "occurrence": "occurrence-1", "request": "request-2",
+        }
         self.normalize_capture(manifest, [mismatched_identity])
         self.validate_temp(
             manifest, [mismatched_identity],
@@ -1459,7 +1487,34 @@ class LifecycleTraceContractTests(unittest.TestCase):
         self.normalize_capture(manifest, [native, wrapper])
         self.validate_temp(manifest, [native, wrapper])
 
-    def test_dual_application_and_scene_lifecycle_ingress_has_unique_flutter_forwards(self) -> None:
+        missing_application_forward = [
+            record for record in native
+            if record["callback"] != "flutter.application.did-enter-background-forwarded"
+        ]
+        self.normalize_capture(manifest, [missing_application_forward, wrapper])
+        self.validate_temp(
+            manifest, [missing_application_forward, wrapper],
+            "requires integration-forwarded aggregate handoffs for .*background",
+        )
+
+        self.normalize_capture(manifest, [native, wrapper])
+        invalid_manifest = copy.deepcopy(manifest)
+        for assertion in invalid_manifest["aggregate_assertions"]:
+            for member in assertion["members"]:
+                member.pop("app_state")
+        self.validate_temp(
+            invalid_manifest, [native, wrapper],
+            "app-background-foreground aggregate selectors require app_state qualification",
+        )
+
+        reversed_native = [native[0], *native[3:5], *native[1:3], native[-1]]
+        self.normalize_capture(manifest, [reversed_native, wrapper])
+        self.validate_temp(
+            manifest, [reversed_native, wrapper],
+            "app background observations must precede foreground",
+        )
+
+    def test_dual_application_and_scene_lifecycle_ingress_is_rejected(self) -> None:
         manifest = _load_json(VECTORS / "manifest.valid.json")
         manifest["scenario"] = "app-background-foreground"
         manifest["stimulus"].update({"scenario": "app-background-foreground", "source": "app-ui"})
@@ -1498,7 +1553,10 @@ class LifecycleTraceContractTests(unittest.TestCase):
         )
         native = [copy.deepcopy(self.native[0])]
         native.extend(
-            self.runtime_record(callback, owner, kind, "state-change", payload)
+            self.runtime_record(
+                callback, owner, kind, "state-change", payload,
+                {"scene": "scene-1"} if callback.startswith(("scene.", "flutter.scene.")) else None,
+            )
             for callback, owner, kind, payload in seats
         )
         native.append(copy.deepcopy(self.native[-1]))
@@ -1548,32 +1606,9 @@ class LifecycleTraceContractTests(unittest.TestCase):
             },
         ]
         self.normalize_capture(manifest, [native, wrapper])
-        self.validate_temp(manifest, [native, wrapper])
-
-        missing_scene_forward = [
-            record for record in native
-            if record["callback"] != "flutter.scene.did-enter-background-forwarded"
-        ]
-        self.normalize_capture(manifest, [missing_scene_forward, wrapper])
         self.validate_temp(
-            manifest, [missing_scene_forward, wrapper],
-            "scene.did-enter-background requires exactly one matching flutter native forward, observed 0",
-        )
-
-        self.normalize_capture(manifest, [native, wrapper])
-        invalid_manifest = copy.deepcopy(manifest)
-        for assertion in invalid_manifest["aggregate_assertions"]:
-            for member in assertion["members"]:
-                member.pop("app_state")
-        self.validate_temp(
-            invalid_manifest, [native, wrapper],
-            "app-background-foreground aggregate selectors require app_state qualification",
-        )
-
-        reversed_native = [native[0], *native[5:9], *native[1:5], native[-1]]
-        self.normalize_capture(manifest, [reversed_native, wrapper])
-        self.validate_temp(
-            manifest, [reversed_native, wrapper], "app background observations must precede foreground"
+            manifest, [native, wrapper],
+            "app-delegate-only evidence must not contain scene or SwiftUI callbacks",
         )
 
     def test_full_capture_rejects_callback_incompatible_app_state(self) -> None:
@@ -1711,6 +1746,26 @@ class LifecycleTraceContractTests(unittest.TestCase):
     def test_multi_stream_acceptance_requires_aggregate(self) -> None:
         self.manifest["aggregate_assertions"] = []
         self.validate_temp(self.manifest, [self.native, self.wrapper], "requires at least one aggregate")
+
+    def test_swift_start_requires_scene_manifest_flag_matching_topology(self) -> None:
+        for topology, actual in (
+            ("app-delegate-only", True),
+            ("ui-scene", False),
+        ):
+            manifest = copy.deepcopy(self.manifest)
+            native = copy.deepcopy(self.native)
+            wrapper = copy.deepcopy(self.wrapper)
+            manifest["host_topology"] = topology
+            native[0]["payload_summary"]["flags"]["scene_manifest_active"] = actual
+            self.validate_temp(
+                manifest,
+                [native, wrapper],
+                "scene_manifest_active must match declared host_topology",
+            )
+
+    def test_swift_start_accepts_scene_manifest_flag_matching_topology(self) -> None:
+        self.native[0]["payload_summary"]["flags"]["scene_manifest_active"] = False
+        self.validate_temp(self.manifest, [self.native, self.wrapper])
 
     def test_aggregate_selector_cannot_use_trace_control_or_fixture(self) -> None:
         for index, member in enumerate(self.manifest["aggregate_assertions"][0]["members"]):
@@ -2066,7 +2121,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
         self.normalize_capture(self.manifest, [native, self.wrapper])
         self.validate_temp(self.manifest, [native, self.wrapper])
 
-    def test_application_and_scene_transitions_can_both_define_lifecycle_run(self) -> None:
+    def test_application_and_scene_transitions_cannot_compete_in_one_topology(self) -> None:
         manifest = copy.deepcopy(self.manifest)
         manifest["scenario"] = "app-background-foreground"
         manifest["stimulus"].update({
@@ -2111,6 +2166,10 @@ class LifecycleTraceContractTests(unittest.TestCase):
                 "callback": callback, "owner": owner, "phase": "state-change",
                 "payload_summary": {"flags": flags, "counts": {}, "enums": enums},
             })
+            if callback.startswith("scene."):
+                record["correlation"] = {
+                    "occurrence": "occurrence-1", "scene": "scene-1",
+                }
             records.append(record)
         end.update({
             "sequence": 6, "monotonic_ms": 1006,
@@ -2118,18 +2177,25 @@ class LifecycleTraceContractTests(unittest.TestCase):
         })
         records.append(end)
         self.make_native_single(manifest, records)
-        sync_receipt(manifest, 0, records)
-        manifest["streams"][0]["receipt"]["drained_at"] = "2026-08-11T16:00:09Z"
-        self.validate_temp(manifest, [records])
+        self.normalize_capture(manifest, [records])
+        self.validate_temp(
+            manifest, [records],
+            "app-delegate-only evidence must not contain scene or SwiftUI callbacks",
+        )
 
-        duplicate = copy.deepcopy(records[1])
+        application_records = [records[0], records[1], records[3], records[-1]]
+        self.normalize_capture(manifest, [application_records])
+        self.validate_temp(manifest, [application_records])
+        duplicate = copy.deepcopy(application_records[1])
         with self.assertRaisesRegex(ContractError, "at most one per callback seat"):
             _validate_scenario_acceptance(
-                manifest, {manifest["streams"][0]["stream_id"]: records + [duplicate]}
+                manifest,
+                {manifest["streams"][0]["stream_id"]: application_records + [duplicate]},
             )
 
     def test_lifecycle_handoff_reconciles_state_but_scene_aliases_stay_stream_local(self) -> None:
         manifest = copy.deepcopy(self.manifest)
+        manifest["host_topology"] = "ui-scene"
         manifest["scenario"] = "app-background-foreground"
         native_id = manifest["streams"][0]["stream_id"]
         wrapper_id = manifest["streams"][1]["stream_id"]
@@ -2304,7 +2370,7 @@ class LifecycleTraceContractTests(unittest.TestCase):
             wrapper[1]["captured_at"] = "2026-08-11T16:00:20Z"
             self.validate_temp(
                 manifest, [duplicate, wrapper],
-                "matching flutter native forward|scene connection seats|unselected|cannot forward multiple",
+                "matching flutter native forward|scene connection seats|unselected|cannot forward multiple|exactly one scene.will-connect",
             )
 
         manifest, native, wrapper = self.flutter_icon_capture(True)
@@ -3532,6 +3598,149 @@ class LifecycleTraceContractTests(unittest.TestCase):
                 self.validate_temp(
                     manifest, [records], "exactly one leading scenario-start and one final scenario-end"
                 )
+
+    def test_manifest_requires_explicit_host_topology(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest.pop("host_topology")
+        self.validate_temp(
+            manifest, [self.native, self.wrapper],
+            "schema violation at .*host_topology.*required property",
+        )
+
+    def test_swiftui_topology_is_not_claimed_by_wrappers(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["host_topology"] = "swiftui-lifecycle"
+        self.validate_temp(
+            manifest, [self.native, self.wrapper],
+            "swiftui-lifecycle evidence is currently supported only for native-ios",
+        )
+
+    def test_swiftui_background_foreground_uses_state_qualified_phase_seats(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["host_topology"] = "swiftui-lifecycle"
+        manifest["scenario"] = "app-background-foreground"
+        manifest["stimulus"].update({
+            "scenario": "app-background-foreground", "source": "app-ui",
+        })
+        manifest["provider_provenance"].update({
+            "provider": "none", "source": "none", "environment": "none",
+            "receipt_result": "not-applicable", "receipt_recorded_at": None,
+            "provider_sdk": None,
+        })
+        manifest["streams"][0]["provider"] = "none"
+        empty = {"flags": {}, "counts": {}, "enums": {}}
+        records = [
+            copy.deepcopy(self.native[0]),
+            self.runtime_record(
+                "swiftui.scene-phase-change", "swiftui-scene", "os-callback",
+                "state-change", {**empty, "enums": {"app_state": "inactive"}},
+            ),
+            self.runtime_record(
+                "swiftui.scene-phase-change", "swiftui-scene", "os-callback",
+                "state-change", {**empty, "enums": {"app_state": "background"}},
+            ),
+            self.runtime_record(
+                "swiftui.scene-phase-change", "swiftui-scene", "os-callback",
+                "state-change", {**empty, "enums": {"app_state": "inactive"}},
+            ),
+            self.runtime_record(
+                "swiftui.scene-phase-change", "swiftui-scene", "os-callback",
+                "state-change", {**empty, "enums": {"app_state": "active"}},
+            ),
+            copy.deepcopy(self.native[-1]),
+        ]
+        self.make_native_single(manifest, records)
+        self.normalize_capture(manifest, [records])
+        self.validate_temp(manifest, [records])
+
+        duplicate_background = copy.deepcopy(records[2])
+        records.insert(3, duplicate_background)
+        self.normalize_capture(manifest, [records])
+        self.validate_temp(
+            manifest, [records],
+            "requires exactly one app_state=background seat and one app_state=active seat",
+        )
+
+        records.pop(3)
+        records.pop(-2)
+        self.normalize_capture(manifest, [records])
+        self.validate_temp(
+            manifest, [records],
+            "requires exactly one app_state=background seat and one app_state=active seat",
+        )
+
+    def test_l2_runtime_seats_require_one_activation_occurrence(self) -> None:
+        native = copy.deepcopy(self.native)
+        native[1]["correlation"].pop("occurrence")
+        self.normalize_capture(self.manifest, [native, self.wrapper])
+        self.validate_temp(
+            self.manifest, [native, self.wrapper],
+            "exactly one shared correlation.occurrence alias",
+        )
+
+        native = copy.deepcopy(self.native)
+        native[2]["correlation"]["occurrence"] = "occurrence-2"
+        self.normalize_capture(self.manifest, [native, self.wrapper])
+        self.validate_temp(
+            self.manifest, [native, self.wrapper],
+            "exactly one shared correlation.occurrence alias",
+        )
+
+    def test_identical_payload_in_a_later_capture_is_a_new_occurrence(self) -> None:
+        first_manifest = copy.deepcopy(self.manifest)
+        first_native = copy.deepcopy(self.native)
+        first_wrapper = copy.deepcopy(self.wrapper)
+        second_manifest = copy.deepcopy(self.manifest)
+        second_native = copy.deepcopy(self.native)
+        second_wrapper = copy.deepcopy(self.wrapper)
+        second_manifest["manifest_id"] = "abababab-abab-4bab-8bab-abababababab"
+        second_manifest["run_id"] = "bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc"
+        for declaration in second_manifest["streams"]:
+            declaration["process_instance_id"] = "cdcdcdcd-cdcd-4dcd-8dcd-cdcdcdcdcdcd"
+        self.normalize_capture(first_manifest, [first_native, first_wrapper])
+        self.normalize_capture(second_manifest, [second_native, second_wrapper])
+        self.validate_temp(first_manifest, [first_native, first_wrapper])
+        self.validate_temp(second_manifest, [second_native, second_wrapper])
+
+    def test_multiple_url_contexts_fail_closed(self) -> None:
+        manifest, native, wrapper = self.url_capture()
+        native[1]["payload_summary"]["counts"]["url_contexts"] = 2
+        self.normalize_capture(manifest, [native, wrapper])
+        self.validate_temp(
+            manifest, [native, wrapper], "multiple URL contexts arrive",
+        )
+
+    def test_second_scene_identity_fails_closed(self) -> None:
+        manifest, native, wrapper = self.flutter_icon_capture(True)
+        forwarded = next(
+            record for record in native
+            if record["callback"] == "flutter.scene.will-connect-forwarded"
+        )
+        forwarded["correlation"]["scene"] = "scene-2"
+        self.normalize_capture(manifest, [native, wrapper])
+        self.validate_temp(
+            manifest, [native, wrapper], "exactly one participating scene per capture",
+        )
+
+    def test_ui_scene_and_app_delegate_ingress_are_not_competing_owners(self) -> None:
+        manifest, native, wrapper = self.url_capture()
+        manifest["host_topology"] = "ui-scene"
+        native[0]["payload_summary"]["flags"]["scene_manifest_active"] = True
+        self.validate_temp(
+            manifest, [native, wrapper],
+            "ui-scene UI activation must not use AppDelegate ingress",
+        )
+
+    def test_routing_owner_mutation_is_rejected(self) -> None:
+        manifest, native, wrapper = self.url_capture()
+        route = next(
+            record for record in native
+            if record["callback"] == "host.route-url" and record["phase"] == "intent"
+        )
+        route["owner"] = "application-delegate"
+        self.validate_temp(
+            manifest, [native, wrapper], "host.route-url has incompatible owner",
+        )
 
 
 if __name__ == "__main__":

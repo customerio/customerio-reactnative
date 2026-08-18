@@ -8,6 +8,12 @@ the harness supplies the complete `CIO_LIFECYCLE_*` context required by the cano
 contract. It writes canonical NDJSON to `CIO_LIFECYCLE_OUTPUT_PATH` and writes the stream
 receipt to the sibling `.receipt.json` path.
 
+The harness must explicitly provide `CIO_LIFECYCLE_HOST_TOPOLOGY=app-delegate-only`
+and one canonical `CIO_LIFECYCLE_ACTIVATION_OCCURRENCE_ID`. The example has no
+scene manifest or scene delegate, and the recorder places that harness-issued
+occurrence on every non-control record. A UIScene claim fails closed instead of
+being inferred from missing callbacks.
+
 The implementation deliberately has no JavaScript producer, lifecycle receipt, aggregate,
 or `initialProperties` handoff. It also adds no application, scene, notification-center, or
 push delegate. The published wrapper under `ios/` is unchanged.
@@ -37,10 +43,10 @@ files. The focused Node test pins their SHA-256 values:
 
 | File | SHA-256 |
 | --- | --- |
-| `LifecycleTraceEvidence.swift` | `1db44862654643a5feb6209a87e6f7980e8f723e734f713a2f2902812e3f6215` |
-| `LifecycleTraceModel.swift` | `cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1` |
-| `LifecycleTraceProbe.swift` | `9d48ad49e5fe116e66e0c924bd1aafd3764709d9865115ba5491836d03927956` |
-| `LifecycleTraceRecorder.swift` | `5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588` |
+| `LifecycleTraceEvidence.swift` | `f0719e181d7e1ff0423703e86ca9bcc50a99e98111da99dd357fdf09f9ceef87` |
+| `LifecycleTraceModel.swift` | `62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c` |
+| `LifecycleTraceProbe.swift` | `b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580` |
+| `LifecycleTraceRecorder.swift` | `9000c4667164cbc8fd2d0f25d938a1182660a2b0bf400f9166e0d8d86f1e458f` |
 
 The killed-state workaround remains behaviorally unchanged, including its inner
 `launchOptions` shadow. The outer dictionary passed to `startReactNative` is not repaired or
@@ -68,10 +74,10 @@ duplicate or partially port MBL-2278's normalization work.
 ## Evidence boundary
 
 The checked-in example at the contract's audited standalone repository commit resolves
-React Native 0.83.6. Canonical source commit
-`5b8c02e4c85203d073a85da8abb2212b19867e68` contains the reviewed 18-file
-contract. Native checkout `93b63e81f1a5544342393abe219e701f8dcd0657` supplies its
-final relocked bundle and verifier. This work keeps the restored 0.83.6 dependency graph.
+React Native 0.83.6. The immutable `pinned_content_commit` in
+`ios27-lifecycle-contract-v1.lock.json` identifies the reviewed 18-file
+contract. The lock and sync tool are byte-identical to the native owner. This
+work keeps the restored 0.83.6 dependency graph.
 Until a simulator capture passes the relational validator with a valid manifest and
 receipt, the evidence remains L0 source inspection and L1 compilation only. APNs delivery
 and registration on a physical device remain L3-only.

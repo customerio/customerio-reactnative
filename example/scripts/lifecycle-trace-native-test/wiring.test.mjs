@@ -25,6 +25,14 @@ test('configures exactly one native Swift trace stream', () => {
   assert.equal(occurrences(appDelegate, 'LifecycleTraceHarness.startScenario()'), 1);
   assert.match(appDelegate, /LifecycleTracePlatformProbeObserver\(\)/);
   assert.doesNotMatch(appDelegate, /cioFixtureTrace|LifecycleTrace\.attach|runtime:\s*\.javascript/);
+  const probe = readFileSync(
+    path.join(repositoryRoot, 'example/ios/SampleApp/Fixtures/LifecycleTraceProbe.swift'),
+    'utf8'
+  );
+  assert.match(probe, /value\("HOST_TOPOLOGY"\)/);
+  assert.match(probe, /value\("ACTIVATION_OCCURRENCE_ID"\)/);
+  assert.match(probe, /hostTopology: hostTopology/);
+  assert.match(probe, /activationOccurrenceIdentity: activationOccurrenceIdentity/);
 });
 
 test('keeps the killed-state shadow workaround and original React Native properties', () => {
@@ -66,13 +74,13 @@ test('instruments only existing application and routing seats', () => {
 test('wires each byte-copied shared support source exactly once', () => {
   const supportHashes = {
     'LifecycleTraceEvidence.swift':
-      '1db44862654643a5feb6209a87e6f7980e8f723e734f713a2f2902812e3f6215',
+      'f0719e181d7e1ff0423703e86ca9bcc50a99e98111da99dd357fdf09f9ceef87',
     'LifecycleTraceModel.swift':
-      'cd74c8b0c9ebdda75f5a3045e6ddbe6dc993252aeec7649b84c05c21c43f5ff1',
+      '62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c',
     'LifecycleTraceProbe.swift':
-      '9d48ad49e5fe116e66e0c924bd1aafd3764709d9865115ba5491836d03927956',
+      'b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580',
     'LifecycleTraceRecorder.swift':
-      '5c3ecfb951ab957f1215b45e70cb5aeb358cf3c6b5335ff553e91a65d02b1588',
+      '9000c4667164cbc8fd2d0f25d938a1182660a2b0bf400f9166e0d8d86f1e458f',
   };
   for (const [file, expectedHash] of Object.entries(supportHashes)) {
     assert.equal(
@@ -90,6 +98,15 @@ test('wires each byte-copied shared support source exactly once', () => {
     );
     assert.equal(createHash('sha256').update(source).digest('hex'), expectedHash);
   }
+});
+
+test('keeps the React Native control explicitly AppDelegate-only', () => {
+  const info = readFileSync(
+    path.join(repositoryRoot, 'example/ios/SampleApp/Info.plist'),
+    'utf8'
+  );
+  assert.doesNotMatch(info, /UIApplicationSceneManifest/);
+  assert.doesNotMatch(appDelegate, /UISceneDelegate|configurationForConnecting/);
 });
 
 test('does not modify JavaScript or the published iOS wrapper', () => {

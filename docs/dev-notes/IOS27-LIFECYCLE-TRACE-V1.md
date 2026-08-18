@@ -37,6 +37,8 @@ The harness writes the final manifest only after every declared recorder has
 logically drained. It records:
 
 - `manifest_id`, the shared harness `run_id`, and run start/end/creation times;
+- explicit `host_topology`: `app-delegate-only`, `ui-scene`, or
+  `swiftui-lifecycle`; it is never inferred from observed callbacks;
 - exact lowercase production repository commits and whether each production
   checkout was dirty;
 - for a dirty production repository, SHA-256 hashes of both the source tree
@@ -123,6 +125,13 @@ match Swift. Standalone React Native on iOS is modeled as one native Swift
 pass-through stream. There is no automatic Customer.io JavaScript
 notification-receipt seat to aggregate.
 
+Every L2/L3 non-control seat also carries one safe `correlation.occurrence`
+alias. The harness mints its opaque process-local identity at first ingress and
+forwards it through the graph. A terminal, opened metric, or host route may be
+committed only once for that occurrence. A later activation with an identical
+payload is a new run and a new occurrence; permanent URL/delivery deduplication
+and time-window heuristics are not evidence of this contract.
+
 Provider and stimulus provenance is scenario-aware:
 
 - remote push foreground/tap uses APN or FCM. Simulator injection is
@@ -195,8 +204,8 @@ request identifiers, scene/device/customer identifiers, or localized error
 descriptions. `commit_sha` and source snapshot hashes are source provenance,
 not payload digests.
 
-Within-stream correlation uses a first-seen ordinal alias. The `delivery`,
-`request`, `scene`, `url`, and `closure` namespaces each cap at 256 aliases.
+Within-stream correlation uses a first-seen ordinal alias. The `occurrence`,
+`delivery`, `request`, `scene`, `url`, and `closure` namespaces each cap at 256 aliases.
 Alias maps are in-memory, scoped to one stream and scenario, and reset only
 after the post-drain receipt is generated. They are never persisted or logged.
 Ordinal aliases are stream-local. Equal text such as `scene-1` in two streams
@@ -514,8 +523,8 @@ records. A cold run instead requires in-process bootstrap seats. Flutter
 icon-cold is topology-specific: legacy requires engine -> plugin -> raw
 application did-finish -> Flutter application forward -> UIKit did-finish
 notification -> UIKit active notification -> Dart main; scene-enabled requires
-raw application did-finish -> Flutter application forward -> UIKit did-finish
-notification -> engine -> plugin -> raw scene will-connect -> Flutter scene
+raw application did-finish -> plugin -> Flutter application forward -> UIKit
+did-finish notification -> engine -> raw scene will-connect -> Flutter scene
 forward -> UIKit active notification -> Dart main. Expo requires
 subscriber registration before app-delegate will-finish forwarding, followed
 by the `application.did-finish-launching` entry. That application entry must
@@ -551,18 +560,35 @@ quick-action, registration, settings, or state-transition requirements. A
 future negative/absence assertion must use a separate schema type; zero is
 deliberately not overloaded here.
 
-The application and scene lifecycle seats may both emit during one
-`app-background-foreground` run. That scenario requires at least one background
-and one foreground transition, with at most one occurrence per exact callback
-seat, rather than exactly one record across all application and scene seats.
+Application, UIScene, and SwiftUI activation seats are topology alternatives,
+not competing owners. `app-delegate-only` accepts application URL, activity,
+quick-action, and lifecycle ingress and rejects scene/SwiftUI seats. `ui-scene`
+accepts the corresponding scene ingress and rejects application UI activation
+and SwiftUI seats. `swiftui-lifecycle` accepts SwiftUI URL/scene-phase ingress
+and rejects UIKit scene and application UI activation seats. AppDelegate still
+owns launch, APNs registration/failure, and UNUserNotificationCenter callbacks
+and completion composition in every topology. When a UIScene connects,
+`application.did-finish-launching` must precede `scene.will-connect`.
+
+The v1 fixture permits exactly one participating scene per capture. Every scene
+seat carries the same `correlation.scene`; a second distinct scene or multiple
+URL contexts invalidate the capture before terminal/open/routing evidence can
+be claimed. Production coordination may scope independent windows separately,
+but one window must never suppress another.
+
+`app-background-foreground` requires one topology-specific background and one
+topology-specific foreground transition. For a SwiftUI lifecycle, the
+state-qualified seats are exactly one `swiftui.scene-phase-change` with
+`app_state=background` and exactly one with `app_state=active`; intermediate
+`app_state=inactive` phase changes are permitted but do not satisfy either
+required transition.
 Wrapper acceptance for this scenario uses two assertions, one for background
 and one for foreground. Each member has an `app_state` qualifier so two honest
 Dart/JavaScript lifecycle records are counted independently instead of failing
 an undifferentiated exact-count selector. Cross-stream comparison uses the
 derived transition class; stream-local scene aliases remain outside the claim.
-For Flutter, each raw application or scene transition must map to its own
-state-qualified native forwarding seat; one generic forward cannot ambiguously
-stand for two raw ingress records.
+For Flutter, each raw topology-specific transition must map to its own
+state-qualified native forwarding seat.
 `token-registration`, `registration-failure`, `background-fetch`, and
 `notification-settings` are native-side single-stream acceptance topologies in
 v1 because no canonical Dart/JavaScript app-received callback exists for them.

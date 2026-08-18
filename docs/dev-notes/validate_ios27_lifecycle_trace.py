@@ -22,7 +22,7 @@ except ImportError as error:  # pragma: no cover
 
 
 PREFIX = "CIO-LIFECYCLE-TRACE "
-ALIAS_KINDS = ("delivery", "request", "scene", "url", "closure")
+ALIAS_KINDS = ("occurrence", "delivery", "request", "scene", "url", "closure")
 MAX_ALIASES_PER_KIND = 256
 STABLE_RECORD_FIELDS = (
     "manifest_id", "run_id", "stream_id", "process_id", "integration", "runtime",
@@ -47,6 +47,23 @@ COLD_START_SCENARIOS = {
     "custom-url-cold", "universal-link-cold", "quick-action-cold",
     "live-activity-tap-cold",
 }
+
+HOST_TOPOLOGIES = {"app-delegate-only", "ui-scene", "swiftui-lifecycle"}
+APP_DELEGATE_UI_CALLBACKS = {
+    "application.did-become-active", "application.will-resign-active",
+    "application.did-enter-background", "application.will-enter-foreground",
+    "application.open-url", "application.continue-user-activity",
+    "application.perform-quick-action",
+}
+SCENE_CALLBACK_PREFIXES = ("scene.", "uikit.scene-", "flutter.scene.")
+SWIFTUI_CALLBACKS = {"swiftui.on-open-url", "swiftui.scene-phase-change"}
+SCENE_UI_SCENARIOS = (
+    {"icon-cold-launch", "app-background-foreground"}
+    .union(CUSTOM_URL_SCENARIOS)
+    .union(UNIVERSAL_LINK_SCENARIOS)
+    .union(QUICK_ACTION_SCENARIOS)
+    .union(LIVE_ACTIVITY_SCENARIOS)
+)
 
 REMOTE_NOTIFICATION_CALLBACKS = {
     "application.did-receive-remote-notification",
@@ -674,6 +691,110 @@ def _validate_scenario_provenance(manifest: dict[str, Any]) -> None:
             raise ContractError("unit-fixture must use diagnostic none provenance")
 
 
+def _validate_declared_host_topology(manifest: dict[str, Any]) -> None:
+    """Reject unsupported integration/topology combinations before reading evidence."""
+    topology = manifest["host_topology"]
+    if topology not in HOST_TOPOLOGIES:
+        raise ContractError(f"unsupported host_topology {topology}")
+    integrations = {item["integration"] for item in manifest["streams"]}
+    if topology == "swiftui-lifecycle" and integrations != {"native-ios"}:
+        raise ContractError(
+            "swiftui-lifecycle evidence is currently supported only for native-ios"
+        )
+    if topology == "swiftui-lifecycle" and manifest["scenario"] in QUICK_ACTION_SCENARIOS:
+        raise ContractError(
+            "swiftui-lifecycle quick-action evidence has no canonical v1 ingress"
+        )
+
+
+def _is_scene_callback(callback: str) -> bool:
+    return callback.startswith(SCENE_CALLBACK_PREFIXES)
+
+
+def _validate_topology_and_occurrence(
+    manifest: dict[str, Any], records_by_stream: dict[str, list[dict[str, Any]]]
+) -> None:
+    """Enforce one explicit host topology and one safe activation occurrence."""
+    topology = manifest["host_topology"]
+    scenario = manifest["scenario"]
+    all_records = [record for records in records_by_stream.values() for record in records]
+    runtime_records = [record for record in all_records if record["kind"] != "trace-control"]
+
+    if manifest["evidence_level"] in ("L2", "L3"):
+        occurrences = {
+            (record.get("correlation") or {}).get("occurrence")
+            for record in runtime_records
+        }
+        if occurrences != {"occurrence-1"}:
+            raise ContractError(
+                "L2/L3 runtime seats require exactly one shared correlation.occurrence alias"
+            )
+
+    scene_records = [record for record in all_records if _is_scene_callback(record["callback"])]
+    swiftui_records = [record for record in all_records if record["callback"] in SWIFTUI_CALLBACKS]
+    application_ui_records = [
+        record for record in all_records if record["callback"] in APP_DELEGATE_UI_CALLBACKS
+    ]
+
+    for record in scene_records:
+        if (record.get("correlation") or {}).get("scene") is None:
+            raise ContractError(
+                f"{record['callback']} requires correlation.scene in a scene topology"
+            )
+    scene_aliases = {
+        (record.get("correlation") or {}).get("scene") for record in all_records
+    }
+    scene_aliases.discard(None)
+    if len(scene_aliases) > 1:
+        raise ContractError(
+            "lifecycle contract v1 permits exactly one participating scene per capture"
+        )
+
+    if topology == "app-delegate-only":
+        if scene_records or swiftui_records:
+            raise ContractError(
+                "app-delegate-only evidence must not contain scene or SwiftUI callbacks"
+            )
+        if scene_aliases:
+            raise ContractError("app-delegate-only evidence must not allocate scene aliases")
+    elif topology == "ui-scene":
+        if swiftui_records:
+            raise ContractError("ui-scene evidence must not contain SwiftUI lifecycle callbacks")
+        if application_ui_records:
+            callbacks = sorted({record["callback"] for record in application_ui_records})
+            raise ContractError(
+                "ui-scene UI activation must not use AppDelegate ingress: "
+                f"{callbacks}"
+            )
+        if scenario in SCENE_UI_SCENARIOS and len(scene_aliases) != 1:
+            raise ContractError(
+                f"ui-scene scenario {scenario} requires exactly one participating scene"
+            )
+    else:
+        if scene_records:
+            raise ContractError(
+                "swiftui-lifecycle evidence must not contain UISceneDelegate callbacks"
+            )
+        if application_ui_records:
+            callbacks = sorted({record["callback"] for record in application_ui_records})
+            raise ContractError(
+                "swiftui-lifecycle UI activation must not use AppDelegate ingress: "
+                f"{callbacks}"
+            )
+        if scenario in SCENE_UI_SCENARIOS and scenario != "icon-cold-launch" and not swiftui_records:
+            raise ContractError(
+                f"swiftui-lifecycle scenario {scenario} requires a SwiftUI lifecycle ingress"
+            )
+
+    if scenario in URL_SCENARIOS.union(LIVE_ACTIVITY_SCENARIOS):
+        for record in runtime_records:
+            url_contexts = record["payload_summary"]["counts"].get("url_contexts")
+            if url_contexts is not None and url_contexts > 1:
+                raise ContractError(
+                    "one activation occurrence must fail closed when multiple URL contexts arrive"
+                )
+
+
 def _validate_wrapper_acceptance_topology(
     manifest: dict[str, Any],
 ) -> tuple[dict[str, Any], dict[str, Any]] | None:
@@ -731,6 +852,7 @@ def _validate_wrapper_acceptance_topology(
 def _validate_manifest_relations(manifest: dict[str, Any]) -> tuple[datetime, datetime]:
     started, ended = _validate_timestamps(manifest)
     _validate_scenario_provenance(manifest)
+    _validate_declared_host_topology(manifest)
 
     repositories = {item["name"]: item for item in manifest["repositories"]}
     frameworks = {item["name"]: item for item in manifest["frameworks"]}
@@ -1530,10 +1652,7 @@ def _validate_payload(record: dict[str, Any], target_os_version: str | None = No
         if app_state in {"unknown", "off-main-thread"}:
             raise ContractError(f"{callback} L2/L3 requires a concrete app_state")
 
-    scene_callback = (
-        callback.startswith("scene.") or ".scene." in callback or ".scene-" in callback
-        or callback.startswith("uikit.scene-")
-    )
+    scene_callback = _is_scene_callback(callback)
     if scene_callback:
         if _require(summary, "flags", "has_scene", callback) is not True:
             raise ContractError(f"{callback} requires has_scene=true")
@@ -1683,6 +1802,18 @@ def _validate_stream(
         record["kind"] != "trace-control" for record in records
     ):
         raise ContractError(f"stream {stream_id}: L2/L3 requires a non-control runtime observation")
+    if (
+        manifest["evidence_level"] in ("L2", "L3")
+        and declaration["runtime"] == "swift"
+    ):
+        actual_scene_manifest = initial["payload_summary"]["flags"].get(
+            "scene_manifest_active"
+        )
+        expected_scene_manifest = manifest["host_topology"] == "ui-scene"
+        if actual_scene_manifest is not expected_scene_manifest:
+            raise ContractError(
+                f"stream {stream_id}: scene_manifest_active must match declared host_topology"
+            )
 
     expected_stable = {
         "manifest_id": manifest["manifest_id"], "run_id": manifest["run_id"],
@@ -1985,6 +2116,13 @@ def _lifecycle_transition(record: dict[str, Any]) -> str | None:
         return "background"
     if "will-enter-foreground" in callback:
         return "foreground"
+    if callback == "swiftui.scene-phase-change":
+        state = record["payload_summary"]["enums"].get("app_state")
+        if state == "background":
+            return "background"
+        if state == "active":
+            return "foreground"
+        return None
     if callback in {"wrapper.app-lifecycle-state", "flutter.app-lifecycle-state"}:
         state = record["payload_summary"]["enums"].get("app_state")
         if state == "background":
@@ -2054,15 +2192,13 @@ def _validate_icon_launch_handoff(
     native_record: dict[str, Any],
     wrapper_record: dict[str, Any],
     integration: str,
-    native_records: list[dict[str, Any]],
+    host_topology: str,
 ) -> None:
     native_state = native_record["payload_summary"]["enums"].get("app_state")
-    has_scene = any(
-        record["callback"] in {"scene.will-connect", "flutter.scene.will-connect-forwarded"}
-        for record in native_records
-    )
     expected_native_state = (
-        "background" if integration == "flutter" and has_scene else "inactive"
+        "background"
+        if integration == "flutter" and host_topology == "ui-scene"
+        else "inactive"
     )
     if native_state != expected_native_state:
         raise ContractError(
@@ -2141,9 +2277,11 @@ def _require_capture_time_order(
 
 
 def _validate_cold_flutter_icon_topology(
-    native_records: list[dict[str, Any]], wrapper_records: list[dict[str, Any]]
+    native_records: list[dict[str, Any]],
+    wrapper_records: list[dict[str, Any]],
+    host_topology: str,
 ) -> None:
-    """Require one of the two empirically observed Flutter icon-launch orders."""
+    """Require the explicitly declared Flutter icon-launch order."""
 
     def exact(
         records: list[dict[str, Any]], callback: str, phase: str
@@ -2187,14 +2325,19 @@ def _validate_cold_flutter_icon_topology(
             "cold Flutter icon launch requires either no scene connection seats or "
             "exactly one raw and forwarded scene connection seat"
         )
+    expects_scene = host_topology == "ui-scene"
+    if bool(scene_entries) != expects_scene:
+        raise ContractError(
+            "cold Flutter icon launch scene seats must match declared host_topology"
+        )
 
     if scene_entries:
         ordered = (
             application,
+            plugin,
             application_forward,
             application_notification,
             engine,
-            plugin,
             scene_entries[0],
             scene_forwards[0],
             application_active,
@@ -2249,9 +2392,19 @@ def _require_same_correlation(
 ) -> None:
     source_correlation = source.get("correlation") or {}
     target_correlation = target.get("correlation") or {}
-    key = next((candidate for candidate in keys if source_correlation.get(candidate)), None)
+    remaining = keys
+    if "occurrence" in keys:
+        occurrence = source_correlation.get("occurrence")
+        if occurrence is None:
+            raise ContractError(f"{label} requires correlation.occurrence")
+        if target_correlation.get("occurrence") != occurrence:
+            raise ContractError(f"{label} must preserve correlation.occurrence")
+        remaining = tuple(key for key in keys if key != "occurrence")
+        if not remaining:
+            return
+    key = next((candidate for candidate in remaining if source_correlation.get(candidate)), None)
     if key is None:
-        raise ContractError(f"{label} requires a non-null {keys} correlation alias")
+        raise ContractError(f"{label} requires a non-null {remaining} correlation alias")
     if target_correlation.get(key) != source_correlation[key]:
         raise ContractError(f"{label} must preserve correlation.{key}")
 
@@ -2262,11 +2415,19 @@ def _has_same_correlation(
     """Return whether a possible forwarding pair preserves one available alias."""
     source_correlation = source.get("correlation") or {}
     target_correlation = target.get("correlation") or {}
-    for key in keys:
+    remaining = keys
+    if "occurrence" in keys:
+        occurrence = source_correlation.get("occurrence")
+        if occurrence is None or target_correlation.get("occurrence") != occurrence:
+            return False
+        remaining = tuple(key for key in keys if key != "occurrence")
+        if not remaining:
+            return True
+    for key in remaining:
         value = source_correlation.get(key)
         if value is not None:
             return target_correlation.get(key) == value
-    return not keys
+    return not remaining
 
 
 def _native_stream_records(
@@ -2281,7 +2442,7 @@ def _native_stream_records(
     return records_by_stream[swift_ids[0]]
 
 
-def _raw_ingress_groups(scenario: str) -> list[set[str]]:
+def _raw_ingress_groups(scenario: str, host_topology: str) -> list[set[str]]:
     if scenario == "icon-cold-launch":
         return [LAUNCH_DEFINING]
     if scenario in {"push-foreground", "local-notification-foreground"}:
@@ -2292,22 +2453,37 @@ def _raw_ingress_groups(scenario: str) -> list[set[str]]:
     }:
         return [{"notification-center.did-receive-response"}]
     if scenario in CUSTOM_URL_SCENARIOS.union(LIVE_ACTIVITY_SCENARIOS):
-        return [URL_COLD_DEFINING if scenario in COLD_START_SCENARIOS else URL_DEFINING]
+        if host_topology == "app-delegate-only":
+            return [{"application.open-url"}]
+        if host_topology == "ui-scene":
+            return [{"scene.will-connect" if scenario in COLD_START_SCENARIOS else "scene.open-url-contexts"}]
+        return [{"swiftui.on-open-url"}]
     if scenario in UNIVERSAL_LINK_SCENARIOS:
-        return [
-            USER_ACTIVITY_COLD_DEFINING
-            if scenario in COLD_START_SCENARIOS else USER_ACTIVITY_DEFINING
-        ]
+        if host_topology == "app-delegate-only":
+            return [{"application.continue-user-activity"}]
+        if host_topology == "ui-scene":
+            return [{"scene.will-connect" if scenario in COLD_START_SCENARIOS else "scene.continue-user-activity"}]
+        return [{"swiftui.on-open-url"}]
     if scenario in QUICK_ACTION_SCENARIOS:
-        return [
-            QUICK_ACTION_COLD_DEFINING
-            if scenario in COLD_START_SCENARIOS else QUICK_ACTION_DEFINING
-        ]
+        if host_topology == "app-delegate-only":
+            return [{"application.perform-quick-action"}]
+        if host_topology == "ui-scene":
+            return [{"scene.will-connect" if scenario in COLD_START_SCENARIOS else "scene.perform-quick-action"}]
+        return []
     if scenario == "app-background-foreground":
-        return [
-            {"application.did-enter-background", "scene.did-enter-background"},
-            {"application.will-enter-foreground", "scene.will-enter-foreground"},
-        ]
+        if host_topology == "app-delegate-only":
+            return [
+                {"application.did-enter-background"},
+                {"application.will-enter-foreground"},
+            ]
+        if host_topology == "ui-scene":
+            return [
+                {"scene.did-enter-background"},
+                {"scene.will-enter-foreground"},
+            ]
+        # SwiftUI expresses both transitions through one callback name. Its
+        # background and active app_state seats are validated independently.
+        return [{"swiftui.scene-phase-change"}]
     return []
 
 
@@ -2330,10 +2506,10 @@ def _forward_correlation_keys(record: dict[str, Any], scenario: str) -> tuple[st
         "notification-center.will-present", "notification-center.did-receive-response",
         "application.did-receive-remote-notification",
     }:
-        return ("delivery", "request")
+        return ("occurrence", "delivery", "request")
     if callback == "application.did-finish-launching" or _lifecycle_transition(record) is not None:
-        return ()
-    return _scenario_correlation_keys(scenario)
+        return ("occurrence",)
+    return ("occurrence",) + _scenario_correlation_keys(scenario)
 
 
 def _validate_native_causal_chains(
@@ -2426,13 +2602,24 @@ def _validate_native_causal_chains(
 
     if scenario in COLD_START_SCENARIOS and scenario != "icon-cold-launch":
         launch = exact("application.did-finish-launching", "entry")
-        groups = _raw_ingress_groups(scenario)
+        groups = _raw_ingress_groups(scenario, manifest["host_topology"])
         ingresses = [record for record in records if groups and record["callback"] in groups[0]]
         if len(ingresses) == 1:
             _require_order(launch, ingresses[0], "cold launch ingress")
 
+    if manifest["host_topology"] == "ui-scene":
+        scene_connections = [
+            record for record in records
+            if record["callback"] == "scene.will-connect" and record["phase"] == "entry"
+        ]
+        if scene_connections:
+            launch = exact("application.did-finish-launching", "entry")
+            if len(scene_connections) != 1:
+                raise ContractError("ui-scene evidence requires exactly one scene.will-connect seat")
+            _require_order(launch, scene_connections[0], "application launch to scene connection")
+
     if scenario in CUSTOM_URL_SCENARIOS.union(LIVE_ACTIVITY_SCENARIOS):
-        ingress_callbacks = _raw_ingress_groups(scenario)[0]
+        ingress_callbacks = _raw_ingress_groups(scenario, manifest["host_topology"])[0]
         ingresses = [record for record in records if record["callback"] in ingress_callbacks]
         if len(ingresses) != 1:
             raise ContractError(f"{scenario} requires exactly one raw URL ingress")
@@ -2512,7 +2699,7 @@ def _validate_wrapper_forwarding_chain(
     if handoff is None:
         raise ContractError(f"multi-stream L2/L3 scenario {scenario} has no canonical wrapper handoff")
     wrapper_callbacks = handoff[1]
-    ingress_groups = _raw_ingress_groups(scenario)
+    ingress_groups = _raw_ingress_groups(scenario, manifest["host_topology"])
     forward_registry = INTEGRATION_FORWARD_FOR_INGRESS[integration]
 
     allowed_forwards: set[str] = set()
@@ -2564,7 +2751,8 @@ def _validate_wrapper_forwarding_chain(
         if len(selected_native) == 1 and len(selected_wrapper) == 1:
             if scenario == "icon-cold-launch":
                 _validate_icon_launch_handoff(
-                    selected_native[0], selected_wrapper[0], integration, native_records
+                    selected_native[0], selected_wrapper[0], integration,
+                    manifest["host_topology"],
                 )
             if _handoff_facts(selected_native[0], scenario) != _handoff_facts(
                 selected_wrapper[0], scenario
@@ -2695,7 +2883,9 @@ def _validate_wrapper_forwarding_chain(
                         continue
                     _require_order(bootstrap, forwarded, f"cold {integration} bootstrap")
         if integration == "flutter" and scenario == "icon-cold-launch":
-            _validate_cold_flutter_icon_topology(native_records, wrapper_records)
+            _validate_cold_flutter_icon_topology(
+                native_records, wrapper_records, manifest["host_topology"]
+            )
         if integration == "expo":
             launches = [
                 record for record in native_records
@@ -2858,7 +3048,8 @@ def _validate_partial_test_handoff(
             if scenario == "icon-cold-launch":
                 all_native_records = records_by_stream[native_declaration["stream_id"]]
                 _validate_icon_launch_handoff(
-                    native_records[0], wrapper_records[0], integration, all_native_records
+                    native_records[0], wrapper_records[0], integration,
+                    manifest["host_topology"],
                 )
                 if integration == "flutter":
                     raw_scene = [
@@ -2894,6 +3085,8 @@ def _validate_scenario_acceptance(
     scenario = manifest["scenario"]
     topology = _validate_wrapper_acceptance_topology(manifest)
     required_groups = list(SCENARIO_REQUIRED_GROUPS.get(scenario, ()))
+    host_topology = manifest["host_topology"]
+    all_records = [record for records in records_by_stream.values() for record in records]
     if scenario == "token-registration":
         provider = manifest["provider_provenance"]["provider"]
         required_groups = [
@@ -2901,10 +3094,40 @@ def _validate_scenario_acceptance(
         ]
         if provider == "fcm":
             required_groups.insert(1, {"fcm.registration-token-refreshed"})
-    if not required_groups:
+    elif scenario == "app-background-foreground":
+        if host_topology == "app-delegate-only":
+            required_groups = [
+                {"application.did-enter-background"},
+                {"application.will-enter-foreground"},
+            ]
+        elif host_topology == "ui-scene":
+            required_groups = [
+                {"scene.did-enter-background"},
+                {"scene.will-enter-foreground"},
+            ]
+        else:
+            required_groups = []
+            swiftui_records = [
+                record for record in all_records
+                if record["callback"] == "swiftui.scene-phase-change"
+            ]
+            transition_counts = {
+                transition: sum(
+                    _lifecycle_transition(record) == transition
+                    for record in swiftui_records
+                )
+                for transition in ("background", "foreground")
+            }
+            if transition_counts != {"background": 1, "foreground": 1}:
+                raise ContractError(
+                    "swiftui-lifecycle app-background-foreground requires exactly one "
+                    "app_state=background seat and one app_state=active seat"
+                )
+    if not required_groups and not (
+        scenario == "app-background-foreground" and host_topology == "swiftui-lifecycle"
+    ):
         raise ContractError(f"scenario {scenario} has no canonical acceptance registry entry")
 
-    all_records = [record for records in records_by_stream.values() for record in records]
     for callbacks in required_groups:
         matching = [record for record in all_records if record["callback"] in callbacks]
         if scenario == "app-background-foreground":
@@ -2998,6 +3221,7 @@ def validate_capture(
         raise ContractError(f"manifest streams are missing capture files: {sorted(missing)}")
     for stream_id, declaration in declarations.items():
         _validate_stream(manifest, declaration, records_by_stream[stream_id], started, ended)
+    _validate_topology_and_occurrence(manifest, records_by_stream)
     _validate_scenario_acceptance(manifest, records_by_stream)
     _validate_aggregates(manifest, records_by_stream)
 

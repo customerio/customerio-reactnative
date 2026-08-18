@@ -6,6 +6,7 @@
   "run_ended_at": "2026-08-11T16:00:10Z",
   "created_at": "2026-08-11T16:00:11Z",
   "evidence_level": "L2",
+  "host_topology": "app-delegate-only",
   "scenario": "push-tap-warm",
   "repositories": [
     {
@@ -106,7 +107,7 @@
         "dropped_records_total": 0,
         "buffer_high_watermark": 1,
         "buffer_capacity": 256,
-        "alias_counts": { "delivery": 1, "request": 0, "scene": 0, "url": 0, "closure": 0 },
+        "alias_counts": { "occurrence": 1, "delivery": 1, "request": 0, "scene": 0, "url": 0, "closure": 0 },
         "alias_overflow": false,
         "alias_overflow_namespaces": []
       }
@@ -126,7 +127,7 @@
         "dropped_records_total": 0,
         "buffer_high_watermark": 1,
         "buffer_capacity": 256,
-        "alias_counts": { "delivery": 0, "request": 0, "scene": 0, "url": 0, "closure": 0 },
+        "alias_counts": { "occurrence": 1, "delivery": 0, "request": 0, "scene": 0, "url": 0, "closure": 0 },
         "alias_overflow": false,
         "alias_overflow_namespaces": []
       }

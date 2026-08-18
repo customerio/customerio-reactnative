@@ -5,7 +5,8 @@ import Foundation
 
 /// A synchronous line sink. The recorder calls it only from its private serial output queue.
 public protocol LifecycleTraceSink: AnyObject {
-    func write(line: String)
+    @discardableResult
+    func write(line: String) -> Bool
 
     /// Persists the receipt outside the sequenced NDJSON stream.
     func writeReceipt(json: String) -> Bool
@@ -14,15 +15,15 @@ public protocol LifecycleTraceSink: AnyObject {
 public extension LifecycleTraceSink {
     func writeReceipt(json: String) -> Bool {
         write(line: LifecycleTraceRecorder.receiptPrefix + json)
-        return true
     }
 }
 
 public final class ConsoleLifecycleTraceSink: LifecycleTraceSink {
     public init() {}
 
-    public func write(line: String) {
+    public func write(line: String) -> Bool {
         print(line)
+        return true
     }
 }
 
@@ -141,8 +142,12 @@ public struct LifecycleTraceCompletionHandle: Equatable {
     fileprivate let droppedRecordsAtCreation: Int
 }
 
-// State ownership and wire serialization remain co-located to preserve one ordering boundary.
 // swiftlint:disable type_body_length
+/// A thread-safe, bounded evidence recorder available before application launch completes.
+///
+/// Synchronous UIKit and framework callbacks cannot await an actor, so a short `NSLock` protects state and a
+/// private serial queue performs ordered sink writes. No host callback or completion runs while the lock is held.
+/// State ownership and wire serialization remain co-located to preserve one ordering boundary.
 public final class LifecycleTraceRecorder: @unchecked Sendable {
     public static let linePrefix = "CIO-LIFECYCLE-TRACE "
     public static let receiptPrefix = "CIO-LIFECYCLE-RECEIPT "
@@ -183,10 +188,12 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
     private var negativeFixtureDropFloors: [String: Int] = [:]
     private var endCompletion: ((LifecycleTraceStreamReceipt?) -> Void)?
     private var observedBackgroundSeat = false
+    private var participatingSceneIdentity: LifecycleTraceCorrelationValue?
     private var captureFailed = false
 
     public var scenario: LifecycleTraceScenario { context.scenario }
     public var processInstanceID: String { context.processInstanceID }
+    public var hostTopology: LifecycleTraceHostTopology { context.hostTopology }
 
     // Used only by focused tests to create deterministic overflow. Production code never pauses.
     var isDrainSchedulingPausedForTesting = false
@@ -212,7 +219,9 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
     }
 
     @discardableResult
-    public func startScenario() -> Bool {
+    public func startScenario(
+        observation: LifecycleTraceObservation = LifecycleTraceObservation()
+    ) -> Bool {
         stateLock.lock()
         defer { stateLock.unlock() }
         guard case .idle = state else { return false }
@@ -223,7 +232,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             kind: .traceControl,
             callback: .traceScenarioStart,
             phase: .stateChange,
-            observation: LifecycleTraceObservation(),
+            observation: observation,
             completion: nil,
             prealiasedCorrelation: nil
         )
@@ -240,7 +249,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         phase: LifecycleTracePhase,
         observations: LifecycleTraceObservation...
     ) -> Bool {
-        let observation = observations.reduce(LifecycleTraceObservation()) { $0.merging($1) }
+        var observation = observations.reduce(LifecycleTraceObservation()) { $0.merging($1) }
         stateLock.lock()
         defer { stateLock.unlock() }
         guard case .recording = state,
@@ -253,7 +262,21 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             return false
         }
 
-        if callback == .sceneDidEnterBackground {
+        observation.correlations[.occurrence] = .string(context.activationOccurrenceIdentity)
+        if observation.counts[.urlContexts, default: 0] > 1 {
+            invalidateCaptureLocked()
+            return false
+        }
+        if let sceneIdentity = observation.correlations[.scene] {
+            if let participatingSceneIdentity, participatingSceneIdentity != sceneIdentity {
+                invalidateCaptureLocked()
+                return false
+            }
+            participatingSceneIdentity = sceneIdentity
+        }
+
+        if callback == .sceneDidEnterBackground || callback == .applicationDidEnterBackground ||
+            (callback == .swiftUIScenePhaseChange && observation.enums[.appState] == "background") {
             observedBackgroundSeat = true
         }
 
@@ -269,6 +292,13 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         guard !captureFailed else { return false }
         scheduleDrainLocked()
         return true
+    }
+
+    /// Invalidates ambiguous evidence without changing the host application's production route.
+    public func invalidateCapture() {
+        stateLock.lock()
+        invalidateCaptureLocked()
+        stateLock.unlock()
     }
 
     /// Records a fixture-owned closure creation. It never accepts a production completion object.
@@ -374,7 +404,8 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
     }
 
     /// Closes only when the caller has just observed a terminal seat valid for this scenario.
-    @discardableResult
+    /// A rejected terminal does not invoke `completion`. An accepted close invokes it after drain,
+    /// passing `nil` when the receipt cannot be encoded or persisted.
     public func endScenario(
         after terminal: LifecycleTraceTerminal,
         completion: @escaping (LifecycleTraceStreamReceipt?) -> Void
@@ -434,18 +465,58 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
         )
 
         pendingRecords.append(record)
-        bufferHighWatermark = max(bufferHighWatermark, pendingRecords.count)
-        if pendingRecords.count > bufferCapacity {
-            droppedRecordsTotal += pendingRecords.count
+        let displacedOldestRecord = bufferedRecordCountLocked() > bufferCapacity
+        if displacedOldestRecord, !evictOldestBufferedRecordLocked() {
             captureFailed = true
             pendingRecords.removeAll()
+            return record
         }
+        let observedBufferLoad = max(
+            pendingRecords.contains(where: { $0.callback == .traceScenarioStart }) ? 1 : 0,
+            bufferedRecordCountLocked()
+        )
+        bufferHighWatermark = max(bufferHighWatermark, observedBufferLoad)
 
         record.recorder = snapshotLocked()
         if let index = pendingRecords.firstIndex(where: { $0.sequence == sequence }) {
             pendingRecords[index] = record
         }
+        if displacedOldestRecord {
+            refreshPendingBufferAccountingLocked()
+        }
         return record
+    }
+
+    private func bufferedRecordCountLocked() -> Int {
+        pendingRecords.reduce(into: 0) { count, pending in
+            if pending.callback != .traceScenarioStart {
+                count += 1
+            }
+        }
+    }
+
+    private func evictOldestBufferedRecordLocked() -> Bool {
+        guard let evictionIndex = pendingRecords.firstIndex(where: {
+            $0.callback != .traceScenarioStart
+        }) else { return false }
+        pendingRecords.remove(at: evictionIndex)
+        droppedRecordsTotal += 1
+        return true
+    }
+
+    private func refreshPendingBufferAccountingLocked() {
+        for index in pendingRecords.indices {
+            guard pendingRecords[index].callback != .traceScenarioStart else { continue }
+            let snapshot = pendingRecords[index].recorder
+            pendingRecords[index].recorder = LifecycleTraceRecorderSnapshot(
+                droppedRecordsTotal: droppedRecordsTotal,
+                aliasCounts: snapshot.aliasCounts,
+                aliasOverflow: snapshot.aliasOverflow,
+                aliasOverflowNamespaces: snapshot.aliasOverflowNamespaces,
+                bufferHighWatermark: bufferHighWatermark,
+                bufferCapacity: snapshot.bufferCapacity
+            )
+        }
     }
 
     private func aliasesLocked(
@@ -471,6 +542,7 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
 
     private func snapshotLocked() -> LifecycleTraceRecorderSnapshot {
         let counts = LifecycleTraceAliasCounts(
+            occurrence: aliasTables[.occurrence]?.count ?? 0,
             delivery: aliasTables[.delivery]?.count ?? 0,
             request: aliasTables[.request]?.count ?? 0,
             scene: aliasTables[.scene]?.count ?? 0,
@@ -509,23 +581,28 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
 
             guard let line = encode(record) else {
                 stateLock.lock()
-                captureFailed = true
-                state = .ended
-                pendingRecords.removeAll()
-                let completion = endCompletion
-                endCompletion = nil
+                invalidateCaptureLocked()
                 stateLock.unlock()
-                completion?(nil)
                 return
             }
-            sink.write(line: Self.linePrefix + line)
+            let published = sink.write(line: Self.linePrefix + line)
 
             stateLock.lock()
+            guard !captureFailed else {
+                stateLock.unlock()
+                return
+            }
+            guard published else {
+                invalidateCaptureLocked()
+                stateLock.unlock()
+                return
+            }
             emittedRecords += 1
             lastEmittedSequence = record.sequence
             let isEnd = record.callback == .traceScenarioEnd
             if isEnd {
                 state = .ended
+                drainScheduled = false
                 let receipt = receiptLocked(drainedAt: max(now(), lastCapturedAt))
                 let completion = endCompletion
                 endCompletion = nil
@@ -589,6 +666,21 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
             && fixtureStates.values.allSatisfy { $0.observedCallCount > 0 || $0.hasNotInvokedOutcome }
     }
 
+    private func invalidateCaptureLocked() {
+        captureFailed = true
+        state = .ended
+        drainScheduled = false
+        pendingRecords.removeAll()
+        aliasTables.removeAll()
+        fixtureStates.removeAll()
+        negativeFixtureDropFloors.removeAll()
+        let completion = endCompletion
+        endCompletion = nil
+        if let completion {
+            sinkQueue.async { completion(nil) }
+        }
+    }
+
     private func beginEndingLocked(completion: @escaping (LifecycleTraceStreamReceipt?) -> Void) {
         state = .ending
         endCompletion = completion
@@ -612,7 +704,10 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
 
     private func terminalIsValidForScenarioLocked(_ terminal: LifecycleTraceTerminal) -> Bool {
         switch (context.scenario, terminal) {
-        case (.iconColdLaunch, .activeScene),
+        case (.iconColdLaunch, .activeApplication)
+            where context.hostTopology == .appDelegateOnly,
+             (.iconColdLaunch, .activeScene)
+                 where context.hostTopology != .appDelegateOnly,
              (.pushTapWarm, .notificationResponse),
              (.pushTapCold, .notificationResponse),
              (.localNotificationTapWarm, .notificationResponse),
@@ -626,7 +721,10 @@ public final class LifecycleTraceRecorder: @unchecked Sendable {
              (.tokenRegistration, .tokenRegistration),
              (.registrationFailure, .registrationFailure):
             return true
-        case (.appBackgroundForeground, .activeScene):
+        case (.appBackgroundForeground, .activeApplication)
+            where context.hostTopology == .appDelegateOnly,
+             (.appBackgroundForeground, .activeScene)
+                 where context.hostTopology != .appDelegateOnly:
             return observedBackgroundSeat
         default:
             return false

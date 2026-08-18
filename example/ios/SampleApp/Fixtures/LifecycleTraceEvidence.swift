@@ -61,6 +61,15 @@ public enum LifecycleTraceEvidence {
         return URL(string: redirect) != nil
     }
 
+    /// Classifies the SDK's Live Activity URL transformation without exposing URL values.
+    public static func widgetRoutingResult(
+        original: URL,
+        destination: URL?
+    ) -> LifecycleTraceRoutingResult {
+        guard let destination = destination else { return .handled }
+        return destination == original ? .unhandled : .redirect
+    }
+
     public static func observe(applicationState: UIApplication.State) -> LifecycleTraceObservation {
         let value: String
         switch applicationState {

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -14,9 +15,12 @@ import tempfile
 from typing import Any
 
 
-SCHEMA = "cio-lifecycle-contract-lock/1"
+SCHEMA = "cio-lifecycle-contract-lock/2"
 SOURCE_REPOSITORY = "customerio/customerio-ios"
-SOURCE_COMMIT = "5b8c02e4c85203d073a85da8abb2212b19867e68"
+RELOCK_NOTE = (
+    "pinned_content_commit identifies the immutable reviewed contract content; "
+    "this descendant lock cannot self-reference its own commit."
+)
 ALGORITHM = "sha256"
 EXPECTED_PATHS = (
     "docs/dev-notes/IOS27-LIFECYCLE-CALLBACK-CONTRACT.md",
@@ -50,7 +54,13 @@ class ContractError(RuntimeError):
     pass
 
 
-def _load_lock(path: Path) -> list[dict[str, str]]:
+@dataclass(frozen=True)
+class ContractLock:
+    pinned_content_commit: str
+    entries: list[dict[str, str]]
+
+
+def _load_lock(path: Path) -> ContractLock:
     if path.is_symlink() or not path.is_file():
         raise ContractError(f"lock must be a regular non-symlink file: {path}")
     try:
@@ -58,18 +68,26 @@ def _load_lock(path: Path) -> list[dict[str, str]]:
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ContractError(f"cannot read lock {path}: {error}") from error
     if not isinstance(payload, dict) or set(payload) != {
-        "schema", "source_repository", "source_commit", "algorithm", "files"
+        "schema", "source_repository", "pinned_content_commit", "relock_note",
+        "algorithm", "files"
     }:
         raise ContractError("lock has an unexpected top-level shape")
     expected_scalars = {
         "schema": SCHEMA,
         "source_repository": SOURCE_REPOSITORY,
-        "source_commit": SOURCE_COMMIT,
+        "relock_note": RELOCK_NOTE,
         "algorithm": ALGORITHM,
     }
     for key, expected in expected_scalars.items():
         if payload.get(key) != expected:
             raise ContractError(f"lock {key} must equal {expected}")
+    pinned_content_commit = payload.get("pinned_content_commit")
+    if (
+        not isinstance(pinned_content_commit, str)
+        or len(pinned_content_commit) != 40
+        or any(character not in "0123456789abcdef" for character in pinned_content_commit)
+    ):
+        raise ContractError("lock pinned_content_commit must be a lowercase 40-character SHA")
     files = payload.get("files")
     if not isinstance(files, list) or len(files) != len(EXPECTED_PATHS):
         raise ContractError(f"lock must contain exactly {len(EXPECTED_PATHS)} files")
@@ -91,7 +109,7 @@ def _load_lock(path: Path) -> list[dict[str, str]]:
         normalized.append({"path": relative, "sha256": digest})
     if tuple(item["path"] for item in normalized) != EXPECTED_PATHS:
         raise ContractError("lock paths or ordering differ from the canonical 18-file bundle")
-    return normalized
+    return ContractLock(pinned_content_commit=pinned_content_commit, entries=normalized)
 
 
 def _validate_relative_path(value: str) -> None:
@@ -156,14 +174,47 @@ def _git(root: Path, *arguments: str) -> str:
     return completed.stdout.strip()
 
 
-def _verify_source_checkout(root: Path, entries: list[dict[str, str]]) -> None:
+def _git_bytes(root: Path, *arguments: str) -> bytes:
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(root), *arguments],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ContractError(f"git {' '.join(arguments)} failed for {root}") from error
+    return completed.stdout
+
+
+def _verify_source_checkout(root: Path, lock: ContractLock) -> None:
     if _git(root, "rev-parse", "--show-toplevel") != str(root):
         raise ContractError("source-root must be the Git checkout root")
-    if _git(root, "rev-parse", "HEAD") != SOURCE_COMMIT:
-        raise ContractError(f"source HEAD must equal {SOURCE_COMMIT}")
     if _git(root, "remote", "get-url", "origin") not in ACCEPTED_ORIGINS:
         raise ContractError(f"source origin must identify {SOURCE_REPOSITORY}")
-    verify(root, entries)
+    head = _git(root, "rev-parse", "HEAD")
+    try:
+        subprocess.run(
+            [
+                "git", "-C", str(root), "merge-base", "--is-ancestor",
+                lock.pinned_content_commit, head,
+            ],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ContractError(
+            "pinned_content_commit must be an ancestor of source HEAD"
+        ) from error
+    verify(root, lock.entries)
+    for entry in lock.entries:
+        blob = _git_bytes(root, "show", f"{lock.pinned_content_commit}:{entry['path']}")
+        actual = hashlib.sha256(blob).hexdigest()
+        if actual != entry["sha256"]:
+            raise ContractError(
+                "pinned content differs from lock digest for " + entry["path"]
+            )
 
 
 def _atomic_copy(source: Path, destination: Path) -> None:
@@ -187,9 +238,9 @@ def _atomic_copy(source: Path, destination: Path) -> None:
                 pass
 
 
-def sync(source_root: Path, destination_root: Path, entries: list[dict[str, str]]) -> None:
-    _verify_source_checkout(source_root, entries)
-    for entry in entries:
+def sync(source_root: Path, destination_root: Path, lock: ContractLock) -> None:
+    _verify_source_checkout(source_root, lock)
+    for entry in lock.entries:
         source = _target(source_root, entry["path"], must_exist=True)
         destination = _target(destination_root, entry["path"], must_exist=False)
         if destination.exists() and (destination.is_symlink() or not destination.is_file()):
@@ -197,7 +248,7 @@ def sync(source_root: Path, destination_root: Path, entries: list[dict[str, str]
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination = _target(destination_root, entry["path"], must_exist=False)
         _atomic_copy(source, destination)
-    verify(destination_root, entries)
+    verify(destination_root, lock.entries)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -217,16 +268,19 @@ def main() -> int:
     default_root = Path(__file__).resolve().parents[1]
     lock_path = Path(arguments.lock) if arguments.lock else default_root / LOCK_RELATIVE_PATH
     try:
-        entries = _load_lock(lock_path)
+        lock = _load_lock(lock_path)
         if arguments.command == "verify":
             root = _root(arguments.root)
-            verify(root, entries)
-            print(f"verified {len(entries)} canonical files under {root}")
+            verify(root, lock.entries)
+            print(f"verified {len(lock.entries)} canonical files under {root}")
         else:
             source_root = _root(arguments.source_root)
             destination_root = _root(arguments.destination_root)
-            sync(source_root, destination_root, entries)
-            print(f"synced and verified {len(entries)} canonical files under {destination_root}")
+            sync(source_root, destination_root, lock)
+            print(
+                f"synced and verified {len(lock.entries)} canonical files under "
+                f"{destination_root}"
+            )
     except ContractError as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
