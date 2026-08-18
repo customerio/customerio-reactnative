@@ -1,7 +1,0 @@
-{
-  "schema": "customerio-cocoapods-deployment-target-source-lock/1",
-  "canonical_repository": "customerio/customerio-ios",
-  "canonical_commit": "af8ad9baa750c497864884f1322f219d2ca8c32a",
-  "canonical_path": "scripts/cocoapods_deployment_target.rb",
-  "sha256": "c94bc108d83da53767b097d4a6ca58d012bf574ee5bacb8d694a47a0705bf971"
-}

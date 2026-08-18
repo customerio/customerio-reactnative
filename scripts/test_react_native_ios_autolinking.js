@@ -76,7 +76,6 @@ if (!packageArchive.files || packageArchive.name !== packageName) {
 const packagedPaths = new Set(packageArchive.files.map((file) => file.path));
 for (const requiredPath of [
   'ios/cocoapods_deployment_target.rb',
-  'ios/cocoapods_deployment_target.lock.json',
   'docs/cocoapods-deployment-target-normalization.md',
 ]) {
   if (!packagedPaths.has(requiredPath)) {

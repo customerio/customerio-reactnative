@@ -13,14 +13,10 @@ configuration, preserving a higher inherited app or extension floor. The helper 
 settings in the generated Pods project and CocoaPods-integrated app or extension projects. It does
 not rewrite a podspec or change runtime API availability.
 
-The package also ships a source lock beside the helper. That lock identifies the reviewed
-`customerio-ios` source commit and digest used for this wrapper copy, and the repository test suite
-fails if the packaged helper drifts without an explicit relock.
-
-To relock, land the canonical helper change in `customerio-ios` first, copy that file
-byte-for-byte into every wrapper, then update `canonical_commit` and `sha256` together. Do not edit
-the wrapper copy independently: the local test proves its digest matches the lock, while review of
-the named upstream commit establishes the source provenance.
+The package owns and tests this copy of the helper because customer Podfiles must be able to load it
+from the installed npm package. When its behavior changes, update the helper, tests, and guidance
+together. It does not depend on a cross-repository source lock or require wrapper copies to remain
+byte-identical.
 
 Customer.io deliberately continues to publish native SDKs that support iOS versions below 15. A
 podspec can therefore correctly declare that lower library minimum even when React Native or the
