@@ -22,9 +22,13 @@ end
 
 begin
   project_paths = ARGV.uniq.sort.flat_map do |path|
-    unless File.directory?(path)
+    unless File.exist?(path)
       raise CustomerIO::CocoaPodsDeploymentTarget::AuditError,
             "CocoaPods deployment-target audit path does not exist: #{path}"
+    end
+    unless File.directory?(path)
+      raise CustomerIO::CocoaPodsDeploymentTarget::AuditError,
+            "CocoaPods deployment-target audit path is not a project or directory: #{path}"
     end
 
     if File.extname(path) == ".xcodeproj"

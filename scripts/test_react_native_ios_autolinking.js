@@ -18,8 +18,13 @@ const config = JSON.parse(
     encoding: 'utf8',
   })
 );
-const actualPodspec =
-  config.dependencies['customerio-reactnative'].platforms.ios.podspecPath;
+const customerIODependency = config.dependencies['customerio-reactnative'];
+const actualPodspec = customerIODependency?.platforms?.ios?.podspecPath;
+if (!actualPodspec) {
+  throw new Error(
+    'Expected React Native autolinking to expose an iOS podspecPath for customerio-reactnative'
+  );
+}
 const expectedPodspec = path.join(
   repositoryRoot,
   'customerio-reactnative.podspec'

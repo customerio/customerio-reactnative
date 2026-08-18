@@ -80,10 +80,13 @@ setting already determines the effective value.
 
 If the helper reports a non-numeric selected value, use the project, target, and configuration in
 the error to locate the authoritative `IPHONEOS_DEPLOYMENT_TARGET`. Replace the macro or inherited
-expression at that precedence with its intended numeric version, then run `pod install` again. Do
-not skip that target: continuing with an unresolved expression would leave the generated project
-outside the deterministic audit. The helper validates every selected value before changing any
-project, so this failure does not leave a partially normalized installation.
+expression at that precedence with its intended numeric version, then run `pod install` again. For
+a generated Pods target, make that override durably in the Podfile's `post_install` hook before
+calling `CustomerIO::CocoaPodsDeploymentTarget.normalize!`, or correct the podspec that supplies the
+expression; do not edit the generated project because the next install replaces it. Do not skip
+that target: continuing with an unresolved expression would leave the generated project outside
+the deterministic audit. The helper validates every selected value before changing any project,
+so this failure does not leave a partially normalized installation.
 
 If an error says a selected xcconfig cannot be read or parsed, repair or remove the reported base
 configuration file reference for the reported project, target, and configuration. Lower-precedence
@@ -107,13 +110,14 @@ follow an intentional platform-support change across the SDK, wrappers, and rele
 it is not a prerequisite for adopting Xcode 27. Keep the audit in CI after removing the helper so
 a later dependency update cannot silently reintroduce a lower target.
 
-The repository also includes a deterministic CI audit that prints the target, matching project,
-and effective value for every generated target/configuration pair in stable order. It examines
-every target in each passed project, including non-integrated targets that the normalizer
-intentionally does not change; set those targets to the host minimum explicitly. Pass the `Pods`
-directory so the audit discovers every `.xcodeproj` directly under it, including CocoaPods
-multi-project output, while ignoring unrelated example projects vendored inside downloaded pod
-sources. It fails if a supplied path is missing or contains no projects.
+Repository contributors also have a deterministic CI audit under `scripts/` that prints the target,
+matching project, and effective value for every generated target/configuration pair in stable
+order. That audit script is not part of the published npm package. It examines every target in each
+passed project, including non-integrated targets that the normalizer intentionally does not change;
+set those targets to the host minimum explicitly. Pass the `Pods` directory so the audit discovers
+every `.xcodeproj` directly under it, including CocoaPods multi-project output, while ignoring
+unrelated example projects vendored inside downloaded pod sources. It fails if a supplied path is
+missing or contains no projects.
 
 ```sh
 cd example

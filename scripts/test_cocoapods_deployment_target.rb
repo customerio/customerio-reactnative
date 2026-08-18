@@ -357,6 +357,23 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
     end
   end
 
+  def test_standalone_audit_rejects_an_existing_non_project_file
+    Dir.mktmpdir do |directory|
+      file_path = Pathname(directory).join("Podfile")
+      File.write(file_path, "platform :ios, '15.0'\n")
+
+      _output, error, status = Open3.capture3(
+        RbConfig.ruby,
+        File.expand_path("audit_cocoapods_deployment_targets.rb", __dir__),
+        file_path.to_s
+      )
+
+      refute status.success?
+      assert_includes error, "is not a project or directory"
+      refute_includes error, "does not exist"
+    end
+  end
+
   def test_normalize_preserves_a_higher_target_xcconfig_floor
     skip "Xcodeproj is unavailable" unless xcodeproj_available?
 
