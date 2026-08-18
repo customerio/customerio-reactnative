@@ -160,6 +160,30 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
     )
   end
 
+  def test_normalize_fails_before_mutating_whitespace_qualified_target_settings
+    [" ", "\t"].each do |separator|
+      project = Project.new(Pathname("Pods.xcodeproj"), [], 0)
+      conditional = target(project, "Conditional", nil)
+      conditional.build_configurations.first.build_settings[
+        "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING}#{separator}[sdk=iphoneos*]"
+      ] = "13.0"
+      project.targets << conditional
+      installer = Installer.new([project], nil, [])
+
+      error = assert_raises(CustomerIO::CocoaPodsDeploymentTarget::AuditError) do
+        CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+          installer,
+          minimum_ios_version: "15.0",
+          io: nil
+        )
+      end
+
+      assert_includes error.message, "conditional IPHONEOS_DEPLOYMENT_TARGET"
+      assert_nil deployment_target(conditional)
+      assert_equal 0, project.save_count
+    end
+  end
+
   def test_normalize_fails_before_target_override_can_lower_a_conditional_project_floor
     project = Project.new(Pathname("App.xcodeproj"), [], 0, project_configurations(nil))
     project.build_configurations.first.build_settings[
@@ -182,6 +206,30 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
       CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING
     )
     assert_equal 0, project.save_count
+  end
+
+  def test_normalize_fails_before_target_override_can_lower_whitespace_qualified_project_floors
+    [" ", "\t"].each do |separator|
+      project = Project.new(Pathname("App.xcodeproj"), [], 0, project_configurations(nil))
+      project.build_configurations.first.build_settings[
+        "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING}#{separator}[sdk=iphoneos*]"
+      ] = "17.0"
+      app = target(project, "App", nil)
+      project.targets << app
+      installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+      error = assert_raises(CustomerIO::CocoaPodsDeploymentTarget::AuditError) do
+        CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+          installer,
+          minimum_ios_version: "15.0",
+          io: nil
+        )
+      end
+
+      assert_includes error.message, "conditional IPHONEOS_DEPLOYMENT_TARGET"
+      assert_nil deployment_target(app)
+      assert_equal 0, project.save_count
+    end
   end
 
   def test_normalize_preserves_a_higher_inherited_project_floor
@@ -579,6 +627,74 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
       assert_includes error.message, xcconfig_path.to_s
       assert_nil deployment_target(app)
       assert_equal 0, project.save_count
+    end
+  end
+
+  def test_normalize_fails_closed_for_whitespace_qualified_target_xcconfig_floors
+    skip "Xcodeproj is unavailable" unless xcodeproj_available?
+
+    [" ", "\t"].each do |separator|
+      Dir.mktmpdir do |directory|
+        xcconfig_path = Pathname(directory).join("Target.xcconfig")
+        File.write(
+          xcconfig_path,
+          "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING}#{separator}[sdk=iphoneos*] = 13.0\n"
+        )
+        project = project_with_floor("App.xcodeproj", "16.0")
+        app = target(project, "App", nil)
+        app.build_configurations.each do |configuration|
+          configuration.base_configuration_reference = ConfigurationReference.new(xcconfig_path)
+        end
+        project.targets << app
+        installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+        error = assert_raises(CustomerIO::CocoaPodsDeploymentTarget::AuditError) do
+          CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+            installer,
+            minimum_ios_version: "15.0",
+            io: nil
+          )
+        end
+
+        assert_includes error.message, "conditional IPHONEOS_DEPLOYMENT_TARGET"
+        assert_nil deployment_target(app)
+        assert_equal 0, project.save_count
+      end
+    end
+  end
+
+  def test_normalize_fails_closed_for_whitespace_qualified_project_xcconfig_floors
+    skip "Xcodeproj is unavailable" unless xcodeproj_available?
+
+    [" ", "\t"].each do |separator|
+      Dir.mktmpdir do |directory|
+        xcconfig_path = Pathname(directory).join("Project.xcconfig")
+        File.write(
+          xcconfig_path,
+          "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING}#{separator}[sdk=iphoneos*] = 17.0\n"
+        )
+        project_configuration = OpaqueConfiguration.new(
+          "Debug",
+          {},
+          ConfigurationReference.new(xcconfig_path)
+        )
+        project = Project.new(Pathname("App.xcodeproj"), [], 0, [project_configuration])
+        app = Target.new("App", "App-uuid", project, [Configuration.new("Debug", {})])
+        project.targets << app
+        installer = Installer.new([], nil, [AggregateTarget.new([app], project)])
+
+        error = assert_raises(CustomerIO::CocoaPodsDeploymentTarget::AuditError) do
+          CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+            installer,
+            minimum_ios_version: "15.0",
+            io: nil
+          )
+        end
+
+        assert_includes error.message, "conditional IPHONEOS_DEPLOYMENT_TARGET"
+        assert_nil deployment_target(app)
+        assert_equal 0, project.save_count
+      end
     end
   end
 

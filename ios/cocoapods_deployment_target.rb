@@ -274,8 +274,9 @@ module CustomerIO
     private_class_method :configuration_file_setting
 
     def validate_no_conditional_settings!(settings, context:)
+      conditional_setting_pattern = /\A#{Regexp.escape(BUILD_SETTING)}[[:space:]]*\[/
       conditional_keys = settings.keys.map(&:to_s).select do |key|
-        key.start_with?("#{BUILD_SETTING}[")
+        key.match?(conditional_setting_pattern)
       end.sort
       return if conditional_keys.empty?
 
