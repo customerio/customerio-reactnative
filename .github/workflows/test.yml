@@ -26,8 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -35,10 +33,6 @@ jobs:
 
       - run: npm ci
 
-      - name: Validate iOS lifecycle fixture wiring
-        env:
-          CIO_LIFECYCLE_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD' }}
-        run: node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
       - run: npm run lint:report
 
       - name: Annotate Code Linting Results
@@ -51,3 +45,19 @@ jobs:
           fail-on-error: true 
           markdown-report-on-step-summary: true 
           report-json: "eslint_report.json"
+
+  lifecycle-fixture:
+    name: Validate iOS lifecycle fixture wiring
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - env:
+          CIO_LIFECYCLE_BASE_REF: origin/${{ github.base_ref }}
+        run: node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs

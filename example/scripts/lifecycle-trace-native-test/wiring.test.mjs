@@ -104,6 +104,18 @@ test('instruments only existing application and routing seats', () => {
   );
   assert.match(appDelegate, /LifecycleTraceEvidence\.widgetRoutingResult\(/);
   assert.doesNotMatch(appDelegate, /liveActivityRoutingResult/);
+  const evidence = readFileSync(
+    path.join(
+      repositoryRoot,
+      'example/ios/SampleApp/Fixtures/LifecycleTraceEvidence.swift'
+    ),
+    'utf8'
+  );
+  assert.match(evidence, /static func isTraceableURLRoute\(_ url: URL\)/);
+  assert.match(
+    evidence,
+    /static func widgetRoutingResult\(\s*original: URL,\s*destination: URL\?/s
+  );
 });
 
 test('pins the native-owned contract sync tool', () => {
@@ -181,4 +193,18 @@ test('does not modify JavaScript or the published iOS wrapper', () => {
     { cwd: repositoryRoot, encoding: 'utf8' }
   ).trim();
   assert.equal(changed, '');
+  const dirty = execFileSync(
+    'git',
+    [
+      'status',
+      '--porcelain=v1',
+      '--untracked-files=all',
+      '--',
+      'example/index.js',
+      'example/src',
+      'ios',
+    ],
+    { cwd: repositoryRoot, encoding: 'utf8' }
+  ).trim();
+  assert.equal(dirty, '');
 });

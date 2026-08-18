@@ -41,12 +41,13 @@ those push seats in its existing no-op APN/FCM callback methods.
 The four shared support sources are byte copies of native's post-format, post-build frozen
 files. The focused Node test pins their SHA-256 values:
 
-| File                           | SHA-256                                                            |
-| ------------------------------ | ------------------------------------------------------------------ |
-| `LifecycleTraceEvidence.swift` | `f0719e181d7e1ff0423703e86ca9bcc50a99e98111da99dd357fdf09f9ceef87` |
-| `LifecycleTraceModel.swift`    | `62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c` |
-| `LifecycleTraceProbe.swift`    | `b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580` |
-| `LifecycleTraceRecorder.swift` | `9000c4667164cbc8fd2d0f25d938a1182660a2b0bf400f9166e0d8d86f1e458f` |
+| File                                  | SHA-256                                                            |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| `LifecycleTraceEvidence.swift`        | `f0719e181d7e1ff0423703e86ca9bcc50a99e98111da99dd357fdf09f9ceef87` |
+| `LifecycleTraceModel.swift`           | `62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c` |
+| `LifecycleTraceProbe.swift`           | `b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580` |
+| `LifecycleTraceRecorder.swift`        | `9000c4667164cbc8fd2d0f25d938a1182660a2b0bf400f9166e0d8d86f1e458f` |
+| `scripts/ios27_lifecycle_contract.py` | `03c48a30b287c58e5b611388980928ea08eb91385b52ac5e4dbdb1d32a23db28` |
 
 The killed-state workaround remains behaviorally unchanged, including its inner
 `launchOptions` shadow. The outer dictionary passed to `startReactNative` is not repaired or
@@ -90,9 +91,12 @@ and registration on a physical device remain L3-only.
 Use Node 20 for the focused source test:
 
 ```sh
-CIO_LIFECYCLE_BASE_REF=origin/codex/mbl-2278-cocoapods-target-normalization \
+CIO_LIFECYCLE_BASE_REF=origin/<current-pr-base> \
   mise x node@20 -- node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
 ```
+
+For the current stack, `<current-pr-base>` is
+`codex/mbl-2278-cocoapods-target-normalization`.
 
 Verify the byte-identical canonical bundle from the repository root:
 
