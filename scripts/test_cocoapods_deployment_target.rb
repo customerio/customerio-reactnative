@@ -8,6 +8,7 @@ require "open3"
 require "pathname"
 require "rbconfig"
 require "stringio"
+require "timeout"
 require "tmpdir"
 
 begin
@@ -41,6 +42,7 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
     helper_path = File.expand_path("../ios/cocoapods_deployment_target.rb", __dir__)
     lock = JSON.parse(File.read(lock_path))
 
+    assert_equal "customerio-cocoapods-deployment-target-source-lock/1", lock.fetch("schema")
     assert_equal "customerio/customerio-ios", lock.fetch("canonical_repository")
     assert_match(/\A[0-9a-f]{40}\z/, lock.fetch("canonical_commit"))
     assert_equal "scripts/cocoapods_deployment_target.rb", lock.fetch("canonical_path")
@@ -342,7 +344,7 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
       end
       FileUtils.mkdir_p(Pathname(directory).join("DownloadedPod/Example.xcodeproj"))
 
-      output, error, status = Open3.capture3(
+      output, error, status = capture3_with_timeout(
         RbConfig.ruby,
         File.expand_path("audit_cocoapods_deployment_targets.rb", __dir__),
         "--minimum",
@@ -358,11 +360,13 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
   end
 
   def test_standalone_audit_rejects_an_existing_non_project_file
+    skip "Xcodeproj is unavailable" unless xcodeproj_available?
+
     Dir.mktmpdir do |directory|
       file_path = Pathname(directory).join("Podfile")
       File.write(file_path, "platform :ios, '15.0'\n")
 
-      _output, error, status = Open3.capture3(
+      _output, error, status = capture3_with_timeout(
         RbConfig.ruby,
         File.expand_path("audit_cocoapods_deployment_targets.rb", __dir__),
         file_path.to_s
@@ -402,6 +406,8 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
   end
 
   def test_target_xcconfig_skips_an_unreadable_lower_precedence_project_xcconfig
+    skip "Xcodeproj is unavailable" unless xcodeproj_available?
+
     Dir.mktmpdir do |directory|
       target_xcconfig = Pathname(directory).join("Target.xcconfig")
       File.write(target_xcconfig, "#{CustomerIO::CocoaPodsDeploymentTarget::BUILD_SETTING} = 17.0\n")
@@ -605,6 +611,10 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
   end
 
   private
+
+  def capture3_with_timeout(*command)
+    Timeout.timeout(120) { Open3.capture3(*command) }
+  end
 
   def xcodeproj_available?
     defined?(Xcodeproj::Config) && defined?(Xcodeproj::Project)

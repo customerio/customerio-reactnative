@@ -17,6 +17,11 @@ The package also ships a source lock beside the helper. That lock identifies the
 `customerio-ios` source commit and digest used for this wrapper copy, and the repository test suite
 fails if the packaged helper drifts without an explicit relock.
 
+To relock, land the canonical helper change in `customerio-ios` first, copy that file
+byte-for-byte into every wrapper, then update `canonical_commit` and `sha256` together. Do not edit
+the wrapper copy independently: the local test proves its digest matches the lock, while review of
+the named upstream commit establishes the source provenance.
+
 Customer.io deliberately continues to publish native SDKs that support iOS versions below 15. A
 podspec can therefore correctly declare that lower library minimum even when React Native or the
 application consuming it requires a newer iOS version. CocoaPods carries deployment metadata from
