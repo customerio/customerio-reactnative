@@ -162,9 +162,10 @@ module CustomerIO
       targets.flat_map do |target|
         project = target.respond_to?(:project) ? target.project : nil
         target.build_configurations.map do |configuration|
+          context = configuration_context(project, target, configuration)
+          validate_no_conditional_settings!(configuration.build_settings, context: context)
           target_setting_present = configuration.build_settings.key?(BUILD_SETTING)
           target_value = normalized_setting(configuration.build_settings[BUILD_SETTING])
-          context = configuration_context(project, target, configuration)
           if target_setting_present
             target_configuration_value = nil
             project_value = nil
@@ -204,6 +205,8 @@ module CustomerIO
 
     def effective_configuration_value(configuration, context:)
       return nil if configuration.nil?
+
+      validate_no_conditional_settings!(configuration.build_settings, context: context)
 
       if configuration.build_settings.key?(BUILD_SETTING)
         return normalized_setting(configuration.build_settings[BUILD_SETTING])
@@ -257,6 +260,10 @@ module CustomerIO
         unless settings.respond_to?(:key?)
           raise AuditError, "#{context}: Cannot inspect xcconfig #{xcconfig_path}"
         end
+        validate_no_conditional_settings!(
+          settings,
+          context: "#{context}, xcconfig #{xcconfig_path}"
+        )
         return [false, nil] unless settings.key?(BUILD_SETTING)
 
         return [true, normalized_setting(settings[BUILD_SETTING])]
@@ -265,6 +272,19 @@ module CustomerIO
       [false, nil]
     end
     private_class_method :configuration_file_setting
+
+    def validate_no_conditional_settings!(settings, context:)
+      conditional_keys = settings.keys.map(&:to_s).select do |key|
+        key.start_with?("#{BUILD_SETTING}[")
+      end.sort
+      return if conditional_keys.empty?
+
+      raise AuditError,
+            "#{context} has conditional #{BUILD_SETTING} settings that cannot be audited deterministically: " \
+            "#{conditional_keys.join(', ')}. Replace them with one numeric, unconditional #{BUILD_SETTING} " \
+            "before running this helper."
+    end
+    private_class_method :validate_no_conditional_settings!
 
     def rendered_synchronized_path(anchor, relative_path)
       anchor_path = if anchor.respond_to?(:path)

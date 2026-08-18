@@ -82,6 +82,12 @@ effective value and final value. It fails the install if the selected effective 
 non-numeric, such as `$(CUSTOM_IOS_FLOOR)`, because the generated-project audit cannot prove its
 resolved value. A non-numeric value at a lower precedence does not fail when an explicit target
 setting already determines the effective value.
+SDK-, architecture-, or configuration-qualified keys such as
+`IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]` also fail before mutation at the selected precedence.
+Xcode can choose a qualified key over an unconditional value, so adding a numeric override would
+not prove the effective floor and could lower a higher conditional project setting. Replace the
+selected conditional matrix with one numeric, unconditional deployment target before rerunning the
+helper.
 
 If the helper reports a non-numeric selected value, use the project, target, and configuration in
 the error to locate the authoritative `IPHONEOS_DEPLOYMENT_TARGET`. Replace the macro or inherited
