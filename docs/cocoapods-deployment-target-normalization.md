@@ -13,6 +13,10 @@ configuration, preserving a higher inherited app or extension floor. The helper 
 settings in the generated Pods project and CocoaPods-integrated app or extension projects. It does
 not rewrite a podspec or change runtime API availability.
 
+The package also ships a source lock beside the helper. That lock identifies the reviewed
+`customerio-ios` source commit and digest used for this wrapper copy, and the repository test suite
+fails if the packaged helper drifts without an explicit relock.
+
 Customer.io deliberately continues to publish native SDKs that support iOS versions below 15. A
 podspec can therefore correctly declare that lower library minimum even when React Native or the
 application consuming it requires a newer iOS version. CocoaPods carries deployment metadata from

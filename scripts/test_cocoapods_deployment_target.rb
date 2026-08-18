@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "fileutils"
+require "digest"
+require "json"
 require "minitest/autorun"
 require "open3"
 require "pathname"
@@ -33,6 +35,17 @@ class CocoaPodsDeploymentTargetTest < Minitest::Test
   Target = Struct.new(:name, :uuid, :project, :build_configurations)
   AggregateTarget = Struct.new(:user_targets, :user_project)
   Installer = Struct.new(:generated_projects, :pods_project, :aggregate_targets)
+
+  def test_helper_matches_reviewed_native_source_lock
+    lock_path = File.expand_path("../ios/cocoapods_deployment_target.lock.json", __dir__)
+    helper_path = File.expand_path("../ios/cocoapods_deployment_target.rb", __dir__)
+    lock = JSON.parse(File.read(lock_path))
+
+    assert_equal "customerio/customerio-ios", lock.fetch("canonical_repository")
+    assert_match(/\A[0-9a-f]{40}\z/, lock.fetch("canonical_commit"))
+    assert_equal "scripts/cocoapods_deployment_target.rb", lock.fetch("canonical_path")
+    assert_equal lock.fetch("sha256"), Digest::SHA256.file(helper_path).hexdigest
+  end
 
   def test_normalize_covers_generated_and_integrated_targets_and_preserves_higher_floors
     pods_project = Project.new(Pathname("Pods/Pods.xcodeproj"), [], 0)
