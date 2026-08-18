@@ -16,7 +16,7 @@ being inferred from missing callbacks.
 
 The implementation deliberately has no JavaScript producer, lifecycle receipt, aggregate,
 or `initialProperties` handoff. It also adds no application, scene, notification-center, or
-push delegate. The published wrapper under `ios/` is unchanged.
+push delegate. This ticket does not change the published wrapper under `ios/`.
 
 ## Existing seats recorded
 
@@ -93,7 +93,7 @@ and registration on a physical device remain L3-only.
 Use Node 20 for the focused source test:
 
 ```sh
-CIO_LIFECYCLE_BASE_REF=origin/<current-pr-base> \
+CIO_LIFECYCLE_BASE_REF="$(git rev-parse origin/<current-pr-base>)" \
   mise x node@20 -- node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
 ```
 
