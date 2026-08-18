@@ -29,9 +29,16 @@ typealias CioMessagingPushHandler = MessagingPushAPN
 let UNIVERSAL_LINK_URL = URL(string: "http://www.amiapp-reactnative-apns.com")!
 #endif
 
-private let sampleLifecycleTraceRecorder = LifecycleTraceHarness.configureFromEnvironment(
-  sink: ConsoleLifecycleTraceSink()
-)
+private let sampleLifecycleTraceRecorder: LifecycleTraceRecorder? = {
+  let environment = ProcessInfo.processInfo.environment
+  guard environment.keys.contains(where: { $0.hasPrefix("CIO_LIFECYCLE_") }) else {
+    return nil
+  }
+  return LifecycleTraceHarness.configureFromEnvironment(
+    sink: ConsoleLifecycleTraceSink(),
+    environment: environment
+  )
+}()
 private let sampleLifecycleTraceProbeObserver = sampleLifecycleTraceRecorder.map { _ in
   LifecycleTracePlatformProbeObserver()
 }
@@ -131,7 +138,9 @@ extension AppDelegate {
     // customer's redirect target to route to (nil when it carries none); any other URL comes back
     // unchanged, so existing deep links keep working.
     let isCustomerIOLiveActivityURL = LifecycleTraceEvidence.isCustomerIOLiveActivityRoute(url)
-    if isCustomerIOLiveActivityURL {
+    let isTraceableLiveActivityURL = isCustomerIOLiveActivityURL
+      && LifecycleTraceEvidence.isTraceableURLRoute(url)
+    if isTraceableLiveActivityURL {
       LifecycleTraceProbe.post(
         callback: .customerIORouteDeepLink,
         owner: .customerIOSDK,
@@ -141,7 +150,7 @@ extension AppDelegate {
       )
     }
     let routableUrl = NativeLiveActivities.handleWidgetUrl(url)
-    if isCustomerIOLiveActivityURL {
+    if isTraceableLiveActivityURL {
       LifecycleTraceProbe.post(
         callback: .customerIORouteDeepLink,
         owner: .customerIOSDK,
@@ -149,7 +158,10 @@ extension AppDelegate {
         phase: .result,
         observations: routeEvidence,
         LifecycleTraceEvidence.observe(
-          routingResult: Self.liveActivityRoutingResult(original: url, destination: routableUrl)
+          routingResult: LifecycleTraceEvidence.widgetRoutingResult(
+            original: url,
+            destination: routableUrl
+          )
         )
       )
     }
@@ -205,14 +217,6 @@ extension AppDelegate {
       LifecycleTraceHarness.endScenario(after: .hostUserActivityRoute)
       return handled
     }
-
-  private static func liveActivityRoutingResult(
-    original: URL,
-    destination: URL?
-  ) -> LifecycleTraceRoutingResult {
-    guard let destination else { return .handled }
-    return destination == original ? .unhandled : .redirect
-  }
 
   private func recordColdStartLaunch(
     _ application: UIApplication,

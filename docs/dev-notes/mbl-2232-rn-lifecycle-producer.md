@@ -41,11 +41,11 @@ those push seats in its existing no-op APN/FCM callback methods.
 The four shared support sources are byte copies of native's post-format, post-build frozen
 files. The focused Node test pins their SHA-256 values:
 
-| File | SHA-256 |
-| --- | --- |
+| File                           | SHA-256                                                            |
+| ------------------------------ | ------------------------------------------------------------------ |
 | `LifecycleTraceEvidence.swift` | `f0719e181d7e1ff0423703e86ca9bcc50a99e98111da99dd357fdf09f9ceef87` |
-| `LifecycleTraceModel.swift` | `62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c` |
-| `LifecycleTraceProbe.swift` | `b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580` |
+| `LifecycleTraceModel.swift`    | `62d6d8c3b50635a1a5687e535df4b13606b57a71a0106b419bc274819cf6c46c` |
+| `LifecycleTraceProbe.swift`    | `b3cb7c92594f555f326dc6410de33e2528382258cd691cf3fb8f2619c9bce580` |
 | `LifecycleTraceRecorder.swift` | `9000c4667164cbc8fd2d0f25d938a1182660a2b0bf400f9166e0d8d86f1e458f` |
 
 The killed-state workaround remains behaviorally unchanged, including its inner
@@ -71,6 +71,11 @@ podspec as the primary package podspec. CocoaPods then creates an empty aggregat
 validation for this producer must include that exact stacked change. This ticket does not
 duplicate or partially port MBL-2278's normalization work.
 
+The real `example/ios/SampleApp.xcodeproj` is generated and untracked. A reviewer
+with an existing local project must remove and regenerate it from
+`SampleApp.xcodeproj.tracked` before building, so stale local project wiring
+cannot omit the four fixture sources.
+
 ## Evidence boundary
 
 The checked-in example at the contract's audited standalone repository commit resolves
@@ -85,7 +90,8 @@ and registration on a physical device remain L3-only.
 Use Node 20 for the focused source test:
 
 ```sh
-mise x node@20 -- node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
+CIO_LIFECYCLE_BASE_REF=origin/codex/mbl-2278-cocoapods-target-normalization \
+  mise x node@20 -- node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
 ```
 
 Verify the byte-identical canonical bundle from the repository root:
