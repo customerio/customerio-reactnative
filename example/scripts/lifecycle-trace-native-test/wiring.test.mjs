@@ -175,6 +175,11 @@ test('keeps the React Native control explicitly AppDelegate-only', () => {
 test('does not modify JavaScript or the published iOS wrapper', (t) => {
   const baseRef = process.env.CIO_LIFECYCLE_BASE_REF;
   if (!baseRef) {
+    assert.notEqual(
+      process.env.GITHUB_EVENT_NAME,
+      'pull_request',
+      'CIO_LIFECYCLE_BASE_REF must identify the PR base on pull_request events'
+    );
     t.skip('PR base is unavailable; content and hash assertions still ran');
     return;
   }

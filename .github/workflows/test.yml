@@ -49,6 +49,7 @@ jobs:
           report-json: "eslint_report.json"
 
       - name: Validate iOS lifecycle fixture wiring
+        if: always()
         env:
           CIO_LIFECYCLE_BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
         run: node --test example/scripts/lifecycle-trace-native-test/wiring.test.mjs
