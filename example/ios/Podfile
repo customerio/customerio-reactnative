@@ -109,6 +109,6 @@ target "LiveActivityWidget" do
   # A widget extension cannot link the wrapper pod, so it names the rendering pods itself.
   # Keep the version in step with package.json's cioNativeiOSSdkVersion.
   %w[CustomerIOLiveActivitiesTemplates CustomerIOLiveActivitiesAttributes].each do |cio_pod|
-    pod cio_pod, '4.7.2'
+    pod cio_pod, '4.7.4'
   end
 end
