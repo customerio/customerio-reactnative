@@ -370,6 +370,7 @@ DEPENDENCIES
   fastlane-plugin-versioning_android
   fastlane-plugin-versioning_ios
   logger
+  minitest (~> 5.25)
   mutex_m
   xcodeproj (< 1.26.0)
 

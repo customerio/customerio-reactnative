@@ -230,6 +230,21 @@ jobs:
           fi
         working-directory: example
 
+      - name: Audit CocoaPods deployment targets
+        if: ${{ inputs.platform == 'ios' }}
+        working-directory: example
+        run: |
+          node ../scripts/test_react_native_ios_autolinking.js
+          bundle exec ruby ../scripts/test_cocoapods_deployment_target.rb
+          minimum_ios_version=$(bundle exec ruby -e \
+            "require './node_modules/react-native/scripts/react_native_pods'; \
+             require '../ios/cocoapods_deployment_target'; \
+             print CustomerIO::CocoaPodsDeploymentTarget.maximum(min_ios_version_supported, '15.0')")
+          bundle exec ruby ../scripts/audit_cocoapods_deployment_targets.rb \
+            --minimum "$minimum_ios_version" \
+            ios/Pods \
+            ios/SampleApp.xcodeproj
+
       # Build the app and upload to Firebase App Distribution
 
       - name: Setup Android environment for Android sample app

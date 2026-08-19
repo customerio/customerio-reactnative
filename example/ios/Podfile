@@ -7,16 +7,22 @@ load "/tmp/override_cio_sdk.rb"
 # -------------
 
 # Resolve scripts with node to allow for hoisting
-def node_require(script)
-  require Pod::Executable.execute_command('node', ['-p',
+def node_resolve(script)
+  Pod::Executable.execute_command('node', ['-p',
     "require.resolve(
       '#{script}',
       {paths: [process.argv[1]]},
     )", __dir__]).strip
 end
 
+def node_require(script)
+  require node_resolve(script)
+end
+
 node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
+
+require_relative '../../ios/cocoapods_deployment_target'
 
 require_relative "../scripts/ios_project_setup_utils.rb"
 
@@ -29,6 +35,10 @@ setup_permissions([
 ])
 
 push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
+customer_io_minimum_ios_version = CustomerIO::CocoaPodsDeploymentTarget.maximum(
+  min_ios_version_supported,
+  '15.0'
+)
 
 app_target_name = "SampleApp"
 nse_target_name = "NotificationServiceExtension"
@@ -72,6 +82,11 @@ target app_target_name do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false
+    )
+
+    CustomerIO::CocoaPodsDeploymentTarget.normalize!(
+      installer,
+      minimum_ios_version: customer_io_minimum_ios_version
     )
 
   end
