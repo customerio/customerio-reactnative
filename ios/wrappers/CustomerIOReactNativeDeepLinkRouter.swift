@@ -2,11 +2,14 @@ import Foundation
 
 final class CustomerIOReactNativeDeepLinkRouter {
     private static let sceneManifestKey = "UIApplicationSceneManifest"
+    private static let sceneConfigurationsKey = "UISceneConfigurations"
     private static let openURLNotification = Notification.Name("RCTOpenURLNotification")
 
     static var isSceneLifecycleEnabled: Bool {
-        // UIKit enables the scene lifecycle when the scene manifest is present.
-        Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) != nil
+        guard let manifest = Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) as? [String: Any],
+              let configurations = manifest[sceneConfigurationsKey] as? [String: Any]
+        else { return false }
+        return !configurations.isEmpty
     }
 
     static func route(_ url: URL) {

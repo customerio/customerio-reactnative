@@ -227,6 +227,29 @@ public class NativeLiveActivities: NSObject {
         CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
     }
 
+    /// Build React Native launch options from a scene connection, reporting a cold Live Activity
+    /// tap and replacing Customer.io's internal tracking URL with its destination.
+    public static func reactNativeLaunchOptions(
+        from connectionOptions: UIScene.ConnectionOptions
+    ) -> [UIApplication.LaunchOptionsKey: Any] {
+        var launchOptions: [UIApplication.LaunchOptionsKey: Any] = [:]
+
+        if let url = connectionOptions.urlContexts.first?.url,
+           let routableUrl = handleWidgetUrl(url)
+        {
+            launchOptions[.url] = routableUrl
+        }
+
+        if let userActivity = connectionOptions.userActivities.first {
+            launchOptions[.userActivityDictionary] = [
+                UIApplication.LaunchOptionsKey.userActivityType.rawValue: userActivity.activityType,
+                "UIApplicationLaunchOptionsUserActivityKey": userActivity,
+            ]
+        }
+
+        return launchOptions
+    }
+
     // MARK: - Helpers
 
     @available(iOS 16.2, *)

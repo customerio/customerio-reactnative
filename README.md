@@ -105,7 +105,19 @@ extension AppDelegate {
 
 A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
-For a `UIScene` host, replace the ordinary React Native URL-forwarding body in its existing `SceneDelegate` with this handoff. The wrapper reports Customer.io Live Activity taps and routes every remaining URL through React Native Linking once:
+For a `UIScene` host, handle both lifecycle paths. At scene connection, pass launch options through the wrapper so a cold Live Activity tap is attributed and React Native receives the customer's destination instead of Customer.io's internal tracking URL:
+
+```swift
+import customerio_reactnative
+
+reactNativeFactory?.startReactNative(
+  withModuleName: "YourApp",
+  in: window,
+  launchOptions: NativeLiveActivities.reactNativeLaunchOptions(from: connectionOptions)
+)
+```
+
+Then replace the ordinary React Native URL-forwarding body in the existing `SceneDelegate` for warm opens. This reports Live Activity taps and routes each remaining URL through React Native Linking:
 
 ```swift
 import customerio_reactnative
