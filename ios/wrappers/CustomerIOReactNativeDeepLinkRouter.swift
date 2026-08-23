@@ -5,6 +5,8 @@ final class CustomerIOReactNativeDeepLinkRouter {
     private static let sceneConfigurationsKey = "UISceneConfigurations"
     private static let openURLNotification = Notification.Name("RCTOpenURLNotification")
 
+    /// Mirrors React Native's `RCTIsSceneDelegateApp()` manifest check without linking to the
+    /// internal symbol, so the wrapper continues to compile against older supported versions.
     static var isSceneLifecycleEnabled: Bool {
         guard let manifest = Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) as? [String: Any],
               let configurations = manifest[sceneConfigurationsKey] as? [String: Any]

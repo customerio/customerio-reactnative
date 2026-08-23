@@ -223,6 +223,7 @@ public class NativeLiveActivities: NSObject {
 
     /// Report an `opened` metric for a tapped Live Activity and route its destination through
     /// React Native Linking. Call this from a scene-based host's URL lifecycle method.
+    @objc(handleAndRouteWidgetUrl:)
     public static func handleAndRouteWidgetUrl(_ url: URL) {
         guard let routableUrl = handleWidgetUrl(url) else { return }
         CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
@@ -231,6 +232,7 @@ public class NativeLiveActivities: NSObject {
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
     /// tap and replacing Customer.io's internal tracking URL with its destination. This mirrors
     /// React Native 0.88's `RCTConvertConnectionOptionsToLaunchOptions` conversion.
+    @objc(reactNativeLaunchOptionsFromConnectionOptions:)
     public static func reactNativeLaunchOptions(
         from connectionOptions: UIScene.ConnectionOptions
     ) -> [UIApplication.LaunchOptionsKey: Any] {

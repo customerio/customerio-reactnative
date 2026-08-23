@@ -129,6 +129,9 @@ func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
 }
 ```
 
+Do not also pass those URLs to `RCTLinkingManager`. The helper already publishes them through
+React Native Linking, and forwarding them again can deliver the same URL twice.
+
 Android needs no equivalent step. Expo apps use the [config plugin](https://github.com/customerio/customerio-expo-plugin) instead of these manual snippets; scene support depends on the Expo version supported by the plugin.
 
 ---
