@@ -21,7 +21,7 @@ RUBY
 platform_line = "platform :ios, min_ios_version_supported\n"
 raise 'missing React Native platform declaration' unless podfile.include?(platform_line)
 
-apn_pod = "  pod 'customerio-reactnative', :path => customer_io_package_root, :subspecs => ['apn']\n"
+wrapper_subspecs = "  pod 'customerio-reactnative', :path => customer_io_package_root, :subspecs => ['apn', 'liveactivities']\n"
 post_install_line = "  post_install do |installer|\n"
 raise 'missing React Native post_install block' unless podfile.include?(post_install_line)
 
@@ -46,7 +46,7 @@ podfile.sub!(platform_line, "#{helper}\n#{platform_line}")
 # Keep the wrapper's APN opt-in after use_native_modules!, matching the supported
 # host setup. Adding the subspec first prevents CocoaPods from including the
 # autolinked root spec, leaving the wrapper target with no implementation files.
-podfile.sub!(post_install_line, "#{apn_pod}\n#{post_install_line}")
+podfile.sub!(post_install_line, "#{wrapper_subspecs}\n#{post_install_line}")
 podfile.delete_suffix!(post_install_end)
 podfile << normalizer
 File.write(podfile_path, podfile)

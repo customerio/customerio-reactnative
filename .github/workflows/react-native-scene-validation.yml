@@ -103,6 +103,7 @@ jobs:
           /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0 dict' "$plist"
           /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' "$plist"
           /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string cio-rn-scene-validation' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:1 string cio-live-activity' "$plist"
 
           cd "$host"
           bundle install
@@ -140,12 +141,52 @@ jobs:
           fi
 
       - name: Install and launch scene host
+        id: warm-launch
         uses: customerio/mobile-ci-tools/github-actions/ios/launch-simulator-app/v1@main
         with:
           app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/${{ env.APP_NAME }}.app
           expected-ios-major: '27'
           survival-seconds: '30'
           log-path: ${{ runner.temp }}/rn-scene-launch.log
+
+      - name: Cold launch from a Live Activity URL
+        shell: bash
+        env:
+          SIMULATOR_UDID: ${{ steps.warm-launch.outputs.simulator-udid }}
+        run: |
+          set -euo pipefail
+          app_path="$RUNNER_TEMP/rn-scene-derived-data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
+          bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Info.plist")"
+          executable="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app_path/Info.plist")"
+          log_path="$RUNNER_TEMP/rn-scene-cold-launch.log"
+
+          xcrun simctl boot "$SIMULATOR_UDID" >/dev/null 2>&1 || true
+          xcrun simctl bootstatus "$SIMULATOR_UDID" -b
+          xcrun simctl install "$SIMULATOR_UDID" "$app_path"
+          trap 'xcrun simctl terminate "$SIMULATOR_UDID" "$bundle_id" >/dev/null 2>&1 || true; xcrun simctl uninstall "$SIMULATOR_UDID" "$bundle_id" >/dev/null 2>&1 || true' EXIT
+
+          tracking_url='cio-live-activity://open?cio_delivery_id=scene-validation&cio_redirect=cio-rn-scene-validation%3A%2F%2Fcold'
+          xcrun simctl openurl "$SIMULATOR_UDID" "$tracking_url"
+          sleep 30
+
+          xcrun simctl spawn "$SIMULATOR_UDID" log show \
+            --last 45s \
+            --style compact \
+            --predicate "process == '$executable'" > "$log_path" 2>&1 || true
+
+          process_status="$(/bin/ps -axo state=,comm= | /usr/bin/awk \
+            -v device="/Devices/$SIMULATOR_UDID/" \
+            -v suffix="/$executable" \
+            'index($0, device) && substr($0, length($0) - length(suffix) + 1) == suffix { print }')"
+          if [[ -z "$process_status" || "$process_status" == *$'\n'* ]]; then
+            echo "::error::cold-launched scene host did not remain alive"
+            exit 1
+          fi
+          read -r process_state _ <<< "$process_status"
+          if [[ "$process_state" != [RSIU]* ]]; then
+            echo "::error::cold-launched scene host is not runnable: $process_status"
+            exit 1
+          fi
 
       - name: Upload validation logs
         if: always()

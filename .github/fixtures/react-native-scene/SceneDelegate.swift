@@ -3,6 +3,7 @@ import React
 import ReactAppDependencyProvider
 import React_RCTAppDelegate
 import UIKit
+import customerio_reactnative
 
 class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate {
   var window: UIWindow?
@@ -26,27 +27,40 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
     reactNativeFactory?.startReactNative(
       withModuleName: "CioRnSceneHost",
       in: window,
-      connectionOptions: connectionOptions
+      launchOptions: NativeLiveActivities.reactNativeLaunchOptions(from: connectionOptions)
     )
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-      DIGraphShared.shared.deepLinkUtil.handleDeepLink(
-        URL(string: "https://customer.io/react-native-scene-validation")!
-      )
-    }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
-      guard UserDefaults.standard.bool(forKey: AppDelegate.deepLinkProbeKey) else {
-        fatalError("Customer.io scene deep link did not reach React Native Linking")
+    if connectionOptions.urlContexts.isEmpty {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+        DIGraphShared.shared.deepLinkUtil.handleDeepLink(
+          URL(string: "https://customer.io/react-native-scene-validation")!
+        )
+      }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+        guard UserDefaults.standard.integer(forKey: AppDelegate.warmDeepLinkCountKey) == 1 else {
+          fatalError("Customer.io warm scene deep link was not delivered exactly once")
+        }
+      }
+    } else {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+        guard UserDefaults.standard.integer(forKey: AppDelegate.coldDeepLinkCountKey) == 1 else {
+          fatalError("Customer.io cold scene deep link was not delivered exactly once")
+        }
       }
     }
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-    if URLContexts.contains(where: { $0.url.absoluteString == "cio-rn-scene-validation://received" }) {
-      UserDefaults.standard.set(true, forKey: AppDelegate.deepLinkProbeKey)
-      return
+    for context in URLContexts {
+      switch context.url.absoluteString {
+      case "cio-rn-scene-validation://warm-received":
+        increment(AppDelegate.warmDeepLinkCountKey)
+      case "cio-rn-scene-validation://cold-received":
+        increment(AppDelegate.coldDeepLinkCountKey)
+      default:
+        NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
+      }
     }
-    RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
   }
 
   func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
@@ -59,5 +73,10 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
     #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
     #endif
+  }
+
+  private func increment(_ key: String) {
+    let defaults = UserDefaults.standard
+    defaults.set(defaults.integer(forKey: key) + 1, forKey: key)
   }
 }
