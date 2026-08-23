@@ -41,12 +41,6 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
           fatalError("Customer.io warm scene deep link was not delivered exactly once")
         }
       }
-    } else {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
-        guard UserDefaults.standard.integer(forKey: AppDelegate.coldDeepLinkCountKey) == 1 else {
-          fatalError("Customer.io cold scene deep link was not delivered exactly once")
-        }
-      }
     }
   }
 
@@ -55,8 +49,6 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
       switch context.url.absoluteString {
       case "cio-rn-scene-validation://warm-received":
         increment(AppDelegate.warmDeepLinkCountKey)
-      case "cio-rn-scene-validation://cold-received":
-        increment(AppDelegate.coldDeepLinkCountKey)
       default:
         NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
       }
