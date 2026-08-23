@@ -12,6 +12,8 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
     willConnectTo session: UISceneSession,
     options connectionOptions: UIScene.ConnectionOptions
   ) {
+    UserDefaults.standard.set(true, forKey: AppDelegate.sceneConnectionProbeKey)
+
     guard let windowScene = scene as? UIWindowScene else {
       return
     }
@@ -25,8 +27,6 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
       in: window,
       connectionOptions: connectionOptions
     )
-
-    UserDefaults.standard.set(true, forKey: AppDelegate.sceneConnectionProbeKey)
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

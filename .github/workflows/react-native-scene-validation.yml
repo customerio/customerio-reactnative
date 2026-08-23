@@ -13,7 +13,7 @@ permissions:
 env:
   APP_NAME: CioRnSceneHost
   REACT_NATIVE_CLI_VERSION: 20.2.0
-  REACT_NATIVE_TEMPLATE_VERSION: 0.83.0-nightly-2026724-ed3802b
+  REACT_NATIVE_TEMPLATE_VERSION: 0.87.0
   REACT_NATIVE_VERSION: 0.88.0-nightly-20260823-0c7f63a4e
 
 jobs:
@@ -119,6 +119,21 @@ jobs:
             -derivedDataPath "$RUNNER_TEMP/rn-scene-derived-data" \
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee "$RUNNER_TEMP/rn-scene-build.log"
+
+      - name: Validate built scene manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          plist="$RUNNER_TEMP/rn-scene-derived-data/Build/Products/Release-iphonesimulator/$APP_NAME.app/Info.plist"
+          test -f "$plist"
+          scene_class="$(/usr/libexec/PlistBuddy \
+            -c 'Print :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName' \
+            "$plist")"
+          # shellcheck disable=SC2016
+          if [[ "$scene_class" != '$(PRODUCT_MODULE_NAME).SceneDelegate' ]]; then
+            echo "::error::unexpected built scene delegate class: $scene_class"
+            exit 1
+          fi
 
       - name: Install and launch scene host
         uses: customerio/mobile-ci-tools/github-actions/ios/launch-simulator-app/v1@main
