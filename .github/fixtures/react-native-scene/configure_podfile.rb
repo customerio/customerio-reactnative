@@ -21,7 +21,7 @@ RUBY
 platform_line = "platform :ios, min_ios_version_supported\n"
 raise 'missing React Native platform declaration' unless podfile.include?(platform_line)
 
-wrapper_subspecs = "  pod 'customerio-reactnative', :path => customer_io_package_root, :subspecs => ['apn', 'liveactivities']\n"
+wrapper_subspecs = "  pod 'customerio-reactnative', :path => '../node_modules/customerio-reactnative', :subspecs => ['apn', 'liveactivities']\n"
 post_install_line = "  post_install do |installer|\n"
 raise 'missing React Native post_install block' unless podfile.include?(post_install_line)
 
