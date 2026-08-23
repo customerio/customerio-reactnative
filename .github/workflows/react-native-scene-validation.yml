@@ -54,7 +54,13 @@ jobs:
             --version "$REACT_NATIVE_VERSION" \
             --skip-install
           cd "$APP_NAME"
+          npm pkg set "dependencies.react-native=$REACT_NATIVE_VERSION"
           npm install
+          installed_version="$(node -p "require('react-native/package.json').version")"
+          if [[ "$installed_version" != "$REACT_NATIVE_VERSION" ]]; then
+            echo "::error::expected react-native $REACT_NATIVE_VERSION, installed $installed_version"
+            exit 1
+          fi
           npm install "${{ steps.wrapper.outputs.path }}"
 
       - name: Apply upstream scene host shape
@@ -86,7 +92,7 @@ jobs:
       - name: Build scene host
         shell: bash
         run: |
-          set -o pipefail
+          set -euo pipefail
           host="$RUNNER_TEMP/$APP_NAME"
           xcodebuild \
             -workspace "$host/ios/$APP_NAME.xcworkspace" \
@@ -101,7 +107,7 @@ jobs:
       - name: Install and launch scene host
         uses: customerio/mobile-ci-tools/github-actions/ios/launch-simulator-app/v1@main
         with:
-          app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/CioRnSceneHost.app
+          app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/${{ env.APP_NAME }}.app
           expected-ios-major: '27'
           survival-seconds: '10'
           log-path: ${{ runner.temp }}/rn-scene-launch.log

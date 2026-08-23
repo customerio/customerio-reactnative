@@ -2,13 +2,14 @@ podfile_path = ARGV.fetch(0)
 podfile = File.read(podfile_path)
 
 helper = <<~'RUBY'
-  customer_io_package_root = File.dirname(
-    Pod::Executable.execute_command('node', [
-      '-p',
-      "require.resolve('customerio-reactnative/package.json', {paths: [process.argv[1]]})",
+  def node_resolve(script)
+    Pod::Executable.execute_command('node', ['-p',
+      "require.resolve('#{script}', {paths: [process.argv[1]]})",
       __dir__
     ]).strip
-  )
+  end
+
+  customer_io_package_root = File.dirname(node_resolve('customerio-reactnative/package.json'))
   require File.join(customer_io_package_root, 'ios', 'cocoapods_deployment_target')
 
   customer_io_minimum_ios_version = CustomerIO::CocoaPodsDeploymentTarget.maximum(
