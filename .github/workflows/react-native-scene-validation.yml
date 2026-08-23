@@ -42,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           npm ci
-          package_name="$(npm pack --silent --pack-destination "$RUNNER_TEMP")"
+          package_name="$(npm pack --silent --pack-destination "$RUNNER_TEMP" | tail -n 1)"
           echo "path=$RUNNER_TEMP/$package_name" >> "$GITHUB_OUTPUT"
 
       - name: Generate RN 0.88 scene host
