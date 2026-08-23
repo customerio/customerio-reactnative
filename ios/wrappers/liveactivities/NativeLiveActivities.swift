@@ -6,6 +6,7 @@ import CioLiveActivities
 import CioLiveActivities_Attributes
 import CioLiveActivities_Templates
 import Foundation
+import UIKit
 
 @objc(NativeCustomerIOLiveActivities)
 public class NativeLiveActivities: NSObject {
@@ -228,7 +229,8 @@ public class NativeLiveActivities: NSObject {
     }
 
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
-    /// tap and replacing Customer.io's internal tracking URL with its destination.
+    /// tap and replacing Customer.io's internal tracking URL with its destination. This mirrors
+    /// React Native 0.88's `RCTConvertConnectionOptionsToLaunchOptions` conversion.
     public static func reactNativeLaunchOptions(
         from connectionOptions: UIScene.ConnectionOptions
     ) -> [UIApplication.LaunchOptionsKey: Any] {

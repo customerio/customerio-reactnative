@@ -72,7 +72,7 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
-After `CustomerIO.initialize`, iOS `UIScene` hosts receive Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. Register the app's `Linking` URL listener before initializing Customer.io. AppDelegate-only hosts keep their existing deep-link integration.
+After `CustomerIO.initialize`, iOS `UIScene` hosts receive Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. Register the app's `Linking` URL listener before initializing Customer.io. That listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision. AppDelegate-only hosts keep their existing deep-link integration.
 
 ---
 
