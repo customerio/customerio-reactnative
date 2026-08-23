@@ -4,7 +4,7 @@ final class CustomerIOReactNativeDeepLinkRouter {
     private static let sceneManifestKey = "UIApplicationSceneManifest"
 
     static var isSceneLifecycleEnabled: Bool {
-        // React Native uses the scene-manifest key as its scene-lifecycle switch.
+        // UIKit enables the scene lifecycle when the scene manifest is present.
         Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) != nil
     }
 
