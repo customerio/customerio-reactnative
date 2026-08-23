@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 final class CustomerIOReactNativeDeepLinkRouter {
     private static let sceneManifestKey = "UIApplicationSceneManifest"

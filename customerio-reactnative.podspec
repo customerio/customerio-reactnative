@@ -23,6 +23,7 @@ Pod::Spec.new do |s|
   else
     s.dependency "React-Core"
   end
+
   # Syntax of native iOS pods allows for automatically upgrading to the latest major version of the iOS SDK.
   # Reference: https://guides.cocoapods.org/syntax/podfile.html#pod
   s.dependency "CustomerIO/DataPipelines", package["cioNativeiOSSdkVersion"]
