@@ -6,7 +6,6 @@ import CioMessagingInApp
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
-    private let deepLinkRouter = CustomerIOReactNativeDeepLinkRouter()
     /// Checks whether the CustomerIO SDK has been initialized.
     /// Returns `true` if the SDK has been successfully initialized, `false` otherwise.
     private var isInitialized: Bool { CustomerIO.shared.implementation != nil }
@@ -50,9 +49,8 @@ public class NativeCustomerIO: NSObject {
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
 
             if CustomerIOReactNativeDeepLinkRouter.isSceneLifecycleEnabled {
-                let deepLinkRouter = deepLinkRouter
                 _ = sdkConfigBuilder.deepLinkCallback { url in
-                    deepLinkRouter.route(url)
+                    CustomerIOReactNativeDeepLinkRouter.route(url)
                     return true
                 }
             }

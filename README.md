@@ -72,7 +72,7 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
-When an iOS host uses the `UIScene` lifecycle, the wrapper routes Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. AppDelegate-only hosts keep their existing deep-link integration.
+After `CustomerIO.initialize`, iOS `UIScene` hosts receive Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. Register the app's `Linking` URL listener before initializing Customer.io. AppDelegate-only hosts keep their existing deep-link integration.
 
 ---
 
@@ -85,7 +85,9 @@ Enable the activity types you use under the `liveNotifications` key of your SDK 
 <true/>
 ```
 
-**One manual step is required on iOS.** Forward every opened URL to the SDK from your `AppDelegate`, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it — and note this only compiles once the `liveactivities` subspec is installed:
+**One manual step is required on iOS.** Forward every opened URL to the SDK from the host's active lifecycle, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it. This only compiles once the `liveactivities` subspec is installed.
+
+For an AppDelegate host:
 
 ```swift
 import customerio_reactnative
@@ -103,7 +105,23 @@ extension AppDelegate {
 
 A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
-Android needs no equivalent step. Expo apps need none either — the [config plugin](https://github.com/customerio/customerio-expo-plugin) injects this for you.
+For a `UIScene` host, put the equivalent handoff in its existing `SceneDelegate`:
+
+```swift
+import customerio_reactnative
+import React
+
+extension SceneDelegate {
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    for context in URLContexts {
+      guard let routableUrl = NativeLiveActivities.handleWidgetUrl(context.url) else { continue }
+      _ = RCTLinkingManager.application(UIApplication.shared, open: routableUrl, options: [:])
+    }
+  }
+}
+```
+
+Android needs no equivalent step. Expo apps use the [config plugin](https://github.com/customerio/customerio-expo-plugin) instead of these manual snippets; scene support depends on the Expo version supported by the plugin.
 
 ---
 

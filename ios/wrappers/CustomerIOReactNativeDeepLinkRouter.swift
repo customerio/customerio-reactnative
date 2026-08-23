@@ -4,16 +4,13 @@ final class CustomerIOReactNativeDeepLinkRouter {
     private static let sceneManifestKey = "UIApplicationSceneManifest"
 
     static var isSceneLifecycleEnabled: Bool {
+        // React Native uses the scene-manifest key as its scene-lifecycle switch.
         Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) != nil
     }
 
-    func route(_ url: URL) {
+    static func route(_ url: URL) {
         DispatchQueue.main.async {
-            if RCTLinkingManager.application(UIApplication.shared, open: url, options: [:]) {
-                return
-            }
-
-            UIApplication.shared.open(url)
+            _ = RCTLinkingManager.application(UIApplication.shared, open: url, options: [:])
         }
     }
 }
