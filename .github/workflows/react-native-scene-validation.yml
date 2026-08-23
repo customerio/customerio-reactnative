@@ -129,8 +129,7 @@ jobs:
           scene_class="$(/usr/libexec/PlistBuddy \
             -c 'Print :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName' \
             "$plist")"
-          # shellcheck disable=SC2016
-          if [[ "$scene_class" != '$(PRODUCT_MODULE_NAME).SceneDelegate' ]]; then
+          if [[ "$scene_class" != "$APP_NAME.SceneDelegate" ]]; then
             echo "::error::unexpected built scene delegate class: $scene_class"
             exit 1
           fi
