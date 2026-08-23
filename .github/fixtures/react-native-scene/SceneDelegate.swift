@@ -1,3 +1,4 @@
+import CioInternalCommon
 import React
 import ReactAppDependencyProvider
 import React_RCTAppDelegate
@@ -27,9 +28,24 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
       in: window,
       connectionOptions: connectionOptions
     )
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+      DIGraphShared.shared.deepLinkUtil.handleDeepLink(
+        URL(string: "https://customer.io/react-native-scene-validation")!
+      )
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 25) {
+      guard UserDefaults.standard.bool(forKey: AppDelegate.deepLinkProbeKey) else {
+        fatalError("Customer.io scene deep link did not reach React Native Linking")
+      }
+    }
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    if URLContexts.contains(where: { $0.url.absoluteString == "cio-rn-scene-validation://received" }) {
+      UserDefaults.standard.set(true, forKey: AppDelegate.deepLinkProbeKey)
+      return
+    }
     RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
   }
 

@@ -98,6 +98,11 @@ jobs:
           /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneConfigurationName string Default Configuration' "$plist"
           # shellcheck disable=SC2016
           /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName string $(PRODUCT_MODULE_NAME).SceneDelegate' "$plist"
+          /usr/libexec/PlistBuddy -c 'Delete :CFBundleURLTypes' "$plist" >/dev/null 2>&1 || true
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes array' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0 dict' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string cio-rn-scene-validation' "$plist"
 
           cd "$host"
           bundle install
