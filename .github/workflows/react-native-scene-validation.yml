@@ -1,0 +1,131 @@
+name: React Native scene host validation
+
+on:
+  pull_request:
+    paths:
+      - '.github/fixtures/react-native-scene/**'
+      - '.github/workflows/react-native-scene-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP_NAME: CioRnSceneHost
+  REACT_NATIVE_VERSION: 0.88.0-nightly-20260823-0c7f63a4e
+
+jobs:
+  validate:
+    name: RN 0.88 scene host on Xcode 27
+    runs-on: xcode-27
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out React Native SDK
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Report and verify toolchain family
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Build wrapper package
+        id: wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          package_name="$(npm pack --silent --pack-destination "$RUNNER_TEMP")"
+          echo "path=$RUNNER_TEMP/$package_name" >> "$GITHUB_OUTPUT"
+
+      - name: Generate RN 0.88 scene host
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          npx @react-native-community/cli@latest init "$APP_NAME" \
+            --version "$REACT_NATIVE_VERSION" \
+            --skip-install
+          cd "$APP_NAME"
+          npm install
+          npm install "${{ steps.wrapper.outputs.path }}"
+
+      - name: Apply upstream scene host shape
+        shell: bash
+        run: |
+          set -euo pipefail
+          fixture="$GITHUB_WORKSPACE/.github/fixtures/react-native-scene"
+          host="$RUNNER_TEMP/$APP_NAME"
+          cp "$fixture/App.tsx" "$host/App.tsx"
+          cp "$fixture/AppDelegate.swift" "$host/ios/$APP_NAME/AppDelegate.swift"
+          cp "$fixture/SceneDelegate.swift" "$host/ios/$APP_NAME/SceneDelegate.swift"
+
+          plist="$host/ios/$APP_NAME/Info.plist"
+          /usr/libexec/PlistBuddy -c 'Delete :UIApplicationSceneManifest' "$plist" >/dev/null 2>&1 || true
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest dict' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations dict' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication array' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0 dict' "$plist"
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneConfigurationName string Default Configuration' "$plist"
+          # shellcheck disable=SC2016
+          /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName string $(PRODUCT_MODULE_NAME).SceneDelegate' "$plist"
+
+          cd "$host"
+          bundle install
+          bundle exec ruby "$fixture/configure.rb" "ios/$APP_NAME.xcodeproj" "$APP_NAME"
+          bundle exec pod install --project-directory=ios
+
+      - name: Build scene host
+        shell: bash
+        run: |
+          set -o pipefail
+          host="$RUNNER_TEMP/$APP_NAME"
+          xcodebuild \
+            -workspace "$host/ios/$APP_NAME.xcworkspace" \
+            -scheme "$APP_NAME" \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/rn-scene-derived-data" \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee "$RUNNER_TEMP/rn-scene-build.log"
+
+      - name: Install and launch scene host
+        id: launch
+        uses: customerio/mobile-ci-tools/github-actions/ios/launch-simulator-app/v1@main
+        with:
+          app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/CioRnSceneHost.app
+          expected-ios-major: '27'
+          survival-seconds: '10'
+          log-path: ${{ runner.temp }}/rn-scene-launch.log
+
+      - name: Verify scene connection
+        shell: bash
+        env:
+          BUNDLE_ID: ${{ steps.launch.outputs.bundle-id }}
+          SIMULATOR_UDID: ${{ steps.launch.outputs.simulator-udid }}
+        run: |
+          set -euo pipefail
+          scene_log="$RUNNER_TEMP/rn-scene-callback.log"
+          xcrun simctl spawn "$SIMULATOR_UDID" log show \
+            --last 2m \
+            --style compact \
+            --predicate "process == '$APP_NAME' AND eventMessage CONTAINS 'CIO_RN_SCENE_WILL_CONNECT'" \
+            > "$scene_log"
+          grep -Fq 'CIO_RN_SCENE_WILL_CONNECT' "$scene_log"
+
+      - name: Upload validation logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: react-native-0.88-scene-validation-logs
+          path: ${{ runner.temp }}/rn-scene-*.log
+          if-no-files-found: warn
+          retention-days: 7
