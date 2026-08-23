@@ -26,7 +26,7 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
       connectionOptions: connectionOptions
     )
 
-    NSLog("CIO_RN_SCENE_WILL_CONNECT")
+    UserDefaults.standard.set(true, forKey: AppDelegate.sceneConnectionProbeKey)
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

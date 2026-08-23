@@ -99,28 +99,12 @@ jobs:
             build 2>&1 | tee "$RUNNER_TEMP/rn-scene-build.log"
 
       - name: Install and launch scene host
-        id: launch
         uses: customerio/mobile-ci-tools/github-actions/ios/launch-simulator-app/v1@main
         with:
           app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/CioRnSceneHost.app
           expected-ios-major: '27'
           survival-seconds: '10'
           log-path: ${{ runner.temp }}/rn-scene-launch.log
-
-      - name: Verify scene connection
-        shell: bash
-        env:
-          BUNDLE_ID: ${{ steps.launch.outputs.bundle-id }}
-          SIMULATOR_UDID: ${{ steps.launch.outputs.simulator-udid }}
-        run: |
-          set -euo pipefail
-          scene_log="$RUNNER_TEMP/rn-scene-callback.log"
-          xcrun simctl spawn "$SIMULATOR_UDID" log show \
-            --last 2m \
-            --style compact \
-            --predicate "process == '$APP_NAME' AND eventMessage CONTAINS 'CIO_RN_SCENE_WILL_CONNECT'" \
-            > "$scene_log"
-          grep -Fq 'CIO_RN_SCENE_WILL_CONNECT' "$scene_log"
 
       - name: Upload validation logs
         if: always()
