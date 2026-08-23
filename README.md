@@ -72,6 +72,8 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
+When an iOS host uses the `UIScene` lifecycle, the wrapper routes Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. AppDelegate-only hosts keep their existing deep-link integration.
+
 ---
 
 ## 🔴 Live Activities
