@@ -220,6 +220,13 @@ public class NativeLiveActivities: NSObject {
         CustomerIO.liveActivities.handleWidgetUrl(url)
     }
 
+    /// Report an `opened` metric for a tapped Live Activity and route its destination through
+    /// React Native Linking. Call this from a scene-based host's URL lifecycle method.
+    public static func handleAndRouteWidgetUrl(_ url: URL) {
+        guard let routableUrl = handleWidgetUrl(url) else { return }
+        CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
+    }
+
     // MARK: - Helpers
 
     @available(iOS 16.2, *)

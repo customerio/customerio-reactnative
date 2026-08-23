@@ -105,16 +105,14 @@ extension AppDelegate {
 
 A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
-For a `UIScene` host, replace the ordinary React Native URL-forwarding body in its existing `SceneDelegate` with this handoff. `handleWidgetUrl` returns non-Customer.io URLs unchanged, so each URL still reaches React Native once:
+For a `UIScene` host, replace the ordinary React Native URL-forwarding body in its existing `SceneDelegate` with this handoff. The wrapper reports Customer.io Live Activity taps and routes every remaining URL through React Native Linking once:
 
 ```swift
 import customerio_reactnative
-import React
 
 func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
   for context in URLContexts {
-    guard let routableUrl = NativeLiveActivities.handleWidgetUrl(context.url) else { continue }
-    _ = RCTLinkingManager.application(UIApplication.shared, open: routableUrl, options: [:])
+    NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
   }
 }
 ```
