@@ -1,6 +1,9 @@
+import CioMessagingPushAPN
 import UIKit
 
 @main
+class AppDelegateWithCioIntegration: CioAppDelegateWrapper<AppDelegate> {}
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
   static let sceneConnectionProbeKey = "CIO_RN_SCENE_DID_CONNECT"
 
