@@ -7,6 +7,8 @@ export default function App(): React.JSX.Element {
     const subscription = Linking.addEventListener('url', ({ url }) => {
       if (url === 'https://customer.io/react-native-scene-validation') {
         Linking.openURL('cio-rn-scene-validation://warm-received');
+      } else if (url === 'cio-rn-scene-validation://cold') {
+        Linking.openURL('cio-rn-scene-validation://cold-received');
       }
     });
 
