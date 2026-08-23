@@ -12,6 +12,8 @@ permissions:
 
 env:
   APP_NAME: CioRnSceneHost
+  REACT_NATIVE_CLI_VERSION: 20.2.0
+  REACT_NATIVE_TEMPLATE_VERSION: 0.83.0-nightly-2026724-ed3802b
   REACT_NATIVE_VERSION: 0.88.0-nightly-20260823-0c7f63a4e
 
 jobs:
@@ -50,17 +52,31 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: |
           set -euo pipefail
-          npx @react-native-community/cli@latest init "$APP_NAME" \
+          npx "@react-native-community/cli@$REACT_NATIVE_CLI_VERSION" init "$APP_NAME" \
             --version "$REACT_NATIVE_VERSION" \
+            --template "@react-native-community/template@$REACT_NATIVE_TEMPLATE_VERSION" \
             --skip-install
           cd "$APP_NAME"
-          npm pkg set "dependencies.react-native=$REACT_NATIVE_VERSION"
+          npm pkg set \
+            "dependencies.react-native=$REACT_NATIVE_VERSION" \
+            "dependencies.@react-native/new-app-screen=$REACT_NATIVE_VERSION"
+          npm pkg set \
+            "devDependencies.@react-native/babel-preset=$REACT_NATIVE_VERSION" \
+            "devDependencies.@react-native/eslint-config=$REACT_NATIVE_VERSION" \
+            "devDependencies.@react-native/jest-preset=$REACT_NATIVE_VERSION" \
+            "devDependencies.@react-native/metro-config=$REACT_NATIVE_VERSION" \
+            "devDependencies.@react-native/typescript-config=$REACT_NATIVE_VERSION"
           npm install
-          installed_version="$(node -p "require('react-native/package.json').version")"
-          if [[ "$installed_version" != "$REACT_NATIVE_VERSION" ]]; then
-            echo "::error::expected react-native $REACT_NATIVE_VERSION, installed $installed_version"
-            exit 1
-          fi
+          for package_name in \
+            react-native \
+            @react-native/new-app-screen \
+            @react-native/babel-preset \
+            @react-native/eslint-config \
+            @react-native/jest-preset \
+            @react-native/metro-config \
+            @react-native/typescript-config; do
+            npm ls --depth=0 "$package_name@$REACT_NATIVE_VERSION" >/dev/null
+          done
           npm install "${{ steps.wrapper.outputs.path }}"
 
       - name: Apply upstream scene host shape
@@ -109,7 +125,7 @@ jobs:
         with:
           app-path: ${{ runner.temp }}/rn-scene-derived-data/Build/Products/Release-iphonesimulator/${{ env.APP_NAME }}.app
           expected-ios-major: '27'
-          survival-seconds: '10'
+          survival-seconds: '30'
           log-path: ${{ runner.temp }}/rn-scene-launch.log
 
       - name: Upload validation logs
@@ -117,6 +133,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: react-native-0.88-scene-validation-logs
-          path: ${{ runner.temp }}/rn-scene-*.log
+          path: |
+            ${{ runner.temp }}/rn-scene-*.log
+            ${{ runner.temp }}/${{ env.APP_NAME }}/package-lock.json
+            ${{ runner.temp }}/${{ env.APP_NAME }}/ios/Podfile.lock
           if-no-files-found: warn
           retention-days: 7

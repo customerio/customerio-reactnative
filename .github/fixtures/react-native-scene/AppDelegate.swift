@@ -9,7 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
     UserDefaults.standard.set(false, forKey: Self.sceneConnectionProbeKey)
-    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       guard UserDefaults.standard.bool(forKey: Self.sceneConnectionProbeKey) else {
         fatalError("SceneDelegate did not receive willConnectTo")
       }
