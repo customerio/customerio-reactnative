@@ -79,6 +79,7 @@ jobs:
 
           cd "$host"
           bundle install
+          bundle exec ruby "$fixture/configure_podfile.rb" ios/Podfile
           bundle exec ruby "$fixture/configure.rb" "ios/$APP_NAME.xcodeproj" "$APP_NAME"
           bundle exec pod install --project-directory=ios
 
