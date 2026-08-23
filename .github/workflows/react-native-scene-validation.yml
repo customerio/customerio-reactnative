@@ -158,7 +158,6 @@ jobs:
           app_path="$RUNNER_TEMP/rn-scene-derived-data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
           bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Info.plist")"
           executable="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app_path/Info.plist")"
-          log_path="$RUNNER_TEMP/rn-scene-cold-launch.log"
 
           xcrun simctl boot "$SIMULATOR_UDID" >/dev/null 2>&1 || true
           xcrun simctl bootstatus "$SIMULATOR_UDID" -b
@@ -168,11 +167,6 @@ jobs:
           tracking_url='cio-live-activity://open?cio_delivery_id=scene-validation&cio_redirect=cio-rn-scene-validation%3A%2F%2Fcold'
           xcrun simctl openurl "$SIMULATOR_UDID" "$tracking_url"
           sleep 30
-
-          xcrun simctl spawn "$SIMULATOR_UDID" log show \
-            --last 45s \
-            --style compact \
-            --predicate "process == '$executable'" > "$log_path" 2>&1 || true
 
           process_status="$(/bin/ps -axo state=,comm= | /usr/bin/awk \
             -v device="/Devices/$SIMULATOR_UDID/" \
