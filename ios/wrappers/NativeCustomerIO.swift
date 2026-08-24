@@ -51,7 +51,7 @@ public class NativeCustomerIO: NSObject {
             if CustomerIOReactNativeDeepLinkRouter.isSceneLifecycleEnabled {
                 _ = sdkConfigBuilder.deepLinkCallback { url in
                     CustomerIOReactNativeDeepLinkRouter.route(url)
-                    return true
+                    return true // React Native Linking cannot report handling; JavaScript owns fallback.
                 }
             }
 
