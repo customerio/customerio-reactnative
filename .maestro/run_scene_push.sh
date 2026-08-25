@@ -15,6 +15,13 @@ if [[ "$DEVELOPER_DIR" == */CommandLineTools && -d /Applications/Xcode.app/Conte
 fi
 export DEVELOPER_DIR
 
+for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
+  command -v "$command" >/dev/null 2>&1 || {
+    echo "error: required command '$command' is not installed" >&2
+    exit 2
+  }
+done
+
 device_id="${E2E_DEVICE_ID:-}"
 if [[ -z "$device_id" ]]; then
   device_id="$(xcrun simctl list devices booted -j | jq -r \
@@ -32,13 +39,6 @@ if [[ -z "$device_id" ]]; then
 fi
 xcrun simctl bootstatus "$device_id" -b
 
-for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
-  command -v "$command" >/dev/null 2>&1 || {
-    echo "error: required command '$command' is not installed" >&2
-    exit 2
-  }
-done
-
 created_host_parent=false
 if [[ -n "${CIO_E2E_HOST_PARENT:-}" ]]; then
   host_parent="$CIO_E2E_HOST_PARENT"
@@ -51,6 +51,7 @@ package_dir="$host_parent/package"
 derived_data="$host_parent/derived-data"
 flow_log=""
 flow_pid=""
+installed_app=false
 cleanup() {
   if [[ -n "$flow_pid" ]]; then
     kill "$flow_pid" >/dev/null 2>&1 || true
@@ -58,6 +59,10 @@ cleanup() {
   fi
   if [[ -n "$flow_log" ]]; then
     rm -f "$flow_log"
+  fi
+  if [[ "$installed_app" == true ]]; then
+    xcrun simctl terminate "$device_id" "$APP_ID" >/dev/null 2>&1 || true
+    xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
   fi
   if [[ "$created_host_parent" == true && -d "$host_parent" ]]; then
     find "$host_parent" -depth -delete
@@ -70,9 +75,23 @@ run_notification_flow() {
   local flow="$1"
   local payload="$2"
   local ready=false
+  local status=0
+  local flow_name="${flow##*/}"
+  local maestro_args=(--device "$device_id" test "$flow")
+
+  flow_name="${flow_name%.yaml}"
+  if [[ -n "${RUNNER_TEMP:-}" ]]; then
+    maestro_args=(
+      --device "$device_id"
+      test
+      --debug-output "$RUNNER_TEMP/react-native-scene-maestro-$flow_name"
+      --flatten-debug-output
+      "$flow"
+    )
+  fi
 
   flow_log="$(mktemp "${TMPDIR:-/tmp}/cio-rn-maestro-flow.XXXXXX")"
-  maestro --device "$device_id" test "$flow" > >(tee "$flow_log") 2>&1 &
+  maestro "${maestro_args[@]}" > >(tee "$flow_log") 2>&1 &
   flow_pid=$!
 
   for _ in {1..240}; do
@@ -81,7 +100,12 @@ run_notification_flow() {
       break
     fi
     if ! kill -0 "$flow_pid" >/dev/null 2>&1; then
-      wait "$flow_pid"
+      if wait "$flow_pid"; then
+        echo "error: Maestro completed before reaching the Home screen" >&2
+      else
+        status=$?
+        echo "error: Maestro exited before reaching the Home screen (status $status)" >&2
+      fi
       flow_pid=""
       return 1
     fi
@@ -94,7 +118,10 @@ run_notification_flow() {
   fi
 
   xcrun simctl push "$device_id" "$APP_ID" "$payload"
-  wait "$flow_pid"
+  if ! wait "$flow_pid"; then
+    flow_pid=""
+    return 1
+  fi
   flow_pid=""
   rm -f "$flow_log"
   flow_log=""
@@ -161,6 +188,7 @@ app_path="$derived_data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
 test -d "$app_path"
 xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$device_id" "$app_path"
+installed_app=true
 
 cd "$REPO_ROOT"
 maestro --device "$device_id" test .maestro/scene_push_prepare.yaml

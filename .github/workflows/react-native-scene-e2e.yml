@@ -19,6 +19,7 @@ concurrency:
 jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: xcode-27
     timeout-minutes: 60
 
@@ -55,3 +56,12 @@ jobs:
         env:
           E2E_SIMULATOR_NAME: iPhone 17 Pro
         run: .maestro/run_scene_push.sh
+
+      - name: Upload Maestro diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: react-native-scene-maestro-diagnostics
+          path: ${{ runner.temp }}/react-native-scene-maestro-*
+          if-no-files-found: ignore
+          retention-days: 7

@@ -2,6 +2,10 @@ appId: org.reactjs.native.example.CioRnSceneHost
 name: React Native UIScene warm push routing
 ---
 - pressKey: Home
+- extendedWaitUntil:
+    visible:
+      id: "NotificationShortLookView"
+    timeout: 30000
 - tapOn:
     id: "NotificationShortLookView"
     retryTapIfNoChange: false

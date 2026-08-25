@@ -5,6 +5,7 @@ import { CioRegion, CustomerIO } from 'customerio-reactnative';
 export default function App(): React.JSX.Element {
   const [receivedUrl, setReceivedUrl] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
     const subscription = Linking.addEventListener('url', ({ url }) => {
@@ -14,10 +15,16 @@ export default function App(): React.JSX.Element {
     CustomerIO.initialize({
       cdpApiKey: 'scene-e2e-key',
       region: CioRegion.US,
-    }).then(() => setInitialized(true));
-    CustomerIO.pushMessaging.showPromptForPushNotifications({
-      ios: { sound: true, badge: true },
-    });
+    })
+      .then(() =>
+        CustomerIO.pushMessaging.showPromptForPushNotifications({
+          ios: { sound: true, badge: true },
+        })
+      )
+      .then(() => setInitialized(true))
+      .catch((error: unknown) => {
+        setFailure(error instanceof Error ? error.message : String(error));
+      });
 
     return () => subscription.remove();
   }, []);
@@ -28,6 +35,7 @@ export default function App(): React.JSX.Element {
         Customer.io React Native scene E2E{' '}
         {initialized ? 'ready' : 'initializing'}
       </Text>
+      {failure && <Text>Initialization failed: {failure}</Text>}
       {receivedUrl && <Text>Received: {receivedUrl}</Text>}
     </View>
   );
