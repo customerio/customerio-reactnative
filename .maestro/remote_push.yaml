@@ -1,0 +1,141 @@
+appId: ${APP_ID}
+name: React Native APNs delivery and opened attribution
+---
+- runScript:
+    file: ../scripts/setup_run.js
+
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible:
+      id: "login_button"
+    timeout: 15000
+- tapOn:
+    id: "first_name_input"
+- inputText: "Maestro Campaign Tester"
+- tapOn:
+    id: "email_input"
+- inputText: ${output.email}
+- hideKeyboard
+- runFlow:
+    when:
+      visible: "Get 20% off your first order"
+    commands:
+      - tapOn: "✕"
+- tapOn:
+    id: "login_button"
+
+- runFlow:
+    when:
+      visible: "Get 20% off your first order"
+    commands:
+      - tapOn: "✕"
+
+- scrollUntilVisible:
+    element:
+      id: "push_permission_button"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: "push_permission_button"
+- tapOn:
+    text: "^Allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Push notifications enabled successfully"
+    timeout: 10000
+
+- retry:
+    maxRetries: 1
+    commands:
+      - runFlow:
+          when:
+            visible:
+              id: "BackButton"
+          commands:
+            - tapOn:
+                id: "BackButton"
+      - extendedWaitUntil:
+          visible:
+            id: "custom_event_button"
+          timeout: 15000
+      - tapOn:
+          id: "custom_event_button"
+- extendedWaitUntil:
+    visible:
+      id: "event_name_input"
+    timeout: 10000
+- tapOn:
+    id: "event_name_input"
+- inputText: "jason"
+- tapOn:
+    id: "property_name_input"
+- inputText: "run_id"
+- tapOn:
+    id: "property_value_input"
+- inputText: ${output.run_id}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "send_event_button"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: "send_event_button"
+- extendedWaitUntil:
+    visible: "Event sent successfully"
+    timeout: 10000
+- pressKey: Home
+
+- runScript:
+    file: ../scripts/assert_customer_activity.js
+    env:
+      RUN_EMAIL: ${output.email}
+      EXPECTED_ACTIVITY_TYPE: "event"
+      EXPECTED_ACTIVITY_NAME: "jason"
+      EXPECTED_PROPERTY_NAME: "run_id"
+      EXPECTED_PROPERTY_VALUE: ${output.run_id}
+      MIN_TIMESTAMP_SECONDS: ${output.started_at_seconds}
+      MAX_WAIT_MS: "45000"
+- assertTrue: ${output.assert_ok === "true"}
+
+- runScript:
+    file: ../scripts/assert_message_delivered.js
+    env:
+      RUN_EMAIL: ${output.email}
+      EXPECTED_TYPE: "push"
+      MIN_METRIC: "delivered"
+      CAMPAIGN_ID: "15"
+      MAX_WAIT_MS: "60000"
+- assertTrue: ${output.assert_ok === "true"}
+- assertTrue: ${output.message_id.length > 0}
+
+- swipe:
+    start: 20%, 1%
+    end: 20%, 90%
+    duration: 900
+- waitForAnimationToEnd:
+    timeout: 2000
+- extendedWaitUntil:
+    visible:
+      id: "NotificationShortLookView"
+    timeout: 15000
+- tapOn:
+    id: "NotificationShortLookView"
+    retryTapIfNoChange: false
+- extendedWaitUntil:
+    visible:
+      id: "send_event_button"
+    timeout: 15000
+
+- runScript:
+    file: ../scripts/assert_message_delivered.js
+    env:
+      RUN_EMAIL: ${output.email}
+      EXPECTED_TYPE: "push"
+      MIN_METRIC: "opened"
+      CAMPAIGN_ID: "15"
+      EXPECTED_MESSAGE_ID: ${output.message_id}
+      MAX_WAIT_MS: "60000"
+- assertTrue: ${output.assert_ok === "true"}
