@@ -255,6 +255,7 @@ jobs:
 
           cat > "$check_dir/Podfile" <<EOF
           source 'https://cdn.cocoapods.org/'
+          install! 'cocoapods', :integrate_targets => false, :skip_pods_project_generation => true
           platform :ios, '15.0'
 
           target 'CustomerIOTrunkResolutionCheck' do
