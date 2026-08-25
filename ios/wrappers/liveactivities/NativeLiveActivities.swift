@@ -232,7 +232,8 @@ public class NativeLiveActivities: NSObject {
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
     /// tap and replacing Customer.io's internal tracking URL with its destination. This mirrors the
     /// `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
-    /// 0.88.0-nightly-20260823-0c7f63a4e.
+    /// 0.88.0-nightly-20260823-0c7f63a4e. Before `CustomerIO.initialize`, the native Live Activities
+    /// stub parses the redirect and buffers the opened metric for the module to flush at initialization.
     @objc(reactNativeLaunchOptionsFromConnectionOptions:)
     public static func reactNativeLaunchOptions(
         from connectionOptions: UIScene.ConnectionOptions
