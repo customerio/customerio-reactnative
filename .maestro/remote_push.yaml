@@ -11,12 +11,25 @@ name: React Native APNs delivery and opened attribution
     visible:
       id: "login_button"
     timeout: 15000
-- tapOn:
-    id: "first_name_input"
-- inputText: "Maestro Campaign Tester"
-- tapOn:
-    id: "email_input"
-- inputText: ${output.email}
+- retry:
+    maxRetries: 2
+    commands:
+      - runFlow:
+          when:
+            visible: "Get 20% off your first order"
+          commands:
+            - tapOn: "✕"
+      - tapOn:
+          id: "first_name_input"
+      - eraseText
+      - inputText: "Maestro Campaign Tester"
+      - tapOn:
+          id: "email_input"
+      - eraseText
+      - inputText: ${output.email}
+      - copyTextFrom:
+          id: "email_input"
+      - assertTrue: ${maestro.copiedText === output.email}
 - hideKeyboard
 - runFlow:
     when:

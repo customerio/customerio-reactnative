@@ -28,7 +28,9 @@ Run the remote APNs loop after configuring the APN sample's ignored
 the same APN workspace key for the build and restores its ignored config when
 the run ends. Put the `Mobile SDK Maestro E2E` App API key from the same
 `Mobile: React Native` workspace in `.maestro/.env` as shown by
-`.maestro/.env.example`, then run:
+`.maestro/.env.example`. Simulator APNs tokens use the sandbox environment, so
+temporarily enable **Send all push notifications to sandbox** for the workspace
+and restore its previous setting after the run. Then run:
 
 ```bash
 .maestro/run_remote_push.sh
