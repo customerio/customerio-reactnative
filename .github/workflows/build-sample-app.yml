@@ -52,7 +52,7 @@ env:
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: macos-26
+    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'macos-26' }}
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
@@ -69,6 +69,7 @@ jobs:
 
       # This file is untracked and needs to be created dynamically
       - name: Create SampleApp.xcodeproj file
+        if: ${{ inputs.platform == 'ios' }}
         shell: bash
         working-directory: example/ios
         run: |
@@ -110,10 +111,15 @@ jobs:
           # Export the groups as an environment variable
           echo "firebase_distribution_groups=$(IFS=','; echo "${distribution_groups[*]}")" >> $GITHUB_ENV
 
-      - name: Install CLI tools used in CI script
+      - name: Install sd CLI for Android builds
+        if: ${{ inputs.platform == 'android' }}
+        uses: kenji-miyake/setup-sd@08c14e27d65a1c215342ef00c81583ae67f4c5ef # v2.0.0
+
+      - name: Install CLI tools for iOS builds
+        if: ${{ inputs.platform == 'ios' }}
         shell: bash
         run: |
-          brew install sd # used in CI script as an easier to use sed CLI. Replaces text in files. 
+          brew install sd # used in CI script as an easier to use sed CLI. Replaces text in files.
           brew install xcbeautify # used by fastlane for output
 
       - name: Install Ruby
@@ -209,6 +215,7 @@ jobs:
             **/package-lock.json
 
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
+        if: ${{ inputs.platform == 'ios' }}
         uses: actions/cache@v4
         with:
           path: example/Pods
@@ -275,7 +282,7 @@ jobs:
           build_status: ${{ steps.build_app.outcome }}
           app_icon_emoji: ":react:"
           app_name: "React Native"
-          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_{1}', inputs.app_name, inputs.platform_upper_name )] }}
+          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_{1}', inputs.app_name, inputs.platform_name_upper )] }}
           firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
           git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
           icon_url: "https://vectorified.com/images/icon-react-native-24.png"
