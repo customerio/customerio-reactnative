@@ -40,8 +40,8 @@ if [[ -z "$device_id" ]]; then
     echo "error: no available '$simulator_name' simulator; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME" >&2
     exit 2
   fi
-  xcrun simctl boot "$device_id" >/dev/null 2>&1 || true
 fi
+xcrun simctl boot "$device_id" >/dev/null 2>&1 || true
 xcrun simctl bootstatus "$device_id" -b
 
 created_host_parent=false
