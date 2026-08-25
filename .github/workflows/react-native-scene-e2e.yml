@@ -5,9 +5,6 @@ on:
     paths:
       - '.github/workflows/react-native-scene-e2e.yml'
       - '.maestro/**'
-      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
-      - 'ios/wrappers/NativeCustomerIO.swift'
-      - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
   schedule:
     - cron: '47 7 * * *'
   workflow_dispatch:
@@ -49,6 +46,7 @@ jobs:
       - name: Install Maestro
         shell: bash
         run: |
+          export MAESTRO_VERSION=2.6.0
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 

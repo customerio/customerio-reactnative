@@ -9,7 +9,10 @@ APP_ID="org.reactjs.native.example.CioRnSceneHost"
 RN_CLI_VERSION="20.2.0"
 RN_TEMPLATE_VERSION="0.87.0"
 RN_VERSION="0.88.0-nightly-20260823-0c7f63a4e"
-DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+DEVELOPER_DIR="${DEVELOPER_DIR:-$(xcode-select -p)}"
+if [[ "$DEVELOPER_DIR" == */CommandLineTools && -d /Applications/Xcode.app/Contents/Developer ]]; then
+  DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+fi
 export DEVELOPER_DIR
 
 device_id="${E2E_DEVICE_ID:-}"
@@ -46,11 +49,15 @@ fi
 host="$host_parent/$APP_NAME"
 package_dir="$host_parent/package"
 derived_data="$host_parent/derived-data"
-push_pid=""
+flow_log=""
+flow_pid=""
 cleanup() {
-  if [[ -n "$push_pid" ]]; then
-    kill "$push_pid" >/dev/null 2>&1 || true
-    wait "$push_pid" 2>/dev/null || true
+  if [[ -n "$flow_pid" ]]; then
+    kill "$flow_pid" >/dev/null 2>&1 || true
+    wait "$flow_pid" 2>/dev/null || true
+  fi
+  if [[ -n "$flow_log" ]]; then
+    rm -f "$flow_log"
   fi
   if [[ "$created_host_parent" == true && -d "$host_parent" ]]; then
     find "$host_parent" -depth -delete
@@ -58,6 +65,40 @@ cleanup() {
 }
 trap cleanup EXIT
 mkdir -p "$package_dir"
+
+run_notification_flow() {
+  local flow="$1"
+  local payload="$2"
+  local ready=false
+
+  flow_log="$(mktemp "${TMPDIR:-/tmp}/cio-rn-maestro-flow.XXXXXX")"
+  maestro --device "$device_id" test "$flow" > >(tee "$flow_log") 2>&1 &
+  flow_pid=$!
+
+  for _ in {1..240}; do
+    if grep -q 'Press Home key.*COMPLETED' "$flow_log"; then
+      ready=true
+      break
+    fi
+    if ! kill -0 "$flow_pid" >/dev/null 2>&1; then
+      wait "$flow_pid"
+      flow_pid=""
+      return 1
+    fi
+    sleep 0.5
+  done
+
+  if [[ "$ready" != true ]]; then
+    echo "error: Maestro did not reach the Home screen before notification injection" >&2
+    return 1
+  fi
+
+  xcrun simctl push "$device_id" "$APP_ID" "$payload"
+  wait "$flow_pid"
+  flow_pid=""
+  rm -f "$flow_log"
+  flow_log=""
+}
 
 cd "$REPO_ROOT"
 npm ci
@@ -124,20 +165,5 @@ xcrun simctl install "$device_id" "$app_path"
 cd "$REPO_ROOT"
 maestro --device "$device_id" test .maestro/scene_push_prepare.yaml
 xcrun simctl terminate "$device_id" "$APP_ID"
-(
-  sleep 10
-  xcrun simctl push "$device_id" "$APP_ID" .maestro/fixtures/customerio_scene_cold.apns
-) &
-push_pid=$!
-maestro --device "$device_id" test .maestro/scene_push_open.yaml
-wait "$push_pid"
-push_pid=""
-
-(
-  sleep 10
-  xcrun simctl push "$device_id" "$APP_ID" .maestro/fixtures/customerio_scene_warm.apns
-) &
-push_pid=$!
-maestro --device "$device_id" test .maestro/scene_push_warm.yaml
-wait "$push_pid"
-push_pid=""
+run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
+run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
