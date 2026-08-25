@@ -1,13 +1,23 @@
-import CioInternalCommon
+@_spi(Internal) import CioInternalCommon
 import Foundation
+import UIKit
 
 enum CustomerIOReactNativeDeepLinkRouter {
+    private struct PendingUrl {
+        let id: UUID
+        let url: URL
+    }
+
+    private static let readinessTimeout: TimeInterval = 3
     private static let sceneManifestKey = "UIApplicationSceneManifest"
     private static let sceneConfigurationsKey = "UISceneConfigurations"
     private static let sceneOpenURLContextsSelector = NSSelectorFromString("scene:openURLContexts:")
     // React Native 0.83.6 and 0.88.0-nightly-20260823-0c7f63a4e use this
     // notification name and payload for Linking URL events.
     private static let openURLNotification = Notification.Name("RCTOpenURLNotification")
+    private static let stateLock = NSLock()
+    private static var isReactNativeReady = false
+    private static var pendingUrls: [PendingUrl] = []
 
     /// Mirrors `RCTIsSceneDelegateApp()` without linking to the internal symbol, and also requires
     /// React Native's scene-Linking entry point. A scene manifest alone does not make older React
@@ -21,6 +31,50 @@ enum CustomerIOReactNativeDeepLinkRouter {
         else { return false }
 
         return linkingManager.responds(to: sceneOpenURLContextsSelector)
+    }
+
+    static func install() {
+        guard isSceneLifecycleEnabled else { return }
+
+        DIGraphShared.shared.deepLinkUtil.setDeepLinkCallback { url in
+            accept(url)
+            return true
+        }
+    }
+
+    static func accept(_ url: URL) {
+        stateLock.lock()
+        if !isReactNativeReady {
+            let pendingUrl = PendingUrl(id: UUID(), url: url)
+            pendingUrls.append(pendingUrl)
+            stateLock.unlock()
+            DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
+                expire(pendingUrl.id)
+            }
+            return
+        }
+        stateLock.unlock()
+
+        route(url)
+    }
+
+    static func markReactNativeReady() {
+        let markReady = {
+            stateLock.lock()
+            isReactNativeReady = true
+            let urls = pendingUrls.map(\.url)
+            pendingUrls.removeAll()
+            stateLock.unlock()
+
+            // This runs on the main thread, so buffered URLs are published before a new
+            // main-thread URL can interleave with them.
+            urls.forEach(route)
+        }
+        if Thread.isMainThread {
+            markReady()
+        } else {
+            DispatchQueue.main.async(execute: markReady)
+        }
     }
 
     static func route(_ url: URL) {
@@ -40,6 +94,28 @@ enum CustomerIOReactNativeDeepLinkRouter {
             publish()
         } else {
             DispatchQueue.main.async(execute: publish)
+        }
+    }
+
+    private static func expire(_ id: UUID) {
+        stateLock.lock()
+        guard !isReactNativeReady,
+              let index = pendingUrls.firstIndex(where: { $0.id == id })
+        else {
+            stateLock.unlock()
+            return
+        }
+        let url = pendingUrls.remove(at: index).url
+        stateLock.unlock()
+
+        DIGraphShared.shared.logger.error(
+            "Customer.io is opening an SDK deep link externally because React Native did not initialize in time"
+        )
+        UIApplication.shared.open(url) { opened in
+            guard !opened else { return }
+            DIGraphShared.shared.logger.error(
+                "Customer.io could not open the SDK deep link externally"
+            )
         }
     }
 }

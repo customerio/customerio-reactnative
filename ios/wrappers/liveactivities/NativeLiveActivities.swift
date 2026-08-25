@@ -226,7 +226,7 @@ public class NativeLiveActivities: NSObject {
     @objc(handleAndRouteWidgetUrl:)
     public static func handleAndRouteWidgetUrl(_ url: URL) {
         guard let routableUrl = handleWidgetUrl(url) else { return }
-        CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
+        CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
     }
 
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity

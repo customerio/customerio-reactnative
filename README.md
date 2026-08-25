@@ -72,7 +72,13 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
-After initializing through the React Native `CustomerIO.initialize` API, iOS `UIScene` hosts on a React Native version that exposes scene-based `Linking` receive Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. Register the app's `Linking` URL listener before initializing Customer.io. That listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published without a listener is dropped rather than opened externally, which would risk duplicate navigation. Natively initialized hosts, including Expo config-plugin integrations, keep their existing integration until that integration installs the callback. Older React Native versions and AppDelegate-only hosts also keep their existing deep-link integration.
+On iOS, a `UIScene` host must install the wrapper's deep-link bridge before React Native starts. Call this first in `scene(_:willConnectTo:options:)`:
+
+```swift
+NativeCustomerIO.configureSceneDeepLinkRouting()
+```
+
+Then register the app's JavaScript `Linking` URL listener before calling `CustomerIO.initialize`. This ordering is required. Customer.io push, in-app, and inbox destinations are buffered during cold launch, then delivered through React Native's standard `Linking` API after initialization. If React Native does not initialize within three seconds, the SDK opens the destination through the system instead of retaining it indefinitely. The listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published after initialization without a listener is not opened externally, which would risk duplicate navigation. Natively initialized hosts, including Expo config-plugin integrations, keep their existing callback. Older React Native versions and AppDelegate-only hosts also keep their existing deep-link integration.
 
 This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
 
