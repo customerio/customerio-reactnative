@@ -240,6 +240,40 @@ jobs:
             npm run ci:install_${{ inputs.platform }}
           fi
         working-directory: example
+        env:
+          CUSTOMER_IO_USE_GIT_SOURCES: ${{ inputs.platform == 'ios' && 'true' || 'false' }}
+
+      - name: Verify Customer.io pod resolution through CocoaPods trunk
+        if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
+        working-directory: example
+        shell: bash
+        run: |
+          set -o pipefail
+          check_dir=$(mktemp -d "${RUNNER_TEMP}/customerio-cocoapods-trunk.XXXXXX")
+          trap 'rm -rf "$check_dir"' EXIT
+          customer_io_ios_version=$(node -p "require('../package.json').cioNativeiOSSdkVersion.replace(/^=\\s*/, '')")
+
+          cat > "$check_dir/Podfile" <<EOF
+          source 'https://cdn.cocoapods.org/'
+          platform :ios, '15.0'
+
+          target 'CustomerIOTrunkResolutionCheck' do
+            pod 'CustomerIO/MessagingPushAPN', '= ${customer_io_ios_version}'
+          end
+          EOF
+
+          set +e
+          bundle exec pod install --project-directory="$check_dir" --no-repo-update 2>&1 | tee "$check_dir/pod-install.log"
+          pod_install_status=${PIPESTATUS[0]}
+          set -e
+
+          if [[ "$pod_install_status" -eq 0 ]]; then
+            echo "CocoaPods trunk resolved CustomerIO/MessagingPushAPN ${customer_io_ios_version}."
+          elif grep -Eqi '429|too many requests' "$check_dir/pod-install.log"; then
+            echo "::warning::CocoaPods trunk smoke check was rate-limited; the Git-backed sample build remains the required CI path."
+          else
+            exit "$pod_install_status"
+          fi
 
       - name: Audit CocoaPods deployment targets
         if: ${{ inputs.platform == 'ios' }}
