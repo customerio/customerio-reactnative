@@ -37,10 +37,50 @@ setup_permissions([
 push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
 customer_io_ios_git_source = "https://github.com/customerio/customerio-ios.git"
 customer_io_ios_version = "4.7.6"
+customer_io_firebase_git_source = "https://github.com/customerio/customerio-ios-fcm.git"
+customer_io_firebase_version = "1.0.0"
 customer_io_minimum_ios_version = CustomerIO::CocoaPodsDeploymentTarget.maximum(
   min_ios_version_supported,
   '15.0'
 )
+
+def install_customer_io_ios_pods_from_git(source:, tag:, push_provider:, app_extension:)
+  subspecs = ["MessagingPush", push_provider == "apn" ? "MessagingPushAPN" : "MessagingPushFCM"]
+  pods = [
+    "CustomerIOCommon",
+    "CustomerIOMessagingPush",
+  ]
+
+  unless app_extension
+    subspecs += [
+      "DataPipelines",
+      "MessagingInApp",
+      "MessagingInbox",
+      "Location",
+      "LocationGeofence",
+      "LiveActivities",
+      "LiveActivitiesTemplates",
+    ]
+    pods += [
+      "CustomerIODataPipelines",
+      "CustomerIOTrackingMigration",
+      "CustomerIOLocation",
+      "CustomerIOLocationGeofence",
+      "CustomerIOMessagingInApp",
+      "CustomerIOMessagingInbox",
+      "CustomerIOLiveActivities",
+      "CustomerIOLiveActivitiesAttributes",
+      "CustomerIOLiveActivitiesTemplates",
+    ]
+  end
+
+  pod "CustomerIO", :git => source, :tag => tag, :subspecs => subspecs
+  pods << (push_provider == "apn" ? "CustomerIOMessagingPushAPN" : "CustomerIOMessagingPushFCM")
+
+  pods.each do |pod_name|
+    pod pod_name, :git => source, :tag => tag
+  end
+end
 
 app_target_name = "SampleApp"
 nse_target_name = "NotificationServiceExtension"
@@ -76,10 +116,16 @@ target app_target_name do
     :app_path => "#{installation_root}/..",
   )
   pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location", "geofence", "liveactivities"]
-  if push_provider == "apn"
-    # The APN spec is intermittently rate-limited through the public CocoaPods CDN.
-    # Resolve this one pod from the same pinned Customer.io iOS tag instead.
-    pod "CustomerIOMessagingPushAPN", :git => customer_io_ios_git_source, :tag => customer_io_ios_version
+  # Resolve Customer.io's native pods directly from their pinned Git tags. The public CocoaPods
+  # CDN can rate-limit GitHub-backed spec lookups on shared CI runners.
+  install_customer_io_ios_pods_from_git(
+    source: customer_io_ios_git_source,
+    tag: customer_io_ios_version,
+    push_provider: push_provider,
+    app_extension: false,
+  )
+  if push_provider == "fcm"
+    pod "CioFirebaseWrapper", :git => customer_io_firebase_git_source, :tag => customer_io_firebase_version
   end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
@@ -105,9 +151,12 @@ target nse_target_name do
   # Ideally, installing non-production SDK to main target should be enough
   # We should not need to install non-production SDK to app extension separately
   pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
-  if push_provider == "apn"
-    pod "CustomerIOMessagingPushAPN", :git => customer_io_ios_git_source, :tag => customer_io_ios_version
-  end
+  install_customer_io_ios_pods_from_git(
+    source: customer_io_ios_git_source,
+    tag: customer_io_ios_version,
+    push_provider: push_provider,
+    app_extension: true,
+  )
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
 end
@@ -119,6 +168,6 @@ target "LiveActivityWidget" do
   # A widget extension cannot link the wrapper pod, so it names the rendering pods itself.
   # Keep the version in step with package.json's cioNativeiOSSdkVersion.
   %w[CustomerIOLiveActivitiesTemplates CustomerIOLiveActivitiesAttributes].each do |cio_pod|
-    pod cio_pod, '4.7.6'
+    pod cio_pod, :git => customer_io_ios_git_source, :tag => customer_io_ios_version
   end
 end
