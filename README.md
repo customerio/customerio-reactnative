@@ -74,6 +74,8 @@ This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-n
 
 After `CustomerIO.initialize`, iOS `UIScene` hosts receive Customer.io push, in-app, and inbox destinations through React Native's standard `Linking` API. Register the app's `Linking` URL listener before initializing Customer.io. That listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published without a listener is dropped rather than opened externally, which would risk duplicate navigation. AppDelegate-only hosts keep their existing deep-link integration.
 
+This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
+
 This release's compatibility scope is one simultaneous window scene. Multiple simultaneous React Native window scenes are not supported; hosts enabling them retain responsibility for scene-to-bridge mapping and window-specific routing.
 
 ---
