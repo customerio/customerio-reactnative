@@ -45,7 +45,17 @@ customer_io_minimum_ios_version = CustomerIO::CocoaPodsDeploymentTarget.maximum(
 )
 
 def install_customer_io_ios_pods_from_git(source:, tag:, push_provider:, app_extension:)
-  subspecs = ["MessagingPush", push_provider == "apn" ? "MessagingPushAPN" : "MessagingPushFCM"]
+  push_subspec = push_provider == "apn" ? "MessagingPushAPN" : "MessagingPushFCM"
+
+  # The rich push target is isolated from the host app, so install its push
+  # subspec directly. Declaring the individual transitive pods here leaves
+  # CocoaPods without the framework search paths needed by the extension.
+  if app_extension
+    pod "CustomerIO/#{push_subspec}", :git => source, :tag => tag
+    return
+  end
+
+  subspecs = ["MessagingPush", push_subspec]
   pods = [
     "CustomerIOCommon",
     "CustomerIOMessagingPush",
@@ -75,7 +85,7 @@ def install_customer_io_ios_pods_from_git(source:, tag:, push_provider:, app_ext
   end
 
   pod "CustomerIO", :git => source, :tag => tag, :subspecs => subspecs
-  pods << (push_provider == "apn" ? "CustomerIOMessagingPushAPN" : "CustomerIOMessagingPushFCM")
+  pods << "CustomerIOMessagingPush#{push_provider == "apn" ? "APN" : "FCM"}"
 
   pods.each do |pod_name|
     pod pod_name, :git => source, :tag => tag
