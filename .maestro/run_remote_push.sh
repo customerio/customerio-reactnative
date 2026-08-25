@@ -57,14 +57,14 @@ backend_status="$(curl -sS --retry 3 --retry-all-errors --retry-delay 2 --connec
 campaign_response="$(curl -sS --retry 3 --retry-all-errors --retry-delay 2 --connect-timeout 10 \
   -w $'\n%{http_code}' \
   -H "Authorization: Bearer $MAESTRO_APP_API_KEY" \
-  "$MAESTRO_EXT_API_BASE_URL/campaigns/15" || true)"
+  "$MAESTRO_EXT_API_BASE_URL/campaigns/68" || true)"
 campaign_status="${campaign_response##*$'\n'}"
 campaign_body="${campaign_response%$'\n'*}"
 [[ "$campaign_status" == "200" ]] || \
-  die "App API key cannot access campaign 15 in the Mobile: React Native workspace (HTTP ${campaign_status:-unreachable})"
+  die "App API key cannot access campaign 68 in the Mobile: React Native workspace (HTTP ${campaign_status:-unreachable})"
 campaign_name="$(printf '%s' "$campaign_body" | jq -r '.campaign.name // .name // empty' 2>/dev/null || true)"
-[[ "$campaign_name" == "push_notif_test" ]] || \
-  die "campaign 15 is not the expected Mobile: React Native push_notif_test automation"
+[[ "$campaign_name" == "Maestro React Native APNs E2E" ]] || \
+  die "campaign 68 is not the expected Mobile: React Native Maestro APNs automation"
 
 device_id="${E2E_DEVICE_ID:-}"
 simulator_name="${E2E_SIMULATOR_NAME:-}"
@@ -82,7 +82,12 @@ if [[ -z "$device_id" ]]; then
     '[.devices[][] | select(.name == $name)][0].udid // empty')"
 fi
 [[ -n "$device_id" ]] || die "no available iPhone simulator; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME"
-xcrun simctl boot "$device_id" >/dev/null 2>&1 || true
+simulator_started_by_runner=false
+if ! xcrun simctl list devices booted -j | jq -e --arg id "$device_id" \
+  'any(.devices[][]; .udid == $id and .state == "Booted")' >/dev/null; then
+  xcrun simctl boot "$device_id"
+  simulator_started_by_runner=true
+fi
 xcrun simctl bootstatus "$device_id" -b
 
 temp_base="${TMPDIR:-/tmp}"
@@ -90,7 +95,8 @@ temp_base="${temp_base%/}"
 run_root="$(mktemp -d "$temp_base/cio-rn-remote-push.XXXXXX")"
 harness="$run_root/mobile-e2e"
 derived_data="$run_root/derived-data"
-artifacts="${CIO_E2E_ARTIFACT_DIR:-$run_root/maestro-artifacts}"
+artifacts="$run_root/maestro-artifacts"
+artifact_export_dir="${CIO_E2E_ARTIFACT_DIR:-}"
 installed_app=false
 nse_env_generated=false
 nse_env_backup="$run_root/Env.swift.original"
@@ -109,6 +115,9 @@ cleanup() {
   if [[ "$installed_app" == true && "${CIO_E2E_KEEP_APP:-false}" != "true" ]]; then
     xcrun simctl terminate "$device_id" "$APP_ID" >/dev/null 2>&1 || true
     xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
+  fi
+  if [[ "$simulator_started_by_runner" == true ]]; then
+    xcrun simctl shutdown "$device_id" >/dev/null 2>&1 || true
   fi
   if [[ "$nse_env_generated" == true ]]; then
     if [[ -f "$nse_env_backup" ]]; then
@@ -206,4 +215,8 @@ set -e
 
 python3 "$harness/scripts/redact_artifacts.py" "$artifacts"
 python3 "$harness/scripts/redact_artifacts.py" "$artifacts" --check
+if [[ -n "$artifact_export_dir" ]]; then
+  mkdir -p "$artifact_export_dir"
+  cp -R "$artifacts/." "$artifact_export_dir/"
+fi
 exit "$result"

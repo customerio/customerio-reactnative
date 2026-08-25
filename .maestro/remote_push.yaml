@@ -59,6 +59,17 @@ name: React Native APNs delivery and opened attribution
     visible: "Push notifications enabled successfully"
     timeout: 10000
 
+- runScript:
+    file: ../scripts/assert_customer_activity.js
+    env:
+      RUN_EMAIL: ${output.email}
+      EXPECTED_ACTIVITY_TYPE: "device_change"
+      EXPECTED_PROPERTY_NAME: "devices.0.platform"
+      EXPECTED_PROPERTY_VALUE: "ios"
+      MIN_TIMESTAMP_SECONDS: ${output.started_at_seconds}
+      MAX_WAIT_MS: "45000"
+- assertTrue: ${output.assert_ok === "true"}
+
 - retry:
     maxRetries: 1
     commands:
@@ -81,7 +92,7 @@ name: React Native APNs delivery and opened attribution
     timeout: 10000
 - tapOn:
     id: "event_name_input"
-- inputText: "jason"
+- inputText: "maestro_rn_apns_e2e"
 - tapOn:
     id: "property_name_input"
 - inputText: "run_id"
@@ -99,19 +110,19 @@ name: React Native APNs delivery and opened attribution
 - extendedWaitUntil:
     visible: "Event sent successfully"
     timeout: 10000
-- pressKey: Home
 
 - runScript:
     file: ../scripts/assert_customer_activity.js
     env:
       RUN_EMAIL: ${output.email}
       EXPECTED_ACTIVITY_TYPE: "event"
-      EXPECTED_ACTIVITY_NAME: "jason"
+      EXPECTED_ACTIVITY_NAME: "maestro_rn_apns_e2e"
       EXPECTED_PROPERTY_NAME: "run_id"
       EXPECTED_PROPERTY_VALUE: ${output.run_id}
       MIN_TIMESTAMP_SECONDS: ${output.started_at_seconds}
       MAX_WAIT_MS: "45000"
 - assertTrue: ${output.assert_ok === "true"}
+- pressKey: Home
 
 - runScript:
     file: ../scripts/assert_message_delivered.js
@@ -119,7 +130,7 @@ name: React Native APNs delivery and opened attribution
       RUN_EMAIL: ${output.email}
       EXPECTED_TYPE: "push"
       MIN_METRIC: "delivered"
-      CAMPAIGN_ID: "15"
+      CAMPAIGN_ID: "68"
       MAX_WAIT_MS: "60000"
 - assertTrue: ${output.assert_ok === "true"}
 - assertTrue: ${output.message_id.length > 0}
@@ -131,12 +142,9 @@ name: React Native APNs delivery and opened attribution
 - waitForAnimationToEnd:
     timeout: 2000
 - extendedWaitUntil:
-    visible:
-      id: "NotificationShortLookView"
+    visible: "Maestro RN APNs E2E"
     timeout: 15000
-- tapOn:
-    id: "NotificationShortLookView"
-    retryTapIfNoChange: false
+- tapOn: "Maestro RN APNs E2E"
 - extendedWaitUntil:
     visible:
       id: "send_event_button"
@@ -148,7 +156,7 @@ name: React Native APNs delivery and opened attribution
       RUN_EMAIL: ${output.email}
       EXPECTED_TYPE: "push"
       MIN_METRIC: "opened"
-      CAMPAIGN_ID: "15"
+      CAMPAIGN_ID: "68"
       EXPECTED_MESSAGE_ID: ${output.message_id}
       MAX_WAIT_MS: "60000"
 - assertTrue: ${output.assert_ok === "true"}

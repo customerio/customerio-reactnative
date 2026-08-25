@@ -37,7 +37,7 @@ and restore its previous setting after the run. Then run:
 ```
 
 The remote flow identifies a fresh customer in the `Mobile: React Native`
-workspace, sends the `jason` event used by its existing `push_notif_test`
-automation (campaign 15), taps the real system notification, and requires
+workspace, sends the `maestro_rn_apns_e2e` event used by its dedicated Maestro
+automation (campaign 68), taps the real system notification, and requires
 matching backend `delivered` and `opened` metrics. It is intentionally local or
 trusted-CI only; pull requests do not receive the required workspace credential.
