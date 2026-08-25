@@ -8,7 +8,7 @@ enum CustomerIOReactNativeDeepLinkRouter {
         let url: URL
     }
 
-    private static let readinessTimeout: TimeInterval = 3
+    private static let readinessTimeout: TimeInterval = 10
     private static let sceneManifestKey = "UIApplicationSceneManifest"
     private static let sceneConfigurationsKey = "UISceneConfigurations"
     private static let sceneOpenURLContextsSelector = NSSelectorFromString("scene:openURLContexts:")
@@ -16,6 +16,8 @@ enum CustomerIOReactNativeDeepLinkRouter {
     // notification name and payload for Linking URL events.
     private static let openURLNotification = Notification.Name("RCTOpenURLNotification")
     private static let stateLock = NSLock()
+    // React Native Linking is process-wide. Multi-window and independent bridge lifecycles are
+    // outside the single-window scene contract, so readiness intentionally lasts for the process.
     private static var isReactNativeReady = false
     private static var pendingUrls: [PendingUrl] = []
 
