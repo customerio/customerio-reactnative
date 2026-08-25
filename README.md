@@ -133,8 +133,9 @@ Then replace the ordinary React Native URL-forwarding body in the existing `Scen
 import customerio_reactnative
 
 func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-  guard let context = URLContexts.first else { return }
-  NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
+  for context in URLContexts {
+    NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
+  }
 }
 ```
 
