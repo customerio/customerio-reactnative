@@ -35,6 +35,8 @@ setup_permissions([
 ])
 
 push_provider = (ENV["PUSH_PROVIDER"] || "apn").downcase
+customer_io_ios_git_source = "https://github.com/customerio/customerio-ios.git"
+customer_io_ios_version = "4.7.6"
 customer_io_minimum_ios_version = CustomerIO::CocoaPodsDeploymentTarget.maximum(
   min_ios_version_supported,
   '15.0'
@@ -74,6 +76,11 @@ target app_target_name do
     :app_path => "#{installation_root}/..",
   )
   pod "customerio-reactnative", :path => cio_package_path, :subspecs => [push_provider, "location", "geofence", "liveactivities"]
+  if push_provider == "apn"
+    # The APN spec is intermittently rate-limited through the public CocoaPods CDN.
+    # Resolve this one pod from the same pinned Customer.io iOS tag instead.
+    pod "CustomerIOMessagingPushAPN", :git => customer_io_ios_git_source, :tag => customer_io_ios_version
+  end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: false, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'feature/wrappers-inline-support', is_app_extension: false, push_service: push_provider)
 
@@ -98,6 +105,9 @@ target nse_target_name do
   # Ideally, installing non-production SDK to main target should be enough
   # We should not need to install non-production SDK to app extension separately
   pod "customerio-reactnative-richpush/#{push_provider}", :path => cio_package_path
+  if push_provider == "apn"
+    pod "CustomerIOMessagingPushAPN", :git => customer_io_ios_git_source, :tag => customer_io_ios_version
+  end
   # install_non_production_ios_sdk_local_path(local_path: '~/code/customerio-ios/', is_app_extension: true, push_service: push_provider)
   # install_non_production_ios_sdk_git_branch(branch_name: 'BRANCH-NAME-HERE', is_app_extension: true, push_service: push_provider)
 end
