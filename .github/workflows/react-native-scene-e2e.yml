@@ -1,0 +1,59 @@
+name: React Native scene routing E2E
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/react-native-scene-e2e.yml'
+      - '.maestro/**'
+      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
+      - 'ios/wrappers/NativeCustomerIO.swift'
+      - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
+  schedule:
+    - cron: '47 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  route-notifications:
+    name: RN scene notification routing on Xcode 27
+    runs-on: xcode-27
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out React Native SDK
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Verify Xcode 27 toolchain
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: '3.4'
+
+      - name: Install Maestro
+        shell: bash
+        run: |
+          curl -Ls https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Test warm and terminated notification routing
+        shell: bash
+        env:
+          E2E_SIMULATOR_NAME: iPhone 17 Pro
+        run: .maestro/run_scene_push.sh
