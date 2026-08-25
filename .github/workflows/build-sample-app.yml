@@ -170,6 +170,10 @@ jobs:
         with:
           subdirectory: example
           lane: "update_react_native_app_version"
+          options: >
+            {
+              "platform": "${{ inputs.platform }}"
+            }
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
