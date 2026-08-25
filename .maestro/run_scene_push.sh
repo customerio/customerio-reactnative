@@ -23,12 +23,17 @@ for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
 done
 
 device_id="${E2E_DEVICE_ID:-}"
-if [[ -z "$device_id" ]]; then
+simulator_name="${E2E_SIMULATOR_NAME:-}"
+if [[ -z "$device_id" && -n "$simulator_name" ]]; then
+  device_id="$(xcrun simctl list devices available -j | jq -r --arg name "$simulator_name" \
+    '[.devices[][] | select(.name == $name)][0].udid // empty')"
+fi
+if [[ -z "$device_id" && -z "$simulator_name" ]]; then
   device_id="$(xcrun simctl list devices booted -j | jq -r \
     '[.devices[][] | select(.state == "Booted") | select(.name | startswith("iPhone"))][0].udid // empty')"
 fi
 if [[ -z "$device_id" ]]; then
-  simulator_name="${E2E_SIMULATOR_NAME:-iPhone 17 Pro}"
+  simulator_name="${simulator_name:-iPhone 17 Pro}"
   device_id="$(xcrun simctl list devices available -j | jq -r --arg name "$simulator_name" \
     '[.devices[][] | select(.name == $name)][0].udid // empty')"
   if [[ -z "$device_id" ]]; then
