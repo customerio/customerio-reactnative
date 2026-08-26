@@ -24,8 +24,8 @@ for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
 done
 
 maestro_version="$(maestro --version | tr -d '\r')"
-if [[ "$maestro_version" != '2.6.0' ]]; then
-  echo "error: Maestro 2.6.0 is required; found '$maestro_version'" >&2
+if [[ "$maestro_version" != '2.8.0' ]]; then
+  echo "error: Maestro 2.8.0 is required; found '$maestro_version'" >&2
   exit 2
 fi
 
@@ -45,6 +45,15 @@ if [[ -z "$device_id" ]]; then
     '[.devices[][] | select(.name == $name)][0].udid // empty')"
   if [[ -z "$device_id" ]]; then
     echo "error: no available '$simulator_name' simulator; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME" >&2
+    exit 2
+  fi
+fi
+if [[ -n "${E2E_IOS_RUNTIME_MAJOR:-}" ]]; then
+  runtime_id="$(xcrun simctl list devices available -j | jq -r --arg id "$device_id" \
+    '[.devices | to_entries[] | select(any(.value[]; .udid == $id))][0].key // empty')"
+  expected_runtime_fragment=".iOS-${E2E_IOS_RUNTIME_MAJOR}-"
+  if [[ "$runtime_id" != *"$expected_runtime_fragment"* ]]; then
+    echo "error: selected simulator runtime '$runtime_id' is not iOS $E2E_IOS_RUNTIME_MAJOR" >&2
     exit 2
   fi
 fi
@@ -85,7 +94,9 @@ cleanup() {
     xcrun simctl shutdown "$device_id" >/dev/null 2>&1 || true
   fi
   if [[ "$created_host_parent" == true && -d "$host_parent" ]]; then
-    find "$host_parent" -depth -delete
+    if ! find "$host_parent" -depth -delete; then
+      echo "warning: could not completely remove temporary host $host_parent" >&2
+    fi
   fi
 }
 trap cleanup EXIT

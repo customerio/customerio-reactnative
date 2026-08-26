@@ -60,13 +60,14 @@ jobs:
       - name: Install Maestro
         shell: bash
         run: |
-          export MAESTRO_VERSION=2.6.0
+          export MAESTRO_VERSION=2.8.0
           curl -Ls https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
       - name: Test warm and terminated notification routing
         shell: bash
         env:
+          E2E_IOS_RUNTIME_MAJOR: '27'
           E2E_SIMULATOR_NAME: iPhone 17 Pro
         run: .maestro/run_scene_push.sh
 

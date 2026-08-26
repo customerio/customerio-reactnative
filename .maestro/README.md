@@ -17,7 +17,7 @@ client routing path, not backend `sent`, `delivered`, or `opened` metrics. Those
 metrics are covered separately by `run_remote_push.sh`, which uses the existing
 APN sample, its notification service extension, a real workspace, and APNs.
 
-Run with Maestro 2.6.0 and a booted iPhone simulator:
+Run with Maestro 2.8.0 and a booted iPhone simulator:
 
 ```bash
 .maestro/run_scene_push.sh
