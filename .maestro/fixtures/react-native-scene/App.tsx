@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Linking, Text, View } from 'react-native';
-import { CioRegion, CustomerIO } from 'customerio-reactnative';
+import {
+  CioPushPermissionStatus,
+  CioRegion,
+  CustomerIO,
+} from 'customerio-reactnative';
 
 export default function App(): React.JSX.Element {
   const [receivedUrl, setReceivedUrl] = useState<string | null>(null);
@@ -21,7 +25,12 @@ export default function App(): React.JSX.Element {
           ios: { sound: true, badge: true },
         })
       )
-      .then(() => setInitialized(true))
+      .then((status) => {
+        if (status !== CioPushPermissionStatus.Granted) {
+          throw new Error(`Push permission is ${status}`);
+        }
+        setInitialized(true);
+      })
       .catch((error: unknown) => {
         setFailure(error instanceof Error ? error.message : String(error));
       });
