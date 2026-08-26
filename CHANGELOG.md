@@ -1,3 +1,9 @@
+## [6.7.0](https://github.com/customerio/customerio-reactnative/compare/6.6.3...6.7.0) (2026-08-26)
+
+### Features
+
+* support deep-link routing in React Native UIScene hosts ([0c6bb16](https://github.com/customerio/customerio-reactnative/commit/0c6bb16a7c5bae9452a79d66ca37dc75f1122cc5))
+
 ## [6.6.3](https://github.com/customerio/customerio-reactnative/compare/6.6.2...6.6.3) (2026-08-21)
 
 ### Bug Fixes
