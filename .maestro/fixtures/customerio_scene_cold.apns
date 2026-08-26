@@ -1,0 +1,16 @@
+{
+  "aps": {
+    "alert": {
+      "title": "Customer.io scene routing",
+      "body": "Open React Native cold destination"
+    },
+    "sound": "default"
+  },
+  "CIO-Delivery-ID": "maestro-scene-route",
+  "CIO-Delivery-Token": "maestro-scene-token",
+  "CIO": {
+    "push": {
+      "link": "https://customer.io/react-native-scene-e2e/cold"
+    }
+  }
+}

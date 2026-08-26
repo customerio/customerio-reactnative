@@ -1,0 +1,105 @@
+name: React Native scene routing E2E
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/react-native-scene-e2e.yml'
+      - '.maestro/fixtures/customerio_scene_cold.apns'
+      - '.maestro/fixtures/customerio_scene_warm.apns'
+      - '.maestro/fixtures/react-native-scene/**'
+      - '.maestro/run_scene_push.sh'
+      - '.maestro/scene_push_open.yaml'
+      - '.maestro/scene_push_prepare.yaml'
+      - '.maestro/scene_push_warm.yaml'
+      - 'src/customerio-cdp.ts'
+      - 'src/customerio-push.ts'
+      - 'src/index.ts'
+      - 'src/native-logger-listener.ts'
+      - 'src/specs/modules/NativeCustomerIO.ts'
+      - 'src/specs/modules/NativeCustomerIOMessagingPush.ts'
+      - 'src/types/data-pipelines.ts'
+      - 'src/types/index.ts'
+      - 'src/types/internal.ts'
+      - 'src/types/push.ts'
+      - 'src/utils/native-bridge.ts'
+      - 'src/utils/param-validation.ts'
+      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
+      - 'ios/wrappers/NativeCustomerIO.swift'
+      - 'ios/wrappers/NativeCustomerIO.mm'
+      - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
+      - 'ios/wrappers/push/**'
+      - 'ios/wrappers/utils/CioConfigUtils.swift'
+      - 'ios/wrappers/utils/CioConstants.swift'
+      - 'ios/wrappers/CustomerioReactnative-Bridging-Header.h'
+      - 'ios/cocoapods_deployment_target.rb'
+      - 'customerio-reactnative.podspec'
+      - 'package.json'
+      - 'package-lock.json'
+  schedule:
+    - cron: '47 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  route-notifications:
+    name: RN scene notification routing on Xcode 27
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: xcode-27
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out React Native SDK
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Verify Xcode 27 toolchain
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: '3.4'
+
+      - name: Install Maestro
+        shell: bash
+        run: |
+          set -euo pipefail
+          maestro_zip="$RUNNER_TEMP/maestro-2.8.0.zip"
+          maestro_dir="$RUNNER_TEMP/maestro-2.8.0"
+          curl -fsSL \
+            https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.8.0/maestro.zip \
+            -o "$maestro_zip"
+          echo 'b3e561161904fb391875ca5834d5b22cf0b01c052dd1b408ad83e30d8f8951b3  '"$maestro_zip" \
+            | shasum -a 256 -c -
+          unzip -q "$maestro_zip" -d "$maestro_dir"
+          echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Test warm and terminated notification routing
+        shell: bash
+        env:
+          E2E_IOS_RUNTIME_MAJOR: '27'
+          E2E_SIMULATOR_NAME: iPhone 17 Pro
+        run: .maestro/run_scene_push.sh
+
+      - name: Upload Maestro diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: react-native-scene-maestro-diagnostics
+          path: ${{ runner.temp }}/react-native-scene-maestro-*
+          if-no-files-found: ignore
+          retention-days: 7
