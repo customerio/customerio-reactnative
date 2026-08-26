@@ -16,7 +16,7 @@ and does not require changing a shared Customer.io campaign. It validates the
 client routing path, not backend `sent`, `delivered`, or `opened` metrics. Those
 metrics remain a separate remote E2E lane using a real workspace and APNs.
 
-Run with Maestro 2.6.0 and a booted iPhone simulator:
+Run with Maestro 2.8.0 and a booted iPhone simulator:
 
 ```bash
 .maestro/run_scene_push.sh
