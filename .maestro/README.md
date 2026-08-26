@@ -42,7 +42,8 @@ automation (campaign 68), taps the real system notification, and requires
 matching backend `delivered` and `opened` metrics. It is intentionally local or
 trusted-CI only; pull requests do not receive the required workspace credential.
 
-On the supported simulator, Notification Center requires selecting the
-notification and then its system Open action by coordinate. The runner accepts
-that interaction only when the app reopens and Customer.io records `opened` for
-the exact delivered message.
+The activation gate requires an iPhone 17 Pro simulator. Notification Center
+is not exposed reliably through iOS accessibility, so the flow selects the
+notification and its system Open action by coordinate. The runner accepts that
+interaction only when the app reopens and Customer.io records `opened` for the
+exact delivered message.

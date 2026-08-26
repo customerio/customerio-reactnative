@@ -13,6 +13,7 @@ if [[ "$DEVELOPER_DIR" == */CommandLineTools && -d /Applications/Xcode.app/Conte
 fi
 export DEVELOPER_DIR
 export PUSH_PROVIDER=apn
+export MAESTRO_CLI_NO_ANALYTICS=1
 
 if ! bundle _2.6.9_ --version >/dev/null 2>&1; then
   if [[ "${CIO_E2E_RUBY_READY:-false}" != "true" ]] && command -v mise >/dev/null 2>&1; then
@@ -75,7 +76,7 @@ if [[ -z "$device_id" && -n "$simulator_name" ]]; then
   device_id="$(xcrun simctl list devices available -j | jq -r --arg name "$simulator_name" \
     '[.devices[][] | select(.name == $name)][0].udid // empty')"
 fi
-if [[ -z "$device_id" ]]; then
+if [[ -z "$device_id" && -z "$simulator_name" ]]; then
   device_id="$(xcrun simctl list devices booted -j | jq -r \
     '[.devices[][] | select(.state == "Booted") | select(.name | startswith("iPhone"))][0].udid // empty')"
 fi
@@ -85,6 +86,10 @@ if [[ -z "$device_id" ]]; then
     '[.devices[][] | select(.name == $name)][0].udid // empty')"
 fi
 [[ -n "$device_id" ]] || die "no available iPhone simulator; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME"
+device_type="$(xcrun simctl list devices available -j | jq -r --arg id "$device_id" \
+  '[.devices[][] | select(.udid == $id)][0].deviceTypeIdentifier // empty')"
+[[ "$device_type" == "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro" ]] || \
+  die "remote push activation requires an iPhone 17 Pro simulator; selected device type is '${device_type:-unknown}'"
 simulator_started_by_runner=false
 if ! xcrun simctl list devices booted -j | jq -e --arg id "$device_id" \
   'any(.devices[][]; .udid == $id and .state == "Booted")' >/dev/null; then
@@ -154,6 +159,7 @@ IOS_SITE_ID="$(ruby -e '
   print primary[/SITE_ID:\s*'"'"'([^'"'"']+)'"'"'/, 1].to_s
 ' "$app_env")"
 [[ -n "$IOS_CDP_API_KEY" && -n "$IOS_SITE_ID" ]] || die "APN sample redaction values could not be resolved"
+[[ "$IOS_SITE_ID" != *'<'* ]] || die "APN sample SITE_ID still contains a placeholder"
 export IOS_CDP_API_KEY IOS_SITE_ID
 
 git init -q "$harness"
@@ -210,6 +216,7 @@ maestro --device "$device_id" test \
   --debug-output "$artifacts" \
   --flatten-debug-output \
   -e "APP_ID=$APP_ID" \
+  -e "ARTIFACT_DIR=$artifacts" \
   -e "MAESTRO_APP_API_KEY=$MAESTRO_APP_API_KEY" \
   -e "MAESTRO_EXT_API_BASE_URL=$MAESTRO_EXT_API_BASE_URL" \
   "$harness/flows/reactnative_remote_push.yaml"

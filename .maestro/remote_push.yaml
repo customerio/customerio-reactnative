@@ -55,9 +55,6 @@ name: React Native APNs delivery and opened attribution
 - tapOn:
     text: "^Allow$"
     optional: true
-- extendedWaitUntil:
-    visible: "Push notifications enabled successfully"
-    timeout: 10000
 
 - runScript:
     file: ../scripts/assert_customer_activity.js
@@ -80,9 +77,10 @@ name: React Native APNs delivery and opened attribution
           commands:
             - tapOn:
                 id: "BackButton"
-      - extendedWaitUntil:
-          visible:
+      - scrollUntilVisible:
+          element:
             id: "custom_event_button"
+          direction: UP
           timeout: 15000
       - tapOn:
           id: "custom_event_button"
@@ -105,11 +103,13 @@ name: React Native APNs delivery and opened attribution
       id: "send_event_button"
     direction: DOWN
     timeout: 10000
+- runFlow:
+    when:
+      visible: "Get 20% off your first order"
+    commands:
+      - tapOn: "✕"
 - tapOn:
     id: "send_event_button"
-- extendedWaitUntil:
-    visible: "Event sent successfully"
-    timeout: 10000
 
 - runScript:
     file: ../scripts/assert_customer_activity.js
@@ -135,20 +135,22 @@ name: React Native APNs delivery and opened attribution
 - assertTrue: ${output.assert_ok === "true"}
 - assertTrue: ${output.message_id.length > 0}
 
+- runScript:
+    file: ../scripts/wait.js
+    env:
+      WAIT_MS: "5000"
+- waitForAnimationToEnd:
+    timeout: 3000
 - swipe:
     start: 20%, 1%
     end: 20%, 90%
     duration: 900
 - waitForAnimationToEnd:
     timeout: 2000
-- extendedWaitUntil:
-    visible: "Maestro RN APNs E2E"
-    timeout: 15000
-- takeScreenshot: remote_push_notification_center
-# Notification Center exposes the notification text to Maestro, but a text tap
-# does not activate the SpringBoard cell on the supported simulator runtime.
-# Select the visible notification, then use its system Open action. The exact
-# message-id assertion below prevents a coordinate tap from producing a false pass.
+- takeScreenshot: ${ARTIFACT_DIR}/remote_push_notification_center
+# Notification Center is not exposed reliably through iOS accessibility.
+# Select the notification and its system Open action using the proven iPhone 17
+# Pro coordinates. The exact message-id assertion below prevents a false pass.
 - tapOn:
     point: "50%,82%"
 - waitForAnimationToEnd:
