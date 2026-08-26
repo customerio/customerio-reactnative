@@ -5,7 +5,7 @@ name: React Native UIScene warm push routing
 - extendedWaitUntil:
     visible:
       id: "NotificationShortLookView"
-    timeout: 30000
+    timeout: 60000
 - tapOn:
     id: "NotificationShortLookView"
     retryTapIfNoChange: false

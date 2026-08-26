@@ -65,9 +65,16 @@ jobs:
       - name: Install Maestro
         shell: bash
         run: |
-          export MAESTRO_VERSION=2.8.0
-          curl -Ls https://get.maestro.mobile.dev | bash
-          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+          set -euo pipefail
+          maestro_zip="$RUNNER_TEMP/maestro-2.8.0.zip"
+          maestro_dir="$RUNNER_TEMP/maestro-2.8.0"
+          curl -fsSL \
+            https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.8.0/maestro.zip \
+            -o "$maestro_zip"
+          echo 'b3e561161904fb391875ca5834d5b22cf0b01c052dd1b408ad83e30d8f8951b3  '"$maestro_zip" \
+            | shasum -a 256 -c -
+          unzip -q "$maestro_zip" -d "$maestro_dir"
+          echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
 
       - name: Test warm and terminated notification routing
         shell: bash
