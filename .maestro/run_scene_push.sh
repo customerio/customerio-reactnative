@@ -16,7 +16,7 @@ fi
 export DEVELOPER_DIR
 export MAESTRO_CLI_NO_ANALYTICS=1
 
-for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
+for command in bundle jq maestro node npm npx ruby xcodebuild xcrun; do
   command -v "$command" >/dev/null 2>&1 || {
     echo "error: required command '$command' is not installed" >&2
     exit 2
@@ -29,52 +29,43 @@ if [[ "$maestro_version" != '2.8.0' ]]; then
   exit 2
 fi
 
+runtime_major="${E2E_IOS_RUNTIME_MAJOR:-27}"
+runtime_fragment=".iOS-${runtime_major}-"
+simulator_devices="$(xcrun simctl list devices available -j)"
 device_id="${E2E_DEVICE_ID:-}"
 simulator_name="${E2E_SIMULATOR_NAME:-}"
 if [[ -z "$device_id" && -n "$simulator_name" ]]; then
-  device_id="$(xcrun simctl list devices available -j | jq -r --arg name "$simulator_name" \
-    '[.devices[][] | select(.name == $name)][0].udid // empty')"
+  device_id="$(jq -r --arg name "$simulator_name" --arg runtime "$runtime_fragment" \
+    '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.name == $name)][0].udid // empty' \
+    <<< "$simulator_devices")"
 fi
 if [[ -z "$device_id" && -z "$simulator_name" ]]; then
-  device_id="$(xcrun simctl list devices booted -j | jq -r \
-    '[.devices[][] | select(.state == "Booted") | select(.name | startswith("iPhone"))][0].udid // empty')"
+  device_id="$(jq -r --arg runtime "$runtime_fragment" \
+    '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.state == "Booted") | select(.name | startswith("iPhone"))][0].udid // empty' \
+    <<< "$simulator_devices")"
 fi
 if [[ -z "$device_id" ]]; then
   simulator_name="${simulator_name:-iPhone 17 Pro}"
-  device_id="$(xcrun simctl list devices available -j | jq -r --arg name "$simulator_name" \
-    '[.devices[][] | select(.name == $name)][0].udid // empty')"
+  device_id="$(jq -r --arg name "$simulator_name" --arg runtime "$runtime_fragment" \
+    '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.name == $name)][0].udid // empty' \
+    <<< "$simulator_devices")"
   if [[ -z "$device_id" ]]; then
-    echo "error: no available '$simulator_name' simulator; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME" >&2
+    echo "error: no available '$simulator_name' simulator on iOS $runtime_major; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME" >&2
     exit 2
   fi
 fi
-if [[ -n "${E2E_IOS_RUNTIME_MAJOR:-}" ]]; then
-  runtime_id="$(xcrun simctl list devices available -j | jq -r --arg id "$device_id" \
-    '[.devices | to_entries[] | select(any(.value[]; .udid == $id))][0].key // empty')"
-  expected_runtime_fragment=".iOS-${E2E_IOS_RUNTIME_MAJOR}-"
-  if [[ "$runtime_id" != *"$expected_runtime_fragment"* ]]; then
-    echo "error: selected simulator runtime '$runtime_id' is not iOS $E2E_IOS_RUNTIME_MAJOR" >&2
-    exit 2
-  fi
+runtime_id="$(jq -r --arg id "$device_id" \
+  '[.devices | to_entries[] | select(any(.value[]; .udid == $id))][0].key // empty' \
+  <<< "$simulator_devices")"
+if [[ "$runtime_id" != *"$runtime_fragment"* ]]; then
+  echo "error: selected simulator runtime '$runtime_id' is not iOS $runtime_major" >&2
+  exit 2
 fi
 simulator_started_by_runner=false
-if ! xcrun simctl list devices booted -j | jq -e --arg id "$device_id" \
-  'any(.devices[][]; .udid == $id and .state == "Booted")' >/dev/null; then
-  xcrun simctl boot "$device_id"
-  simulator_started_by_runner=true
-fi
-xcrun simctl bootstatus "$device_id" -b
-
 created_host_parent=false
-if [[ -n "${CIO_E2E_HOST_PARENT:-}" ]]; then
-  host_parent="$CIO_E2E_HOST_PARENT"
-else
-  host_parent="$(mktemp -d "${TMPDIR:-/tmp}/cio-rn-scene-e2e.XXXXXX")"
-  created_host_parent=true
-fi
-host="$host_parent/$APP_NAME"
-package_dir="$host_parent/package"
-derived_data="$host_parent/derived-data"
+host_parent=""
+package_dir=""
+derived_data=""
 flow_log=""
 flow_pid=""
 installed_app=false
@@ -82,6 +73,15 @@ current_phase="setup"
 cleanup() {
   local exit_code=$?
   set +e
+  if [[ "$exit_code" -ne 0 && -n "${RUNNER_TEMP:-}" ]] && \
+    xcrun simctl list devices booted -j | jq -e --arg id "$device_id" \
+      'any(.devices[][]; .udid == $id and .state == "Booted")' >/dev/null; then
+    xcrun simctl spawn "$device_id" log show \
+      --last 15m \
+      --style compact \
+      --predicate "process == '$APP_NAME'" \
+      > "$RUNNER_TEMP/react-native-scene-device.log" 2>&1 || true
+  fi
   if [[ -n "$flow_pid" ]]; then
     kill "$flow_pid" >/dev/null 2>&1 || true
     wait "$flow_pid" 2>/dev/null || true
@@ -96,7 +96,7 @@ cleanup() {
   if [[ "$simulator_started_by_runner" == true ]]; then
     xcrun simctl shutdown "$device_id" >/dev/null 2>&1 || true
   fi
-  if [[ "$created_host_parent" == true && -d "$host_parent" ]]; then
+  if [[ "$created_host_parent" == true && -n "$host_parent" && -d "$host_parent" ]]; then
     if ! find "$host_parent" -depth -delete; then
       echo "warning: could not completely remove temporary host $host_parent" >&2
     fi
@@ -116,6 +116,23 @@ cleanup() {
   return "$exit_code"
 }
 trap cleanup EXIT
+
+if ! jq -e --arg id "$device_id" \
+  'any(.devices[][]; .udid == $id and .state == "Booted")' <<< "$simulator_devices" >/dev/null; then
+  xcrun simctl boot "$device_id"
+  simulator_started_by_runner=true
+fi
+xcrun simctl bootstatus "$device_id" -b
+
+if [[ -n "${CIO_E2E_HOST_PARENT:-}" ]]; then
+  host_parent="$CIO_E2E_HOST_PARENT"
+else
+  host_parent="$(mktemp -d "${TMPDIR:-/tmp}/cio-rn-scene-e2e.XXXXXX")"
+  created_host_parent=true
+fi
+host="$host_parent/$APP_NAME"
+package_dir="$host_parent/package"
+derived_data="$host_parent/derived-data"
 mkdir -p "$package_dir"
 
 run_notification_flow() {
@@ -185,10 +202,12 @@ run_notification_flow() {
 }
 
 cd "$REPO_ROOT"
+current_phase="package"
 npm ci
 package_name="$(npm pack --silent --pack-destination "$package_dir" | tail -n 1)"
 
 cd "$host_parent"
+current_phase="generate"
 npx "@react-native-community/cli@$RN_CLI_VERSION" init "$APP_NAME" \
   --version "$RN_VERSION" \
   --template "@react-native-community/template@$RN_TEMPLATE_VERSION" \
@@ -203,6 +222,7 @@ npm pkg set \
   "devDependencies.@react-native/jest-preset=$RN_VERSION" \
   "devDependencies.@react-native/metro-config=$RN_VERSION" \
   "devDependencies.@react-native/typescript-config=$RN_VERSION"
+current_phase="install"
 npm install
 npm install "$package_dir/$package_name"
 
@@ -220,17 +240,11 @@ plist="ios/$APP_NAME/Info.plist"
 # shellcheck disable=SC2016
 /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName string $(PRODUCT_MODULE_NAME).SceneDelegate' "$plist"
 
+current_phase="pods"
 bundle install
 bundle exec ruby "$FIXTURE_DIR/configure_podfile.rb" ios/Podfile
 bundle exec ruby "$FIXTURE_DIR/configure.rb" "ios/$APP_NAME.xcodeproj" "$APP_NAME"
 bundle exec pod install --project-directory=ios
-
-node node_modules/react-native/scripts/bundle.js \
-  --platform ios \
-  --dev false \
-  --entry-file index.js \
-  --bundle-output "ios/main.jsbundle" \
-  --assets-dest ios
 
 current_phase="compile"
 xcodebuild -quiet \
@@ -249,7 +263,7 @@ xcrun simctl install "$device_id" "$app_path"
 installed_app=true
 
 cd "$REPO_ROOT"
-current_phase="routing"
+current_phase="prepare"
 prepare_args=(--device "$device_id" test .maestro/scene_push_prepare.yaml)
 if [[ -n "${RUNNER_TEMP:-}" ]]; then
   prepare_args=(
@@ -262,6 +276,6 @@ if [[ -n "${RUNNER_TEMP:-}" ]]; then
 fi
 maestro "${prepare_args[@]}"
 xcrun simctl terminate "$device_id" "$APP_ID"
+current_phase="routing"
 run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
 run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
-current_phase="passed"
