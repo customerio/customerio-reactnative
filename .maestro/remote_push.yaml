@@ -144,7 +144,17 @@ name: React Native APNs delivery and opened attribution
 - extendedWaitUntil:
     visible: "Maestro RN APNs E2E"
     timeout: 15000
-- tapOn: "Maestro RN APNs E2E"
+- takeScreenshot: remote_push_notification_center
+# Notification Center exposes the notification text to Maestro, but a text tap
+# does not activate the SpringBoard cell on the supported simulator runtime.
+# Select the visible notification, then use its system Open action. The exact
+# message-id assertion below prevents a coordinate tap from producing a false pass.
+- tapOn:
+    point: "50%,82%"
+- waitForAnimationToEnd:
+    timeout: 1000
+- tapOn:
+    point: "15%,82%"
 - extendedWaitUntil:
     visible:
       id: "send_event_button"

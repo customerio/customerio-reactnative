@@ -41,3 +41,8 @@ workspace, sends the `maestro_rn_apns_e2e` event used by its dedicated Maestro
 automation (campaign 68), taps the real system notification, and requires
 matching backend `delivered` and `opened` metrics. It is intentionally local or
 trusted-CI only; pull requests do not receive the required workspace credential.
+
+On the supported simulator, Notification Center requires selecting the
+notification and then its system Open action by coordinate. The runner accepts
+that interaction only when the app reopens and Customer.io records `opened` for
+the exact delivered message.
