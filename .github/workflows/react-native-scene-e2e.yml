@@ -8,6 +8,10 @@ on:
       - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
       - 'ios/wrappers/NativeCustomerIO.swift'
       - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
+      - 'ios/cocoapods_deployment_target.rb'
+      - 'customerio-reactnative.podspec'
+      - 'package.json'
+      - 'package-lock.json'
   schedule:
     - cron: '47 7 * * *'
   workflow_dispatch:

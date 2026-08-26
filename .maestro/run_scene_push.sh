@@ -14,6 +14,7 @@ if [[ "$DEVELOPER_DIR" == */CommandLineTools && -d /Applications/Xcode.app/Conte
   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 fi
 export DEVELOPER_DIR
+export MAESTRO_CLI_NO_ANALYTICS=1
 
 for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
   command -v "$command" >/dev/null 2>&1 || {
@@ -21,6 +22,12 @@ for command in bundle jq maestro node npm npx pod ruby xcodebuild xcrun; do
     exit 2
   }
 done
+
+maestro_version="$(maestro --version | tr -d '\r')"
+if [[ "$maestro_version" != '2.6.0' ]]; then
+  echo "error: Maestro 2.6.0 is required; found '$maestro_version'" >&2
+  exit 2
+fi
 
 device_id="${E2E_DEVICE_ID:-}"
 simulator_name="${E2E_SIMULATOR_NAME:-}"
@@ -41,7 +48,12 @@ if [[ -z "$device_id" ]]; then
     exit 2
   fi
 fi
-xcrun simctl boot "$device_id" >/dev/null 2>&1 || true
+simulator_started_by_runner=false
+if ! xcrun simctl list devices booted -j | jq -e --arg id "$device_id" \
+  'any(.devices[][]; .udid == $id and .state == "Booted")' >/dev/null; then
+  xcrun simctl boot "$device_id"
+  simulator_started_by_runner=true
+fi
 xcrun simctl bootstatus "$device_id" -b
 
 created_host_parent=false
@@ -68,6 +80,9 @@ cleanup() {
   if [[ "$installed_app" == true ]]; then
     xcrun simctl terminate "$device_id" "$APP_ID" >/dev/null 2>&1 || true
     xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
+  fi
+  if [[ "$simulator_started_by_runner" == true ]]; then
+    xcrun simctl shutdown "$device_id" >/dev/null 2>&1 || true
   fi
   if [[ "$created_host_parent" == true && -d "$host_parent" ]]; then
     find "$host_parent" -depth -delete
@@ -196,7 +211,17 @@ xcrun simctl install "$device_id" "$app_path"
 installed_app=true
 
 cd "$REPO_ROOT"
-maestro --device "$device_id" test .maestro/scene_push_prepare.yaml
+prepare_args=(--device "$device_id" test .maestro/scene_push_prepare.yaml)
+if [[ -n "${RUNNER_TEMP:-}" ]]; then
+  prepare_args=(
+    --device "$device_id"
+    test
+    --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_push_prepare"
+    --flatten-debug-output
+    .maestro/scene_push_prepare.yaml
+  )
+fi
+maestro "${prepare_args[@]}"
 xcrun simctl terminate "$device_id" "$APP_ID"
 run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
 run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
