@@ -45,13 +45,26 @@ name: React Native APNs delivery and opened attribution
     commands:
       - tapOn: "✕"
 
-- scrollUntilVisible:
-    element:
-      id: "push_permission_button"
-    direction: DOWN
-    timeout: 10000
-- tapOn:
-    id: "push_permission_button"
+- retry:
+    maxRetries: 2
+    commands:
+      - runFlow:
+          when:
+            visible: "Get 20% off your first order"
+          commands:
+            - tapOn: "✕"
+      - scrollUntilVisible:
+          element:
+            id: "push_permission_button"
+          direction: DOWN
+          timeout: 10000
+      - runFlow:
+          when:
+            visible: "Get 20% off your first order"
+          commands:
+            - tapOn: "✕"
+      - tapOn:
+          id: "push_permission_button"
 - tapOn:
     text: "^Allow$"
     optional: true
@@ -159,7 +172,7 @@ name: React Native APNs delivery and opened attribution
 - tapOn:
     point: "50%,82%"
 - waitForAnimationToEnd:
-    timeout: 1000
+    timeout: 4000
 - runFlow:
     when:
       notVisible:
