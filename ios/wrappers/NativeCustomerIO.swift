@@ -27,6 +27,7 @@ public class NativeCustomerIO: NSObject {
     @objc
     public static func configureExpoSceneDeepLinkRouting() {
         guard CustomerIO.shared.implementation == nil else { return }
+        // Native initialization preserves an existing callback when its config does not provide one.
         CustomerIOReactNativeDeepLinkRouter.installForExpoSceneLifecycle()
     }
 
