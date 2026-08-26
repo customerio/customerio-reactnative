@@ -70,9 +70,16 @@ lane :update_react_native_app_version do |options|
   # Update versions in package.json
   update_app_json_version(project_path, version_name, version_code)
 
-  # Update Android version
-  update_android_version(project_path, version_name, version_code)
-
-  # Update iOS version
-  update_ios_version(project_path, version_name, version_code)
+  # Update only the target platform. The Android build runs on Linux, where
+  # the iOS version helper cannot load the Xcode project.
+  case options[:platform].to_s
+  when "android"
+    update_android_version(project_path, version_name, version_code)
+  when "ios"
+    update_ios_version(project_path, version_name, version_code)
+  else
+    # Preserve the existing behavior for callers that do not provide a platform.
+    update_android_version(project_path, version_name, version_code)
+    update_ios_version(project_path, version_name, version_code)
+  end
 end
