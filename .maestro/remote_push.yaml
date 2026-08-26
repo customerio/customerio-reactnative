@@ -88,6 +88,11 @@ name: React Native APNs delivery and opened attribution
     visible:
       id: "event_name_input"
     timeout: 10000
+- runFlow:
+    when:
+      visible: "Get 20% off your first order"
+    commands:
+      - tapOn: "✕"
 - tapOn:
     id: "event_name_input"
 - inputText: "maestro_rn_apns_e2e"
@@ -155,8 +160,13 @@ name: React Native APNs delivery and opened attribution
     point: "50%,82%"
 - waitForAnimationToEnd:
     timeout: 1000
-- tapOn:
-    point: "15%,82%"
+- runFlow:
+    when:
+      notVisible:
+        id: "send_event_button"
+    commands:
+      - tapOn:
+          point: "15%,82%"
 - extendedWaitUntil:
     visible:
       id: "send_event_button"
