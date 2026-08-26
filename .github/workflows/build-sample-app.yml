@@ -52,7 +52,7 @@ env:
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: macos-26
+    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'macos-26' }}
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
@@ -69,6 +69,7 @@ jobs:
 
       # This file is untracked and needs to be created dynamically
       - name: Create SampleApp.xcodeproj file
+        if: ${{ inputs.platform == 'ios' }}
         shell: bash
         working-directory: example/ios
         run: |
@@ -110,10 +111,15 @@ jobs:
           # Export the groups as an environment variable
           echo "firebase_distribution_groups=$(IFS=','; echo "${distribution_groups[*]}")" >> $GITHUB_ENV
 
-      - name: Install CLI tools used in CI script
+      - name: Install sd CLI for Android builds
+        if: ${{ inputs.platform == 'android' }}
+        uses: kenji-miyake/setup-sd@08c14e27d65a1c215342ef00c81583ae67f4c5ef # v2.0.0
+
+      - name: Install CLI tools for iOS builds
+        if: ${{ inputs.platform == 'ios' }}
         shell: bash
         run: |
-          brew install sd # used in CI script as an easier to use sed CLI. Replaces text in files. 
+          brew install sd # used in CI script as an easier to use sed CLI. Replaces text in files.
           brew install xcbeautify # used by fastlane for output
 
       - name: Install Ruby
@@ -164,6 +170,10 @@ jobs:
         with:
           subdirectory: example
           lane: "update_react_native_app_version"
+          options: >
+            {
+              "platform": "${{ inputs.platform }}"
+            }
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
@@ -209,6 +219,7 @@ jobs:
             **/package-lock.json
 
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
+        if: ${{ inputs.platform == 'ios' }}
         uses: actions/cache@v4
         with:
           path: example/Pods
@@ -229,6 +240,41 @@ jobs:
             npm run ci:install_${{ inputs.platform }}
           fi
         working-directory: example
+        env:
+          CUSTOMER_IO_USE_GIT_SOURCES: ${{ inputs.platform == 'ios' && 'true' || 'false' }}
+
+      - name: Verify Customer.io pod resolution through CocoaPods trunk
+        if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
+        working-directory: example
+        shell: bash
+        run: |
+          set -o pipefail
+          check_dir=$(mktemp -d "${RUNNER_TEMP}/customerio-cocoapods-trunk.XXXXXX")
+          trap 'rm -rf "$check_dir"' EXIT
+          customer_io_ios_version=$(node -p "require('../package.json').cioNativeiOSSdkVersion.replace(/^=\\s*/, '')")
+
+          cat > "$check_dir/Podfile" <<EOF
+          source 'https://cdn.cocoapods.org/'
+          install! 'cocoapods', :integrate_targets => false, :skip_pods_project_generation => true
+          platform :ios, '15.0'
+
+          target 'CustomerIOTrunkResolutionCheck' do
+            pod 'CustomerIO/MessagingPushAPN', '= ${customer_io_ios_version}'
+          end
+          EOF
+
+          set +e
+          bundle exec pod install --project-directory="$check_dir" --no-repo-update 2>&1 | tee "$check_dir/pod-install.log"
+          pod_install_status=${PIPESTATUS[0]}
+          set -e
+
+          if [[ "$pod_install_status" -eq 0 ]]; then
+            echo "CocoaPods trunk resolved CustomerIO/MessagingPushAPN ${customer_io_ios_version}."
+          elif grep -Eqi '429|too many requests' "$check_dir/pod-install.log"; then
+            echo "::warning::CocoaPods trunk smoke check was rate-limited; the Git-backed sample build remains the required CI path."
+          else
+            exit "$pod_install_status"
+          fi
 
       - name: Audit CocoaPods deployment targets
         if: ${{ inputs.platform == 'ios' }}
@@ -275,7 +321,7 @@ jobs:
           build_status: ${{ steps.build_app.outcome }}
           app_icon_emoji: ":react:"
           app_name: "React Native"
-          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_{1}', inputs.app_name, inputs.platform_upper_name )] }}
+          firebase_app_id: ${{ secrets[format('SAMPLE_APPS_{0}_FIREBASE_APP_ID_{1}', inputs.app_name, inputs.platform_name_upper )] }}
           firebase_distribution_groups: ${{ env.firebase_distribution_groups }}
           git_context: "${{ env.BRANCH_NAME }} (${{ env.COMMIT_HASH }})"
           icon_url: "https://vectorified.com/images/icon-react-native-24.png"
