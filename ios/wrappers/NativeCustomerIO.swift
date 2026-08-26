@@ -10,6 +10,16 @@ public class NativeCustomerIO: NSObject {
     /// Returns `true` if the SDK has been successfully initialized, `false` otherwise.
     private var isInitialized: Bool { CustomerIO.shared.implementation != nil }
 
+    /// Installs React Native scene deep-link routing before the JavaScript bridge starts.
+    /// Call this at the start of `scene(_:willConnectTo:options:)` in a UIScene host.
+    @objc
+    public static func configureSceneDeepLinkRouting() {
+        // A natively initialized host owns its callback. Scene connection happens after
+        // application launch, so never replace a callback that native initialization installed.
+        guard CustomerIO.shared.implementation == nil else { return }
+        CustomerIOReactNativeDeepLinkRouter.install()
+    }
+
     /// Ensures that the CustomerIO SDK is initialized before performing operations.
     /// Logs an error and returns false if the SDK is not initialized.
     private func ensureInitialized() -> Bool {
@@ -30,6 +40,7 @@ public class NativeCustomerIO: NSObject {
         // Skip initialization if already initialized
         if isInitialized {
             logger.info("CustomerIO SDK is already initialized. Skipping initialization.")
+            CustomerIOReactNativeDeepLinkRouter.markReactNativeReady()
             resolve(true)
             return
         }
@@ -47,6 +58,13 @@ public class NativeCustomerIO: NSObject {
             }
 
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
+
+            if CustomerIOReactNativeDeepLinkRouter.isSceneLifecycleEnabled {
+                _ = sdkConfigBuilder.deepLinkCallback { url in
+                    CustomerIOReactNativeDeepLinkRouter.accept(url)
+                    return true // React Native Linking cannot report handling; JavaScript owns fallback.
+                }
+            }
 
             #if CIO_LOCATION_ENABLED
             // Geofence implies location: register the location module whenever location
@@ -111,6 +129,7 @@ public class NativeCustomerIO: NSObject {
                 self.logger.debug(
                     "Customer.io SDK (\(packageSource ?? "") \(packageVersion ?? "")) initialized with config: \(config)"
                 )
+                CustomerIOReactNativeDeepLinkRouter.markReactNativeReady()
                 resolve(true)
             }
         } catch {

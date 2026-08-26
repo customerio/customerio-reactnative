@@ -72,6 +72,18 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
+On iOS, a `UIScene` host must install the wrapper's deep-link bridge before React Native starts. Call this first in `scene(_:willConnectTo:options:)`:
+
+```swift
+NativeCustomerIO.configureSceneDeepLinkRouting()
+```
+
+Then register the app's JavaScript `Linking` URL listener before calling `CustomerIO.initialize`. This ordering is required. Customer.io push, in-app, and inbox destinations are buffered during cold launch, then delivered through React Native's standard `Linking` API after initialization. If React Native does not initialize within ten seconds, the SDK opens the destination through the system instead of retaining it indefinitely. The listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published after initialization without a listener is not opened externally, which would risk duplicate navigation. Natively initialized hosts, including Expo config-plugin integrations, keep their existing callback. Older React Native versions and AppDelegate-only hosts also keep their existing deep-link integration.
+
+This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
+
+This release's compatibility scope is one simultaneous window scene. Multiple simultaneous React Native window scenes are not supported. React Native's URL notification is process-wide, so SDK-published destinations may reach every connected React Native instance rather than one selected window.
+
 ---
 
 ## 🔴 Live Activities
@@ -83,7 +95,9 @@ Enable the activity types you use under the `liveNotifications` key of your SDK 
 <true/>
 ```
 
-**One manual step is required on iOS.** Forward every opened URL to the SDK from your `AppDelegate`, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it — and note this only compiles once the `liveactivities` subspec is installed:
+**One manual step is required on iOS.** Forward every opened URL to the SDK from the host's active lifecycle, or taps on a Live Activity are not attributed. `NativeLiveActivities` comes from the wrapper pod, so import it. This only compiles once the `liveactivities` subspec is installed.
+
+For an AppDelegate host:
 
 ```swift
 import customerio_reactnative
@@ -101,7 +115,34 @@ extension AppDelegate {
 
 A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
-Android needs no equivalent step. Expo apps need none either — the [config plugin](https://github.com/customerio/customerio-expo-plugin) injects this for you.
+For a `UIScene` host, handle both lifecycle paths. At scene connection, pass launch options through the wrapper so a cold Live Activity tap is attributed and React Native receives the customer's destination instead of Customer.io's internal tracking URL:
+
+```swift
+import customerio_reactnative
+
+reactNativeFactory?.startReactNative(
+  withModuleName: "YourApp",
+  in: window,
+  launchOptions: NativeLiveActivities.reactNativeLaunchOptions(from: connectionOptions)
+)
+```
+
+Then replace the ordinary React Native URL-forwarding body in the existing `SceneDelegate` for warm opens. This reports Live Activity taps and routes each remaining URL through React Native Linking:
+
+```swift
+import customerio_reactnative
+
+func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+  for context in URLContexts {
+    NativeLiveActivities.handleAndRouteWidgetUrl(context.url)
+  }
+}
+```
+
+Do not also pass those URLs to `RCTLinkingManager`. The helper already publishes them through
+React Native Linking, and forwarding them again can deliver the same URL twice.
+
+Android needs no equivalent step. Expo apps use the [config plugin](https://github.com/customerio/customerio-expo-plugin) instead of these manual snippets; scene support depends on the Expo version supported by the plugin.
 
 ---
 

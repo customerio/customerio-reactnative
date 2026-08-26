@@ -6,6 +6,7 @@ import CioLiveActivities
 import CioLiveActivities_Attributes
 import CioLiveActivities_Templates
 import Foundation
+import UIKit
 
 @objc(NativeCustomerIOLiveActivities)
 public class NativeLiveActivities: NSObject {
@@ -218,6 +219,41 @@ public class NativeLiveActivities: NSObject {
     @discardableResult
     public static func handleWidgetUrl(_ url: URL) -> URL? {
         CustomerIO.liveActivities.handleWidgetUrl(url)
+    }
+
+    /// Report an `opened` metric for a tapped Live Activity and route its destination through
+    /// React Native Linking. Call this from a scene-based host's URL lifecycle method.
+    @objc(handleAndRouteWidgetUrl:)
+    public static func handleAndRouteWidgetUrl(_ url: URL) {
+        guard let routableUrl = handleWidgetUrl(url) else { return }
+        CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+    }
+
+    /// Build React Native launch options from a scene connection, reporting a cold Live Activity
+    /// tap and replacing Customer.io's internal tracking URL with its destination. This mirrors the
+    /// `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
+    /// 0.88.0-nightly-20260823-0c7f63a4e. Before `CustomerIO.initialize`, the native Live Activities
+    /// stub parses the redirect and buffers the opened metric for the module to flush at initialization.
+    @objc(reactNativeLaunchOptionsFromConnectionOptions:)
+    public static func reactNativeLaunchOptions(
+        from connectionOptions: UIScene.ConnectionOptions
+    ) -> [UIApplication.LaunchOptionsKey: Any] {
+        var launchOptions: [UIApplication.LaunchOptionsKey: Any] = [:]
+
+        if let url = connectionOptions.urlContexts.first?.url,
+           let routableUrl = handleWidgetUrl(url)
+        {
+            launchOptions[.url] = routableUrl
+        }
+
+        if let userActivity = connectionOptions.userActivities.first {
+            launchOptions[.userActivityDictionary] = [
+                UIApplication.LaunchOptionsKey.userActivityType.rawValue: userActivity.activityType,
+                "UIApplicationLaunchOptionsUserActivityKey": userActivity,
+            ]
+        }
+
+        return launchOptions
     }
 
     // MARK: - Helpers
