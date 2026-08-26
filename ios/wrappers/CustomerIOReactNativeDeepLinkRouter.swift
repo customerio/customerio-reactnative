@@ -43,7 +43,7 @@ enum CustomerIOReactNativeDeepLinkRouter {
     /// Expo owns scene-to-Linking forwarding even when its React Native version does not expose
     /// the scene selector itself.
     static var isExpoSceneLifecycleEnabled: Bool {
-        hasSceneManifest
+        hasSceneManifest && NSClassFromString("EXExpoAppSceneDelegate") != nil
     }
 
     static func install() {
@@ -52,8 +52,8 @@ enum CustomerIOReactNativeDeepLinkRouter {
     }
 
     /// Expo owns scene-to-Linking forwarding even on React Native versions that do not expose the
-    /// scene selector themselves. Non-empty scene configurations opt UIKit into the scene lifecycle,
-    /// so the manifest prevents AppDelegate-only hosts from entering this path.
+    /// scene selector themselves. Require both a non-empty scene manifest and Expo's scene delegate
+    /// class so older Expo apps with unrelated scene configurations keep their existing behavior.
     static func installForExpoSceneLifecycle() {
         guard isExpoSceneLifecycleEnabled else { return }
         installCallback()
