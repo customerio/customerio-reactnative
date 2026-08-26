@@ -41,6 +41,7 @@ export interface Spec extends TurboModule {
     config: NativeBridgeObject,
     args: NativeBridgeObject
   ): Promise<void>;
+  setDeepLinkRoutingReady(): void;
   identify(params?: NativeBridgeObject): void;
   clearIdentify(): void;
   track(name: string, properties?: NativeBridgeObject): void;

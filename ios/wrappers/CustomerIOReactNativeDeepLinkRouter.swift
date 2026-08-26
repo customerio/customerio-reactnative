@@ -21,23 +21,45 @@ enum CustomerIOReactNativeDeepLinkRouter {
     private static var isReactNativeReady = false
     private static var pendingUrls: [PendingUrl] = []
 
+    private static var hasSceneManifest: Bool {
+        guard let manifest = Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) as? [String: Any],
+              let configurations = manifest[sceneConfigurationsKey] as? [String: Any]
+        else { return false }
+
+        return !configurations.isEmpty
+    }
+
     /// Mirrors `RCTIsSceneDelegateApp()` without linking to the internal symbol, and also requires
     /// React Native's scene-Linking entry point. A scene manifest alone does not make older React
     /// Native versions scene-aware.
     static var isSceneLifecycleEnabled: Bool {
-        guard let manifest = Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) as? [String: Any],
-              let configurations = manifest[sceneConfigurationsKey] as? [String: Any]
-        else { return false }
-        guard !configurations.isEmpty,
+        guard hasSceneManifest,
               let linkingManager = NSClassFromString("RCTLinkingManager")
         else { return false }
 
         return linkingManager.responds(to: sceneOpenURLContextsSelector)
     }
 
+    /// Expo owns scene-to-Linking forwarding even when its React Native version does not expose
+    /// the scene selector itself.
+    static var isExpoSceneLifecycleEnabled: Bool {
+        hasSceneManifest
+    }
+
     static func install() {
         guard isSceneLifecycleEnabled else { return }
+        installCallback()
+    }
 
+    /// Expo owns scene-to-Linking forwarding even on React Native versions that do not expose the
+    /// scene selector themselves. The scene manifest remains required so AppDelegate hosts cannot
+    /// accidentally opt into this path.
+    static func installForExpoSceneLifecycle() {
+        guard isExpoSceneLifecycleEnabled else { return }
+        installCallback()
+    }
+
+    private static func installCallback() {
         DIGraphShared.shared.deepLinkUtil.setDeepLinkCallback { url in
             accept(url)
             return true
@@ -111,7 +133,9 @@ enum CustomerIOReactNativeDeepLinkRouter {
         stateLock.unlock()
 
         DIGraphShared.shared.logger.error(
-            "Customer.io is opening an SDK deep link externally because React Native did not initialize in time"
+            "Customer.io is opening an SDK deep link externally because React Native did not " +
+                "initialize in time. Native-auto-initialized apps must call " +
+                "CustomerIO.setDeepLinkRoutingReady() after registering their Linking listener"
         )
         UIApplication.shared.open(url) { opened in
             guard !opened else { return }

@@ -14,6 +14,9 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => min_ios_version_supported }
   s.source       = { :git => "https://github.com/customerio/customerio-ios.git", :tag => "#{s.version}" }
 
+  # The generated Swift compatibility header imports
+  # <customerio_reactnative/customerio_reactnative.h> in static-library builds.
+  s.header_dir   = "customerio_reactnative"
   s.source_files = "ios/wrappers/**/*.{h,m,mm,swift}"
 
   # Use install_modules_dependencies helper to install the dependencies if React Native version >=0.71.0.
