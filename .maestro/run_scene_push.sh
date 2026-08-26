@@ -50,7 +50,7 @@ if [[ -z "$device_id" ]]; then
     '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.name == $name)][0].udid // empty' \
     <<< "$simulator_devices")"
   if [[ -z "$device_id" ]]; then
-    echo "error: no available '$simulator_name' simulator on iOS $runtime_major; set E2E_DEVICE_ID or E2E_SIMULATOR_NAME" >&2
+    echo "error: no available '$simulator_name' simulator on iOS $runtime_major; set E2E_DEVICE_ID, E2E_SIMULATOR_NAME, or E2E_IOS_RUNTIME_MAJOR" >&2
     exit 2
   fi
 fi
@@ -80,7 +80,7 @@ cleanup() {
       --last 15m \
       --style compact \
       --predicate "process == '$APP_NAME'" \
-      > "$RUNNER_TEMP/react-native-scene-device.log" 2>&1 || true
+      > "$RUNNER_TEMP/react-native-scene-maestro-device.log" 2>&1 || true
   fi
   if [[ -n "$flow_pid" ]]; then
     kill "$flow_pid" >/dev/null 2>&1 || true
