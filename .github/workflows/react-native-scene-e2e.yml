@@ -4,7 +4,13 @@ on:
   pull_request:
     paths:
       - '.github/workflows/react-native-scene-e2e.yml'
-      - '.maestro/**'
+      - '.maestro/fixtures/customerio_scene_cold.apns'
+      - '.maestro/fixtures/customerio_scene_warm.apns'
+      - '.maestro/fixtures/react-native-scene/**'
+      - '.maestro/run_scene_push.sh'
+      - '.maestro/scene_push_open.yaml'
+      - '.maestro/scene_push_prepare.yaml'
+      - '.maestro/scene_push_warm.yaml'
       - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
       - 'ios/wrappers/NativeCustomerIO.swift'
       - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
