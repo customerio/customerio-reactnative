@@ -78,7 +78,10 @@ derived_data="$host_parent/derived-data"
 flow_log=""
 flow_pid=""
 installed_app=false
+current_phase="setup"
 cleanup() {
+  local exit_code=$?
+  set +e
   if [[ -n "$flow_pid" ]]; then
     kill "$flow_pid" >/dev/null 2>&1 || true
     wait "$flow_pid" 2>/dev/null || true
@@ -98,6 +101,19 @@ cleanup() {
       echo "warning: could not completely remove temporary host $host_parent" >&2
     fi
   fi
+  if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+    {
+      echo '## React Native scene notification routing'
+      echo
+      if [[ "$exit_code" -eq 0 ]]; then
+        echo '**Classification:** scene-routing-passed'
+      else
+        echo "**Classification:** ${current_phase}-failed"
+      fi
+      echo '**Scope:** simulator notification presentation, tap, and exact React Native Linking destination; no backend delivery or attribution claim'
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+  return "$exit_code"
 }
 trap cleanup EXIT
 mkdir -p "$package_dir"
@@ -148,7 +164,17 @@ run_notification_flow() {
     return 1
   fi
 
-  xcrun simctl push "$device_id" "$APP_ID" "$payload"
+  local push_output
+  if ! push_output="$(xcrun simctl push "$device_id" "$APP_ID" "$payload" 2>&1)"; then
+    printf '%s\n' "$push_output" >&2
+    if grep -q 'UNErrorDomain.*2003\|Source is not authorized' <<< "$push_output"; then
+      echo "error: simulator notification authorization was not granted; notification routing was not exercised" >&2
+    else
+      echo "error: simctl could not inject the notification fixture" >&2
+    fi
+    return 1
+  fi
+  printf '%s\n' "$push_output"
   if ! wait "$flow_pid"; then
     flow_pid=""
     return 1
@@ -206,6 +232,7 @@ node node_modules/react-native/scripts/bundle.js \
   --bundle-output "ios/main.jsbundle" \
   --assets-dest ios
 
+current_phase="compile"
 xcodebuild -quiet \
   -workspace "ios/$APP_NAME.xcworkspace" \
   -scheme "$APP_NAME" \
@@ -222,6 +249,7 @@ xcrun simctl install "$device_id" "$app_path"
 installed_app=true
 
 cd "$REPO_ROOT"
+current_phase="routing"
 prepare_args=(--device "$device_id" test .maestro/scene_push_prepare.yaml)
 if [[ -n "${RUNNER_TEMP:-}" ]]; then
   prepare_args=(
@@ -236,3 +264,4 @@ maestro "${prepare_args[@]}"
 xcrun simctl terminate "$device_id" "$APP_ID"
 run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
 run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
+current_phase="passed"
