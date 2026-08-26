@@ -30,7 +30,7 @@ the run ends. Put the `Mobile SDK Maestro E2E` App API key from the same
 `Mobile: React Native` workspace in `.maestro/.env` as shown by
 `.maestro/.env.example`. Simulator APNs tokens use the sandbox environment, so
 temporarily enable **Send all push notifications to sandbox** for the workspace
-and restore its previous setting after the run. Then run:
+and restore its previous setting after the run. Use Maestro 2.8.0, then run:
 
 ```bash
 .maestro/run_remote_push.sh
