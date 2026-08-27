@@ -47,6 +47,11 @@ RCT_EXPORT_MODULE()
   [_swiftBridge initialize:config args:args resolve:resolve reject:reject];
 }
 
+- (void)setDeepLinkRoutingReady {
+  [self assertBridgeAvailable:@"during setDeepLinkRoutingReady"];
+  [_swiftBridge setDeepLinkRoutingReady];
+}
+
 - (void)identify:(NSDictionary *)params {
   [self assertBridgeAvailable:@"during identify"];
   [_swiftBridge identify:params];

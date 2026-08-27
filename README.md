@@ -78,7 +78,16 @@ On iOS, a `UIScene` host must install the wrapper's deep-link bridge before Reac
 NativeCustomerIO.configureSceneDeepLinkRouting()
 ```
 
-Then register the app's JavaScript `Linking` URL listener before calling `CustomerIO.initialize`. This ordering is required. Customer.io push, in-app, and inbox destinations are buffered during cold launch, then delivered through React Native's standard `Linking` API after initialization. If React Native does not initialize within ten seconds, the SDK opens the destination through the system instead of retaining it indefinitely. The listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published after initialization without a listener is not opened externally, which would risk duplicate navigation. Natively initialized hosts, including Expo config-plugin integrations, keep their existing callback. Older React Native versions and AppDelegate-only hosts also keep their existing deep-link integration.
+Then register the app's JavaScript `Linking` URL listener before calling `CustomerIO.initialize`. This ordering is required. The Expo plugin detects its scene lifecycle during initialization, so Expo app code does not call the native installation method itself. Customer.io push, in-app, and inbox destinations are buffered during cold launch, then delivered through React Native's standard `Linking` API after initialization. If React Native does not initialize within ten seconds, the SDK opens the destination through the system instead of retaining it indefinitely. The listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published after initialization without a listener is not opened externally, which would risk duplicate navigation. Older React Native versions and AppDelegate-only hosts keep their existing deep-link integration.
+
+An Expo app using config-plugin auto-initialization does not call `CustomerIO.initialize`. Register its `Linking` listener, then mark that listener ready instead:
+
+```typescript
+const subscription = Linking.addEventListener('url', ({ url }) => {
+  // Route the URL in your app.
+});
+CustomerIO.setDeepLinkRoutingReady();
+```
 
 This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
 

@@ -115,6 +115,7 @@ export class CustomerIO {
     static readonly pushMessaging: CustomerIOPushMessaging;
     static readonly registerDeviceToken: (token: string) => Promise<void>;
     static readonly screen: (title: string, properties?: Record<string, any>) => Promise<any>;
+    static readonly setDeepLinkRoutingReady: () => void;
     static readonly setDeviceAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly setProfileAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly track: (name: string, properties?: Record<string, any>) => Promise<any>;

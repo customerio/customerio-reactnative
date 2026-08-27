@@ -143,6 +143,10 @@ class NativeCustomerIOModule(
         }
     }
 
+    override fun setDeepLinkRoutingReady() {
+        // UIScene and React Native Linking readiness are iOS-only concerns.
+    }
+
     override fun identify(params: ReadableMap?) {
         val userId = params?.getString("userId")
         val traits = params?.getMap("traits")
