@@ -1,3 +1,15 @@
+## [6.9.0](https://github.com/customerio/customerio-reactnative/compare/6.8.0...6.9.0) (2026-08-27)
+
+### Features
+
+* expose Live Activity URL transformation (MBL-2304) ([#647](https://github.com/customerio/customerio-reactnative/issues/647)) ([6fe6a21](https://github.com/customerio/customerio-reactnative/commit/6fe6a214c5a693c6480414394d59aea7eb93c764))
+
+## [6.8.0](https://github.com/customerio/customerio-reactnative/compare/6.7.0...6.8.0) (2026-08-27)
+
+### Features
+
+* add Expo scene deep-link readiness (MBL-2304) ([#646](https://github.com/customerio/customerio-reactnative/issues/646)) ([016f9ac](https://github.com/customerio/customerio-reactnative/commit/016f9ac4a521ae4c53834f77ffd41a1893f066c6))
+
 ## [6.7.0](https://github.com/customerio/customerio-reactnative/compare/6.6.3...6.7.0) (2026-08-26)
 
 ### Features

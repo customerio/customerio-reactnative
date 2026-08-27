@@ -56,6 +56,16 @@ export class CustomerIO {
     });
   };
 
+  /**
+   * Signal that the app's React Native Linking listener is ready to receive Customer.io URLs.
+   *
+   * This is only needed by UIScene hosts that initialize Customer.io natively, such as Expo
+   * config-plugin auto-initialization. Call it after registering the Linking listener.
+   */
+  static readonly setDeepLinkRoutingReady = () => {
+    return withNativeModule<void>((native) => native.setDeepLinkRoutingReady());
+  };
+
   /** Identify a user to start tracking their activity. Requires userId, traits, or both. */
   static readonly identify = async ({
     userId,

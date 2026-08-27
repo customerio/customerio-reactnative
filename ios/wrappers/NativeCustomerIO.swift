@@ -2,6 +2,7 @@ import CioAnalytics
 import CioDataPipelines
 import CioInternalCommon
 import CioMessagingInApp
+import Foundation
 
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {
@@ -18,6 +19,23 @@ public class NativeCustomerIO: NSObject {
         // application launch, so never replace a callback that native initialization installed.
         guard CustomerIO.shared.implementation == nil else { return }
         CustomerIOReactNativeDeepLinkRouter.install()
+    }
+
+    /// Installs deep-link routing for an Expo-owned scene lifecycle.
+    ///
+    /// Expo forwards scene URLs into React Native Linking itself, including on React Native
+    /// versions that do not expose the scene Linking selector used by the generic integration.
+    @objc
+    public static func configureExpoSceneDeepLinkRouting() {
+        guard CustomerIO.shared.implementation == nil else { return }
+        // Native initialization preserves an existing callback when its config does not provide one.
+        CustomerIOReactNativeDeepLinkRouter.installForExpoSceneLifecycle()
+    }
+
+    /// Marks the React Native Linking listener as ready for buffered scene URLs.
+    @objc
+    func setDeepLinkRoutingReady() {
+        CustomerIOReactNativeDeepLinkRouter.markReactNativeReady()
     }
 
     /// Ensures that the CustomerIO SDK is initialized before performing operations.
@@ -59,7 +77,10 @@ public class NativeCustomerIO: NSObject {
 
             let sdkConfigBuilder = try SDKConfigBuilder.create(from: config)
 
-            if CustomerIOReactNativeDeepLinkRouter.isSceneLifecycleEnabled {
+            let shouldInstallSceneRouter =
+                CustomerIOReactNativeDeepLinkRouter.isSceneLifecycleEnabled ||
+                (packageSource == "Expo" && CustomerIOReactNativeDeepLinkRouter.isExpoSceneLifecycleEnabled)
+            if shouldInstallSceneRouter {
                 _ = sdkConfigBuilder.deepLinkCallback { url in
                     CustomerIOReactNativeDeepLinkRouter.accept(url)
                     return true // React Native Linking cannot report handling; JavaScript owns fallback.
