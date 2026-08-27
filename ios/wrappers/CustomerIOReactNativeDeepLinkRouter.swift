@@ -69,9 +69,17 @@ enum CustomerIOReactNativeDeepLinkRouter {
     static func accept(_ url: URL) {
         stateLock.lock()
         if !isReactNativeReady {
+            let isFirstPendingUrl = pendingUrls.isEmpty
             let pendingUrl = PendingUrl(id: UUID(), url: url)
             pendingUrls.append(pendingUrl)
             stateLock.unlock()
+            if isFirstPendingUrl {
+                DIGraphShared.shared.logger.info(
+                    "Customer.io buffered an SDK deep link until React Native Linking is ready. " +
+                        "Native-auto-initialized apps must call CustomerIO.setDeepLinkRoutingReady() " +
+                        "after registering their Linking listener"
+                )
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
                 expire(pendingUrl.id)
             }

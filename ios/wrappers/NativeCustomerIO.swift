@@ -32,18 +32,6 @@ public class NativeCustomerIO: NSObject {
         CustomerIOReactNativeDeepLinkRouter.installForExpoSceneLifecycle()
     }
 
-    /// Reports and unwraps a Live Activity widget URL when that module is installed.
-    /// Keeping this entry point in the base wrapper lets generated scene code remain valid when an
-    /// incremental prebuild later disables the Live Activities subspec.
-    @objc
-    public static func handleLiveActivityWidgetUrl(_ url: URL) -> URL? {
-        #if CIO_LIVEACTIVITIES_ENABLED
-        NativeLiveActivities.handleWidgetUrl(url)
-        #else
-        url
-        #endif
-    }
-
     /// Marks the React Native Linking listener as ready for buffered scene URLs.
     @objc
     func setDeepLinkRoutingReady() {
