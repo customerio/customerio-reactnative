@@ -26,6 +26,28 @@ interface NativeLiveActivitiesSpec extends Omit<
  */
 export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
   /**
+   * Report an opened Live Activity and return the URL the app should route.
+   *
+   * Customer.io tracking URLs are unwrapped to their destination after attribution is recorded.
+   * A tracking URL without a destination returns `null`; any other URL is returned unchanged.
+   * This method never rejects, so it can safely compose with Expo Router's
+   * `redirectSystemPath` hook. On Android it is a pass-through.
+   *
+   * Use this in exactly one URL-routing layer. Calling it more than once for the same Customer.io
+   * tracking URL reports more than one opened event.
+   *
+   * @param url - The incoming URL from the host's linking lifecycle.
+   * @returns The URL to route, or `null` when the Customer.io URL has no destination.
+   */
+  async handleWidgetUrl(url: string): Promise<string | null> {
+    try {
+      return await NativeModule.handleWidgetUrl(url);
+    } catch {
+      return url;
+    }
+  }
+
+  /**
    * Start a built-in-template activity.
    *
    * @param payload - Template payload; `payload.type` selects the template.

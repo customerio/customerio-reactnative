@@ -65,6 +65,16 @@ RCT_EXPORT_MODULE()
   [_swiftBridge end:activityId payload:payload resolve:resolve reject:reject];
 }
 
+- (void)handleWidgetUrl:(NSString *)url
+                resolve:(RCTPromiseResolveBlock)resolve
+                 reject:(RCTPromiseRejectBlock)reject {
+  if (!_swiftBridge) {
+    resolve(url);
+    return;
+  }
+  [_swiftBridge handleWidgetUrl:url resolve:resolve reject:reject];
+}
+
 // Export class factory function for React Native component registration
 Class<RCTBridgeModule> NativeCustomerIOLiveActivitiesCls(void) {
   return RCTNativeLiveActivities.class;

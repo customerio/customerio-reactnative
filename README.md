@@ -151,7 +151,23 @@ func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
 Do not also pass those URLs to `RCTLinkingManager`. The helper already publishes them through
 React Native Linking, and forwarding them again can deliver the same URL twice.
 
-Android needs no equivalent step. Expo apps use the [config plugin](https://github.com/customerio/customerio-expo-plugin) instead of these manual snippets; scene support depends on the Expo version supported by the plugin.
+Android needs no equivalent native step.
+
+For Expo Router, unwrap the URL once in the app's top-level `app/+native-intent.tsx` file:
+
+```typescript
+import { CustomerIO } from 'customerio-reactnative';
+
+export async function redirectSystemPath({ path }: { path: string }) {
+  return CustomerIO.liveActivities.handleWidgetUrl(path);
+}
+```
+
+This reports the opened event, returns the customer's destination, preserves ordinary URLs, and
+returns `null` for a Customer.io tracking URL without a destination. Do not also call the helper
+from a `Linking` listener because processing the same tracking URL twice reports two opened events.
+Expo apps without Expo Router can apply the helper once in their central `Linking` initial-URL and
+subscription pipeline.
 
 ---
 
