@@ -52,10 +52,16 @@ enum CustomerIOReactNativeDeepLinkRouter {
     }
 
     /// Expo owns scene-to-Linking forwarding even on React Native versions that do not expose the
-    /// scene selector themselves. Require both a non-empty scene manifest and Expo's scene delegate
-    /// class so older Expo apps with unrelated scene configurations keep their existing behavior.
+    /// scene selector themselves. Prefer the generic React Native capability when available, then
+    /// fall back to Expo's scene delegate capability.
     static func installForExpoSceneLifecycle() {
-        guard isExpoSceneLifecycleEnabled else { return }
+        guard isSceneLifecycleEnabled || isExpoSceneLifecycleEnabled else {
+            DIGraphShared.shared.logger.error(
+                "Customer.io could not install Expo scene deep-link routing because the host " +
+                    "does not expose a supported React Native or Expo scene lifecycle"
+            )
+            return
+        }
         installCallback()
     }
 
