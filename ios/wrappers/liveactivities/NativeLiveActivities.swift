@@ -218,7 +218,13 @@ public class NativeLiveActivities: NSObject {
             resolve(urlString)
             return
         }
-        resolve(Self.handleWidgetUrl(url)?.absoluteString)
+        guard let destination = Self.handleWidgetUrl(url) else {
+            // React Native maps NSNull to JavaScript null. Resolving Swift nil produces undefined,
+            // which would violate the public Promise<string | null> contract.
+            resolve(NSNull())
+            return
+        }
+        resolve(destination.absoluteString)
     }
 
     /// Report an `opened` metric for a tapped Live Activity and return the deep link to route to.
