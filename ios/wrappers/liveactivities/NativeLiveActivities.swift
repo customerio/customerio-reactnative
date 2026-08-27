@@ -208,10 +208,20 @@ public class NativeLiveActivities: NSObject {
         }
     }
 
+    @objc(handleWidgetUrl:resolve:reject:)
+    public func handleWidgetUrl(
+        _ urlString: String,
+        resolve: @escaping RCTPromiseResolveBlock,
+        reject _: @escaping RCTPromiseRejectBlock
+    ) {
+        guard let url = URL(string: urlString) else {
+            resolve(urlString)
+            return
+        }
+        resolve(Self.handleWidgetUrl(url)?.absoluteString)
+    }
+
     /// Report an `opened` metric for a tapped Live Activity and return the deep link to route to.
-    ///
-    /// Not exposed to JavaScript: a Live Activity tap arrives through the app's native URL/scene
-    /// entry point, so call this from there (see the sample app's `AppDelegate`).
     ///
     /// - Returns: the customer's redirect URL for a Customer.io widget URL (`nil` when it carries
     ///   none), or `url` unchanged when it isn't a Customer.io URL — so existing routing still

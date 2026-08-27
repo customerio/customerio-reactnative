@@ -45,6 +45,12 @@ class NativeLiveActivitiesModule(
         return module
     }
 
+    override fun handleWidgetUrl(url: String?, promise: Promise?) {
+        // Customer.io Live Activity widget URLs are an iOS-only contract. Preserve every Android
+        // URL so a shared Expo Router redirectSystemPath implementation cannot suppress routing.
+        promise?.resolve(url)
+    }
+
     override fun start(payload: ReadableMap?, promise: Promise?) {
         val module = getPushModule() ?: return promise.rejectNotAvailable()
         try {

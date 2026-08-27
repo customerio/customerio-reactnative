@@ -15,6 +15,8 @@ import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
 type NativeBridgeObject = UnsafeObject;
 
 export interface Spec extends TurboModule {
+  /** Report a Live Activity open and return the destination URL to route. */
+  handleWidgetUrl(url: string): Promise<string | null>;
   /** Start an activity. Resolves with the SDK-minted activity id. */
   start(payload: NativeBridgeObject): Promise<string>;
   /** Replace the whole content-state of a running activity. Pass the full desired state. */

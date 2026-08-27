@@ -149,6 +149,7 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
 // @public
 export class CustomerIOLiveActivities implements NativeLiveActivitiesSpec {
     end(activityId: string, payload?: LiveActivityPayload): Promise<void>;
+    handleWidgetUrl(url: string): Promise<string | null>;
     start(payload: LiveActivityPayload): Promise<string>;
     update(activityId: string, payload: LiveActivityPayload): Promise<void>;
 }
