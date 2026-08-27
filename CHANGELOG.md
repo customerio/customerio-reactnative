@@ -1,3 +1,9 @@
+## [6.9.0](https://github.com/customerio/customerio-reactnative/compare/6.8.0...6.9.0) (2026-08-27)
+
+### Features
+
+* expose Live Activity URL transformation (MBL-2304) ([#647](https://github.com/customerio/customerio-reactnative/issues/647)) ([6fe6a21](https://github.com/customerio/customerio-reactnative/commit/6fe6a214c5a693c6480414394d59aea7eb93c764))
+
 ## [6.8.0](https://github.com/customerio/customerio-reactnative/compare/6.7.0...6.8.0) (2026-08-27)
 
 ### Features
