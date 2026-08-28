@@ -1,3 +1,9 @@
+## [6.10.0](https://github.com/customerio/customerio-reactnative/compare/6.9.0...6.10.0) (2026-08-28)
+
+### Features
+
+* add acknowledged React Native deep-link routing (MBL-2301) ([#648](https://github.com/customerio/customerio-reactnative/issues/648)) ([859a37d](https://github.com/customerio/customerio-reactnative/commit/859a37d1fa69f09817751d3b84b7370925d8384a))
+
 ## [6.9.0](https://github.com/customerio/customerio-reactnative/compare/6.8.0...6.9.0) (2026-08-27)
 
 ### Features
