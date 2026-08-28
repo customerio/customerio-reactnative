@@ -237,12 +237,16 @@ public class NativeLiveActivities: NSObject {
         CustomerIO.liveActivities.handleWidgetUrl(url)
     }
 
-    /// Report an `opened` metric for a tapped Live Activity and route its destination through
-    /// React Native Linking. Call this from a scene-based host's URL lifecycle method.
+    /// Report an `opened` metric for a tapped Live Activity and route its destination through the
+    /// configured Customer.io router. Ordinary URLs continue through React Native Linking.
     @objc(handleAndRouteWidgetUrl:)
     public static func handleAndRouteWidgetUrl(_ url: URL) {
         guard let routableUrl = handleWidgetUrl(url) else { return }
-        CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+        if routableUrl == url {
+            CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
+        } else {
+            CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+        }
     }
 
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
@@ -260,7 +264,9 @@ public class NativeLiveActivities: NSObject {
         if let url = connectionOptions.urlContexts.first?.url,
            let routableUrl = handleWidgetUrl(url)
         {
-            if CustomerIOReactNativeDeepLinkRouter.requiresAcknowledgedHandler {
+            if CustomerIOReactNativeDeepLinkRouter.requiresAcknowledgedHandler,
+               routableUrl != url
+            {
                 CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
             } else {
                 launchOptions[.url] = routableUrl

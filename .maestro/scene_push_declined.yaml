@@ -12,4 +12,5 @@ name: React Native UIScene declined app-owned URL
 - extendedWaitUntil:
     visible: 'Declined count: 1'
     timeout: 15000
+- assertVisible: 'Received: cio-rn-scene-e2e://declined'
 - assertNotVisible: 'Declined count: 2'

@@ -36,13 +36,21 @@ export default function App(): React.JSX.Element {
 
   useEffect(() => {
     let active = true;
-    let subscription: { remove(): void } | undefined;
+    const subscriptions: Array<{ remove(): void }> = [];
 
     const initialize = async () => {
-      if (routingMode === 'linking') {
-        subscription = Linking.addEventListener('url', ({ url }) => {
+      subscriptions.push(
+        Linking.addEventListener('url', ({ url }) => {
           setReceivedUrl(url);
-        });
+        })
+      );
+
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        setReceivedUrl(initialUrl);
+      }
+
+      if (routingMode === 'linking') {
         CustomerIO.setDeepLinkRoutingReady();
       }
 
@@ -66,7 +74,7 @@ export default function App(): React.JSX.Element {
           handlerSubscription.remove();
           return;
         }
-        subscription = handlerSubscription;
+        subscriptions.push(handlerSubscription);
       }
 
       const status =
@@ -88,7 +96,7 @@ export default function App(): React.JSX.Element {
 
     return () => {
       active = false;
-      subscription?.remove();
+      subscriptions.forEach((subscription) => subscription.remove());
     };
   }, [routingMode]);
 

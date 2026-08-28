@@ -53,7 +53,13 @@ enum CustomerIOReactNativeDeepLinkRouter {
     }
 
     static func installAcknowledgedHandler() {
-        guard isSceneLifecycleEnabled else { return }
+        guard isSceneLifecycleEnabled else {
+            DIGraphShared.shared.logger.error(
+                "Customer.io could not install acknowledged deep-link routing because the host " +
+                    "does not expose a supported React Native scene lifecycle"
+            )
+            return
+        }
         installCallback(requiringAcknowledgedHandler: true)
     }
 
@@ -121,11 +127,19 @@ enum CustomerIOReactNativeDeepLinkRouter {
     ) -> UUID {
         let token = UUID()
         stateLock.lock()
+        let replacesExistingHandler = handlerToken != nil
+        let hasAcknowledgedHandlerConfiguration = requestStore.requiresAcknowledgedHandler
         handlerToken = token
         handlerEmitter = emitter
-        let deliveries = requestStore.useHandler()
+        let deliveries = requestStore.useHandler(replacingExisting: replacesExistingHandler)
         stateLock.unlock()
 
+        if !hasAcknowledgedHandlerConfiguration {
+            DIGraphShared.shared.logger.error(
+                "Customer.io registered an acknowledged deep-link handler without configuring " +
+                    "acknowledged scene routing before React Native started"
+            )
+        }
         for (id, url) in deliveries {
             publishToHandler(id: id, url: url)
         }
@@ -140,10 +154,15 @@ enum CustomerIOReactNativeDeepLinkRouter {
         }
         handlerToken = nil
         handlerEmitter = nil
-        let replacementIds = requestStore.removeHandler()
+        let removal = requestStore.removeHandler()
         stateLock.unlock()
 
-        replacementIds.forEach(scheduleReadinessExpiration)
+        switch removal {
+        case let .buffered(replacementIds):
+            replacementIds.forEach(scheduleReadinessExpiration)
+        case let .linking(urls):
+            urls.forEach(route)
+        }
     }
 
     static func acknowledge(_ id: String, handled: Bool) {
@@ -253,9 +272,10 @@ enum CustomerIOReactNativeDeepLinkRouter {
                     "Customer.io deep link was handled by the host AppDelegate fallback"
                 )
             } else if isAppOwnedCustomScheme(url) {
-                DIGraphShared.shared.logger.error(
-                    "Customer.io did not reopen a deep link whose custom URL scheme belongs to " +
-                        "the host app"
+                route(url)
+                DIGraphShared.shared.logger.info(
+                    "Customer.io forwarded the host app's custom-scheme deep link to React " +
+                        "Native Linking"
                 )
             } else {
                 uiKit.open(url: url)

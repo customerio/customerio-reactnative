@@ -110,7 +110,7 @@ cleanup() {
       else
         echo "**Classification:** ${current_phase}-failed"
       fi
-      echo '**Scope:** simulator notification presentation, tap, and exact acknowledged-handler and legacy-Linking destinations; no backend delivery or attribution claim'
+      echo '**Scope:** simulator notification presentation, tap, ordinary cold URL, and exact acknowledged-handler and legacy-Linking destinations; no backend delivery or attribution claim'
     } >> "$GITHUB_STEP_SUMMARY"
   fi
   return "$exit_code"
@@ -282,6 +282,24 @@ for routing_mode in acknowledged linking; do
   fi
   maestro "${prepare_args[@]}"
   xcrun simctl terminate "$device_id" "$APP_ID"
+
+  if [[ "$routing_mode" == acknowledged ]]; then
+    current_phase="ordinary-link-$routing_mode"
+    xcrun simctl openurl "$device_id" 'cio-rn-scene-e2e://ordinary-cold'
+    ordinary_args=(--device "$device_id" test .maestro/scene_url_open.yaml)
+    if [[ -n "${RUNNER_TEMP:-}" ]]; then
+      ordinary_args=(
+        --device "$device_id"
+        test
+        --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_url_open-$routing_mode"
+        --flatten-debug-output
+        .maestro/scene_url_open.yaml
+      )
+    fi
+    maestro "${ordinary_args[@]}"
+    xcrun simctl terminate "$device_id" "$APP_ID"
+  fi
+
   current_phase="routing-$routing_mode"
   run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
   run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
