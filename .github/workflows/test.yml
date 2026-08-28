@@ -16,6 +16,9 @@ jobs:
       - name: Compile
         run: npm run typescript
 
+      - name: Unit tests
+        run: npm test -- --runInBand --no-watchman
+
       # `npm pack`, not `npm publish --dry-run`. From npm 11 (which node 24 bundles) a dry-run
       # publish also runs the registry-side preflight, so it fails with "cannot publish over the
       # previously published versions" on any branch whose version semantic-release has not bumped

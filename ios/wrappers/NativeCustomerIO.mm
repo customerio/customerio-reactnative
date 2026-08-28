@@ -1,11 +1,16 @@
 #import "utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
+#import <React/RCTInvalidating.h>
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
+@protocol NativeCustomerIOBridge <NativeCustomerIOSpec, RCTInvalidating>
+- (void)setEventEmitter:(id)emitter;
+@end
+
 // Objective-C wrapper for new architecture TurboModule implementation
-@interface RCTNativeCustomerIO : NSObject <NativeCustomerIOSpec>
+@interface RCTNativeCustomerIO : NativeCustomerIOSpecBase <NativeCustomerIOSpec>
 // Bridge to Swift implementation for cross-language compatibility
-@property(nonatomic, strong) id<NativeCustomerIOSpec> swiftBridge;
+@property(nonatomic, strong) id<NativeCustomerIOBridge> swiftBridge;
 @end
 
 @implementation RCTNativeCustomerIO
@@ -30,6 +35,7 @@ RCT_EXPORT_MODULE()
     RCT_ASSERT_NOT_NIL(swiftClass, @"NativeCustomerIO Swift class", @"during runtime lookup");
     _swiftBridge = [[swiftClass alloc] init];
     [self assertBridgeAvailable:@"creating NativeCustomerIO Swift instance"];
+    [_swiftBridge setEventEmitter:self];
   }
   return self;
 }
@@ -50,6 +56,32 @@ RCT_EXPORT_MODULE()
 - (void)setDeepLinkRoutingReady {
   [self assertBridgeAvailable:@"during setDeepLinkRoutingReady"];
   [_swiftBridge setDeepLinkRoutingReady];
+}
+
+- (void)registerDeepLinkHandler {
+  [self assertBridgeAvailable:@"during registerDeepLinkHandler"];
+  [_swiftBridge registerDeepLinkHandler];
+}
+
+- (void)unregisterDeepLinkHandler {
+  [self assertBridgeAvailable:@"during unregisterDeepLinkHandler"];
+  [_swiftBridge unregisterDeepLinkHandler];
+}
+
+- (void)acknowledgeDeepLink:(NSString *)id handled:(BOOL)handled {
+  [self assertBridgeAvailable:@"during acknowledgeDeepLink"];
+  [_swiftBridge acknowledgeDeepLink:id handled:handled];
+}
+
+- (void)invalidate {
+  [self assertBridgeAvailable:@"during invalidate"];
+  [_swiftBridge invalidate];
+}
+
+// Pins the Codegen event name at compile time. Keep this in sync with the TypeScript spec and the
+// runtime selector in NativeCustomerIO.swift.
+- (void)emitOnDeepLinkReceived:(NSDictionary *)value {
+  [super emitOnDeepLinkReceived:value];
 }
 
 - (void)identify:(NSDictionary *)params {

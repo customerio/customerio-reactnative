@@ -237,17 +237,22 @@ public class NativeLiveActivities: NSObject {
         CustomerIO.liveActivities.handleWidgetUrl(url)
     }
 
-    /// Report an `opened` metric for a tapped Live Activity and route its destination through
-    /// React Native Linking. Call this from a scene-based host's URL lifecycle method.
+    /// Report an `opened` metric for a tapped Live Activity and route its destination through the
+    /// configured Customer.io router. Ordinary URLs continue through React Native Linking.
     @objc(handleAndRouteWidgetUrl:)
     public static func handleAndRouteWidgetUrl(_ url: URL) {
         guard let routableUrl = handleWidgetUrl(url) else { return }
-        CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+        if routableUrl == url {
+            CustomerIOReactNativeDeepLinkRouter.route(routableUrl)
+        } else {
+            CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+        }
     }
 
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
-    /// tap and replacing Customer.io's internal tracking URL with its destination. This mirrors the
-    /// `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
+    /// tap and routing its destination through the installed Customer.io scene router. Without the
+    /// acknowledged-handler opt-in, the destination remains in React Native's launch options. This
+    /// mirrors the `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
     /// 0.88.0-nightly-20260823-0c7f63a4e. Before `CustomerIO.initialize`, the native Live Activities
     /// stub parses the redirect and buffers the opened metric for the module to flush at initialization.
     @objc(reactNativeLaunchOptionsFromConnectionOptions:)
@@ -259,7 +264,13 @@ public class NativeLiveActivities: NSObject {
         if let url = connectionOptions.urlContexts.first?.url,
            let routableUrl = handleWidgetUrl(url)
         {
-            launchOptions[.url] = routableUrl
+            if CustomerIOReactNativeDeepLinkRouter.requiresAcknowledgedHandler,
+               routableUrl != url
+            {
+                CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
+            } else {
+                launchOptions[.url] = routableUrl
+            }
         }
 
         if let userActivity = connectionOptions.userActivities.first {

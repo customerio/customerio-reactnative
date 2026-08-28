@@ -1,0 +1,16 @@
+{
+  "aps": {
+    "alert": {
+      "title": "Customer.io scene routing",
+      "body": "Decline a React Native app-owned destination"
+    },
+    "sound": "default"
+  },
+  "CIO-Delivery-ID": "maestro-scene-route-declined",
+  "CIO-Delivery-Token": "maestro-scene-token-declined",
+  "CIO": {
+    "push": {
+      "link": "cio-rn-scene-e2e://declined"
+    }
+  }
+}

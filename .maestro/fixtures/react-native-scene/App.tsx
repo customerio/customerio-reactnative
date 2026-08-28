@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Linking, Text, View } from 'react-native';
+import { Linking, Settings, Text, View } from 'react-native';
 import {
   CioPushPermissionStatus,
   CioRegion,
@@ -25,37 +25,80 @@ async function validateLiveActivityBridge(): Promise<void> {
 }
 
 export default function App(): React.JSX.Element {
+  const routingMode =
+    Settings.get('CioSceneE2EPersistedMode') === 'linking'
+      ? 'linking'
+      : 'acknowledged';
   const [receivedUrl, setReceivedUrl] = useState<string | null>(null);
+  const [declineCount, setDeclineCount] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
-    const subscription = Linking.addEventListener('url', ({ url }) => {
-      setReceivedUrl(url);
-    });
+    let active = true;
+    const subscriptions: Array<{ remove(): void }> = [];
 
-    CustomerIO.initialize({
-      cdpApiKey: 'scene-e2e-key',
-      region: CioRegion.US,
-    })
-      .then(() =>
-        CustomerIO.pushMessaging.showPromptForPushNotifications({
-          ios: { sound: true, badge: true },
+    const initialize = async () => {
+      subscriptions.push(
+        Linking.addEventListener('url', ({ url }) => {
+          setReceivedUrl(url);
         })
-      )
-      .then(async (status) => {
-        if (status !== CioPushPermissionStatus.Granted) {
-          throw new Error(`Push permission is ${status}`);
-        }
-        await validateLiveActivityBridge();
-        setInitialized(true);
-      })
-      .catch((error: unknown) => {
-        setFailure(error instanceof Error ? error.message : String(error));
+      );
+
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        setReceivedUrl(initialUrl);
+      }
+
+      if (routingMode === 'linking') {
+        CustomerIO.setDeepLinkRoutingReady();
+      }
+
+      await CustomerIO.initialize({
+        cdpApiKey: 'scene-e2e-key',
+        region: CioRegion.US,
       });
 
-    return () => subscription.remove();
-  }, []);
+      // Register after initialization in acknowledged mode. This intentionally exercises the cold
+      // replay boundary where initialization must not drain the URL into legacy Linking.
+      if (routingMode === 'acknowledged') {
+        const handlerSubscription = CustomerIO.setDeepLinkHandler((url) => {
+          if (url === 'cio-rn-scene-e2e://declined') {
+            setDeclineCount((count) => count + 1);
+            return false;
+          }
+          setReceivedUrl(url);
+          return true;
+        });
+        if (!active) {
+          handlerSubscription.remove();
+          return;
+        }
+        subscriptions.push(handlerSubscription);
+      }
+
+      const status =
+        await CustomerIO.pushMessaging.showPromptForPushNotifications({
+          ios: { sound: true, badge: true },
+        });
+      if (status !== CioPushPermissionStatus.Granted) {
+        throw new Error(`Push permission is ${status}`);
+      }
+      await validateLiveActivityBridge();
+      setInitialized(true);
+    };
+
+    initialize().catch((error: unknown) => {
+      if (active) {
+        setFailure(error instanceof Error ? error.message : String(error));
+      }
+    });
+
+    return () => {
+      active = false;
+      subscriptions.forEach((subscription) => subscription.remove());
+    };
+  }, [routingMode]);
 
   return (
     <View>
@@ -63,8 +106,10 @@ export default function App(): React.JSX.Element {
         Customer.io React Native scene E2E{' '}
         {initialized ? 'ready' : 'initializing'}
       </Text>
+      <Text>Routing: {routingMode}</Text>
       {failure && <Text>Initialization failed: {failure}</Text>}
       {receivedUrl && <Text>Received: {receivedUrl}</Text>}
+      {declineCount > 0 && <Text>Declined count: {declineCount}</Text>}
     </View>
   );
 }

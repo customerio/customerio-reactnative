@@ -3,12 +3,8 @@ import Foundation
 import UIKit
 
 enum CustomerIOReactNativeDeepLinkRouter {
-    private struct PendingUrl {
-        let id: UUID
-        let url: URL
-    }
-
     private static let readinessTimeout: TimeInterval = 10
+    private static let acknowledgementTimeout: TimeInterval = 10
     private static let sceneManifestKey = "UIApplicationSceneManifest"
     private static let sceneConfigurationsKey = "UISceneConfigurations"
     private static let sceneOpenURLContextsSelector = NSSelectorFromString("scene:openURLContexts:")
@@ -16,10 +12,15 @@ enum CustomerIOReactNativeDeepLinkRouter {
     // notification name and payload for Linking URL events.
     private static let openURLNotification = Notification.Name("RCTOpenURLNotification")
     private static let stateLock = NSLock()
-    // React Native Linking is process-wide. Multi-window and independent bridge lifecycles are
-    // outside the single-window scene contract, so readiness intentionally lasts for the process.
-    private static var isReactNativeReady = false
-    private static var pendingUrls: [PendingUrl] = []
+    private static var requestStore = CustomerIOReactNativeDeepLinkRequestStore()
+    private static var handlerEmitter: ((_ id: String, _ url: String) -> Void)?
+    private static var handlerToken: UUID?
+
+    static var requiresAcknowledgedHandler: Bool {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return requestStore.requiresAcknowledgedHandler
+    }
 
     private static var hasSceneManifest: Bool {
         guard let manifest = Bundle.main.object(forInfoDictionaryKey: sceneManifestKey) as? [String: Any],
@@ -48,7 +49,18 @@ enum CustomerIOReactNativeDeepLinkRouter {
 
     static func install() {
         guard isSceneLifecycleEnabled else { return }
-        installCallback()
+        installCallback(requiringAcknowledgedHandler: false)
+    }
+
+    static func installAcknowledgedHandler() {
+        guard isSceneLifecycleEnabled else {
+            DIGraphShared.shared.logger.error(
+                "Customer.io could not install acknowledged deep-link routing because the host " +
+                    "does not expose a supported React Native scene lifecycle"
+            )
+            return
+        }
+        installCallback(requiringAcknowledgedHandler: true)
     }
 
     /// Expo owns scene-to-Linking forwarding even on React Native versions that do not expose the
@@ -62,10 +74,15 @@ enum CustomerIOReactNativeDeepLinkRouter {
             )
             return
         }
-        installCallback()
+        installCallback(requiringAcknowledgedHandler: false)
     }
 
-    private static func installCallback() {
+    private static func installCallback(requiringAcknowledgedHandler: Bool) {
+        stateLock.lock()
+        if requiringAcknowledgedHandler {
+            requestStore.requireAcknowledgedHandler()
+        }
+        stateLock.unlock()
         DIGraphShared.shared.deepLinkUtil.setDeepLinkCallback { url in
             accept(url)
             return true
@@ -74,44 +91,99 @@ enum CustomerIOReactNativeDeepLinkRouter {
 
     static func accept(_ url: URL) {
         stateLock.lock()
-        if !isReactNativeReady {
-            let isFirstPendingUrl = pendingUrls.isEmpty
-            let pendingUrl = PendingUrl(id: UUID(), url: url)
-            pendingUrls.append(pendingUrl)
-            stateLock.unlock()
-            if isFirstPendingUrl {
-                DIGraphShared.shared.logger.info(
-                    "Customer.io buffered an SDK deep link until React Native Linking is ready. " +
-                        "Native-auto-initialized apps must call CustomerIO.setDeepLinkRoutingReady() " +
-                        "after registering their Linking listener"
-                )
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
-                expire(pendingUrl.id)
-            }
-            return
-        }
+        let acceptance = requestStore.accept(url)
         stateLock.unlock()
 
-        route(url)
+        switch acceptance {
+        case let .buffered(id):
+            DIGraphShared.shared.logger.info(
+                "Customer.io buffered an SDK deep link until a React Native route is ready"
+            )
+            scheduleReadinessExpiration(for: id)
+        case let .linking(url):
+            route(url)
+        case let .handler(id, url):
+            publishToHandler(id: id, url: url)
+        }
     }
 
     static func markReactNativeReady() {
         let markReady = {
             stateLock.lock()
-            isReactNativeReady = true
-            let urls = pendingUrls.map(\.url)
-            pendingUrls.removeAll()
+            let urls = requestStore.useLinking()
             stateLock.unlock()
 
-            // This runs on the main thread, so buffered URLs are published before a new
-            // main-thread URL can interleave with them.
             urls.forEach(route)
         }
         if Thread.isMainThread {
             markReady()
         } else {
             DispatchQueue.main.async(execute: markReady)
+        }
+    }
+
+    static func registerHandler(
+        _ emitter: @escaping (_ id: String, _ url: String) -> Void
+    ) -> UUID {
+        let token = UUID()
+        stateLock.lock()
+        let hasAcknowledgedHandlerConfiguration = requestStore.requiresAcknowledgedHandler
+        handlerToken = token
+        handlerEmitter = emitter
+        let deliveries = requestStore.useHandler()
+        stateLock.unlock()
+
+        if !hasAcknowledgedHandlerConfiguration {
+            DIGraphShared.shared.logger.error(
+                "Customer.io registered an acknowledged deep-link handler without configuring " +
+                    "acknowledged scene routing before React Native started"
+            )
+        }
+        for (id, url) in deliveries {
+            publishToHandler(id: id, url: url)
+        }
+        return token
+    }
+
+    static func unregisterHandler(_ token: UUID) {
+        stateLock.lock()
+        guard handlerToken == token else {
+            stateLock.unlock()
+            return
+        }
+        handlerToken = nil
+        handlerEmitter = nil
+        requestStore.removeHandler()
+        stateLock.unlock()
+    }
+
+    static func acknowledge(_ id: String, handled: Bool) {
+        guard let requestId = UUID(uuidString: id) else {
+            DIGraphShared.shared.logger.error(
+                "Customer.io ignored an invalid React Native deep-link acknowledgement"
+            )
+            return
+        }
+
+        stateLock.lock()
+        let resolution = requestStore.acknowledge(requestId, handled: handled)
+        stateLock.unlock()
+
+        switch resolution {
+        case .handled:
+            DIGraphShared.shared.logger.info(
+                "React Native acknowledged the Customer.io deep link"
+            )
+        case let .fallback(url):
+            DIGraphShared.shared.logger.info(
+                "React Native declined the Customer.io deep link; using the native fallback"
+            )
+            fallback(url)
+        case nil:
+            DIGraphShared.shared.logger.info(
+                "Customer.io ignored a late or unknown React Native deep-link acknowledgement; " +
+                    "the native fallback may have already routed the destination"
+            )
         }
     }
 
@@ -135,27 +207,106 @@ enum CustomerIOReactNativeDeepLinkRouter {
         }
     }
 
-    private static func expire(_ id: UUID) {
-        stateLock.lock()
-        guard !isReactNativeReady,
-              let index = pendingUrls.firstIndex(where: { $0.id == id })
-        else {
+    private static func publishToHandler(id: UUID, url: URL) {
+        let publish = {
+            stateLock.lock()
+            let emitter = handlerEmitter
             stateLock.unlock()
-            return
+
+            emitter?(id.uuidString, url.absoluteString)
+            DispatchQueue.main.asyncAfter(deadline: .now() + acknowledgementTimeout) {
+                expireAcknowledgement(id)
+            }
         }
-        let url = pendingUrls.remove(at: index).url
+        if Thread.isMainThread {
+            publish()
+        } else {
+            DispatchQueue.main.async(execute: publish)
+        }
+    }
+
+    private static func scheduleReadinessExpiration(for id: UUID) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
+            expireReadiness(id)
+        }
+    }
+
+    private static func expireReadiness(_ id: UUID) {
+        stateLock.lock()
+        let url = requestStore.expireReadiness(id)
         stateLock.unlock()
 
+        guard let url else { return }
+
         DIGraphShared.shared.logger.error(
-            "Customer.io is opening an SDK deep link externally because React Native did not " +
-                "initialize in time. Native-auto-initialized apps must call " +
-                "CustomerIO.setDeepLinkRoutingReady() after registering their Linking listener"
+            "Customer.io is using the native fallback because React Native deep-link routing " +
+                "did not become ready in time"
         )
-        UIApplication.shared.open(url) { opened in
-            guard !opened else { return }
-            DIGraphShared.shared.logger.error(
-                "Customer.io could not open the SDK deep link externally"
-            )
+        fallback(url)
+    }
+
+    private static func expireAcknowledgement(_ id: UUID) {
+        stateLock.lock()
+        let url = requestStore.expireAcknowledgement(id)
+        stateLock.unlock()
+
+        guard let url else { return }
+
+        DIGraphShared.shared.logger.error(
+            "Customer.io is using the native fallback because the React Native deep-link " +
+                "handler did not acknowledge the URL in time"
+        )
+        fallback(url)
+    }
+
+    private static func fallback(_ url: URL) {
+        let open = {
+            let uiKit = DIGraphShared.shared.uIKitWrapper
+            if uiKit.continueNSUserActivity(webpageURL: url) {
+                DIGraphShared.shared.logger.info(
+                    "Customer.io deep link was handled by the host AppDelegate fallback"
+                )
+            } else if isAppOwnedCustomScheme(url) {
+                stateLock.lock()
+                let linkingIsReady = requestStore.canDeliverWithLinking
+                stateLock.unlock()
+                route(url)
+                if linkingIsReady {
+                    DIGraphShared.shared.logger.info(
+                        "Customer.io forwarded the host app's custom-scheme deep link to React " +
+                            "Native Linking"
+                    )
+                } else {
+                    DIGraphShared.shared.logger.error(
+                        "Customer.io published the host app's custom-scheme deep link before " +
+                            "React Native Linking was marked ready; the destination may not be handled"
+                    )
+                }
+            } else {
+                uiKit.open(url: url)
+                DIGraphShared.shared.logger.info(
+                    "Customer.io opened the deep link through the system fallback"
+                )
+            }
+        }
+        if Thread.isMainThread {
+            open()
+        } else {
+            DispatchQueue.main.async(execute: open)
+        }
+    }
+
+    private static func isAppOwnedCustomScheme(_ url: URL) -> Bool {
+        guard let scheme = url.scheme,
+              scheme.caseInsensitiveCompare("http") != .orderedSame,
+              scheme.caseInsensitiveCompare("https") != .orderedSame,
+              let urlTypes = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes")
+              as? [[String: Any]]
+        else { return false }
+
+        return urlTypes.contains { urlType in
+            guard let schemes = urlType["CFBundleURLSchemes"] as? [String] else { return false }
+            return schemes.contains { $0.caseInsensitiveCompare(scheme) == .orderedSame }
         }
     }
 }
