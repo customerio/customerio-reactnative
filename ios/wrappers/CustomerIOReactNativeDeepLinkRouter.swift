@@ -127,11 +127,10 @@ enum CustomerIOReactNativeDeepLinkRouter {
     ) -> UUID {
         let token = UUID()
         stateLock.lock()
-        let replacesExistingHandler = handlerToken != nil
         let hasAcknowledgedHandlerConfiguration = requestStore.requiresAcknowledgedHandler
         handlerToken = token
         handlerEmitter = emitter
-        let deliveries = requestStore.useHandler(replacingExisting: replacesExistingHandler)
+        let deliveries = requestStore.useHandler()
         stateLock.unlock()
 
         if !hasAcknowledgedHandlerConfiguration {
@@ -154,15 +153,8 @@ enum CustomerIOReactNativeDeepLinkRouter {
         }
         handlerToken = nil
         handlerEmitter = nil
-        let removal = requestStore.removeHandler()
+        requestStore.removeHandler()
         stateLock.unlock()
-
-        switch removal {
-        case let .buffered(replacementIds):
-            replacementIds.forEach(scheduleReadinessExpiration)
-        case let .linking(urls):
-            urls.forEach(route)
-        }
     }
 
     static func acknowledge(_ id: String, handled: Bool) {
@@ -272,11 +264,21 @@ enum CustomerIOReactNativeDeepLinkRouter {
                     "Customer.io deep link was handled by the host AppDelegate fallback"
                 )
             } else if isAppOwnedCustomScheme(url) {
+                stateLock.lock()
+                let linkingIsReady = requestStore.canDeliverWithLinking
+                stateLock.unlock()
                 route(url)
-                DIGraphShared.shared.logger.info(
-                    "Customer.io forwarded the host app's custom-scheme deep link to React " +
-                        "Native Linking"
-                )
+                if linkingIsReady {
+                    DIGraphShared.shared.logger.info(
+                        "Customer.io forwarded the host app's custom-scheme deep link to React " +
+                            "Native Linking"
+                    )
+                } else {
+                    DIGraphShared.shared.logger.error(
+                        "Customer.io published the host app's custom-scheme deep link before " +
+                            "React Native Linking was marked ready; the destination may not be handled"
+                    )
+                }
             } else {
                 uiKit.open(url: url)
                 DIGraphShared.shared.logger.info(

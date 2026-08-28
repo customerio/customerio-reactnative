@@ -12,11 +12,6 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
         case fallback(URL)
     }
 
-    enum HandlerRemoval: Equatable {
-        case buffered([UUID])
-        case linking([URL])
-    }
-
     private enum DeliveryMode: Equatable {
         case unavailable
         case linking
@@ -53,6 +48,10 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
         requiresHandler
     }
 
+    var canDeliverWithLinking: Bool {
+        isLinkingReady
+    }
+
     mutating func requireAcknowledgedHandler() {
         requiresHandler = true
     }
@@ -83,48 +82,18 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
         return urls
     }
 
-    mutating func useHandler(replacingExisting: Bool = false) -> [(UUID, URL)] {
+    mutating func useHandler() -> [(UUID, URL)] {
         hasHandler = true
         var deliveries: [(UUID, URL)] = []
-        for index in requests.indices
-        where requests[index].state == .buffered ||
-            (replacingExisting && requests[index].state == .awaitingAcknowledgement) {
-            if replacingExisting, requests[index].state == .awaitingAcknowledgement {
-                requests[index] = Request(
-                    id: UUID(),
-                    url: requests[index].url,
-                    state: .awaitingAcknowledgement
-                )
-            } else {
-                requests[index].state = .awaitingAcknowledgement
-            }
+        for index in requests.indices where requests[index].state == .buffered {
+            requests[index].state = .awaitingAcknowledgement
             deliveries.append((requests[index].id, requests[index].url))
         }
         return deliveries
     }
 
-    mutating func removeHandler() -> HandlerRemoval {
-        guard hasHandler else { return .buffered([]) }
+    mutating func removeHandler() {
         hasHandler = false
-
-        var replacementIds: [UUID] = []
-        for index in requests.indices where requests[index].state == .awaitingAcknowledgement {
-            let replacementId = UUID()
-            requests[index] = Request(
-                id: replacementId,
-                url: requests[index].url,
-                state: .buffered
-            )
-            replacementIds.append(replacementId)
-        }
-
-        guard deliveryMode == .linking else { return .buffered(replacementIds) }
-
-        let urls = requests.compactMap { request in
-            request.state == .buffered ? request.url : nil
-        }
-        requests.removeAll { $0.state == .buffered }
-        return .linking(urls)
     }
 
     mutating func acknowledge(_ id: UUID, handled: Bool) -> Resolution? {

@@ -128,40 +128,30 @@ private enum DeepLinkRequestStoreTests {
         _ = reloadStore.useLinking()
         _ = reloadStore.useHandler()
         let oldReloadId = handlerRequest(reloadStore.accept(reloadUrl))
-        let reloadRemoval = reloadStore.removeHandler()
-        guard case let .linking(reloadUrls) = reloadRemoval else {
-            fputs("error: handler removal must use previously signalled Linking readiness\n", stderr)
-            exit(1)
-        }
+        reloadStore.removeHandler()
         require(
-            reloadUrls == [reloadUrl],
-            "handler removal must immediately return its in-flight URL to ready Linking"
+            reloadStore.acknowledge(oldReloadId, handled: true) == .handled,
+            "handler removal must preserve an in-flight acknowledgement"
         )
         require(
             reloadStore.accept(linkingUrl) == .linking(linkingUrl),
             "handler removal must restore previously signalled Linking readiness for new URLs"
         )
-        require(
-            reloadStore.acknowledge(oldReloadId, handled: true) == nil,
-            "an acknowledgement from the removed handler must not resolve a Linking delivery"
-        )
 
         let replacementUrl = URL(string: "myapp://handler-replacement")!
         var replacementStore = CustomerIOReactNativeDeepLinkRequestStore()
+        replacementStore.requireAcknowledgedHandler()
         _ = replacementStore.useHandler()
         let oldReplacementId = handlerRequest(replacementStore.accept(replacementUrl))
-        let replacementReplay = replacementStore.useHandler(replacingExisting: true)
+        replacementStore.removeHandler()
+        let replacementReplay = replacementStore.useHandler()
         require(
-            replacementReplay.count == 1 && replacementReplay[0].0 != oldReplacementId,
-            "a replacement handler must receive the in-flight URL with a new request ID"
+            replacementReplay.isEmpty,
+            "a replacement handler must not receive a URL still awaiting its original acknowledgement"
         )
         require(
-            replacementStore.acknowledge(oldReplacementId, handled: true) == nil,
-            "an acknowledgement from the replaced handler must not resolve the new request"
-        )
-        require(
-            replacementStore.acknowledge(replacementReplay[0].0, handled: true) == .handled,
-            "the replacement handler must resolve the replayed URL"
+            replacementStore.acknowledge(oldReplacementId, handled: true) == .handled,
+            "the original handler must be able to resolve its in-flight URL after replacement"
         )
 
         print("React Native deep-link request store tests passed")

@@ -110,7 +110,7 @@ cleanup() {
       else
         echo "**Classification:** ${current_phase}-failed"
       fi
-      echo '**Scope:** simulator notification presentation, tap, ordinary cold URL, and exact acknowledged-handler and legacy-Linking destinations; no backend delivery or attribution claim'
+      echo '**Scope:** simulator notification presentation, tap, ordinary warm and cold URLs, and exact acknowledged-handler and legacy-Linking destinations; no backend delivery or attribution claim'
     } >> "$GITHUB_STEP_SUMMARY"
   fi
   return "$exit_code"
@@ -201,6 +201,30 @@ run_notification_flow() {
   flow_log=""
 }
 
+run_ordinary_url_flow() {
+  local url="$1"
+  local state="$2"
+  local ordinary_args=(
+    --device "$device_id"
+    test
+    -e "EXPECTED_URL=$url"
+    .maestro/scene_url_open.yaml
+  )
+
+  xcrun simctl openurl "$device_id" "$url"
+  if [[ -n "${RUNNER_TEMP:-}" ]]; then
+    ordinary_args=(
+      --device "$device_id"
+      test
+      --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_url_open-$state"
+      --flatten-debug-output
+      -e "EXPECTED_URL=$url"
+      .maestro/scene_url_open.yaml
+    )
+  fi
+  maestro "${ordinary_args[@]}"
+}
+
 cd "$REPO_ROOT"
 current_phase="package"
 npm ci
@@ -281,24 +305,16 @@ for routing_mode in acknowledged linking; do
     )
   fi
   maestro "${prepare_args[@]}"
-  xcrun simctl terminate "$device_id" "$APP_ID"
 
   if [[ "$routing_mode" == acknowledged ]]; then
-    current_phase="ordinary-link-$routing_mode"
-    xcrun simctl openurl "$device_id" 'cio-rn-scene-e2e://ordinary-cold'
-    ordinary_args=(--device "$device_id" test .maestro/scene_url_open.yaml)
-    if [[ -n "${RUNNER_TEMP:-}" ]]; then
-      ordinary_args=(
-        --device "$device_id"
-        test
-        --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_url_open-$routing_mode"
-        --flatten-debug-output
-        .maestro/scene_url_open.yaml
-      )
-    fi
-    maestro "${ordinary_args[@]}"
+    current_phase="ordinary-link-warm-$routing_mode"
+    run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-warm' warm
     xcrun simctl terminate "$device_id" "$APP_ID"
+
+    current_phase="ordinary-link-cold-$routing_mode"
+    run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-cold' cold
   fi
+  xcrun simctl terminate "$device_id" "$APP_ID"
 
   current_phase="routing-$routing_mode"
   run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns

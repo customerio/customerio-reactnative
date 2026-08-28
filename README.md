@@ -72,7 +72,7 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
-On iOS, a `UIScene` host using the acknowledged handler must declare that ownership before React Native starts. Call this first in `scene(_:willConnectTo:options:)` so cold destinations wait for the JavaScript handler instead of entering the legacy `Linking` path:
+On iOS, a React Native 0.88+ `UIScene` host using the acknowledged handler must declare that ownership before React Native starts. This API is not used on Android or by AppDelegate-only hosts. Call this first in `scene(_:willConnectTo:options:)` so cold destinations wait for the JavaScript handler instead of entering the legacy `Linking` path:
 
 ```swift
 NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()
@@ -108,10 +108,11 @@ CustomerIO.setDeepLinkRoutingReady();
 
 This older path cannot acknowledge whether JavaScript handled the URL, so the SDK cannot safely fall back after it publishes a `Linking` event. Prefer `setDeepLinkHandler` for new UIScene integrations. Older React Native versions and AppDelegate-only hosts keep their existing deep-link integration.
 
-Expo apps keep the `Linking` path. Register the app's `Linking` listener, then call
-`CustomerIO.setDeepLinkRoutingReady()` after the router is ready. The Expo plugin configures its
-native scene lifecycle automatically, and Expo app code does not call either native configuration
-method or `CustomerIO.initialize`.
+Expo apps keep the `Linking` path. With config-plugin auto-initialization, register the app's
+`Linking` listener, then call `CustomerIO.setDeepLinkRoutingReady()` after the router is ready. The
+Expo plugin configures its native scene lifecycle automatically, so Expo app code does not call a
+native configuration method. Apps using JavaScript initialization register the router before
+`CustomerIO.initialize`; initialization marks Linking ready automatically.
 
 This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
 
