@@ -109,6 +109,45 @@ private enum DeepLinkRequestStoreTests {
             "explicit handler must remain able to acknowledge the URL"
         )
 
+        let requiredUrl = URL(string: "myapp://required-handler")!
+        var requiredStore = CustomerIOReactNativeDeepLinkRequestStore()
+        requiredStore.requireAcknowledgedHandler()
+        let requiredId = bufferedRequest(requiredStore.accept(requiredUrl))
+        require(
+            requiredStore.useLinking().isEmpty,
+            "native initialization must not drain a URL reserved for the acknowledged handler"
+        )
+        let requiredReplay = requiredStore.useHandler()
+        require(
+            requiredReplay.count == 1 && requiredReplay[0].0 == requiredId,
+            "a handler registered after Linking readiness must receive the reserved URL"
+        )
+
+        let reloadUrl = URL(string: "myapp://bridge-reload")!
+        var reloadStore = CustomerIOReactNativeDeepLinkRequestStore()
+        _ = reloadStore.useLinking()
+        _ = reloadStore.useHandler()
+        let oldReloadId = handlerRequest(reloadStore.accept(reloadUrl))
+        let replacementIds = reloadStore.removeHandler()
+        require(replacementIds.count == 1, "handler removal must rebuffer its in-flight URL")
+        require(
+            reloadStore.accept(linkingUrl) == .linking(linkingUrl),
+            "handler removal must restore previously signalled Linking readiness"
+        )
+        let reloadReplay = reloadStore.useHandler()
+        require(
+            reloadReplay.count == 1 && reloadReplay[0].0 == replacementIds[0],
+            "a replacement handler must receive the rebuffered URL"
+        )
+        require(
+            reloadStore.acknowledge(oldReloadId, handled: true) == nil,
+            "an acknowledgement from the invalidated bridge must not resolve the replacement"
+        )
+        require(
+            reloadStore.acknowledge(replacementIds[0], handled: true) == .handled,
+            "the replacement handler must resolve the rebuffered URL"
+        )
+
         print("React Native deep-link request store tests passed")
     }
 }

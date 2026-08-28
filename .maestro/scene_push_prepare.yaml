@@ -3,8 +3,11 @@ name: React Native UIScene push routing, prepare
 ---
 - launchApp:
     clearState: false
+    arguments:
+      CioSceneE2EMode: ${ROUTING_MODE}
     permissions:
       notifications: allow
 - extendedWaitUntil:
-    visible: "Customer.io React Native scene E2E ready"
+    visible: 'Customer.io React Native scene E2E ready'
     timeout: 15000
+- assertVisible: 'Routing: ${ROUTING_MODE}'

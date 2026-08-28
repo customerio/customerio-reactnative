@@ -15,12 +15,11 @@ enum CustomerIOReactNativeDeepLinkRouter {
     private static var requestStore = CustomerIOReactNativeDeepLinkRequestStore()
     private static var handlerEmitter: ((_ id: String, _ url: String) -> Void)?
     private static var handlerToken: UUID?
-    private static var hasInstalledCallback = false
 
-    static var isInstalled: Bool {
+    static var requiresAcknowledgedHandler: Bool {
         stateLock.lock()
         defer { stateLock.unlock() }
-        return hasInstalledCallback
+        return requestStore.requiresAcknowledgedHandler
     }
 
     private static var hasSceneManifest: Bool {
@@ -50,7 +49,12 @@ enum CustomerIOReactNativeDeepLinkRouter {
 
     static func install() {
         guard isSceneLifecycleEnabled else { return }
-        installCallback()
+        installCallback(requiringAcknowledgedHandler: false)
+    }
+
+    static func installAcknowledgedHandler() {
+        guard isSceneLifecycleEnabled else { return }
+        installCallback(requiringAcknowledgedHandler: true)
     }
 
     /// Expo owns scene-to-Linking forwarding even on React Native versions that do not expose the
@@ -64,12 +68,14 @@ enum CustomerIOReactNativeDeepLinkRouter {
             )
             return
         }
-        installCallback()
+        installCallback(requiringAcknowledgedHandler: false)
     }
 
-    private static func installCallback() {
+    private static func installCallback(requiringAcknowledgedHandler: Bool) {
         stateLock.lock()
-        hasInstalledCallback = true
+        if requiringAcknowledgedHandler {
+            requestStore.requireAcknowledgedHandler()
+        }
         stateLock.unlock()
         DIGraphShared.shared.deepLinkUtil.setDeepLinkCallback { url in
             accept(url)
@@ -87,9 +93,7 @@ enum CustomerIOReactNativeDeepLinkRouter {
             DIGraphShared.shared.logger.info(
                 "Customer.io buffered an SDK deep link until a React Native route is ready"
             )
-            DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
-                expireReadiness(id)
-            }
+            scheduleReadinessExpiration(for: id)
         case let .linking(url):
             route(url)
         case let .handler(id, url):
@@ -136,8 +140,10 @@ enum CustomerIOReactNativeDeepLinkRouter {
         }
         handlerToken = nil
         handlerEmitter = nil
-        requestStore.removeHandler()
+        let replacementIds = requestStore.removeHandler()
         stateLock.unlock()
+
+        replacementIds.forEach(scheduleReadinessExpiration)
     }
 
     static func acknowledge(_ id: String, handled: Bool) {
@@ -205,6 +211,12 @@ enum CustomerIOReactNativeDeepLinkRouter {
         }
     }
 
+    private static func scheduleReadinessExpiration(for id: UUID) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + readinessTimeout) {
+            expireReadiness(id)
+        }
+    }
+
     private static func expireReadiness(_ id: UUID) {
         stateLock.lock()
         let url = requestStore.expireReadiness(id)
@@ -240,6 +252,11 @@ enum CustomerIOReactNativeDeepLinkRouter {
                 DIGraphShared.shared.logger.info(
                     "Customer.io deep link was handled by the host AppDelegate fallback"
                 )
+            } else if isAppOwnedCustomScheme(url) {
+                DIGraphShared.shared.logger.error(
+                    "Customer.io did not reopen a deep link whose custom URL scheme belongs to " +
+                        "the host app"
+                )
             } else {
                 uiKit.open(url: url)
                 DIGraphShared.shared.logger.info(
@@ -251,6 +268,20 @@ enum CustomerIOReactNativeDeepLinkRouter {
             open()
         } else {
             DispatchQueue.main.async(execute: open)
+        }
+    }
+
+    private static func isAppOwnedCustomScheme(_ url: URL) -> Bool {
+        guard let scheme = url.scheme,
+              scheme.caseInsensitiveCompare("http") != .orderedSame,
+              scheme.caseInsensitiveCompare("https") != .orderedSame,
+              let urlTypes = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes")
+              as? [[String: Any]]
+        else { return false }
+
+        return urlTypes.contains { urlType in
+            guard let schemes = urlType["CFBundleURLSchemes"] as? [String] else { return false }
+            return schemes.contains { $0.caseInsensitiveCompare(scheme) == .orderedSame }
         }
     }
 }

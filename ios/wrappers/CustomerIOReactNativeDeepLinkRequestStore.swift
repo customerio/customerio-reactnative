@@ -29,8 +29,28 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
         var state: RequestState
     }
 
-    private var deliveryMode: DeliveryMode = .unavailable
+    private var isLinkingReady = false
+    private var requiresHandler = false
+    private var hasHandler = false
     private var requests: [Request] = []
+
+    private var deliveryMode: DeliveryMode {
+        if hasHandler {
+            return .handler
+        }
+        if !requiresHandler, isLinkingReady {
+            return .linking
+        }
+        return .unavailable
+    }
+
+    var requiresAcknowledgedHandler: Bool {
+        requiresHandler
+    }
+
+    mutating func requireAcknowledgedHandler() {
+        requiresHandler = true
+    }
 
     mutating func accept(_ url: URL) -> Acceptance {
         switch deliveryMode {
@@ -48,9 +68,9 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
     }
 
     mutating func useLinking() -> [URL] {
-        guard deliveryMode != .handler else { return [] }
+        isLinkingReady = true
+        guard deliveryMode == .linking else { return [] }
 
-        deliveryMode = .linking
         let urls = requests.compactMap { request in
             request.state == .buffered ? request.url : nil
         }
@@ -59,7 +79,7 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
     }
 
     mutating func useHandler() -> [(UUID, URL)] {
-        deliveryMode = .handler
+        hasHandler = true
         var deliveries: [(UUID, URL)] = []
         for index in requests.indices where requests[index].state == .buffered {
             requests[index].state = .awaitingAcknowledgement
@@ -68,9 +88,21 @@ struct CustomerIOReactNativeDeepLinkRequestStore {
         return deliveries
     }
 
-    mutating func removeHandler() {
-        guard deliveryMode == .handler else { return }
-        deliveryMode = .unavailable
+    mutating func removeHandler() -> [UUID] {
+        guard hasHandler else { return [] }
+        hasHandler = false
+
+        var replacementIds: [UUID] = []
+        for index in requests.indices where requests[index].state == .awaitingAcknowledgement {
+            let replacementId = UUID()
+            requests[index] = Request(
+                id: replacementId,
+                url: requests[index].url,
+                state: .buffered
+            )
+            replacementIds.append(replacementId)
+        }
+        return replacementIds
     }
 
     mutating func acknowledge(_ id: UUID, handled: Bool) -> Resolution? {

@@ -23,6 +23,17 @@ public class NativeCustomerIO: NSObject {
         CustomerIOReactNativeDeepLinkRouter.install()
     }
 
+    /// Installs scene deep-link routing for the acknowledged JavaScript handler before the React
+    /// Native bridge starts. Call this at the start of `scene(_:willConnectTo:options:)` when the
+    /// host uses `CustomerIO.setDeepLinkHandler`.
+    @objc
+    public static func configureAcknowledgedSceneDeepLinkRouting() {
+        // The cold scene connection happens before JavaScript can register its handler. Record the
+        // host's ownership choice now so initialization cannot drain a buffered URL into Linking.
+        guard CustomerIO.shared.implementation == nil else { return }
+        CustomerIOReactNativeDeepLinkRouter.installAcknowledgedHandler()
+    }
+
     /// Installs deep-link routing for an Expo-owned scene lifecycle.
     ///
     /// Expo forwards scene URLs into React Native Linking itself, including on React Native

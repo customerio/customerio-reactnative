@@ -85,9 +85,11 @@ export class CustomerIO {
   /**
    * Register an acknowledged deep-link handler for an iOS UIScene host.
    *
-   * Register this before `initialize`. Return `true` after routing a URL. Returning `false`,
-   * throwing, or rejecting lets the native SDK try the host AppDelegate and then the system.
-   * Cold URLs are buffered until this handler is registered, subject to the native timeout.
+   * In a native React Native scene host, pair this with
+   * `NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()` in the SceneDelegate. Register
+   * this before `initialize` when possible. Return `true` after routing a URL. Returning `false`,
+   * throwing, or rejecting lets the native SDK try the host AppDelegate and then the system. Cold
+   * URLs are buffered until this handler is registered, subject to the native timeout.
    */
   static readonly setDeepLinkHandler = (
     handler: DeepLinkHandler

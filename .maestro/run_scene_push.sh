@@ -110,7 +110,7 @@ cleanup() {
       else
         echo "**Classification:** ${current_phase}-failed"
       fi
-      echo '**Scope:** simulator notification presentation, tap, and exact React Native Linking destination; no backend delivery or attribution claim'
+      echo '**Scope:** simulator notification presentation, tap, and exact acknowledged-handler and legacy-Linking destinations; no backend delivery or attribution claim'
     } >> "$GITHUB_STEP_SUMMARY"
   fi
   return "$exit_code"
@@ -239,6 +239,10 @@ plist="ios/$APP_NAME/Info.plist"
 /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneConfigurationName string Default Configuration' "$plist"
 # shellcheck disable=SC2016
 /usr/libexec/PlistBuddy -c 'Add :UIApplicationSceneManifest:UISceneConfigurations:UIWindowSceneSessionRoleApplication:0:UISceneDelegateClassName string $(PRODUCT_MODULE_NAME).SceneDelegate' "$plist"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes array' "$plist"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0 dict' "$plist"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' "$plist"
+/usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string cio-rn-scene-e2e' "$plist"
 
 current_phase="pods"
 bundle install
@@ -263,19 +267,25 @@ xcrun simctl install "$device_id" "$app_path"
 installed_app=true
 
 cd "$REPO_ROOT"
-current_phase="prepare"
-prepare_args=(--device "$device_id" test .maestro/scene_push_prepare.yaml)
-if [[ -n "${RUNNER_TEMP:-}" ]]; then
-  prepare_args=(
-    --device "$device_id"
-    test
-    --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_push_prepare"
-    --flatten-debug-output
-    .maestro/scene_push_prepare.yaml
-  )
-fi
-maestro "${prepare_args[@]}"
-xcrun simctl terminate "$device_id" "$APP_ID"
-current_phase="routing"
-run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
-run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
+for routing_mode in acknowledged linking; do
+  current_phase="prepare-$routing_mode"
+  prepare_args=(--device "$device_id" test -e "ROUTING_MODE=$routing_mode" .maestro/scene_push_prepare.yaml)
+  if [[ -n "${RUNNER_TEMP:-}" ]]; then
+    prepare_args=(
+      --device "$device_id"
+      test
+      --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_push_prepare-$routing_mode"
+      --flatten-debug-output
+      -e "ROUTING_MODE=$routing_mode"
+      .maestro/scene_push_prepare.yaml
+    )
+  fi
+  maestro "${prepare_args[@]}"
+  xcrun simctl terminate "$device_id" "$APP_ID"
+  current_phase="routing-$routing_mode"
+  run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
+  run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
+  if [[ "$routing_mode" == acknowledged ]]; then
+    run_notification_flow .maestro/scene_push_declined.yaml .maestro/fixtures/customerio_scene_declined.apns
+  fi
+done

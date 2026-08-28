@@ -5,6 +5,9 @@ import UIKit
 import customerio_reactnative
 
 class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate {
+    private static let launchModeKey = "CioSceneE2EMode"
+    private static let persistedModeKey = "CioSceneE2EPersistedMode"
+
     var window: UIWindow?
     var reactNativeFactory: RCTReactNativeFactory?
 
@@ -15,7 +18,11 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
     ) {
         guard let windowScene = scene as? UIWindowScene else { return }
 
-        NativeCustomerIO.configureSceneDeepLinkRouting()
+        if usesAcknowledgedHandler {
+            NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()
+        } else {
+            NativeCustomerIO.configureSceneDeepLinkRouting()
+        }
         dependencyProvider = RCTAppDependencyProvider()
         reactNativeFactory = RCTReactNativeFactory(delegate: self)
         window = UIWindow(windowScene: windowScene)
@@ -40,5 +47,16 @@ class SceneDelegate: RCTDefaultReactNativeFactoryDelegate, UIWindowSceneDelegate
 
     override func bundleURL() -> URL? {
         Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+    }
+
+    private var usesAcknowledgedHandler: Bool {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains(Self.launchModeKey) || arguments.contains("-\(Self.launchModeKey)"),
+           let mode = UserDefaults.standard.string(forKey: Self.launchModeKey)
+        {
+            UserDefaults.standard.set(mode, forKey: Self.persistedModeKey)
+        }
+
+        return UserDefaults.standard.string(forKey: Self.persistedModeKey) != "linking"
     }
 }

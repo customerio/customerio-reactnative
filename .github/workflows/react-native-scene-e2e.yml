@@ -5,10 +5,12 @@ on:
     paths:
       - '.github/workflows/react-native-scene-e2e.yml'
       - '.maestro/fixtures/customerio_scene_cold.apns'
+      - '.maestro/fixtures/customerio_scene_declined.apns'
       - '.maestro/fixtures/customerio_scene_warm.apns'
       - '.maestro/fixtures/react-native-scene/**'
       - '.maestro/run_scene_push.sh'
       - '.maestro/scene_push_open.yaml'
+      - '.maestro/scene_push_declined.yaml'
       - '.maestro/scene_push_prepare.yaml'
       - '.maestro/scene_push_warm.yaml'
       - 'src/customerio-cdp.ts'

@@ -246,9 +246,9 @@ public class NativeLiveActivities: NSObject {
     }
 
     /// Build React Native launch options from a scene connection, reporting a cold Live Activity
-    /// tap and routing its destination through the installed Customer.io scene router. Without an
-    /// installed router, the destination remains in React Native's launch options. This mirrors the
-    /// `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
+    /// tap and routing its destination through the installed Customer.io scene router. Without the
+    /// acknowledged-handler opt-in, the destination remains in React Native's launch options. This
+    /// mirrors the `RCTConvertConnectionOptionsToLaunchOptions` conversion verified in React Native
     /// 0.88.0-nightly-20260823-0c7f63a4e. Before `CustomerIO.initialize`, the native Live Activities
     /// stub parses the redirect and buffers the opened metric for the module to flush at initialization.
     @objc(reactNativeLaunchOptionsFromConnectionOptions:)
@@ -260,7 +260,7 @@ public class NativeLiveActivities: NSObject {
         if let url = connectionOptions.urlContexts.first?.url,
            let routableUrl = handleWidgetUrl(url)
         {
-            if CustomerIOReactNativeDeepLinkRouter.isInstalled {
+            if CustomerIOReactNativeDeepLinkRouter.requiresAcknowledgedHandler {
                 CustomerIOReactNativeDeepLinkRouter.accept(routableUrl)
             } else {
                 launchOptions[.url] = routableUrl

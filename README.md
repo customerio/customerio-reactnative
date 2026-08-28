@@ -72,10 +72,10 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
-On iOS, a `UIScene` host must install the wrapper's deep-link bridge before React Native starts. Call this first in `scene(_:willConnectTo:options:)`:
+On iOS, a `UIScene` host using the acknowledged handler must declare that ownership before React Native starts. Call this first in `scene(_:willConnectTo:options:)` so cold destinations wait for the JavaScript handler instead of entering the legacy `Linking` path:
 
 ```swift
-NativeCustomerIO.configureSceneDeepLinkRouting()
+NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()
 ```
 
 Register the app's Customer.io deep-link handler before calling `CustomerIO.initialize`. Return `true` after routing a URL. Return `false` to let the native SDK try the host AppDelegate and then open the URL through the system. A thrown error, rejected promise, missing handler, or handler timeout follows the same fallback. Cold URLs wait up to ten seconds for registration and are replayed once the handler is ready. After delivery, the handler has ten seconds to settle. Return `false` only for URLs your app does not own; opening an app-owned URL through the system can deliver it back to your app lifecycle.
@@ -95,7 +95,9 @@ CustomerIO.initialize(config);
 
 Remove the returned subscription when the routing owner is torn down. The Expo plugin detects its scene lifecycle during native initialization, so Expo app code does not call `configureSceneDeepLinkRouting` or `CustomerIO.initialize`. In an Expo app, call `setDeepLinkHandler` when the root routing owner starts.
 
-The existing `Linking` readiness API remains available for backward compatibility:
+The existing `Linking` path remains available for backward compatibility. Keep
+`NativeCustomerIO.configureSceneDeepLinkRouting()` in your SceneDelegate, then signal readiness
+after registering the listener:
 
 ```typescript
 const subscription = Linking.addEventListener('url', ({ url }) => {
