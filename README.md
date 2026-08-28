@@ -78,7 +78,14 @@ On iOS, a React Native 0.88+ `UIScene` host using the acknowledged handler must 
 NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()
 ```
 
-Register the app's Customer.io deep-link handler before calling `CustomerIO.initialize`. Return `true` after routing a URL. Return `false` to let the native SDK try the host AppDelegate, then return a host-owned custom scheme to React Native `Linking` or open other URLs through the system. A thrown error, rejected promise, missing handler, or handler timeout follows the same fallback. Cold URLs wait up to ten seconds for registration and are replayed once the handler is ready. After delivery, the handler has ten seconds to settle.
+Register the app's Customer.io deep-link handler before calling `CustomerIO.initialize`. Return
+`true` after routing a URL. Return `false` to let the native SDK try the host AppDelegate, then pass
+a host-owned custom scheme to React Native `Linking` or open other URLs through the system. If your
+handler might decline an app-owned custom scheme, keep a `Linking` URL listener registered for that
+fallback. A thrown error, rejected promise, missing handler, or handler timeout follows the same
+native fallback. Cold URLs wait up to ten seconds for registration and are replayed once the handler
+is ready. After delivery, the handler has ten seconds to settle; after that, fallback runs and a late
+result is ignored.
 
 ```typescript
 const subscription = CustomerIO.setDeepLinkHandler(async (url) => {
@@ -93,7 +100,8 @@ const subscription = CustomerIO.setDeepLinkHandler(async (url) => {
 CustomerIO.initialize(config);
 ```
 
-Remove the returned subscription when the routing owner is torn down.
+Remove the returned subscription when the routing owner is torn down. If no replacement handler
+registers, later destinations wait for the readiness timeout and then use the native fallback.
 
 The existing `Linking` path remains available for backward compatibility. Keep
 `NativeCustomerIO.configureSceneDeepLinkRouting()` in your SceneDelegate, then signal readiness
