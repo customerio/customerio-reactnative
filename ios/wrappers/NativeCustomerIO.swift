@@ -88,6 +88,8 @@ public class NativeCustomerIO: NSObject {
     private func sendDeepLink(id: String, url: String) {
         guard let emitter = objcEventEmitter else { return }
 
+        // Codegen derives this selector from `onDeepLinkReceived` in NativeCustomerIO.ts. Keep it
+        // in sync with that spec property and the forwarding override in NativeCustomerIO.mm.
         let selector = Selector(("emitOnDeepLinkReceived:"))
         guard emitter.responds(to: selector) else {
             logger.error("Customer.io could not emit a React Native deep-link event")

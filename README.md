@@ -84,8 +84,9 @@ a host-owned custom scheme to React Native `Linking` or open other URLs through 
 handler might decline an app-owned custom scheme, keep a `Linking` URL listener registered for that
 fallback. A thrown error, rejected promise, missing handler, or handler timeout follows the same
 native fallback. Cold URLs wait up to ten seconds for registration and are replayed once the handler
-is ready. After delivery, the handler has ten seconds to settle; after that, fallback runs and a late
-result is ignored.
+is ready. After delivery, the handler has ten seconds to settle. If it takes longer, native fallback
+runs; a handler that later routes the URL can cause a second navigation because its acknowledgement
+cannot cancel the fallback.
 
 ```typescript
 const subscription = CustomerIO.setDeepLinkHandler(async (url) => {
@@ -113,6 +114,10 @@ const subscription = Linking.addEventListener('url', ({ url }) => {
 });
 CustomerIO.setDeepLinkRoutingReady();
 ```
+
+Cold destinations wait up to ten seconds for this readiness signal. If it does not arrive, the SDK
+tries the host AppDelegate, passes a host-owned custom scheme to React Native `Linking`, or opens
+other URLs through the system.
 
 This older path cannot acknowledge whether JavaScript handled the URL, so the SDK cannot safely fall back after it publishes a `Linking` event. Prefer `setDeepLinkHandler` for new UIScene integrations. Older React Native versions and AppDelegate-only hosts keep their existing deep-link integration.
 

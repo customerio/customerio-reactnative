@@ -78,6 +78,8 @@ RCT_EXPORT_MODULE()
   [_swiftBridge invalidate];
 }
 
+// Pins the Codegen event name at compile time. Keep this in sync with the TypeScript spec and the
+// runtime selector in NativeCustomerIO.swift.
 - (void)emitOnDeepLinkReceived:(NSDictionary *)value {
   [super emitOnDeepLinkReceived:value];
 }

@@ -85,11 +85,15 @@ export class CustomerIO {
   /**
    * Register an acknowledged deep-link handler for an iOS UIScene host.
    *
+   * This API only handles Customer.io destinations delivered through an iOS UIScene lifecycle.
    * In a native React Native scene host, pair this with
    * `NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()` in the SceneDelegate. Register
    * this before `initialize` when possible. Return `true` after routing a URL. Returning `false`,
-   * throwing, or rejecting lets the native SDK try the host AppDelegate and then the system. Cold
-   * URLs are buffered until this handler is registered, subject to the native timeout.
+   * throwing, or rejecting lets the native SDK try the host AppDelegate, then React Native Linking
+   * for a host-owned custom scheme or the system for other URLs. Cold URLs are buffered until this
+   * handler is registered, subject to the native timeout. After delivery, the handler has ten
+   * seconds to settle. Once that timeout runs the native fallback, a late handler cannot cancel it
+   * and may cause a second navigation if it also routes the URL.
    */
   static readonly setDeepLinkHandler = (
     handler: DeepLinkHandler
@@ -98,6 +102,8 @@ export class CustomerIO {
       throw new Error('[CustomerIO] "handler" must be a function.');
     }
 
+    // Native unregister is tokenless and removes the current native handler. Remove the old
+    // subscription first so its cleanup cannot unregister the replacement.
     deepLinkHandlerSubscription?.remove();
 
     return withNativeModule<DeepLinkHandlerSubscription>((native) => {

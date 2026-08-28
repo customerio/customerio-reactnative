@@ -180,7 +180,10 @@ enum CustomerIOReactNativeDeepLinkRouter {
             )
             fallback(url)
         case nil:
-            break
+            DIGraphShared.shared.logger.info(
+                "Customer.io ignored a late or unknown React Native deep-link acknowledgement; " +
+                    "the native fallback may have already routed the destination"
+            )
         }
     }
 
