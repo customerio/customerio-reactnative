@@ -23,6 +23,22 @@ const packageJson = require('customerio-reactnative/package.json');
 
 // Track whether CustomerIO SDK has been initialized to prevent usage before setup
 let _initialized = false;
+let deepLinkHandlerSubscription: DeepLinkHandlerSubscription | undefined;
+
+/**
+ * Handles a Customer.io deep-link destination delivered from iOS.
+ * @public
+ */
+export type DeepLinkHandler = (url: string) => boolean | Promise<boolean>;
+
+/**
+ * Removes a Customer.io deep-link handler.
+ * @public
+ */
+export interface DeepLinkHandlerSubscription {
+  /** Stop routing Customer.io deep links through this handler. */
+  remove(): void;
+}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
 const nativeModule = ensureNativeModule(NativeModule);
@@ -64,6 +80,84 @@ export class CustomerIO {
    */
   static readonly setDeepLinkRoutingReady = () => {
     return withNativeModule<void>((native) => native.setDeepLinkRoutingReady());
+  };
+
+  /**
+   * Register an acknowledged deep-link handler for an iOS UIScene host.
+   *
+   * Register this before `initialize`. Return `true` after routing a URL. Returning `false`,
+   * throwing, or rejecting lets the native SDK try the host AppDelegate and then the system.
+   * Cold URLs are buffered until this handler is registered, subject to the native timeout.
+   */
+  static readonly setDeepLinkHandler = (
+    handler: DeepLinkHandler
+  ): DeepLinkHandlerSubscription => {
+    if (typeof handler !== 'function') {
+      throw new Error('[CustomerIO] "handler" must be a function.');
+    }
+
+    deepLinkHandlerSubscription?.remove();
+
+    return withNativeModule<DeepLinkHandlerSubscription>((native) => {
+      const nativeSubscription = native.onDeepLinkReceived(async (data) => {
+        const event = data as { id?: unknown; url?: unknown };
+        if (typeof event.id !== 'string' || typeof event.url !== 'string') {
+          NativeLoggerListener.warn(
+            'Received an invalid native deep-link event.'
+          );
+          return;
+        }
+
+        let handled = false;
+        try {
+          handled = (await handler(event.url)) === true;
+        } catch (error) {
+          NativeLoggerListener.warn('Deep-link handler failed:', error);
+        }
+
+        try {
+          native.acknowledgeDeepLink(event.id, handled);
+        } catch (error) {
+          NativeLoggerListener.warn(
+            'Failed to acknowledge a deep-link result:',
+            error
+          );
+        }
+      });
+
+      let removed = false;
+      const subscription: DeepLinkHandlerSubscription = {
+        remove: () => {
+          if (removed) {
+            return;
+          }
+          removed = true;
+          try {
+            native.unregisterDeepLinkHandler();
+          } finally {
+            nativeSubscription.remove();
+            if (deepLinkHandlerSubscription === subscription) {
+              deepLinkHandlerSubscription = undefined;
+            }
+          }
+        },
+      };
+
+      try {
+        native.registerDeepLinkHandler();
+      } catch (error) {
+        try {
+          native.unregisterDeepLinkHandler();
+        } catch {
+          // Preserve the registration error; the native timeout still owns pending URLs.
+        }
+        nativeSubscription.remove();
+        throw error;
+      }
+
+      deepLinkHandlerSubscription = subscription;
+      return subscription;
+    });
   };
 
   /** Identify a user to start tracking their activity. Requires userId, traits, or both. */

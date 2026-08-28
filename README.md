@@ -78,9 +78,24 @@ On iOS, a `UIScene` host must install the wrapper's deep-link bridge before Reac
 NativeCustomerIO.configureSceneDeepLinkRouting()
 ```
 
-Then register the app's JavaScript `Linking` URL listener before calling `CustomerIO.initialize`. This ordering is required. The Expo plugin detects its scene lifecycle during initialization, so Expo app code does not call the native installation method itself. Customer.io push, in-app, and inbox destinations are buffered during cold launch, then delivered through React Native's standard `Linking` API after initialization. If React Native does not initialize within ten seconds, the SDK opens the destination through the system instead of retaining it indefinitely. The listener owns the routing decision: navigate destinations your app handles, and use the app's normal external-browser path for other HTTP(S) destinations. React Native's native URL event has no handled result that the SDK can use for this decision, so a destination published after initialization without a listener is not opened externally, which would risk duplicate navigation. Older React Native versions and AppDelegate-only hosts keep their existing deep-link integration.
+Register the app's Customer.io deep-link handler before calling `CustomerIO.initialize`. Return `true` after routing a URL. Return `false` to let the native SDK try the host AppDelegate and then open the URL through the system. A thrown error, rejected promise, missing handler, or handler timeout follows the same fallback. Cold URLs wait up to ten seconds for registration and are replayed once the handler is ready. After delivery, the handler has ten seconds to settle. Return `false` only for URLs your app does not own; opening an app-owned URL through the system can deliver it back to your app lifecycle.
 
-An Expo app using config-plugin auto-initialization does not call `CustomerIO.initialize`. Register its `Linking` listener, then mark that listener ready instead:
+```typescript
+const subscription = CustomerIO.setDeepLinkHandler(async (url) => {
+  if (!canRouteInApp(url)) {
+    return false;
+  }
+
+  await routeInApp(url);
+  return true;
+});
+
+CustomerIO.initialize(config);
+```
+
+Remove the returned subscription when the routing owner is torn down. The Expo plugin detects its scene lifecycle during native initialization, so Expo app code does not call `configureSceneDeepLinkRouting` or `CustomerIO.initialize`. In an Expo app, call `setDeepLinkHandler` when the root routing owner starts.
+
+The existing `Linking` readiness API remains available for backward compatibility:
 
 ```typescript
 const subscription = Linking.addEventListener('url', ({ url }) => {
@@ -88,6 +103,8 @@ const subscription = Linking.addEventListener('url', ({ url }) => {
 });
 CustomerIO.setDeepLinkRoutingReady();
 ```
+
+This older path cannot acknowledge whether JavaScript handled the URL, so the SDK cannot safely fall back after it publishes a `Linking` event. Prefer `setDeepLinkHandler` for new UIScene integrations. Older React Native versions and AppDelegate-only hosts keep their existing deep-link integration.
 
 This integration applies after the host has adopted React Native's UIScene lifecycle; the plugin does not replace React Native's root application lifecycle.
 
@@ -124,7 +141,7 @@ extension AppDelegate {
 
 A React Native `AppDelegate` conforms to `UIApplicationDelegate` directly rather than subclassing, so this method is not an `override`, and the URL is passed on to `RCTLinkingManager` instead of `super`. See [the sample app's `AppDelegate.swift`](/example/ios/SampleApp/AppDelegate.swift) for this in context.
 
-For a `UIScene` host, handle both lifecycle paths. At scene connection, pass launch options through the wrapper so a cold Live Activity tap is attributed and React Native receives the customer's destination instead of Customer.io's internal tracking URL:
+For a `UIScene` host, handle both lifecycle paths. At scene connection, pass the connection options through the wrapper so a cold Live Activity tap is attributed and its destination enters the same acknowledged scene router as other Customer.io deep links:
 
 ```swift
 import customerio_reactnative
@@ -136,7 +153,7 @@ reactNativeFactory?.startReactNative(
 )
 ```
 
-Then replace the ordinary React Native URL-forwarding body in the existing `SceneDelegate` for warm opens. This reports Live Activity taps and routes each remaining URL through React Native Linking:
+Then replace the ordinary React Native URL-forwarding body in the existing `SceneDelegate` for warm opens. This reports Live Activity taps and routes each remaining URL through the same scene router:
 
 ```swift
 import customerio_reactnative
@@ -148,8 +165,8 @@ func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
 }
 ```
 
-Do not also pass those URLs to `RCTLinkingManager`. The helper already publishes them through
-React Native Linking, and forwarding them again can deliver the same URL twice.
+Do not also pass those URLs to `RCTLinkingManager`. The helper already routes them through the
+Customer.io bridge, and forwarding them again can deliver the same URL twice.
 
 Android needs no equivalent native step.
 

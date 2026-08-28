@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Linking, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import {
   CioPushPermissionStatus,
   CioRegion,
@@ -30,8 +30,9 @@ export default function App(): React.JSX.Element {
   const [failure, setFailure] = useState<string | null>(null);
 
   useEffect(() => {
-    const subscription = Linking.addEventListener('url', ({ url }) => {
+    const subscription = CustomerIO.setDeepLinkHandler((url) => {
       setReceivedUrl(url);
+      return true;
     });
 
     CustomerIO.initialize({

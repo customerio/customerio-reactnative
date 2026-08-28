@@ -115,6 +115,7 @@ export class CustomerIO {
     static readonly pushMessaging: CustomerIOPushMessaging;
     static readonly registerDeviceToken: (token: string) => Promise<void>;
     static readonly screen: (title: string, properties?: Record<string, any>) => Promise<any>;
+    static readonly setDeepLinkHandler: (handler: DeepLinkHandler) => DeepLinkHandlerSubscription;
     static readonly setDeepLinkRoutingReady: () => void;
     static readonly setDeviceAttributes: (attributes: Record<string, any>) => Promise<any>;
     static readonly setProfileAttributes: (attributes: Record<string, any>) => Promise<any>;
@@ -177,6 +178,14 @@ export class CustomerIOPushMessaging implements NativePushSpec {
     showPromptForPushNotifications(options?: CioPushPermissionOptions): Promise<CioPushPermissionStatus>;
     trackNotificationReceived(payload: Object): void;
     trackNotificationResponseReceived(payload: Object): void;
+}
+
+// @public
+export type DeepLinkHandler = (url: string) => boolean | Promise<boolean>;
+
+// @public
+export interface DeepLinkHandlerSubscription {
+    remove(): void;
 }
 
 // @public

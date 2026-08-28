@@ -1,5 +1,8 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
-import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  EventEmitter,
+  UnsafeObject,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
 /**
  * Native module specification for CustomerIO React Native SDK
@@ -42,6 +45,10 @@ export interface Spec extends TurboModule {
     args: NativeBridgeObject
   ): Promise<void>;
   setDeepLinkRoutingReady(): void;
+  readonly onDeepLinkReceived: EventEmitter<UnsafeObject>;
+  registerDeepLinkHandler(): void;
+  unregisterDeepLinkHandler(): void;
+  acknowledgeDeepLink(id: string, handled: boolean): void;
   identify(params?: NativeBridgeObject): void;
   clearIdentify(): void;
   track(name: string, properties?: NativeBridgeObject): void;

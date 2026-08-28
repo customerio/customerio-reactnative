@@ -7,6 +7,8 @@ import Foundation
 @objc(NativeCustomerIO)
 public class NativeCustomerIO: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
+    private weak var objcEventEmitter: AnyObject?
+    private var deepLinkHandlerToken: UUID?
     /// Checks whether the CustomerIO SDK has been initialized.
     /// Returns `true` if the SDK has been successfully initialized, `false` otherwise.
     private var isInitialized: Bool { CustomerIO.shared.implementation != nil }
@@ -36,6 +38,51 @@ public class NativeCustomerIO: NSObject {
     @objc
     func setDeepLinkRoutingReady() {
         CustomerIOReactNativeDeepLinkRouter.markReactNativeReady()
+    }
+
+    @objc
+    public func setEventEmitter(_ emitter: AnyObject) {
+        objcEventEmitter = emitter
+    }
+
+    @objc
+    func registerDeepLinkHandler() {
+        guard objcEventEmitter != nil else {
+            logger.error("Customer.io could not register the React Native deep-link handler")
+            return
+        }
+
+        deepLinkHandlerToken = CustomerIOReactNativeDeepLinkRouter.registerHandler { [weak self] id, url in
+            self?.sendDeepLink(id: id, url: url)
+        }
+    }
+
+    @objc
+    func unregisterDeepLinkHandler() {
+        guard let token = deepLinkHandlerToken else { return }
+        CustomerIOReactNativeDeepLinkRouter.unregisterHandler(token)
+        deepLinkHandlerToken = nil
+    }
+
+    @objc
+    func acknowledgeDeepLink(_ id: String, handled: Bool) {
+        CustomerIOReactNativeDeepLinkRouter.acknowledge(id, handled: handled)
+    }
+
+    @objc
+    func invalidate() {
+        unregisterDeepLinkHandler()
+    }
+
+    private func sendDeepLink(id: String, url: String) {
+        guard let emitter = objcEventEmitter else { return }
+
+        let selector = Selector(("emitOnDeepLinkReceived:"))
+        guard emitter.responds(to: selector) else {
+            logger.error("Customer.io could not emit a React Native deep-link event")
+            return
+        }
+        _ = emitter.perform(selector, with: ["id": id, "url": url] as NSDictionary)
     }
 
     /// Ensures that the CustomerIO SDK is initialized before performing operations.

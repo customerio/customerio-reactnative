@@ -24,6 +24,7 @@ on:
       - 'src/utils/native-bridge.ts'
       - 'src/utils/param-validation.ts'
       - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
+      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift'
       - 'ios/wrappers/NativeCustomerIO.swift'
       - 'ios/wrappers/NativeCustomerIO.mm'
       - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
@@ -33,6 +34,7 @@ on:
       - 'ios/wrappers/CustomerioReactnative-Bridging-Header.h'
       - 'ios/cocoapods_deployment_target.rb'
       - 'customerio-reactnative.podspec'
+      - 'scripts/test_ios_deep_link_request_store.swift'
       - 'package.json'
       - 'package-lock.json'
   schedule:
@@ -87,6 +89,15 @@ jobs:
             | shasum -a 256 -c -
           unzip -q "$maestro_zip" -d "$maestro_dir"
           echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Test deep-link acknowledgement state
+        shell: bash
+        run: |
+          xcrun swiftc \
+            ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift \
+            scripts/test_ios_deep_link_request_store.swift \
+            -o "$RUNNER_TEMP/test-ios-deep-link-request-store"
+          "$RUNNER_TEMP/test-ios-deep-link-request-store"
 
       - name: Test warm and terminated notification routing
         shell: bash

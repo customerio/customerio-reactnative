@@ -147,6 +147,18 @@ class NativeCustomerIOModule(
         // UIScene and React Native Linking readiness are iOS-only concerns.
     }
 
+    override fun registerDeepLinkHandler() {
+        // UIScene deep-link acknowledgement is an iOS-only concern.
+    }
+
+    override fun unregisterDeepLinkHandler() {
+        // UIScene deep-link acknowledgement is an iOS-only concern.
+    }
+
+    override fun acknowledgeDeepLink(id: String?, handled: Boolean) {
+        // UIScene deep-link acknowledgement is an iOS-only concern.
+    }
+
     override fun identify(params: ReadableMap?) {
         val userId = params?.getString("userId")
         val traits = params?.getMap("traits")
