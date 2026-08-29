@@ -2,7 +2,7 @@ name: Semantic PR helper
 
 on:
   pull_request:
-    types: [opened, reopened, edited, synchronize, labeled]
+    types: [opened, reopened, edited, synchronize]
 
 jobs:
   lint-pr-title:

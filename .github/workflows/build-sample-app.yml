@@ -227,10 +227,13 @@ jobs:
         if: ${{ inputs.platform == 'ios' }}
         uses: actions/cache@v4
         with:
-          path: example/Pods
-          key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
+          path: |
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+            example/ios/Pods
+          key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ hashFiles('package.json', 'package-lock.json', 'example/package.json', 'example/package-lock.json', 'example/ios/Podfile', 'example/Gemfile.lock', 'customerio-reactnative.podspec', 'customerio-reactnative-richpush.podspec') }}
           restore-keys: |
-            ${{ runner.os }}-${{ inputs.app_name }}-Pods
+            ${{ runner.os }}-${{ inputs.app_name }}-Pods-
 
       - name: Install dependencies to build SDK
         run: npm ci
