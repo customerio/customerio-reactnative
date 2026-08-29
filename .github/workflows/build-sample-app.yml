@@ -32,6 +32,11 @@ on:
           description: "Name of the platform in all upper case (IOS or ANDROID)"
           required: true
           type: string
+      should_distribute:
+          description: "Whether to sign and publish the sample app"
+          required: false
+          default: true
+          type: boolean
     
     outputs:
       sdk_version_name:
@@ -302,6 +307,7 @@ jobs:
         uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
+        if: ${{ inputs.should_distribute }}
         id: build_app
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
@@ -314,8 +320,27 @@ jobs:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
         continue-on-error: true
 
+      - name: Compile ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app (verification only)
+        if: ${{ !inputs.should_distribute }}
+        id: verify_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ inputs.platform }}" == 'android' ]]; then
+            ./android/gradlew -p android :app:assembleRelease
+          else
+            xcodebuild \
+              -workspace ios/SampleApp.xcworkspace \
+              -scheme SampleApp \
+              -configuration Release \
+              -sdk iphonesimulator \
+              -destination 'generic/platform=iOS Simulator' \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          fi
+
       - name: Send slack notification for ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app builds
-        if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
+        if: ${{ always() && inputs.should_distribute && env.IS_PRIMARY_APP == 'true' }}
         uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1@main
         with:
           build_status: ${{ steps.build_app.outcome }}
@@ -332,11 +357,18 @@ jobs:
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check build statuses and mark failure
+        if: ${{ always() }}
+        env:
+          SHOULD_DISTRIBUTE: ${{ inputs.should_distribute }}
+          DISTRIBUTION_OUTCOME: ${{ steps.build_app.outcome }}
+          VERIFICATION_OUTCOME: ${{ steps.verify_build.outcome }}
         run: |
-          FAILED_BUILDS=()
-          [ "${{ steps.build_app.outcome }}" != "success" ] && FAILED_BUILDS+=("(${{ inputs.platform_name }})")
-
-          if [ ${#FAILED_BUILDS[@]} -ne 0 ]; then
-            echo "Build failed for: ${FAILED_BUILDS[*]}"
+          if [[ "$SHOULD_DISTRIBUTE" == 'true' ]]; then
+            outcome="$DISTRIBUTION_OUTCOME"
+          else
+            outcome="$VERIFICATION_OUTCOME"
+          fi
+          if [[ "$outcome" != 'success' ]]; then
+            echo "${{ inputs.platform_name }} build failed with outcome: $outcome"
             exit 1
           fi

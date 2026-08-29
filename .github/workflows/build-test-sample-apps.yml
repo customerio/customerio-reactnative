@@ -1,18 +1,44 @@
 name: Publish Test Sample Apps
 
 on:
-  pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths-ignore:
+      - '**/*.md'
   workflow_dispatch:
   push:
-    branches: [main, feature/*]
+    branches: [main]
 
 concurrency: # cancel previous workflow run if one exists.
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:full') && github.run_id || 'validation' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  prepare:
+    name: Select sample app lane
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - name: Select verification or distribution matrix
+        id: select
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          FULL_PR: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') && github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          if [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
+            echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]' >> "$GITHUB_OUTPUT"
+          else
+            echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":true}]' >> "$GITHUB_OUTPUT"
+          fi
+
   update-pr-comment:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: >-
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+      github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'ci:full') &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # to be able to comment on PR
@@ -40,33 +66,19 @@ jobs:
             Below you will find the list of the latest versions of the sample apps. It's recommended to always download the latest builds of the sample apps to accurately test the pull request. 
 
             ---
-            ${{ steps.build.outputs.build-log }}
+            Builds are in progress. This comment will be updated when they finish.
           edit-mode: replace # replace the existing comment with new content since we are creating new builds
 
   build-sample-apps:
-    if: ${{ always() }} # do not skip running this step if update-pr-comment does not run
-    needs: [update-pr-comment] # wait for PR comment to be created saying new builds are being made.
+    if: >-
+      always() &&
+      needs.prepare.result == 'success' &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full')
+    needs: [prepare, update-pr-comment]
     strategy:
       fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them.
       matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build!
-        sample-app:
-          # List all sample apps you want to have compiled.
-          # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
-          - name: 'APN'
-            cio-workspace-name: 'Mobile: React Native'
-            platform: 'ios'
-            platform_name: 'iOS'
-            platform_name_upper: 'IOS'
-          - name: 'FCM'
-            cio-workspace-name: 'Mobile: xReact Native FCM workspace'
-            platform: 'ios'
-            platform_name: 'iOS'
-            platform_name_upper: 'IOS'
-          - name: 'APN'
-            cio-workspace-name: 'Mobile: React Native'
-            platform: 'android'
-            platform_name: 'Android'
-            platform_name_upper: 'ANDROID'
+        sample-app: ${{ fromJSON(needs.prepare.outputs.matrix) }}
 
     name: Building the ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }} sample app
     uses: ./.github/workflows/build-sample-app.yml
@@ -76,12 +88,17 @@ jobs:
       platform: ${{ matrix.sample-app.platform }}
       platform_name: ${{ matrix.sample-app.platform_name }}
       platform_name_upper: ${{ matrix.sample-app.platform_name_upper }}
+      should_distribute: ${{ matrix.sample-app.should_distribute }}
 
     secrets: inherit
 
   # Update PR comment with build information
   update-pr-comment-with-status:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: >-
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+      github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'ci:full') &&
+      github.event.pull_request.head.repo.full_name == github.repository
     needs: [build-sample-apps, update-pr-comment]
     runs-on: ubuntu-latest
     permissions:

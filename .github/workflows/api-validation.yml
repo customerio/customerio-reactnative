@@ -1,6 +1,13 @@
 name: Public API change Validation
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate-api:

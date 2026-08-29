@@ -2,6 +2,7 @@ name: React Native scene routing E2E
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     paths:
       - '.github/workflows/react-native-scene-e2e.yml'
       - '.maestro/fixtures/customerio_scene_cold.apns'
@@ -48,13 +49,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:full') && github.run_id || 'validation' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+      (github.event_name != 'pull_request' ||
+      (contains(github.event.pull_request.labels.*.name, 'ci:full') &&
+      github.event.pull_request.head.repo.full_name == github.repository))
     runs-on: xcode-27
     timeout-minutes: 60
 
