@@ -6,23 +6,10 @@ on:
       pr_title:
         type: string
         required: true
-      pr_body:
-        type: string
-        required: false
-        default: ''
       base_sha:
         type: string
         required: true
       head_sha:
-        type: string
-        required: true
-      head_repository:
-        type: string
-        required: true
-      target_repository:
-        type: string
-        required: true
-      pr_author:
         type: string
         required: true
       ci_full:
@@ -30,7 +17,7 @@ on:
         required: true
     outputs:
       full_validation:
-        description: Whether this PR needs the full validation lane.
+        description: Whether release intent or ci:full requests distribution validation.
         value: ${{ jobs.classify.outputs.full_validation }}
 
 jobs:
@@ -48,15 +35,7 @@ jobs:
         id: policy
         env:
           PR_TITLE: ${{ inputs.pr_title }}
-          PR_BODY: ${{ inputs.pr_body }}
           BASE_SHA: ${{ inputs.base_sha }}
           HEAD_SHA: ${{ inputs.head_sha }}
-          HEAD_REPOSITORY: ${{ inputs.head_repository }}
-          TARGET_REPOSITORY: ${{ inputs.target_repository }}
-          PR_AUTHOR: ${{ inputs.pr_author }}
           CI_FULL: ${{ inputs.ci_full }}
-          # The semantic PR helper owns the trust-policy failure. Callers use
-          # this reusable workflow only to select safe full or light lanes.
-          ENFORCE_TRUSTED_RELEASE: 'false'
         run: bash .github/scripts/validate-release-policy.sh
-

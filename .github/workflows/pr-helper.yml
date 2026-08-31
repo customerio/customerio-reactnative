@@ -2,7 +2,7 @@ name: Semantic PR helper
 
 on:
   pull_request:
-    types: [opened, reopened, edited, synchronize, labeled, unlabeled]
+    types: [opened, reopened, edited, synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,35 +12,6 @@ jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      issues: write
       pull-requests: write # to comment on PRs
     steps:
     - uses: levibostian/action-conventional-pr-linter@acd7e6035a4c70ae2e6aab469c791cc5ca2a989d # v4.0.1
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Verify release validation policy
-      id: release-policy
-      env:
-        PR_TITLE: ${{ github.event.pull_request.title }}
-        PR_BODY: ${{ github.event.pull_request.body }}
-        BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
-        TARGET_REPOSITORY: ${{ github.repository }}
-        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-        CI_FULL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
-      run: bash .github/scripts/validate-release-policy.sh
-    # GITHUB_TOKEN label events do not start workflows. Gated workflows scan
-    # commits independently; this label is a durable, visible explanation.
-    - name: Mark automatically detected full validation
-      if: steps.release-policy.outputs.requires_full_label == 'true'
-      env:
-        GH_TOKEN: ${{ github.token }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        REPOSITORY: ${{ github.repository }}
-      run: >-
-        gh api "repos/$REPOSITORY/issues/$PR_NUMBER/labels"
-        --method POST
-        --raw-field 'labels[]=ci:full'

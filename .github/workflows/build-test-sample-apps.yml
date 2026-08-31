@@ -21,37 +21,59 @@ jobs:
       contents: read
     with:
       pr_title: ${{ github.event.pull_request.title }}
-      pr_body: ${{ github.event.pull_request.body || '' }}
       base_sha: ${{ github.event.pull_request.base.sha }}
       head_sha: ${{ github.event.pull_request.head.sha }}
-      head_repository: ${{ github.event.pull_request.head.repo.full_name }}
-      target_repository: ${{ github.repository }}
-      pr_author: ${{ github.event.pull_request.user.login }}
       ci_full: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
 
-  # Metadata edits rerun full so a newer skipped check cannot replace a failure.
   prepare:
     name: Select sample app lane
+    # Fail closed on metadata events: an edited or unrelated-label run repeats
+    # unsigned verification instead of replacing a failed check with a skip.
     if: always()
     needs: release_policy
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.select.outputs.matrix }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Select verification or distribution matrix
         id: select
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           FULL_PR: >-
-            ${{ (github.event.action == 'edited' ||
-            github.event.action == 'labeled' ||
-            needs.release_policy.outputs.full_validation == 'true') &&
+            ${{ needs.release_policy.outputs.full_validation == 'true' &&
+            (github.event.action != 'edited' || github.event.changes.title.from != '') &&
+            (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
             github.event.pull_request.head.repo.full_name == github.repository &&
             github.event.pull_request.user.login != 'dependabot[bot]' }}
         run: |
+          set -euo pipefail
           if [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
-            echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]' >> "$GITHUB_OUTPUT"
+            matrix='[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]'
+            fcm_required=false
+            changed_paths="$RUNNER_TEMP/react-native-changed-paths"
+            git cat-file -e "$BASE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            git diff --name-only -z "$BASE_SHA...$HEAD_SHA" > "$changed_paths"
+
+            while IFS= read -r -d '' path; do
+              case "$path" in
+                ios/*|example/ios/*|customerio-reactnative*.podspec|package.json|package-lock.json|scripts/*|.github/workflows/build-sample-app.yml|.github/workflows/build-test-sample-apps.yml)
+                  fcm_required=true
+                  ;;
+              esac
+            done < "$changed_paths"
+
+            if [[ "$fcm_required" == 'true' ]]; then
+              matrix=$(jq -c '. + [{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false}]' <<< "$matrix")
+            fi
+            echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           else
             echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":true}]' >> "$GITHUB_OUTPUT"
           fi
@@ -60,9 +82,9 @@ jobs:
     if: >-
       always() &&
       github.event_name == 'pull_request' &&
-      (github.event.action == 'edited' ||
-      github.event.action == 'labeled' ||
-      needs.release_policy.outputs.full_validation == 'true') &&
+      needs.release_policy.outputs.full_validation == 'true' &&
+      (github.event.action != 'edited' || github.event.changes.title.from != '') &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.login != 'dependabot[bot]'
     needs: release_policy
@@ -122,9 +144,9 @@ jobs:
   update-pr-comment-with-status:
     if: >-
       github.event_name == 'pull_request' &&
-      (github.event.action == 'edited' ||
-      github.event.action == 'labeled' ||
-      needs.release_policy.outputs.full_validation == 'true') &&
+      needs.release_policy.outputs.full_validation == 'true' &&
+      (github.event.action != 'edited' || github.event.changes.title.from != '') &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.login != 'dependabot[bot]'
     needs: [release_policy, build-sample-apps, update-pr-comment]

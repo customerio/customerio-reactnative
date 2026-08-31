@@ -1,20 +1,6 @@
 name: React Native scene routing E2E
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
-    paths:
-      - '.github/workflows/react-native-scene-e2e.yml'
-      - '.github/workflows/react-native-scene-e2e-full.yml'
-      - '.maestro/**'
-      - 'src/**'
-      - 'ios/wrappers/**'
-      - 'ios/cocoapods_deployment_target.rb'
-      - 'customerio-reactnative.podspec'
-      - 'customerio-reactnative-richpush.podspec'
-      - 'scripts/test_ios_deep_link_request_store.swift'
-      - 'package.json'
-      - 'package-lock.json'
   schedule:
     - cron: '47 7 * * *'
   workflow_dispatch:
@@ -34,36 +20,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  release_policy:
-    if: >-
-      github.event_name == 'pull_request' &&
-      inputs.full != true
-    uses: ./.github/workflows/reusable-release-policy.yml
-    permissions:
-      contents: read
-    with:
-      pr_title: ${{ github.event.pull_request.title }}
-      pr_body: ${{ github.event.pull_request.body || '' }}
-      base_sha: ${{ github.event.pull_request.base.sha }}
-      head_sha: ${{ github.event.pull_request.head.sha }}
-      head_repository: ${{ github.event.pull_request.head.repo.full_name }}
-      target_repository: ${{ github.repository }}
-      pr_author: ${{ github.event.pull_request.user.login }}
-      ci_full: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
-
   route-notifications:
     name: RN scene notification routing on Xcode 27
-    needs: release_policy
-    if: >-
-      always() &&
-      (github.event_name != 'pull_request' ||
-      (github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.user.login != 'dependabot[bot]')) &&
-      (inputs.full == true ||
-      github.event_name != 'pull_request' ||
-      (needs.release_policy.result == 'success' &&
-      github.event.action != 'edited' &&
-      needs.release_policy.outputs.full_validation != 'true'))
     runs-on: xcode-27
     timeout-minutes: 60
 
@@ -101,15 +59,6 @@ jobs:
             | shasum -a 256 -c -
           unzip -q "$maestro_zip" -d "$maestro_dir"
           echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
-
-      - name: Test deep-link acknowledgement state
-        shell: bash
-        run: |
-          xcrun swiftc \
-            ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift \
-            scripts/test_ios_deep_link_request_store.swift \
-            -o "$RUNNER_TEMP/test-ios-deep-link-request-store"
-          "$RUNNER_TEMP/test-ios-deep-link-request-store"
 
       - name: Test warm and terminated notification routing
         shell: bash

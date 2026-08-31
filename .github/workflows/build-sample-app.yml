@@ -81,15 +81,26 @@ jobs:
           # Copy the tracked project file to the root of the repository
           cp -R SampleApp.xcodeproj.tracked SampleApp.xcodeproj
 
+      - name: Test deep-link acknowledgement state
+        if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
+        shell: bash
+        working-directory: .
+        run: |
+          xcrun swiftc \
+            ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift \
+            scripts/test_ios_deep_link_request_store.swift \
+            -o "$RUNNER_TEMP/test-ios-deep-link-request-store"
+          "$RUNNER_TEMP/test-ios-deep-link-request-store"
+
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
       - name: Set IS_PRIMARY_APP
         run: |
           if [[ "${{ inputs.app_name }}" == "APN" ]]; then
-            echo "IS_PRIMARY_APP=true" >> $GITHUB_ENV
-            echo "PUSH_PROVIDER=apn" >> $GITHUB_ENV
+            echo "IS_PRIMARY_APP=true" >> "$GITHUB_ENV"
+            echo "PUSH_PROVIDER=apn" >> "$GITHUB_ENV"
           else
-            echo "IS_PRIMARY_APP=false" >> $GITHUB_ENV
-            echo "PUSH_PROVIDER=fcm" >> $GITHUB_ENV
+            echo "IS_PRIMARY_APP=false" >> "$GITHUB_ENV"
+            echo "PUSH_PROVIDER=fcm" >> "$GITHUB_ENV"
           fi
 
       - name: Set Default Firebase Distribution Groups
@@ -114,7 +125,8 @@ jobs:
           fi
 
           # Export the groups as an environment variable
-          echo "firebase_distribution_groups=$(IFS=','; echo "${distribution_groups[*]}")" >> $GITHUB_ENV
+          groups=$(IFS=','; echo "${distribution_groups[*]}")
+          echo "firebase_distribution_groups=$groups" >> "$GITHUB_ENV"
 
       - name: Install sd CLI for Android builds
         if: ${{ inputs.platform == 'android' }}
@@ -152,9 +164,11 @@ jobs:
         id: export-vars
         run: |
           echo "Exporting SDK and App Version..."
-          echo "sdk_version_name=${SDK_VERSION_NAME}" >> $GITHUB_OUTPUT
-          echo "app_version_name=${APP_VERSION_NAME}" >> $GITHUB_OUTPUT
-          echo "app_version_code=${APP_VERSION_CODE}" >> $GITHUB_OUTPUT
+          {
+            echo "sdk_version_name=${SDK_VERSION_NAME}"
+            echo "app_version_name=${APP_VERSION_NAME}"
+            echo "app_version_code=${APP_VERSION_CODE}"
+          } >> "$GITHUB_OUTPUT"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
@@ -185,10 +199,12 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Set Git Context Variables
+        env:
+          BRANCH_NAME_RAW: ${{ github.head_ref || github.ref_name }}
+          COMMIT_HASH_RAW: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
-          echo "BRANCH_NAME=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
-          COMMIT_HASH="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
-          echo "COMMIT_HASH=${COMMIT_HASH:0:7}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME_RAW" >> "$GITHUB_ENV"
+          echo "COMMIT_HASH=${COMMIT_HASH_RAW:0:7}" >> "$GITHUB_ENV"
 
       - name: Setup workspace credentials in React Native environment files
         run: |
