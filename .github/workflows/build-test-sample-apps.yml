@@ -10,7 +10,17 @@ on:
     branches: [main, feature/*]
 
 concurrency: # cancel previous workflow run if one exists.
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Unrelated labels and body-only edits must not cancel an in-flight release or
+  # ci:full run. They share a separate group, where unsigned validation repeats.
+  group: >-
+    ${{ github.workflow }}-${{ github.ref }}-${{
+      github.event_name == 'pull_request' &&
+      ((github.event.action == 'labeled' && github.event.label.name != 'ci:full') ||
+      (github.event.action == 'edited' &&
+      github.event.changes.title.from == '' &&
+      github.event.changes.base.ref.from == '')) &&
+      'metadata' || 'validation'
+    }}
   cancel-in-progress: true
 
 jobs:
