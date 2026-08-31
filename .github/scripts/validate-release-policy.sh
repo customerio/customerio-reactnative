@@ -55,9 +55,15 @@ while IFS= read -r -d '' commit_message; do
   fi
 done < "$commit_messages_file"
 
+full_validation=false
+requires_full_label=false
+
+if [[ "$pr_release" == 'true' || "$commit_release" == 'true' || "${CI_FULL:-false}" == 'true' ]]; then
+  full_validation=true
+fi
+
 if [[ "$commit_release" == 'true' && "$pr_release" != 'true' && "${CI_FULL:-false}" != 'true' ]]; then
-  echo "::error::This PR contains a release-bearing commit, but its PR title/body is non-release. Retitle it with fix:, feat:, perf:, revert:, or a breaking-change marker, or apply ci:full, so release validation runs before merge."
-  exit 1
+  requires_full_label=true
 fi
 
 if [[ ("$pr_release" == 'true' || "$commit_release" == 'true') && ("$HEAD_REPOSITORY" != "$TARGET_REPOSITORY" || "$PR_AUTHOR" == 'dependabot[bot]') ]]; then
@@ -65,4 +71,17 @@ if [[ ("$pr_release" == 'true' || "$commit_release" == 'true') && ("$HEAD_REPOSI
   exit 1
 fi
 
-echo "Release validation policy satisfied (pr_release=$pr_release, commit_release=$commit_release)."
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+  {
+    echo "pr_release=$pr_release"
+    echo "commit_release=$commit_release"
+    echo "full_validation=$full_validation"
+    echo "requires_full_label=$requires_full_label"
+  } >> "$GITHUB_OUTPUT"
+fi
+
+if [[ "$requires_full_label" == 'true' ]]; then
+  echo "::notice::A release-bearing commit was detected behind a non-release PR title. The semantic PR helper will apply ci:full automatically."
+fi
+
+echo "Release validation policy satisfied (pr_release=$pr_release, commit_release=$commit_release, full_validation=$full_validation)."
