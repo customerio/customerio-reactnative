@@ -21,7 +21,8 @@ concurrency: # cancel previous workflow run if one exists.
       github.event.changes.base == null)) &&
       'metadata' || 'validation'
     }}
-  cancel-in-progress: true
+  # Never cancel a main-branch distribution after a newer merge starts.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/feature/') }}
 
 jobs:
   release_policy:
@@ -157,6 +158,7 @@ jobs:
   # Update PR comment with build information
   update-pr-comment-with-status:
     if: >-
+      always() &&
       github.event_name == 'pull_request' &&
       needs.release_policy.outputs.full_validation == 'true' &&
       (github.event.action != 'edited' ||
