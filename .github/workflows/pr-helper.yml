@@ -32,7 +32,9 @@ jobs:
         PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         CI_FULL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
       run: bash .github/scripts/validate-release-policy.sh
-    - name: Automatically request full validation for release-bearing commits
+    # GITHUB_TOKEN label events do not start workflows. Gated workflows scan
+    # commits independently; this label is a durable, visible explanation.
+    - name: Mark automatically detected full validation
       if: steps.release-policy.outputs.requires_full_label == 'true'
       env:
         GH_TOKEN: ${{ github.token }}

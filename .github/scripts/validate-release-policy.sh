@@ -66,7 +66,9 @@ if [[ "$commit_release" == 'true' && "$pr_release" != 'true' && "${CI_FULL:-fals
   requires_full_label=true
 fi
 
-if [[ ("$pr_release" == 'true' || "$commit_release" == 'true') && ("$HEAD_REPOSITORY" != "$TARGET_REPOSITORY" || "$PR_AUTHOR" == 'dependabot[bot]') ]]; then
+if [[ "${ENFORCE_TRUSTED_RELEASE:-true}" == 'true' &&
+  ("$pr_release" == 'true' || "$commit_release" == 'true') &&
+  ("$HEAD_REPOSITORY" != "$TARGET_REPOSITORY" || "$PR_AUTHOR" == 'dependabot[bot]') ]]; then
   echo "::error::Release-bearing PRs require secret-dependent validation from a trusted repository branch. Recreate or update this change on an internal branch before merge."
   exit 1
 fi

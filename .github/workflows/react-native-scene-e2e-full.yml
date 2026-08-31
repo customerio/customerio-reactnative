@@ -8,26 +8,28 @@ permissions:
   contents: read
 
 jobs:
+  release_policy:
+    uses: ./.github/workflows/reusable-release-policy.yml
+    permissions:
+      contents: read
+    with:
+      pr_title: ${{ github.event.pull_request.title }}
+      pr_body: ${{ github.event.pull_request.body || '' }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      head_repository: ${{ github.event.pull_request.head.repo.full_name }}
+      target_repository: ${{ github.repository }}
+      pr_author: ${{ github.event.pull_request.user.login }}
+      ci_full: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+
   # Metadata edits rerun full so a newer skipped check cannot replace a failure.
   full-scene-e2e:
+    needs: release_policy
     if: >-
+      always() &&
       (github.event.action == 'edited' ||
       github.event.action == 'labeled' ||
-      contains(github.event.pull_request.labels.*.name, 'ci:full') ||
-      startsWith(github.event.pull_request.title, 'fix:') ||
-      startsWith(github.event.pull_request.title, 'fix(') ||
-      startsWith(github.event.pull_request.title, 'feat:') ||
-      startsWith(github.event.pull_request.title, 'feat(') ||
-      startsWith(github.event.pull_request.title, 'perf:') ||
-      startsWith(github.event.pull_request.title, 'perf(') ||
-      startsWith(github.event.pull_request.title, 'revert:') ||
-      startsWith(github.event.pull_request.title, 'revert(') ||
-      startsWith(github.event.pull_request.title, 'Revert "') ||
-      contains(github.event.pull_request.body, 'This reverts commit') ||
-      contains(github.event.pull_request.title, '!:') ||
-      contains(github.event.pull_request.body, 'BREAKING CHANGE:') ||
-      contains(github.event.pull_request.body, 'BREAKING CHANGES:') ||
-      contains(github.event.pull_request.body, 'BREAKING-CHANGE:')) &&
+      needs.release_policy.outputs.full_validation == 'true') &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.login != 'dependabot[bot]'
     uses: ./.github/workflows/react-native-scene-e2e.yml

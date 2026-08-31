@@ -1,0 +1,62 @@
+name: Reusable release policy
+
+on:
+  workflow_call:
+    inputs:
+      pr_title:
+        type: string
+        required: true
+      pr_body:
+        type: string
+        required: false
+        default: ''
+      base_sha:
+        type: string
+        required: true
+      head_sha:
+        type: string
+        required: true
+      head_repository:
+        type: string
+        required: true
+      target_repository:
+        type: string
+        required: true
+      pr_author:
+        type: string
+        required: true
+      ci_full:
+        type: boolean
+        required: true
+    outputs:
+      full_validation:
+        description: Whether this PR needs the full validation lane.
+        value: ${{ jobs.classify.outputs.full_validation }}
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      full_validation: ${{ steps.policy.outputs.full_validation }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Classify release validation
+        id: policy
+        env:
+          PR_TITLE: ${{ inputs.pr_title }}
+          PR_BODY: ${{ inputs.pr_body }}
+          BASE_SHA: ${{ inputs.base_sha }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          HEAD_REPOSITORY: ${{ inputs.head_repository }}
+          TARGET_REPOSITORY: ${{ inputs.target_repository }}
+          PR_AUTHOR: ${{ inputs.pr_author }}
+          CI_FULL: ${{ inputs.ci_full }}
+          # The semantic PR helper owns the trust-policy failure. Callers use
+          # this reusable workflow only to select safe full or light lanes.
+          ENFORCE_TRUSTED_RELEASE: 'false'
+        run: bash .github/scripts/validate-release-policy.sh
+
