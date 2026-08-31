@@ -26,6 +26,7 @@ jobs:
         env:
           ACTION: ${{ github.event.action }}
           LABEL: ${{ github.event.label.name }}
+          CI_FULL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
@@ -36,6 +37,9 @@ jobs:
             if [[ "$LABEL" == 'ci:full' ]]; then
               run=true
             fi
+          elif [[ "$CI_FULL" == 'true' ]]; then
+            # Keep validating new commits after ci:full has been applied.
+            run=true
           else
             changed_paths="$RUNNER_TEMP/react-native-scene-e2e-paths"
             git cat-file -e "$BASE_SHA^{commit}"
@@ -49,6 +53,10 @@ jobs:
                   break
                   ;;
                 ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift|ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift|ios/wrappers/NativeCustomerIO.swift|ios/wrappers/NativeCustomerIO.mm|ios/wrappers/liveactivities/NativeLiveActivities.*|ios/wrappers/push/*)
+                  run=true
+                  break
+                  ;;
+                ios/wrappers/utils/CioConfigUtils.swift|src/utils/native-bridge.ts|src/utils/param-validation.ts)
                   run=true
                   break
                   ;;

@@ -182,7 +182,7 @@ jobs:
             platform_name: 'iOS'
     steps:
       - name: Update sample builds PR comment with build information
-        if: ${{ github.event_name == 'pull_request' }}
+        if: needs.build-sample-apps.result == 'success'
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
@@ -192,7 +192,7 @@ jobs:
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
 
       - name: Update sample builds PR comment with build failure message
-        if: ${{ github.event_name == 'pull_request' && failure() }}
+        if: needs.build-sample-apps.result != 'success'
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
