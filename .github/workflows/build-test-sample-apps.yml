@@ -76,7 +76,7 @@ jobs:
 
             while IFS= read -r -d '' path; do
               case "$path" in
-                ios/*|example/ios/*|customerio-reactnative*.podspec|package.json|package-lock.json|scripts/*|.github/workflows/build-sample-app.yml|.github/workflows/build-test-sample-apps.yml)
+                ios/*|example/*|customerio-reactnative*.podspec|package.json|package-lock.json|scripts/*|.github/workflows/build-sample-app.yml|.github/workflows/build-test-sample-apps.yml)
                   fcm_required=true
                   ;;
               esac
