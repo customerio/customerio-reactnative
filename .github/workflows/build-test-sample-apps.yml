@@ -7,15 +7,16 @@ on:
       - '**/*.md'
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, feature/*]
 
 concurrency: # cancel previous workflow run if one exists.
   group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:full') && github.run_id || 'validation' }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   prepare:
     name: Select sample app lane
+    if: github.event.action != 'labeled' || github.event.label.name == 'ci:full'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.select.outputs.matrix }}

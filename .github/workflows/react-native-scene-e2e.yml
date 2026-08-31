@@ -2,26 +2,42 @@ name: React Native scene routing E2E
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - '.github/workflows/react-native-scene-e2e.yml'
+      - '.github/workflows/react-native-scene-e2e-full.yml'
+      - '.maestro/**'
+      - 'src/**'
+      - 'ios/wrappers/**'
+      - 'ios/cocoapods_deployment_target.rb'
+      - 'customerio-reactnative.podspec'
+      - 'customerio-reactnative-richpush.podspec'
+      - 'scripts/test_ios_deep_link_request_store.swift'
+      - 'package.json'
+      - 'package-lock.json'
   schedule:
     - cron: '47 7 * * *'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      full:
+        description: Run the label-triggered full lane.
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:full') && github.run_id || 'validation' }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-${{ inputs.full && 'full' || 'direct' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
     if: >-
-      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
-      (github.event_name != 'pull_request' ||
-      (contains(github.event.pull_request.labels.*.name, 'ci:full') &&
-      github.event.pull_request.head.repo.full_name == github.repository))
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (inputs.full == true || !contains(github.event.pull_request.labels.*.name, 'ci:full'))
     runs-on: xcode-27
     timeout-minutes: 60
 
