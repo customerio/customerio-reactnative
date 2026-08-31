@@ -2,6 +2,7 @@ name: React Native scene routing E2E
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, edited]
     paths:
       - '.github/workflows/react-native-scene-e2e.yml'
       - '.github/workflows/react-native-scene-e2e-full.yml'
@@ -37,7 +38,23 @@ jobs:
     name: RN scene notification routing on Xcode 27
     if: >-
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
-      (inputs.full == true || !contains(github.event.pull_request.labels.*.name, 'ci:full'))
+      (inputs.full == true ||
+      (github.event.action != 'edited' &&
+      !contains(github.event.pull_request.labels.*.name, 'ci:full') &&
+      !startsWith(github.event.pull_request.title, 'fix:') &&
+      !startsWith(github.event.pull_request.title, 'fix(') &&
+      !startsWith(github.event.pull_request.title, 'feat:') &&
+      !startsWith(github.event.pull_request.title, 'feat(') &&
+      !startsWith(github.event.pull_request.title, 'perf:') &&
+      !startsWith(github.event.pull_request.title, 'perf(') &&
+      !startsWith(github.event.pull_request.title, 'revert:') &&
+      !startsWith(github.event.pull_request.title, 'revert(') &&
+      !startsWith(github.event.pull_request.title, 'Revert "') &&
+      !contains(github.event.pull_request.body, 'This reverts commit') &&
+      !contains(github.event.pull_request.title, '!:') &&
+      !contains(github.event.pull_request.body, 'BREAKING CHANGE:') &&
+      !contains(github.event.pull_request.body, 'BREAKING CHANGES:') &&
+      !contains(github.event.pull_request.body, 'BREAKING-CHANGE:')))
     runs-on: xcode-27
     timeout-minutes: 60
 

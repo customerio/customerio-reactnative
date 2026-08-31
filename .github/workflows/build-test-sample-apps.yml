@@ -2,7 +2,7 @@ name: Publish Test Sample Apps
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, labeled]
+    types: [opened, synchronize, reopened, edited, labeled]
     paths-ignore:
       - '**/*.md'
   workflow_dispatch:
@@ -10,13 +10,13 @@ on:
     branches: [main, feature/*]
 
 concurrency: # cancel previous workflow run if one exists.
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'ci:full') && github.run_id || 'validation' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Metadata edits rerun full so a newer skipped check cannot replace a failure.
   prepare:
     name: Select sample app lane
-    if: github.event.action != 'labeled' || github.event.label.name == 'ci:full'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.select.outputs.matrix }}
@@ -26,7 +26,26 @@ jobs:
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
-          FULL_PR: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') && github.event.pull_request.head.repo.full_name == github.repository }}
+          FULL_PR: >-
+            ${{ (github.event.action == 'edited' ||
+            github.event.action == 'labeled' ||
+            contains(github.event.pull_request.labels.*.name, 'ci:full') ||
+            startsWith(github.event.pull_request.title, 'fix:') ||
+            startsWith(github.event.pull_request.title, 'fix(') ||
+            startsWith(github.event.pull_request.title, 'feat:') ||
+            startsWith(github.event.pull_request.title, 'feat(') ||
+            startsWith(github.event.pull_request.title, 'perf:') ||
+            startsWith(github.event.pull_request.title, 'perf(') ||
+            startsWith(github.event.pull_request.title, 'revert:') ||
+            startsWith(github.event.pull_request.title, 'revert(') ||
+            startsWith(github.event.pull_request.title, 'Revert "') ||
+            contains(github.event.pull_request.body, 'This reverts commit') ||
+            contains(github.event.pull_request.title, '!:') ||
+            contains(github.event.pull_request.body, 'BREAKING CHANGE:') ||
+            contains(github.event.pull_request.body, 'BREAKING CHANGES:') ||
+            contains(github.event.pull_request.body, 'BREAKING-CHANGE:')) &&
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            github.event.pull_request.user.login != 'dependabot[bot]' }}
         run: |
           if [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
             echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]' >> "$GITHUB_OUTPUT"
@@ -36,10 +55,26 @@ jobs:
 
   update-pr-comment:
     if: >-
-      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
       github.event_name == 'pull_request' &&
-      contains(github.event.pull_request.labels.*.name, 'ci:full') &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      (github.event.action == 'edited' ||
+      github.event.action == 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'ci:full') ||
+      startsWith(github.event.pull_request.title, 'fix:') ||
+      startsWith(github.event.pull_request.title, 'fix(') ||
+      startsWith(github.event.pull_request.title, 'feat:') ||
+      startsWith(github.event.pull_request.title, 'feat(') ||
+      startsWith(github.event.pull_request.title, 'perf:') ||
+      startsWith(github.event.pull_request.title, 'perf(') ||
+      startsWith(github.event.pull_request.title, 'revert:') ||
+      startsWith(github.event.pull_request.title, 'revert(') ||
+      startsWith(github.event.pull_request.title, 'Revert "') ||
+      contains(github.event.pull_request.body, 'This reverts commit') ||
+      contains(github.event.pull_request.title, '!:') ||
+      contains(github.event.pull_request.body, 'BREAKING CHANGE:') ||
+      contains(github.event.pull_request.body, 'BREAKING CHANGES:') ||
+      contains(github.event.pull_request.body, 'BREAKING-CHANGE:')) &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # to be able to comment on PR
@@ -73,8 +108,7 @@ jobs:
   build-sample-apps:
     if: >-
       always() &&
-      needs.prepare.result == 'success' &&
-      (github.event.action != 'labeled' || github.event.label.name == 'ci:full')
+      needs.prepare.result == 'success'
     needs: [prepare, update-pr-comment]
     strategy:
       fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them.
@@ -96,10 +130,26 @@ jobs:
   # Update PR comment with build information
   update-pr-comment-with-status:
     if: >-
-      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
       github.event_name == 'pull_request' &&
-      contains(github.event.pull_request.labels.*.name, 'ci:full') &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      (github.event.action == 'edited' ||
+      github.event.action == 'labeled' ||
+      contains(github.event.pull_request.labels.*.name, 'ci:full') ||
+      startsWith(github.event.pull_request.title, 'fix:') ||
+      startsWith(github.event.pull_request.title, 'fix(') ||
+      startsWith(github.event.pull_request.title, 'feat:') ||
+      startsWith(github.event.pull_request.title, 'feat(') ||
+      startsWith(github.event.pull_request.title, 'perf:') ||
+      startsWith(github.event.pull_request.title, 'perf(') ||
+      startsWith(github.event.pull_request.title, 'revert:') ||
+      startsWith(github.event.pull_request.title, 'revert(') ||
+      startsWith(github.event.pull_request.title, 'Revert "') ||
+      contains(github.event.pull_request.body, 'This reverts commit') ||
+      contains(github.event.pull_request.title, '!:') ||
+      contains(github.event.pull_request.body, 'BREAKING CHANGE:') ||
+      contains(github.event.pull_request.body, 'BREAKING CHANGES:') ||
+      contains(github.event.pull_request.body, 'BREAKING-CHANGE:')) &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
     needs: [build-sample-apps, update-pr-comment]
     runs-on: ubuntu-latest
     permissions:
