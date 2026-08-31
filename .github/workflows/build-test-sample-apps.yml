@@ -72,7 +72,7 @@ jobs:
             changed_paths="$RUNNER_TEMP/react-native-changed-paths"
             git cat-file -e "$BASE_SHA^{commit}"
             git cat-file -e "$HEAD_SHA^{commit}"
-            git diff --name-only -z "$BASE_SHA...$HEAD_SHA" > "$changed_paths"
+            git diff --no-renames --name-only -z "$BASE_SHA...$HEAD_SHA" > "$changed_paths"
 
             while IFS= read -r -d '' path; do
               case "$path" in
