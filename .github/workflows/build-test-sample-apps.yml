@@ -17,8 +17,8 @@ concurrency: # cancel previous workflow run if one exists.
       github.event_name == 'pull_request' &&
       ((github.event.action == 'labeled' && github.event.label.name != 'ci:full') ||
       (github.event.action == 'edited' &&
-      github.event.changes.title.from == '' &&
-      github.event.changes.base.ref.from == '')) &&
+      !github.event.changes.title &&
+      !github.event.changes.base)) &&
       'metadata' || 'validation'
     }}
   cancel-in-progress: true
