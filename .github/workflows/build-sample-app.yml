@@ -319,6 +319,8 @@ jobs:
         uses: customerio/customerio-android/.github/actions/setup-android@main
 
       - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
+        # This action only selects the repository's supported Xcode version.
+        # Signing credentials are scoped to the distribution-only Fastlane step.
         if: ${{ inputs.platform == 'ios' }}
         uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
 

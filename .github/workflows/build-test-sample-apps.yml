@@ -6,6 +6,12 @@ on:
     paths-ignore:
       - '**/*.md'
   workflow_dispatch:
+    inputs:
+      verification_only:
+        description: Run unsigned compatibility builds without distribution
+        type: boolean
+        required: false
+        default: true
   push:
     branches: [main, feature/*]
 
@@ -14,6 +20,8 @@ concurrency: # cancel previous workflow run if one exists.
   # ci:full run. They share a separate group, where unsigned validation repeats.
   group: >-
     ${{ github.workflow }}-${{ github.ref }}-${{
+      github.event_name == 'workflow_dispatch' && inputs.verification_only == true &&
+      'manual-verification' ||
       github.event_name == 'pull_request' &&
       ((github.event.action == 'labeled' && github.event.label.name != 'ci:full') ||
       (github.event.action == 'edited' &&
@@ -21,8 +29,12 @@ concurrency: # cancel previous workflow run if one exists.
       github.event.changes.base == null)) &&
       'metadata' || 'validation'
     }}
-  # Never cancel a main-branch distribution after a newer merge starts.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/feature/') }}
+  # Manual verification has its own group, so it can be superseded without
+  # canceling or delaying a signed main-branch distribution.
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' ||
+    (github.event_name == 'workflow_dispatch' && inputs.verification_only == true) ||
+    startsWith(github.ref, 'refs/heads/feature/') }}
 
 jobs:
   release_policy:
@@ -57,6 +69,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          VERIFICATION_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.verification_only == true }}
           FULL_PR: >-
             ${{ needs.release_policy.outputs.full_validation == 'true' &&
             (github.event.action != 'edited' ||
@@ -67,7 +80,12 @@ jobs:
             github.event.pull_request.user.login != 'dependabot[bot]' }}
         run: |
           set -euo pipefail
-          if [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
+          distribution_matrix='[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":true}]'
+
+          if [[ "$EVENT_NAME" == 'workflow_dispatch' && "$VERIFICATION_ONLY" == 'true' ]]; then
+            verification_matrix=$(jq -c 'map(.should_distribute = false)' <<< "$distribution_matrix")
+            echo "matrix=$verification_matrix" >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
             matrix='[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]'
             fcm_required=false
             changed_paths="$RUNNER_TEMP/react-native-changed-paths"
@@ -88,7 +106,7 @@ jobs:
             fi
             echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           else
-            echo 'matrix=[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":true}]' >> "$GITHUB_OUTPUT"
+            echo "matrix=$distribution_matrix" >> "$GITHUB_OUTPUT"
           fi
 
   update-pr-comment:
@@ -134,6 +152,8 @@ jobs:
           edit-mode: replace # replace the existing comment with new content since we are creating new builds
 
   build-sample-apps:
+    # Forks and Dependabot deliberately reach this job through prepare's
+    # unsigned matrix. Only signing and distribution are restricted.
     if: >-
       always() &&
       needs.prepare.result == 'success'
