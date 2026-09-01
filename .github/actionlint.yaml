@@ -1,0 +1,5 @@
+self-hosted-runner:
+  labels:
+    # GitHub-hosted public preview label announced in actions/runner-images#14404.
+    # Remove this override after actionlint recognizes the hosted label.
+    - xcode-27

@@ -32,6 +32,11 @@ on:
           description: "Name of the platform in all upper case (IOS or ANDROID)"
           required: true
           type: string
+      should_distribute:
+          description: "Whether to sign and publish the sample app"
+          required: false
+          default: true
+          type: boolean
     
     outputs:
       sdk_version_name:
@@ -76,15 +81,26 @@ jobs:
           # Copy the tracked project file to the root of the repository
           cp -R SampleApp.xcodeproj.tracked SampleApp.xcodeproj
 
+      - name: Test deep-link acknowledgement state
+        if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
+        shell: bash
+        working-directory: .
+        run: |
+          xcrun swiftc \
+            ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift \
+            scripts/test_ios_deep_link_request_store.swift \
+            -o "$RUNNER_TEMP/test-ios-deep-link-request-store"
+          "$RUNNER_TEMP/test-ios-deep-link-request-store"
+
       # Install CLI tools, Ruby, and Ruby dependencies for Fastlane
       - name: Set IS_PRIMARY_APP
         run: |
           if [[ "${{ inputs.app_name }}" == "APN" ]]; then
-            echo "IS_PRIMARY_APP=true" >> $GITHUB_ENV
-            echo "PUSH_PROVIDER=apn" >> $GITHUB_ENV
+            echo "IS_PRIMARY_APP=true" >> "$GITHUB_ENV"
+            echo "PUSH_PROVIDER=apn" >> "$GITHUB_ENV"
           else
-            echo "IS_PRIMARY_APP=false" >> $GITHUB_ENV
-            echo "PUSH_PROVIDER=fcm" >> $GITHUB_ENV
+            echo "IS_PRIMARY_APP=false" >> "$GITHUB_ENV"
+            echo "PUSH_PROVIDER=fcm" >> "$GITHUB_ENV"
           fi
 
       - name: Set Default Firebase Distribution Groups
@@ -109,7 +125,8 @@ jobs:
           fi
 
           # Export the groups as an environment variable
-          echo "firebase_distribution_groups=$(IFS=','; echo "${distribution_groups[*]}")" >> $GITHUB_ENV
+          groups=$(IFS=','; echo "${distribution_groups[*]}")
+          echo "firebase_distribution_groups=$groups" >> "$GITHUB_ENV"
 
       - name: Install sd CLI for Android builds
         if: ${{ inputs.platform == 'android' }}
@@ -147,9 +164,11 @@ jobs:
         id: export-vars
         run: |
           echo "Exporting SDK and App Version..."
-          echo "sdk_version_name=${SDK_VERSION_NAME}" >> $GITHUB_OUTPUT
-          echo "app_version_name=${APP_VERSION_NAME}" >> $GITHUB_OUTPUT
-          echo "app_version_code=${APP_VERSION_CODE}" >> $GITHUB_OUTPUT
+          {
+            echo "sdk_version_name=${SDK_VERSION_NAME}"
+            echo "app_version_name=${APP_VERSION_NAME}"
+            echo "app_version_code=${APP_VERSION_CODE}"
+          } >> "$GITHUB_OUTPUT"
         env:
           SDK_VERSION_NAME: ${{ env.SDK_VERSION_NAME }}
           APP_VERSION_NAME: ${{ env.APP_VERSION_NAME }}
@@ -180,10 +199,12 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Set Git Context Variables
+        env:
+          BRANCH_NAME_RAW: ${{ github.head_ref || github.ref_name }}
+          COMMIT_HASH_RAW: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
-          echo "BRANCH_NAME=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
-          COMMIT_HASH="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
-          echo "COMMIT_HASH=${COMMIT_HASH:0:7}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME_RAW" >> "$GITHUB_ENV"
+          echo "COMMIT_HASH=${COMMIT_HASH_RAW:0:7}" >> "$GITHUB_ENV"
 
       - name: Setup workspace credentials in React Native environment files
         run: |
@@ -298,10 +319,13 @@ jobs:
         uses: customerio/customerio-android/.github/actions/setup-android@main
 
       - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
+        # This action only selects the repository's supported Xcode version.
+        # Signing credentials are scoped to the distribution-only Fastlane step.
         if: ${{ inputs.platform == 'ios' }}
         uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
+        if: ${{ inputs.should_distribute }}
         id: build_app
         uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
         with:
@@ -314,8 +338,27 @@ jobs:
           FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64: ${{ secrets.FIREBASE_APP_DISTRIBUTION_SERVICE_ACCOUNT_CREDS_B64 }}
         continue-on-error: true
 
+      - name: Compile ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app (verification only)
+        if: ${{ !inputs.should_distribute }}
+        id: verify_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ inputs.platform }}" == 'android' ]]; then
+            ./android/gradlew -p android :app:assembleRelease
+          else
+            xcodebuild \
+              -workspace ios/SampleApp.xcworkspace \
+              -scheme SampleApp \
+              -configuration Release \
+              -sdk iphonesimulator \
+              -destination 'generic/platform=iOS Simulator' \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          fi
+
       - name: Send slack notification for ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app builds
-        if: ${{ always() && env.IS_PRIMARY_APP == 'true' }}
+        if: ${{ always() && inputs.should_distribute && env.IS_PRIMARY_APP == 'true' }}
         uses: customerio/mobile-ci-tools/github-actions/slack-notify-sample-app/v1@main
         with:
           build_status: ${{ steps.build_app.outcome }}
@@ -332,11 +375,18 @@ jobs:
           slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Check build statuses and mark failure
+        if: ${{ always() }}
+        env:
+          SHOULD_DISTRIBUTE: ${{ inputs.should_distribute }}
+          DISTRIBUTION_OUTCOME: ${{ steps.build_app.outcome }}
+          VERIFICATION_OUTCOME: ${{ steps.verify_build.outcome }}
         run: |
-          FAILED_BUILDS=()
-          [ "${{ steps.build_app.outcome }}" != "success" ] && FAILED_BUILDS+=("(${{ inputs.platform_name }})")
-
-          if [ ${#FAILED_BUILDS[@]} -ne 0 ]; then
-            echo "Build failed for: ${FAILED_BUILDS[*]}"
+          if [[ "$SHOULD_DISTRIBUTE" == 'true' ]]; then
+            outcome="$DISTRIBUTION_OUTCOME"
+          else
+            outcome="$VERIFICATION_OUTCOME"
+          fi
+          if [[ "$outcome" != 'success' ]]; then
+            echo "${{ inputs.platform_name }} build failed with outcome: $outcome"
             exit 1
           fi

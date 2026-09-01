@@ -1,18 +1,126 @@
 name: Publish Test Sample Apps
 
 on:
-  pull_request: # build sample apps for every commit pushed to an open pull request (including drafts)
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled]
+    paths-ignore:
+      - '**/*.md'
   workflow_dispatch:
+    inputs:
+      verification_only:
+        description: Run unsigned compatibility builds without distribution
+        type: boolean
+        required: false
+        default: true
   push:
     branches: [main, feature/*]
 
 concurrency: # cancel previous workflow run if one exists.
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Unrelated labels and body-only edits must not cancel an in-flight release or
+  # ci:full run. They share a separate group, where unsigned validation repeats.
+  group: >-
+    ${{ github.workflow }}-${{ github.ref }}-${{
+      github.event_name == 'workflow_dispatch' && inputs.verification_only == true &&
+      'manual-verification' ||
+      github.event_name == 'pull_request' &&
+      ((github.event.action == 'labeled' && github.event.label.name != 'ci:full') ||
+      (github.event.action == 'edited' &&
+      github.event.changes.title == null &&
+      github.event.changes.base == null)) &&
+      'metadata' || 'validation'
+    }}
+  # Manual verification has its own group, so it can be superseded without
+  # canceling or delaying a signed main-branch distribution.
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' ||
+    (github.event_name == 'workflow_dispatch' && inputs.verification_only == true) ||
+    startsWith(github.ref, 'refs/heads/feature/') }}
 
 jobs:
+  release_policy:
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/reusable-release-policy.yml
+    permissions:
+      contents: read
+    with:
+      pr_title: ${{ github.event.pull_request.title }}
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      ci_full: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+
+  prepare:
+    name: Select sample app lane
+    # Fail closed on metadata events: an edited or unrelated-label run repeats
+    # unsigned verification instead of replacing a failed check with a skip.
+    if: always()
+    needs: release_policy
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select verification or distribution matrix
+        id: select
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          VERIFICATION_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.verification_only == true }}
+          FULL_PR: >-
+            ${{ needs.release_policy.outputs.full_validation == 'true' &&
+            (github.event.action != 'edited' ||
+            github.event.changes.title != null ||
+            github.event.changes.base != null) &&
+            (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            github.event.pull_request.user.login != 'dependabot[bot]' }}
+        run: |
+          set -euo pipefail
+          distribution_matrix='[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":true},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":true}]'
+
+          if [[ "$EVENT_NAME" == 'workflow_dispatch' && "$VERIFICATION_ONLY" == 'true' ]]; then
+            verification_matrix=$(jq -c 'map(.should_distribute = false)' <<< "$distribution_matrix")
+            echo "matrix=$verification_matrix" >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT_NAME" == 'pull_request' && "$FULL_PR" != 'true' ]]; then
+            matrix='[{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false},{"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false}]'
+            fcm_required=false
+            changed_paths="$RUNNER_TEMP/react-native-changed-paths"
+            git cat-file -e "$BASE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            git diff --no-renames --name-only -z "$BASE_SHA...$HEAD_SHA" > "$changed_paths"
+
+            while IFS= read -r -d '' path; do
+              case "$path" in
+                ios/*|example/*|customerio-reactnative*.podspec|package.json|package-lock.json|scripts/*|.github/workflows/build-sample-app.yml|.github/workflows/build-test-sample-apps.yml)
+                  fcm_required=true
+                  ;;
+              esac
+            done < "$changed_paths"
+
+            if [[ "$fcm_required" == 'true' ]]; then
+              matrix=$(jq -c '. + [{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false}]' <<< "$matrix")
+            fi
+            echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix=$distribution_matrix" >> "$GITHUB_OUTPUT"
+          fi
+
   update-pr-comment:
-    if: ${{ github.event_name == 'pull_request' }}
+    if: >-
+      always() &&
+      github.event_name == 'pull_request' &&
+      needs.release_policy.outputs.full_validation == 'true' &&
+      (github.event.action != 'edited' ||
+      github.event.changes.title != null ||
+      github.event.changes.base != null) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    needs: release_policy
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # to be able to comment on PR
@@ -40,33 +148,20 @@ jobs:
             Below you will find the list of the latest versions of the sample apps. It's recommended to always download the latest builds of the sample apps to accurately test the pull request. 
 
             ---
-            ${{ steps.build.outputs.build-log }}
+            Builds are in progress. This comment will be updated when they finish.
           edit-mode: replace # replace the existing comment with new content since we are creating new builds
 
   build-sample-apps:
-    if: ${{ always() }} # do not skip running this step if update-pr-comment does not run
-    needs: [update-pr-comment] # wait for PR comment to be created saying new builds are being made.
+    # Forks and Dependabot deliberately reach this job through prepare's
+    # unsigned matrix. Only signing and distribution are restricted.
+    if: >-
+      always() &&
+      needs.prepare.result == 'success'
+    needs: [prepare, update-pr-comment]
     strategy:
       fail-fast: false # if one sample app fails to build, let the other sample apps continue to build and not cancel them.
       matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build!
-        sample-app:
-          # List all sample apps you want to have compiled.
-          # List item is name of directory inside of "Apps" directory for the corresponding app to compile.
-          - name: 'APN'
-            cio-workspace-name: 'Mobile: React Native'
-            platform: 'ios'
-            platform_name: 'iOS'
-            platform_name_upper: 'IOS'
-          - name: 'FCM'
-            cio-workspace-name: 'Mobile: xReact Native FCM workspace'
-            platform: 'ios'
-            platform_name: 'iOS'
-            platform_name_upper: 'IOS'
-          - name: 'APN'
-            cio-workspace-name: 'Mobile: React Native'
-            platform: 'android'
-            platform_name: 'Android'
-            platform_name_upper: 'ANDROID'
+        sample-app: ${{ fromJSON(needs.prepare.outputs.matrix) }}
 
     name: Building the ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }} sample app
     uses: ./.github/workflows/build-sample-app.yml
@@ -76,13 +171,23 @@ jobs:
       platform: ${{ matrix.sample-app.platform }}
       platform_name: ${{ matrix.sample-app.platform_name }}
       platform_name_upper: ${{ matrix.sample-app.platform_name_upper }}
+      should_distribute: ${{ matrix.sample-app.should_distribute }}
 
     secrets: inherit
 
   # Update PR comment with build information
   update-pr-comment-with-status:
-    if: ${{ github.event_name == 'pull_request' }}
-    needs: [build-sample-apps, update-pr-comment]
+    if: >-
+      always() &&
+      github.event_name == 'pull_request' &&
+      needs.release_policy.outputs.full_validation == 'true' &&
+      (github.event.action != 'edited' ||
+      github.event.changes.title != null ||
+      github.event.changes.base != null) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'ci:full') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    needs: [release_policy, build-sample-apps, update-pr-comment]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # to be able to comment on PR
@@ -97,7 +202,7 @@ jobs:
             platform_name: 'iOS'
     steps:
       - name: Update sample builds PR comment with build information
-        if: ${{ github.event_name == 'pull_request' }}
+        if: needs.build-sample-apps.result == 'success'
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}
@@ -107,7 +212,7 @@ jobs:
           edit-mode: append # append new line to the existing PR comment to build a list of all sample app builds.
 
       - name: Update sample builds PR comment with build failure message
-        if: ${{ github.event_name == 'pull_request' && failure() }}
+        if: needs.build-sample-apps.result != 'success'
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ needs.update-pr-comment.outputs.comment-id }}

@@ -1,0 +1,41 @@
+name: Reusable release policy
+
+on:
+  workflow_call:
+    inputs:
+      pr_title:
+        type: string
+        required: true
+      base_sha:
+        type: string
+        required: true
+      head_sha:
+        type: string
+        required: true
+      ci_full:
+        type: boolean
+        required: true
+    outputs:
+      full_validation:
+        description: Whether release intent or ci:full requests distribution validation.
+        value: ${{ jobs.classify.outputs.full_validation }}
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      full_validation: ${{ steps.policy.outputs.full_validation }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Classify release validation
+        id: policy
+        env:
+          PR_TITLE: ${{ inputs.pr_title }}
+          BASE_SHA: ${{ inputs.base_sha }}
+          HEAD_SHA: ${{ inputs.head_sha }}
+          CI_FULL: ${{ inputs.ci_full }}
+        run: bash .github/scripts/validate-release-policy.sh

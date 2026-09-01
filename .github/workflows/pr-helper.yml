@@ -2,12 +2,16 @@ name: Semantic PR helper
 
 on:
   pull_request:
-    types: [opened, reopened, edited, synchronize, labeled]
+    types: [opened, reopened, edited, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # to comment on PRs
-    steps:    
+    steps:
     - uses: levibostian/action-conventional-pr-linter@acd7e6035a4c70ae2e6aab469c791cc5ca2a989d # v4.0.1

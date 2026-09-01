@@ -1,60 +1,27 @@
 name: React Native scene routing E2E
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/react-native-scene-e2e.yml'
-      - '.maestro/fixtures/customerio_scene_cold.apns'
-      - '.maestro/fixtures/customerio_scene_declined.apns'
-      - '.maestro/fixtures/customerio_scene_warm.apns'
-      - '.maestro/fixtures/react-native-scene/**'
-      - '.maestro/run_scene_push.sh'
-      - '.maestro/scene_push_open.yaml'
-      - '.maestro/scene_push_declined.yaml'
-      - '.maestro/scene_push_prepare.yaml'
-      - '.maestro/scene_push_warm.yaml'
-      - '.maestro/scene_url_open.yaml'
-      - 'src/customerio-cdp.ts'
-      - 'src/customerio-push.ts'
-      - 'src/index.ts'
-      - 'src/native-logger-listener.ts'
-      - 'src/specs/modules/NativeCustomerIO.ts'
-      - 'src/specs/modules/NativeCustomerIOMessagingPush.ts'
-      - 'src/types/data-pipelines.ts'
-      - 'src/types/index.ts'
-      - 'src/types/internal.ts'
-      - 'src/types/push.ts'
-      - 'src/utils/native-bridge.ts'
-      - 'src/utils/param-validation.ts'
-      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift'
-      - 'ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift'
-      - 'ios/wrappers/NativeCustomerIO.swift'
-      - 'ios/wrappers/NativeCustomerIO.mm'
-      - 'ios/wrappers/liveactivities/NativeLiveActivities.swift'
-      - 'ios/wrappers/push/**'
-      - 'ios/wrappers/utils/CioConfigUtils.swift'
-      - 'ios/wrappers/utils/CioConstants.swift'
-      - 'ios/wrappers/CustomerioReactnative-Bridging-Header.h'
-      - 'ios/cocoapods_deployment_target.rb'
-      - 'customerio-reactnative.podspec'
-      - 'scripts/test_ios_deep_link_request_store.swift'
-      - 'package.json'
-      - 'package-lock.json'
   schedule:
     - cron: '47 7 * * *'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      full:
+        description: Run the label-triggered full lane.
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}-${{ inputs.full && 'full' || 'direct' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: xcode-27
     timeout-minutes: 60
 
@@ -92,15 +59,6 @@ jobs:
             | shasum -a 256 -c -
           unzip -q "$maestro_zip" -d "$maestro_dir"
           echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
-
-      - name: Test deep-link acknowledgement state
-        shell: bash
-        run: |
-          xcrun swiftc \
-            ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift \
-            scripts/test_ios_deep_link_request_store.swift \
-            -o "$RUNNER_TEMP/test-ios-deep-link-request-store"
-          "$RUNNER_TEMP/test-ios-deep-link-request-store"
 
       - name: Test warm and terminated notification routing
         shell: bash

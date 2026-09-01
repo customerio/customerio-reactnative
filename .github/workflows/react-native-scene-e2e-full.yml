@@ -1,0 +1,83 @@
+name: Full React Native scene routing E2E
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths-ignore:
+      - '**/*.md'
+
+permissions:
+  contents: read
+
+jobs:
+  select:
+    name: Select scene-routing E2E lane
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.paths.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select manual or affected-path validation
+        id: paths
+        shell: bash
+        env:
+          ACTION: ${{ github.event.action }}
+          LABEL: ${{ github.event.label.name }}
+          CI_FULL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          run=false
+
+          if [[ "$ACTION" == 'labeled' ]]; then
+            if [[ "$LABEL" == 'ci:full' ]]; then
+              run=true
+            fi
+          elif [[ "$CI_FULL" == 'true' ]]; then
+            # Keep validating new commits after ci:full has been applied.
+            run=true
+          else
+            changed_paths="$RUNNER_TEMP/react-native-scene-e2e-paths"
+            git cat-file -e "$BASE_SHA^{commit}"
+            git cat-file -e "$HEAD_SHA^{commit}"
+            git diff --no-renames --name-only -z "$BASE_SHA...$HEAD_SHA" > "$changed_paths"
+
+            while IFS= read -r -d '' path; do
+              case "$path" in
+                .github/workflows/react-native-scene-e2e.yml|.github/workflows/react-native-scene-e2e-full.yml|.maestro/*|scripts/test_ios_deep_link_request_store.swift)
+                  run=true
+                  break
+                  ;;
+                ios/wrappers/CustomerIOReactNativeDeepLinkRouter.swift|ios/wrappers/CustomerIOReactNativeDeepLinkRequestStore.swift|ios/wrappers/NativeCustomerIO.swift|ios/wrappers/NativeCustomerIO.mm|ios/wrappers/liveactivities/NativeLiveActivities.*|ios/wrappers/push/*)
+                  run=true
+                  break
+                  ;;
+                ios/wrappers/utils/CioConfigUtils.swift|src/utils/native-bridge.ts|src/utils/param-validation.ts)
+                  run=true
+                  break
+                  ;;
+                src/customerio-cdp.ts|src/customerio-push.ts|src/customerio-liveactivities.ts|src/specs/modules/NativeCustomerIO.ts|src/specs/modules/NativeCustomerIOMessagingPush.ts|src/specs/modules/NativeCustomerIOLiveActivities.ts)
+                  run=true
+                  break
+                  ;;
+              esac
+            done < "$changed_paths"
+          fi
+
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+  full-scene-e2e:
+    needs: select
+    # Direct scene-routing paths run automatically. ci:full remains an explicit
+    # escape hatch for any other non-documentation PR.
+    if: >-
+      needs.select.outputs.run == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]'
+    uses: ./.github/workflows/react-native-scene-e2e.yml
+    with:
+      full: true
