@@ -41,14 +41,18 @@ jobs:
         uses: cycjimmy/semantic-release-action@0a51e81a6baff2acad3ee88f4121c589c73d0f0e # v4.2.0
         id: semantic-release
         with:
-          # Both pinned deliberately. The conventionalcommits 10.x line renders through
-          # @conventional-changelog/template, which needs conventional-changelog-writer@9;
+          # Every version here is pinned deliberately. The conventionalcommits 10.x line renders
+          # through @conventional-changelog/template, which needs conventional-changelog-writer@9;
           # every released semantic-release resolves writer@8, so 10.x cannot render here.
+          #
+          # Dependabot cannot see these versions: the `github-actions` ecosystem only resolves
+          # `uses:` refs, and no ecosystem parses `extra_plugins`. An unpinned entry silently
+          # floats to whatever is `latest` at release time, so bump these by hand.
           semantic_version: 25.0.9
           extra_plugins: |
             conventional-changelog-conventionalcommits@9.3.1
-            @semantic-release/github
-            @semantic-release/exec
+            @semantic-release/github@12.0.9
+            @semantic-release/exec@7.1.0
         env:
           # Needs to push git commits to repo. Needs write access.
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
