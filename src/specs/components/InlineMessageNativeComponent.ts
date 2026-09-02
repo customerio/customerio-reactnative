@@ -8,6 +8,7 @@ import type { HostComponent, ViewProps } from 'react-native';
 import type {
   DirectEventHandler,
   Double,
+  WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 
@@ -46,6 +47,7 @@ export interface ActionClickEvent {
 export interface NativeProps extends ViewProps {
   /** Required element ID for retrieving inline message content. */
   elementId: string;
+  showScrollIndicators?: WithDefault<boolean, true>;
   onSizeChange: DirectEventHandler<SizeChangeEvent>;
   onStateChange?: DirectEventHandler<StateChangeEvent>;
   onActionClick?: DirectEventHandler<ActionClickEvent>;
