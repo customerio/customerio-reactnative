@@ -274,6 +274,18 @@ class NativeMessagingInAppModule(
             val unreadCountTemplate = labels.getTypedValue<String>(
                 Keys.InboxAccessibilityLabels.BELL_WITH_UNREAD_COUNT
             )
+            // A mistyped placeholder (`{COUNT}`, `{{count}}`, `%d`) substitutes nothing and is read
+            // aloud verbatim, braces included, with the count never announced. Nothing else in the
+            // stack can surface that, so say it here.
+            if (unreadCountTemplate != null &&
+                !unreadCountTemplate.contains(Keys.InboxAccessibilityLabels.COUNT_PLACEHOLDER)
+            ) {
+                SDKComponent.logger.debug(
+                    "Inbox accessibility label 'bellWithUnreadCount' has no " +
+                        "'${Keys.InboxAccessibilityLabels.COUNT_PLACEHOLDER}' placeholder, so the " +
+                        "unread count will not be announced."
+                )
+            }
             return NotificationInboxAccessibilityLabels(
                 bell = labels.getTypedValue<String>(Keys.InboxAccessibilityLabels.BELL),
                 bellWithUnreadCount = unreadCountTemplate?.let { template ->

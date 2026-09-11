@@ -98,8 +98,14 @@ export const SettingsScreen = () => {
           label="Enable In-App Messaging"
           value={config.inApp?.siteId !== undefined}
           onValueChange={(enableInApp) => {
+            // Disabling clears `inApp` entirely, so re-enabling has nothing to spread
+            // and would drop the accessibility labels. Fall back to the defaults.
             const inApp = enableInApp
-              ? { ...config.inApp, siteId: config.inApp?.siteId ?? '' }
+              ? {
+                  ...Storage.instance.getDefaultCioConfig().inApp,
+                  ...config.inApp,
+                  siteId: config.inApp?.siteId ?? '',
+                }
               : undefined;
             setConfig({ ...config, inApp });
           }}

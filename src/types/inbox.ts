@@ -97,8 +97,12 @@ export type NotificationInboxAccessibilityLabels = {
    */
   bellWithUnreadCount?: string;
   /**
-   * Label announced for the loading spinner. Unset → no label, leaving only the indeterminate
-   * progress role that the platform describes in the device's own language.
+   * Label announced for the loading spinner.
+   *
+   * Unset behaves differently per platform: on Android the spinner keeps its indeterminate
+   * progress role, which TalkBack describes in the device's own language, while on iOS it is not
+   * an accessibility element at all, so VoiceOver skips it rather than focusing an unnamed
+   * control. Set a label if you want the loading state announced on both.
    */
   loadingIndicator?: string;
   /** Label announced for the empty-state icon. Unset → the icon is treated as decorative. */

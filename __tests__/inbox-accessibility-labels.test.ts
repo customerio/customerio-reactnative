@@ -3,10 +3,13 @@
  *
  * The labels are plain data on `CioConfig['inApp']`, and the native side does the real work: iOS
  * parses the dictionary in `MessagingInAppConfigBuilder.build(from:)`, Android converts the
- * `{count}` template into the `(Int) -> String` the SDK expects. What JavaScript owns is the
- * contract — the labels must reach `native.initialize` intact, under exactly the keys the native
- * parsers look for. A rename on either side silently drops every label (the SDK emits no text of
- * its own, so the UI would simply go unlabeled rather than fail), which is what this locks down.
+ * `{count}` template into the `(Int) -> String` the SDK expects.
+ *
+ * Scope: these cover only the JavaScript half — that `initialize` forwards the object intact,
+ * under the key the native parsers read, without interpolating the count. They do NOT pin the
+ * native key names; renaming `bell` in either parser leaves these green while every label stops
+ * arriving. Guarding that needs a test on the native side of each bridge, which on Android would
+ * require a test source set this package does not have.
  *
  * `jest.mock` factories are hoisted above module-scope declarations, so each mock is created
  * inside its factory and read back from the imported (mocked) module.
