@@ -30,6 +30,7 @@ export type CioConfig = {
     autoTrackDeviceAttributes?: boolean;
     inApp?: {
         siteId: string;
+        notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
     };
     push?: {
         android?: {
@@ -350,6 +351,14 @@ export class NotificationInbox implements NotificationInboxPublicSpec {
     subscribeToMessages(listener: NotificationInboxChangeListener, topic?: string): EventSubscription;
     trackMessageClicked(message: InboxMessage, actionName?: string): void;
 }
+
+// @public
+export type NotificationInboxAccessibilityLabels = {
+    bell?: string;
+    bellWithUnreadCount?: string;
+    loadingIndicator?: string;
+    emptyState?: string;
+};
 
 // @public (undocumented)
 export const NotificationInboxBellView: React_2.FC<NotificationInboxBellViewProps>;

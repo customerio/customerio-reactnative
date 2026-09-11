@@ -1,3 +1,4 @@
+import type { NotificationInboxAccessibilityLabels } from './inbox';
 import type { LiveActivitiesConfig } from './live-activities';
 import type { PushClickBehaviorAndroid } from './push';
 
@@ -67,6 +68,11 @@ export type CioConfig = {
   autoTrackDeviceAttributes?: boolean;
   inApp?: {
     siteId: string;
+    /**
+     * Accessibility labels for the Visual Notification Inbox. Optional; an omitted label leaves
+     * that element unlabeled rather than falling back to English.
+     */
+    notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
   };
   push?: {
     android?: {

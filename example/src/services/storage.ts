@@ -19,6 +19,15 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     cdpApiKey: env?.API_KEY ?? '',
     inApp: {
       siteId: env?.SITE_ID ?? '',
+      // The SDK ships no text of its own in the visual inbox, so these are the only strings it
+      // can announce. A real app would resolve them through its own i18n so they follow the
+      // user's language; they are hardcoded here only to keep the sample self-contained.
+      notificationInboxAccessibilityLabels: {
+        bell: 'Notifications',
+        bellWithUnreadCount: 'Notifications, {count} unread',
+        loadingIndicator: 'Loading inbox',
+        emptyState: 'No notifications',
+      },
     },
     region: CioRegion.US,
     logLevel: CioLogLevel.Debug,

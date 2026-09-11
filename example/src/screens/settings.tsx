@@ -38,7 +38,9 @@ export const SettingsScreen = () => {
         />
         <TextField
           onChangeText={(siteId) => {
-            const inApp = { siteId: siteId };
+            // Spread the existing config so editing the site ID keeps the accessibility
+            // labels configured in the default config.
+            const inApp = { ...config.inApp, siteId: siteId };
             setConfig({ ...config, inApp });
           }}
           label="Site ID"
@@ -97,7 +99,7 @@ export const SettingsScreen = () => {
           value={config.inApp?.siteId !== undefined}
           onValueChange={(enableInApp) => {
             const inApp = enableInApp
-              ? { siteId: config.inApp?.siteId ?? '' }
+              ? { ...config.inApp, siteId: config.inApp?.siteId ?? '' }
               : undefined;
             setConfig({ ...config, inApp });
           }}
