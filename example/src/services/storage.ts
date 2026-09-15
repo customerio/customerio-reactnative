@@ -19,15 +19,6 @@ const createDefaultConfig = (env: Env | null | undefined): Config => {
     cdpApiKey: env?.API_KEY ?? '',
     inApp: {
       siteId: env?.SITE_ID ?? '',
-      // The SDK ships no text of its own in the visual inbox, so these are the only strings it
-      // can announce. A real app would resolve them through its own i18n so they follow the
-      // user's language; they are hardcoded here only to keep the sample self-contained.
-      notificationInboxAccessibilityLabels: {
-        bell: 'Notifications',
-        bellWithUnreadCount: 'Notifications, {count} unread',
-        loadingIndicator: 'Loading inbox',
-        emptyState: 'No notifications',
-      },
     },
     region: CioRegion.US,
     logLevel: CioLogLevel.Debug,
@@ -76,25 +67,8 @@ export class Storage {
     this.user = userJsonPayload ? JSON.parse(userJsonPayload) : null;
     // Merge persisted config over defaults so newly added default keys (e.g. the
     // geofence opt-in) are present for installs saved before those keys existed.
-    const savedConfig: Config | null = cioConfigJsonPayload
-      ? JSON.parse(cioConfigJsonPayload)
-      : null;
-    this.config = savedConfig
-      ? {
-          ...Storage.defaultConfig,
-          ...savedConfig,
-          // `inApp` needs one more level of merging than the spread above gives it. A
-          // config saved before the accessibility labels existed carries only `siteId`,
-          // so a shallow spread replaces the defaults' `inApp` wholesale and silently
-          // drops them — leaving every device that ever opened Settings demonstrating
-          // the unlabeled inbox. Only merged when the saved config has `inApp` at all,
-          // so disabling in-app messaging still persists.
-          ...(savedConfig.inApp
-            ? {
-                inApp: { ...Storage.defaultConfig.inApp, ...savedConfig.inApp },
-              }
-            : {}),
-        }
+    this.config = cioConfigJsonPayload
+      ? { ...Storage.defaultConfig, ...JSON.parse(cioConfigJsonPayload) }
       : null;
   };
 

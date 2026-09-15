@@ -38,9 +38,7 @@ export const SettingsScreen = () => {
         />
         <TextField
           onChangeText={(siteId) => {
-            // Spread the existing config so editing the site ID keeps the accessibility
-            // labels configured in the default config.
-            const inApp = { ...config.inApp, siteId: siteId };
+            const inApp = { siteId: siteId };
             setConfig({ ...config, inApp });
           }}
           label="Site ID"
@@ -98,14 +96,8 @@ export const SettingsScreen = () => {
           label="Enable In-App Messaging"
           value={config.inApp?.siteId !== undefined}
           onValueChange={(enableInApp) => {
-            // Disabling clears `inApp` entirely, so re-enabling has nothing to spread
-            // and would drop the accessibility labels. Fall back to the defaults.
             const inApp = enableInApp
-              ? {
-                  ...Storage.instance.getDefaultCioConfig().inApp,
-                  ...config.inApp,
-                  siteId: config.inApp?.siteId ?? '',
-                }
+              ? { siteId: config.inApp?.siteId ?? '' }
               : undefined;
             setConfig({ ...config, inApp });
           }}

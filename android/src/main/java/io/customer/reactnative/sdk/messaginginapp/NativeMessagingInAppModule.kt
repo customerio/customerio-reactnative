@@ -262,7 +262,8 @@ class NativeMessagingInAppModule(
          *
          * `bellWithUnreadCount` arrives as a template string because the bridge carries data but not
          * functions; it is converted here into the `(Int) -> String` the native SDK expects. A
-         * template without the placeholder is returned verbatim for every count.
+         * template without the placeholder is returned verbatim for every count; the JavaScript
+         * layer warns about that case, where the developer can actually see it.
          */
         private fun inboxAccessibilityLabelsFromConfig(
             config: Map<String, Any>
@@ -274,18 +275,6 @@ class NativeMessagingInAppModule(
             val unreadCountTemplate = labels.getTypedValue<String>(
                 Keys.InboxAccessibilityLabels.BELL_WITH_UNREAD_COUNT
             )
-            // A mistyped placeholder (`{COUNT}`, `{{count}}`, `%d`) substitutes nothing and is read
-            // aloud verbatim, braces included, with the count never announced. Nothing else in the
-            // stack can surface that, so say it here.
-            if (unreadCountTemplate != null &&
-                !unreadCountTemplate.contains(Keys.InboxAccessibilityLabels.COUNT_PLACEHOLDER)
-            ) {
-                SDKComponent.logger.debug(
-                    "Inbox accessibility label 'bellWithUnreadCount' has no " +
-                        "'${Keys.InboxAccessibilityLabels.COUNT_PLACEHOLDER}' placeholder, so the " +
-                        "unread count will not be announced."
-                )
-            }
             return NotificationInboxAccessibilityLabels(
                 bell = labels.getTypedValue<String>(Keys.InboxAccessibilityLabels.BELL),
                 bellWithUnreadCount = unreadCountTemplate?.let { template ->

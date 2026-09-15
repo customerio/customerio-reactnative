@@ -5,11 +5,12 @@
  * parses the dictionary in `MessagingInAppConfigBuilder.build(from:)`, Android converts the
  * `{count}` template into the `(Int) -> String` the SDK expects.
  *
- * Scope: these cover only the JavaScript half — that `initialize` forwards the object intact,
- * under the key the native parsers read, without interpolating the count. They do NOT pin the
- * native key names; renaming `bell` in either parser leaves these green while every label stops
- * arriving. Guarding that needs a test on the native side of each bridge, which on Android would
- * require a test source set this package does not have.
+ * Scope: these cover the JavaScript half — that `initialize` forwards the object intact, under
+ * the key the native parsers read, without interpolating the count — plus the placeholder
+ * warning, which lives in JavaScript precisely so it reaches the developer on both platforms.
+ * They do NOT pin the native key names; renaming `bell` in either parser leaves these green
+ * while every label stops arriving. Guarding that needs a test on the native side of each
+ * bridge, which on Android would require a test source set this package does not have.
  *
  * `jest.mock` factories are hoisted above module-scope declarations, so each mock is created
  * inside its factory and read back from the imported (mocked) module.
@@ -124,6 +125,73 @@ describe('notification inbox accessibility labels', () => {
     const [forwardedConfig] = nativeInitialize.mock.calls[0];
     expect(forwardedConfig.inApp.notificationInboxAccessibilityLabels).toEqual({
       emptyState: 'Inga aviseringar',
+    });
+  });
+
+  // A mistyped placeholder is substituted by nothing and announced verbatim, braces included.
+  // Neither native layer can report that usefully — Android logs below the default level and
+  // iOS does not check at all — so the warning is raised here instead.
+  describe('{count} placeholder warning', () => {
+    let warn: jest.SpyInstance;
+
+    beforeEach(() => {
+      warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      warn.mockRestore();
+    });
+
+    it('warns when the template is missing the placeholder', async () => {
+      await CustomerIO.initialize(
+        configWith({
+          siteId: 'site',
+          notificationInboxAccessibilityLabels: {
+            bellWithUnreadCount: 'Aviseringar, {COUNT} olasta',
+          },
+        })
+      );
+
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('bellWithUnreadCount')
+      );
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('{count}'));
+    });
+
+    it('still initializes when the placeholder is mistyped', async () => {
+      await CustomerIO.initialize(
+        configWith({
+          siteId: 'site',
+          notificationInboxAccessibilityLabels: {
+            bellWithUnreadCount: 'Aviseringar, %d olasta',
+          },
+        })
+      );
+
+      // A cosmetic label typo must degrade the announcement, never fail initialization.
+      expect(nativeInitialize).toHaveBeenCalled();
+    });
+
+    it('stays quiet when the placeholder is present', async () => {
+      await CustomerIO.initialize(
+        configWith({
+          siteId: 'site',
+          notificationInboxAccessibilityLabels: labels,
+        })
+      );
+
+      expect(warn).not.toHaveBeenCalled();
+    });
+
+    it('stays quiet when bellWithUnreadCount is not configured', async () => {
+      await CustomerIO.initialize(
+        configWith({
+          siteId: 'site',
+          notificationInboxAccessibilityLabels: { bell: 'Aviseringar' },
+        })
+      );
+
+      expect(warn).not.toHaveBeenCalled();
     });
   });
 });

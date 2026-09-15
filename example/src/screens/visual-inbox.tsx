@@ -6,7 +6,7 @@ import {
   NotificationInboxView,
 } from 'customerio-reactnative';
 import React, { useEffect } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 
 /**
@@ -94,28 +94,6 @@ export const VisualInboxScreen = ({}: NavigationScreenProps<'Visual Inbox'>) => 
           Tapping the bell opens the SDK's inbox panel — this screen presents nothing.
         </Text>
 
-        {/*
-          Debug affordance for checking the empty state. It is driven entirely by SDK data —
-          NotificationInboxView takes no props that could force it — so the only way to see the
-          dimmed-bell empty state is a profile with no messages. Identifying a fresh random user
-          gives exactly that, through the real SDK path rather than a faked view state.
-        */}
-        <Pressable
-          style={styles.debugButton}
-          onPress={() => {
-            const userId = `inbox-empty-${Date.now()}`;
-            CustomerIO.identify({ userId });
-            showMessage({
-              message: `Identified ${userId} — inbox should now be empty`,
-              type: 'info',
-            });
-          }}
-        >
-          <Text style={styles.debugButtonText}>
-            Debug: identify a fresh profile (empty inbox)
-          </Text>
-        </Pressable>
-
         {/* 2. The message list, placed inline by this screen. */}
         <Text style={styles.sectionTitle}>NotificationInboxView</Text>
         <Text style={styles.sectionBody}>
@@ -149,14 +127,6 @@ const styles = StyleSheet.create({
   // 88 not 56: the native composition insets the 56dp bell by 16 on each side, so a
   // 56-square box squeezes the circle down onto the glyph.
   bell: { width: 88, height: 88 },
-  debugButton: {
-    backgroundColor: '#e8e8ef',
-    borderRadius: 6,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-  debugButtonText: { fontSize: 13, color: '#333', fontWeight: '600' },
   embeddedList: {
     flex: 1,
     backgroundColor: '#fff',

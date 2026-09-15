@@ -12,6 +12,18 @@ import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-
 import { enableFreeze, enableScreens } from 'react-native-screens';
 import { getEnvForApp } from './env';
 
+// The SDK ships no text of its own in the visual notification inbox, so these labels are the only
+// strings it can announce. Applied here, at the single initialize() call, rather than stored with
+// the editable Settings config: they are not something a tester should be able to edit away, and
+// keeping them out of the persisted config means Settings needs no special handling for them.
+// A real app would resolve these through its own i18n so they follow the user's language.
+const INBOX_ACCESSIBILITY_LABELS = {
+  bell: 'Notifications',
+  bellWithUnreadCount: 'Notifications, {count} unread',
+  loadingIndicator: 'Loading inbox',
+  emptyState: 'No notifications',
+};
+
 // Enable native screen optimizations for better performance
 enableScreens(true);        // Better native performance
 enableFreeze(true);         // Let tabs "freeze" when not focused
@@ -132,7 +144,18 @@ export default function App({ appName }: { appName: string }) {
             value={{
               onSetConfig: (config) => {
                 console.log('Initializing CustomerIO with config', config);
-                CustomerIO.initialize(config);
+                CustomerIO.initialize(
+                  config.inApp
+                    ? {
+                        ...config,
+                        inApp: {
+                          ...config.inApp,
+                          notificationInboxAccessibilityLabels:
+                            INBOX_ACCESSIBILITY_LABELS,
+                        },
+                      }
+                    : config
+                );
               },
               onLogin: (user) => {
                 console.log('Identifying user', user);
