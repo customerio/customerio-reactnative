@@ -1,3 +1,9 @@
+## [6.11.0](https://github.com/customerio/customerio-reactnative/compare/6.10.0...6.11.0) (2026-09-15)
+
+### Features
+
+* **inbox:** let apps configure visual inbox accessibility labels ([#658](https://github.com/customerio/customerio-reactnative/issues/658)) ([1d911c2](https://github.com/customerio/customerio-reactnative/commit/1d911c24b13c056f8276f8c9facb715ce077e166))
+
 ## [6.10.0](https://github.com/customerio/customerio-reactnative/compare/6.9.0...6.10.0) (2026-08-28)
 
 ### Features
