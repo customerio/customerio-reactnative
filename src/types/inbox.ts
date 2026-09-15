@@ -49,3 +49,62 @@ export class InboxMessageEvent {
     this.actionValue = actionValue;
   }
 }
+
+/**
+ * Host-provided accessibility labels for the Visual Notification Inbox UI.
+ *
+ * The SDK ships no text of its own in the visual inbox — the empty state is an icon and the
+ * loading state is a spinner — so accessibility labels are the one place a string is still
+ * needed. Because the SDK cannot know your app's language, every label is optional and unset by
+ * default, and an omitted label leaves that element unlabeled rather than falling back to
+ * English. Pass strings already localized for the user's language.
+ *
+ * @example
+ * ```ts
+ * CustomerIO.initialize({
+ *   cdpApiKey: '...',
+ *   inApp: {
+ *     siteId: '...',
+ *     notificationInboxAccessibilityLabels: {
+ *       bell: t('inbox.bell'),
+ *       bellWithUnreadCount: t('inbox.unread'), // e.g. "{count} unread notifications"
+ *       loadingIndicator: t('inbox.loading'),
+ *       emptyState: t('inbox.empty'),
+ *     },
+ *   },
+ * });
+ * ```
+ *
+ * @public
+ */
+export type NotificationInboxAccessibilityLabels = {
+  /**
+   * Label for the inbox bell button. Also used when the bell shows an unread badge but
+   * `bellWithUnreadCount` is not provided. Unset → the bell is announced as an unnamed button
+   * (it stays focusable and tappable; hiding it would leave screen reader users no way in).
+   */
+  bell?: string;
+  /**
+   * Label for the bell while it shows an unread badge. Include `{count}` where the number of
+   * unread messages should appear; it is substituted at render time. Unset → falls back to `bell`.
+   *
+   * The badge itself is always hidden from assistive technologies, so the count is announced
+   * only through this label, never as bare digits appended to the button.
+   *
+   * This is a template rather than a function because configuration crosses the native bridge,
+   * which carries data but not callbacks. One template cannot express languages whose plural
+   * rules need a distinct form per count.
+   */
+  bellWithUnreadCount?: string;
+  /**
+   * Label announced for the loading spinner.
+   *
+   * Unset behaves differently per platform: on Android the spinner keeps its indeterminate
+   * progress role, which TalkBack describes in the device's own language, while on iOS it is not
+   * an accessibility element at all, so VoiceOver skips it rather than focusing an unnamed
+   * control. Set a label if you want the loading state announced on both.
+   */
+  loadingIndicator?: string;
+  /** Label announced for the empty-state icon. Unset → the icon is treated as decorative. */
+  emptyState?: string;
+};

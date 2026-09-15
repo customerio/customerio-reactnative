@@ -33,6 +33,16 @@ function failIf(condition: boolean, message: () => string): void {
 }
 
 /**
+ * Logs a warning if the condition is true.
+ * Use this for misconfigurations that degrade behavior but must not fail initialization.
+ */
+function warnIf(condition: boolean, message: () => string): void {
+  if (__DEV__ && condition) {
+    console.warn(`[CustomerIO] ${message()}`);
+  }
+}
+
+/**
  * Validates that a value is defined (not undefined or null).
  * Useful for checking required fields.
  */
@@ -138,6 +148,37 @@ function validateAttributes(
 }
 
 /**
+ * The placeholder the SDK substitutes with the unread count when rendering
+ * `bellWithUnreadCount`.
+ */
+const COUNT_PLACEHOLDER = '{count}';
+
+/**
+ * Warns when `bellWithUnreadCount` is missing its `{count}` placeholder.
+ *
+ * The label is a template, not a finished string. A misspelled placeholder (`{COUNT}`,
+ * `{{count}}`, `%d`) matches nothing, so the template is announced verbatim — braces and all —
+ * and the count is never spoken. The check lives here rather than in either native layer
+ * because neither can report it usefully: Android logs at `debug`, which the default `ERROR`
+ * level discards, and iOS does not check at all. Warning from JavaScript reaches the
+ * developer's console on both platforms, whatever the SDK log level.
+ */
+function validateInboxAccessibilityLabels(value: unknown): void {
+  if (isUndefined(value) || typeof value !== 'object') {
+    return;
+  }
+
+  const template = (value as { bellWithUnreadCount?: unknown })
+    .bellWithUnreadCount;
+  warnIf(
+    typeof template === 'string' && !template.includes(COUNT_PLACEHOLDER),
+    () =>
+      `"inApp.notificationInboxAccessibilityLabels.bellWithUnreadCount" has no ` +
+      `"${COUNT_PLACEHOLDER}" placeholder, so the unread count will not be announced.`
+  );
+}
+
+/**
  * Validates that the given value is a valid CioConfig object.
  * Throws if required fields are missing or incorrectly typed.
  */
@@ -155,6 +196,9 @@ function validateConfig(value: unknown): asserts value is CioConfig {
     allowEmpty: false,
     usage: usage,
   });
+  validateInboxAccessibilityLabels(
+    obj.inApp?.notificationInboxAccessibilityLabels
+  );
 }
 
 // For type safety, we define a ConfigValidator type that asserts the value is a CioConfig

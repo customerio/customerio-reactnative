@@ -5,7 +5,7 @@ import { NavigationCallbackContext } from '@navigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { ContentNavigator } from '@screens';
 import { Storage } from '@services';
-import { appTheme } from '@utils';
+import { appTheme, withInboxAccessibilityLabels } from '@utils';
 import { CioConfig, CioPushPermissionStatus, CustomerIO, InAppMessageEvent, InAppMessageEventType } from 'customerio-reactnative';
 import FlashMessage from 'react-native-flash-message';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -59,7 +59,7 @@ export default function App({ appName }: { appName: string }) {
           'Initializing CustomerIO on app start with config',
           cioConfig
         );
-        CustomerIO.initialize(cioConfig);
+        CustomerIO.initialize(withInboxAccessibilityLabels(cioConfig));
       }
 
       const logInAppEvent = (name: string, params: InAppMessageEvent) => {
@@ -132,7 +132,7 @@ export default function App({ appName }: { appName: string }) {
             value={{
               onSetConfig: (config) => {
                 console.log('Initializing CustomerIO with config', config);
-                CustomerIO.initialize(config);
+                CustomerIO.initialize(withInboxAccessibilityLabels(config));
               },
               onLogin: (user) => {
                 console.log('Identifying user', user);

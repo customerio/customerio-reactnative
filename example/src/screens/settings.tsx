@@ -8,6 +8,7 @@ import {
   TextField,
 } from '@components';
 import { Storage } from '@services';
+import { withInboxAccessibilityLabels } from '@utils';
 import {
   CioConfig,
   CioLocationTrackingMode,
@@ -137,7 +138,9 @@ export const SettingsScreen = () => {
                 type: 'warning',
               });
             } else {
-              CustomerIO.initialize(config as CioConfig);
+              CustomerIO.initialize(
+                withInboxAccessibilityLabels(config as CioConfig)
+              );
               showMessage({
                 message:
                   'CustomerIO settings saved successfully and CustomerIO.initialize() has been called with the new settings',

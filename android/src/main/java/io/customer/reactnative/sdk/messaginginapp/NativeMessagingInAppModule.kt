@@ -10,6 +10,7 @@ import io.customer.messaginginapp.di.inAppMessaging
 import io.customer.messaginginapp.gist.data.model.InboxMessage
 import io.customer.messaginginapp.gist.data.model.response.InboxMessageFactory
 import io.customer.messaginginapp.inbox.NotificationInbox
+import io.customer.messaginginapp.type.NotificationInboxAccessibilityLabels
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingInAppSpec
 import io.customer.reactnative.sdk.constant.Keys
 import io.customer.reactnative.sdk.extension.getTypedValue
@@ -246,9 +247,51 @@ class NativeMessagingInAppModule(
             val module = ModuleMessagingInApp(
                 MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
+                    inboxAccessibilityLabelsFromConfig(config)?.let { labels ->
+                        setNotificationInboxAccessibilityLabels(labels)
+                    }
                 }.build(),
             )
             builder.addCustomerIOModule(module)
+        }
+
+        /**
+         * Builds the host's inbox accessibility labels from the wrapper configuration, or null when
+         * the app provided none — in which case the SDK keeps its default of emitting no labels at
+         * all rather than falling back to English.
+         *
+         * `bellWithUnreadCount` arrives as a template string because the bridge carries data but not
+         * functions; it is converted here into the `(Int) -> String` the native SDK expects. A
+         * template without the placeholder is returned verbatim for every count; the JavaScript
+         * layer warns about that case, where the developer can actually see it.
+         */
+        private fun inboxAccessibilityLabelsFromConfig(
+            config: Map<String, Any>
+        ): NotificationInboxAccessibilityLabels? {
+            val labels = config.getTypedValue<Map<String, Any>>(
+                Keys.Config.NOTIFICATION_INBOX_ACCESSIBILITY_LABELS
+            ) ?: return null
+
+            val unreadCountTemplate = labels.getTypedValue<String>(
+                Keys.InboxAccessibilityLabels.BELL_WITH_UNREAD_COUNT
+            )
+            return NotificationInboxAccessibilityLabels(
+                bell = labels.getTypedValue<String>(Keys.InboxAccessibilityLabels.BELL),
+                bellWithUnreadCount = unreadCountTemplate?.let { template ->
+                    { count: Int ->
+                        template.replace(
+                            Keys.InboxAccessibilityLabels.COUNT_PLACEHOLDER,
+                            count.toString()
+                        )
+                    }
+                },
+                loadingIndicator = labels.getTypedValue<String>(
+                    Keys.InboxAccessibilityLabels.LOADING_INDICATOR
+                ),
+                emptyState = labels.getTypedValue<String>(
+                    Keys.InboxAccessibilityLabels.EMPTY_STATE
+                )
+            )
         }
     }
 }
