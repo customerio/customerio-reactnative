@@ -1,3 +1,9 @@
+## [6.12.0](https://github.com/customerio/customerio-reactnative/compare/6.11.0...6.12.0) (2026-09-17)
+
+### Features
+
+* **in-app:** allow overriding the in-app message color scheme ([#660](https://github.com/customerio/customerio-reactnative/issues/660)) ([223363c](https://github.com/customerio/customerio-reactnative/commit/223363cff35d015915116d7608c0115333b3a74e))
+
 ## [6.11.0](https://github.com/customerio/customerio-reactnative/compare/6.10.0...6.11.0) (2026-09-15)
 
 ### Features
