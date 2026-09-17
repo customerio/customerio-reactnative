@@ -99,6 +99,49 @@ describe('in-app color scheme', () => {
 
       expect(nativeSetColorScheme).toHaveBeenCalledWith('auto');
     });
+
+    // The setter is public and reachable from untyped JavaScript, so it validates too. Its
+    // fallback differs from the config path's — native leaves the current scheme in place
+    // rather than dropping to `auto` — so the warning has to say something different.
+    describe('invalid argument', () => {
+      let warn: jest.SpyInstance;
+
+      beforeEach(() => {
+        warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      });
+
+      afterEach(() => {
+        warn.mockRestore();
+      });
+
+      it('warns and says the scheme is left unchanged', () => {
+        CustomerIO.inAppMessaging.setColorScheme(
+          'DARK' as unknown as CioColorScheme
+        );
+
+        expect(warn).toHaveBeenCalledWith(
+          expect.stringContaining('left unchanged')
+        );
+      });
+
+      it('warns when no scheme is given at all', () => {
+        // Absent is the mistake here, unlike in the config, where it just means "use the
+        // native default" — so null must not be skipped the way the config path skips it.
+        CustomerIO.inAppMessaging.setColorScheme(
+          null as unknown as CioColorScheme
+        );
+
+        expect(warn).toHaveBeenCalledWith(
+          expect.stringContaining('"colorScheme"')
+        );
+      });
+
+      it('stays quiet for a valid scheme', () => {
+        CustomerIO.inAppMessaging.setColorScheme(CioColorScheme.Dark);
+
+        expect(warn).not.toHaveBeenCalled();
+      });
+    });
   });
 
   // TypeScript rejects a bad value, but JavaScript callers reach this untyped. Neither native

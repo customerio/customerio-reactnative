@@ -106,11 +106,17 @@ public class NativeMessagingInApp: NSObject {
     /// cross Codegen. An unrecognized value leaves the current scheme alone instead of resetting
     /// it to `.auto`, so a typo cannot quietly undo a scheme the app set correctly earlier — the
     /// Android bridge behaves the same way.
+    ///
+    /// The parameter is optional even though Codegen declares it non-null: untyped JavaScript can
+    /// still pass `null` or `undefined`, which the bridge forwards as `nil`. Bridging that into a
+    /// non-optional `String` would trap before the value could be reported, and Android accepts a
+    /// nullable argument for the same reason, so a non-optional type here would also leave the two
+    /// platforms behaving differently on the same input.
     @objc(setColorScheme:)
-    public func setColorScheme(_ colorScheme: String) {
+    public func setColorScheme(_ colorScheme: String?) {
         guard let resolved = Self.colorScheme(fromRawValue: colorScheme) else {
             logger.error(
-                "Unrecognized in-app colorScheme '\(colorScheme)', expected one of auto, light, dark. Leaving the color scheme unchanged."
+                "Unrecognized in-app colorScheme '\(colorScheme ?? "nil")', expected one of auto, light, dark. Leaving the color scheme unchanged."
             )
             return
         }
@@ -133,7 +139,7 @@ public class NativeMessagingInApp: NSObject {
     /// Matched explicitly rather than handed to `MessagingInAppConfigBuilder`, which resolves
     /// anything unrecognized to `.auto`; here an unrecognized value has to stay distinguishable
     /// so it can be reported.
-    private static func colorScheme(fromRawValue rawValue: String) -> ColorScheme? {
+    private static func colorScheme(fromRawValue rawValue: String?) -> ColorScheme? {
         switch rawValue {
         case "auto": return .auto
         case "light": return .light

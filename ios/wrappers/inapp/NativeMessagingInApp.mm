@@ -66,6 +66,9 @@ RCT_EXPORT_MODULE()
   [_swiftBridge dismissMessage];
 }
 
+// Signature matches the Codegen protocol, which declares the argument nonnull. ObjC does not
+// enforce that at runtime, so a JavaScript null still arrives here as nil and is forwarded; the
+// Swift side takes an optional and reports it rather than trapping.
 - (void)setColorScheme:(NSString *)colorScheme {
   [self assertBridgeAvailable:@"during setColorScheme"];
   [_swiftBridge setColorScheme:colorScheme];

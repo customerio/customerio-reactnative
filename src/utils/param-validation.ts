@@ -180,25 +180,57 @@ function validateInboxAccessibilityLabels(value: unknown): void {
 }
 
 /**
- * Warns when `inApp.colorScheme` is not one of the `CioColorScheme` values.
+ * Warns when a value is not one of the `CioColorScheme` values.
  *
- * TypeScript rejects a bad value already, but JavaScript callers reach this untyped and
- * neither native layer can report the mistake: both resolve an unrecognized value to
- * `auto`, so a typo renders whichever variant the device asks for instead of the one the
- * app asked for — a wrong theme rather than a visible failure. Warning from JavaScript is
- * the only place the developer sees it, on either platform and at any SDK log level.
+ * TypeScript rejects a bad value already, but JavaScript callers reach both entry points
+ * untyped, and neither native layer reports the mistake at the default log level. The
+ * failure mode is a message rendered in the wrong theme with no error attached, so
+ * JavaScript is the only place the developer reliably sees it.
+ *
+ * `consequence` differs per entry point because the native fallback does: an unrecognized
+ * value at initialization resolves to `auto`, while the runtime setter leaves whatever
+ * scheme the app already chose in place.
  */
-function validateColorScheme(value: unknown): void {
-  if (isUndefined(value)) {
-    return;
-  }
-
+function warnIfNotColorScheme(
+  value: unknown,
+  fieldName: string,
+  consequence: string
+): void {
   const allowed: string[] = Object.values(CioColorScheme);
   warnIf(
     !(typeof value === 'string' && allowed.includes(value)),
     () =>
-      `"inApp.colorScheme" is not a valid CioColorScheme (expected one of ` +
-      `${allowed.join(', ')}), so in-app messages will follow the device appearance.`
+      `"${fieldName}" is not a valid CioColorScheme (expected one of ` +
+      `${allowed.join(', ')}), so ${consequence}.`
+  );
+}
+
+/**
+ * Validates `inApp.colorScheme`. An absent value is legitimate here — the native SDKs
+ * already default to `auto` — so only a value the host actually set is checked.
+ */
+function validateConfigColorScheme(value: unknown): void {
+  if (isUndefined(value)) {
+    return;
+  }
+
+  warnIfNotColorScheme(
+    value,
+    'inApp.colorScheme',
+    'in-app messages will follow the device appearance'
+  );
+}
+
+/**
+ * Validates the argument to `setColorScheme`. Unlike the config field, an absent value is
+ * itself the mistake: the caller asked for a scheme change and named none, and there is no
+ * default to fall back to, so null and undefined are reported rather than skipped.
+ */
+function validateColorSchemeArgument(value: unknown): void {
+  warnIfNotColorScheme(
+    value,
+    'colorScheme',
+    'the color scheme will be left unchanged'
   );
 }
 
@@ -220,7 +252,7 @@ function validateConfig(value: unknown): asserts value is CioConfig {
     allowEmpty: false,
     usage: usage,
   });
-  validateColorScheme(obj.inApp?.colorScheme);
+  validateConfigColorScheme(obj.inApp?.colorScheme);
   validateInboxAccessibilityLabels(
     obj.inApp?.notificationInboxAccessibilityLabels
   );
@@ -235,11 +267,13 @@ export const assert: {
   record: typeof validateRecord;
   attributes: typeof validateAttributes;
   config: ConfigValidator;
+  colorScheme: typeof validateColorSchemeArgument;
 } = {
   string: validateString,
   record: validateRecord,
   attributes: validateAttributes,
   config: validateConfig,
+  colorScheme: validateColorSchemeArgument,
 };
 
 export const validate = {

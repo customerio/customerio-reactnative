@@ -12,6 +12,7 @@ import NativeCustomerIOMessagingInApp, {
 import type { CioColorScheme, InAppMessageEventType } from './types';
 import { InboxEventType, InboxMessageEvent } from './types';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
+import { assert } from './utils/param-validation';
 
 /**
  * Ensures all methods defined in codegen spec are implemented by the public module
@@ -191,6 +192,9 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
    * the device appearance
    */
   setColorScheme(colorScheme: CioColorScheme) {
+    // Validated here as well as in `initialize`: this is a public method reachable from
+    // untyped JavaScript, and without it a bad value reaches the native fallback silently.
+    assert.colorScheme(colorScheme);
     withNativeModule((native) => native.setColorScheme(colorScheme));
   }
 
