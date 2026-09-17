@@ -100,6 +100,54 @@ public class NativeMessagingInApp: NSObject {
         MessagingInApp.shared.dismissMessage()
     }
 
+    /// Overrides the color scheme used to render in-app messages.
+    ///
+    /// Receives the raw value of the JavaScript `CioColorScheme`, since the enum itself cannot
+    /// cross Codegen. An unrecognized value leaves the current scheme alone instead of resetting
+    /// it to `.auto`, so a typo cannot quietly undo a scheme the app set correctly earlier — the
+    /// Android bridge behaves the same way.
+    ///
+    /// The parameter is optional even though Codegen declares it non-null: untyped JavaScript can
+    /// still pass `null` or `undefined`, which the bridge forwards as `nil`. Bridging that into a
+    /// non-optional `String` would trap before the value could be reported, and Android accepts a
+    /// nullable argument for the same reason, so a non-optional type here would also leave the two
+    /// platforms behaving differently on the same input.
+    @objc(setColorScheme:)
+    public func setColorScheme(_ colorScheme: String?) {
+        guard let resolved = Self.colorScheme(fromRawValue: colorScheme) else {
+            logger.error(
+                "Unrecognized in-app colorScheme '\(colorScheme ?? "nil")', expected one of auto, light, dark. Leaving the color scheme unchanged."
+            )
+            return
+        }
+        // Without this the call is dropped in silence: `setColorScheme` forwards through the
+        // module's `implementation?`, which is nil until the SDK is initialized, and the only
+        // trace is an `.info` line the default `.error` log level discards. Android logs this
+        // case at error, so reporting it here is what keeps the two platforms diagnosable in the
+        // same way. Logged rather than failed, again to match Android, which completes the call.
+        guard MessagingInApp.shared.hasBeenInitialized else {
+            logger.error(
+                "In-app messaging is not available, so the color scheme was not applied. Ensure CustomerIO SDK is initialized with the inApp configuration."
+            )
+            return
+        }
+        MessagingInApp.shared.setColorScheme(resolved)
+    }
+
+    /// Maps the wrapper's lowercase wire value onto the native `ColorScheme`.
+    ///
+    /// Matched explicitly rather than handed to `MessagingInAppConfigBuilder`, which resolves
+    /// anything unrecognized to `.auto`; here an unrecognized value has to stay distinguishable
+    /// so it can be reported.
+    private static func colorScheme(fromRawValue rawValue: String?) -> ColorScheme? {
+        switch rawValue {
+        case "auto": return .auto
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
+
     // MARK: - Inbox Methods
 
     @objc(setupInboxListener)

@@ -14,6 +14,8 @@ import type {
 /** TurboModule interface for CustomerIO In-App Messaging native operations */
 export interface Spec extends TurboModule {
   dismissMessage(): void;
+  // Carries the CioColorScheme string value; the enum itself cannot cross Codegen.
+  setColorScheme(colorScheme: string): void;
   readonly onInAppEventReceived: EventEmitter<UnsafeObject>;
   // Notification Inbox event listener methods.
   // Registers/unregisters a native forwarder with the SDK so inbox events

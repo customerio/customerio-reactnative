@@ -10,6 +10,7 @@ import io.customer.messaginginapp.di.inAppMessaging
 import io.customer.messaginginapp.gist.data.model.InboxMessage
 import io.customer.messaginginapp.gist.data.model.response.InboxMessageFactory
 import io.customer.messaginginapp.inbox.NotificationInbox
+import io.customer.messaginginapp.type.ColorScheme
 import io.customer.messaginginapp.type.NotificationInboxAccessibilityLabels
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingInAppSpec
 import io.customer.reactnative.sdk.constant.Keys
@@ -71,6 +72,35 @@ class NativeMessagingInAppModule(
 
     override fun dismissMessage() {
         inAppMessagingModule?.dismissMessage()
+    }
+
+    // Nullable like every other argument-taking override here, and for the same reason: Codegen
+    // declares the parameter non-null, so a non-null Kotlin type would throw
+    // `Intrinsics.checkNotNullParameter` before the body runs when JavaScript passes null — which
+    // is what an untyped caller reading a stored theme sends on first launch.
+    override fun setColorScheme(colorScheme: String?) {
+        val resolved = colorSchemeFromRawValue(colorScheme)
+        if (resolved == null) {
+            // Leave the current scheme alone rather than resetting it to AUTO, so a bad value
+            // cannot quietly undo a scheme the app set correctly earlier.
+            logger.error(
+                "Unrecognized in-app colorScheme '$colorScheme', expected one of auto, light, " +
+                    "dark. Leaving the color scheme unchanged."
+            )
+            return
+        }
+        val module = inAppMessagingModule
+        if (module == null) {
+            // Reachable when the host calls this before CustomerIO.initialize, or without the
+            // in-app module configured. Logged rather than ignored: the scheme is silently not
+            // applied, and nothing else surfaces that.
+            logger.error(
+                "In-app messaging is not available, so the color scheme was not applied. " +
+                    "Ensure CustomerIO SDK is initialized with the inApp configuration."
+            )
+            return
+        }
+        module.setColorScheme(resolved)
     }
 
     override fun setupInboxListener() {
@@ -247,12 +277,47 @@ class NativeMessagingInAppModule(
             val module = ModuleMessagingInApp(
                 MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
+                    colorSchemeFromConfig(config)?.let { colorScheme ->
+                        setColorScheme(colorScheme)
+                    }
                     inboxAccessibilityLabelsFromConfig(config)?.let { labels ->
                         setNotificationInboxAccessibilityLabels(labels)
                     }
                 }.build(),
             )
             builder.addCustomerIOModule(module)
+        }
+
+        /**
+         * Maps the wrapper's `colorScheme` value onto the native [ColorScheme], or null when the
+         * value is absent or unrecognized.
+         *
+         * The accepted values are lowercase because that is the wire contract the JavaScript
+         * `CioColorScheme` enum serializes to and the one iOS already matches. Kept free of
+         * logging so each caller can report a bad value in its own terms: at initialization an
+         * unrecognized value falls back to AUTO, while the runtime setter leaves the scheme the
+         * app already chose untouched.
+         */
+        internal fun colorSchemeFromRawValue(rawValue: String?): ColorScheme? = when (rawValue) {
+            "auto" -> ColorScheme.AUTO
+            "light" -> ColorScheme.LIGHT
+            "dark" -> ColorScheme.DARK
+            else -> null
+        }
+
+        private fun colorSchemeFromConfig(config: Map<String, Any>): ColorScheme? {
+            // Absent is not a mistake — the SDK's own AUTO default stands — so only a value the
+            // host actually provided is worth reporting.
+            val rawValue = config.getTypedValue<String>(Keys.Config.COLOR_SCHEME) ?: return null
+
+            return colorSchemeFromRawValue(rawValue).also { resolved ->
+                if (resolved == null) {
+                    SDKComponent.logger.error(
+                        "Unrecognized in-app colorScheme '$rawValue', expected one of auto, " +
+                            "light, dark. Falling back to the device appearance."
+                    )
+                }
+            }
         }
 
         /**

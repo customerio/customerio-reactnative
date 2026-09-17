@@ -28,6 +28,29 @@ export enum InAppMessageEventType {
 }
 
 /**
+ * Color scheme used to render in-app messages.
+ *
+ * Selects which of the light/dark variants authored in the Customer.io editor is
+ * rendered. Use it when the app has its own appearance setting that can disagree with
+ * the operating system: `Auto` follows the device, while `Light` and `Dark` pin the
+ * variant regardless of it.
+ *
+ * The string values are the wire contract shared with both native SDKs, which match
+ * them lowercase and resolve anything unrecognized to `auto` — so they must stay
+ * exactly as written here even if the members are renamed.
+ *
+ * @public
+ */
+export enum CioColorScheme {
+  /** Follow the device's current appearance. The default when unset. */
+  Auto = 'auto',
+  /** Always render the light variant, whatever the device is set to. */
+  Light = 'light',
+  /** Always render the dark variant, whatever the device is set to. */
+  Dark = 'dark',
+}
+
+/**
  * Represents an inbox message for a user.
  *
  * Inbox messages are persistent messages that can be displayed in a message center or inbox UI.
