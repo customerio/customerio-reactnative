@@ -74,11 +74,19 @@ class NativeMessagingInAppModule(
         inAppMessagingModule?.dismissMessage()
     }
 
-    override fun setColorScheme(colorScheme: String) {
-        val resolved = colorSchemeFromRawValue(colorScheme, logger)
+    // Nullable like every other argument-taking override here, and for the same reason: Codegen
+    // declares the parameter non-null, so a non-null Kotlin type would throw
+    // `Intrinsics.checkNotNullParameter` before the body runs when JavaScript passes null — which
+    // is what an untyped caller reading a stored theme sends on first launch.
+    override fun setColorScheme(colorScheme: String?) {
+        val resolved = colorSchemeFromRawValue(colorScheme)
         if (resolved == null) {
-            // Unrecognized value: leave the current scheme alone rather than resetting it to
-            // AUTO, so a typo cannot quietly undo a scheme the app set correctly earlier.
+            // Leave the current scheme alone rather than resetting it to AUTO, so a bad value
+            // cannot quietly undo a scheme the app set correctly earlier.
+            logger.error(
+                "Unrecognized in-app colorScheme '$colorScheme', expected one of auto, light, " +
+                    "dark. Leaving the color scheme unchanged."
+            )
             return
         }
         val module = inAppMessagingModule
@@ -282,36 +290,35 @@ class NativeMessagingInAppModule(
 
         /**
          * Maps the wrapper's `colorScheme` value onto the native [ColorScheme], or null when the
-         * host provided none — in which case the caller leaves the SDK's own AUTO default alone.
+         * value is absent or unrecognized.
          *
          * The accepted values are lowercase because that is the wire contract the JavaScript
-         * `CioColorScheme` enum serializes to and the one iOS already matches. An unrecognized
-         * value returns null and logs, rather than falling back to AUTO silently: the failure mode
-         * is a message rendered in the wrong theme, which looks like a styling bug rather than a
-         * configuration mistake.
+         * `CioColorScheme` enum serializes to and the one iOS already matches. Kept free of
+         * logging so each caller can report a bad value in its own terms: at initialization an
+         * unrecognized value falls back to AUTO, while the runtime setter leaves the scheme the
+         * app already chose untouched.
          */
-        internal fun colorSchemeFromRawValue(rawValue: String?, logger: Logger): ColorScheme? {
-            if (rawValue == null) return null
+        internal fun colorSchemeFromRawValue(rawValue: String?): ColorScheme? = when (rawValue) {
+            "auto" -> ColorScheme.AUTO
+            "light" -> ColorScheme.LIGHT
+            "dark" -> ColorScheme.DARK
+            else -> null
+        }
 
-            return when (rawValue) {
-                "auto" -> ColorScheme.AUTO
-                "light" -> ColorScheme.LIGHT
-                "dark" -> ColorScheme.DARK
-                else -> {
-                    logger.error(
-                        "Unrecognized in-app colorScheme '$rawValue', expected one of " +
-                            "auto, light, dark. Leaving the color scheme unchanged."
+        private fun colorSchemeFromConfig(config: Map<String, Any>): ColorScheme? {
+            // Absent is not a mistake — the SDK's own AUTO default stands — so only a value the
+            // host actually provided is worth reporting.
+            val rawValue = config.getTypedValue<String>(Keys.Config.COLOR_SCHEME) ?: return null
+
+            return colorSchemeFromRawValue(rawValue).also { resolved ->
+                if (resolved == null) {
+                    SDKComponent.logger.error(
+                        "Unrecognized in-app colorScheme '$rawValue', expected one of auto, " +
+                            "light, dark. Falling back to the device appearance."
                     )
-                    null
                 }
             }
         }
-
-        private fun colorSchemeFromConfig(config: Map<String, Any>): ColorScheme? =
-            colorSchemeFromRawValue(
-                config.getTypedValue<String>(Keys.Config.COLOR_SCHEME),
-                SDKComponent.logger
-            )
 
         /**
          * Builds the host's inbox accessibility labels from the wrapper configuration, or null when

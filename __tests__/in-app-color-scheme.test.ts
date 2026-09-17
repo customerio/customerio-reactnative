@@ -1,6 +1,6 @@
 /**
- * Verifies the in-app color scheme override survives the JS -> native hop, by both routes it can
- * travel: once through `initialize`, and again through the runtime setter.
+ * Covers the two things the JavaScript layer actually owns for the in-app color scheme override:
+ * the wire value, and the runtime setter reaching the native module.
  *
  * The native SDKs do the real work — each resolves the scheme and re-themes messages already on
  * screen, inline views included. What only JavaScript can get wrong is the wire value: both
@@ -9,8 +9,12 @@
  * instead of the one the app asked for. That is a styling bug with no error attached, which is
  * why the serialized values are pinned here.
  *
- * Scope: the JavaScript half only. These do NOT pin the native key name — renaming `colorScheme`
- * in either bridge leaves them green while the override stops arriving.
+ * Deliberately NOT covered: the `initialize` path. `CustomerIO.initialize` forwards the config
+ * object verbatim, so asserting `colorScheme` on the forwarded payload only re-reads the literal
+ * the test itself built — it would stay green if the Android config key or either native mapper
+ * broke. The integration points that can actually break are `Keys.Config.COLOR_SCHEME` and
+ * `colorSchemeFromRawValue` on Android and `colorScheme(fromRawValue:)` on iOS; guarding those
+ * needs a test on the native side of each bridge, which this package has no harness for.
  *
  * `jest.mock` factories are hoisted above module-scope declarations, so each mock is created
  * inside its factory and read back from the imported (mocked) module.
@@ -66,8 +70,6 @@ const nativeSetColorScheme = NativeInAppModule.setColorScheme as jest.Mock;
 const configWith = (inApp: CioConfig['inApp']): CioConfig =>
   ({ cdpApiKey: 'test-key', inApp }) as CioConfig;
 
-const forwardedInApp = () => nativeInitialize.mock.calls[0][0].inApp;
-
 describe('in-app color scheme', () => {
   beforeEach(() => {
     nativeInitialize.mockClear();
@@ -82,24 +84,6 @@ describe('in-app color scheme', () => {
       expect(CioColorScheme.Auto).toBe('auto');
       expect(CioColorScheme.Light).toBe('light');
       expect(CioColorScheme.Dark).toBe('dark');
-    });
-  });
-
-  describe('initialize', () => {
-    it('forwards the configured scheme under the key the native parsers read', async () => {
-      await CustomerIO.initialize(
-        configWith({ siteId: 'site', colorScheme: CioColorScheme.Dark })
-      );
-
-      expect(forwardedInApp().colorScheme).toBe('dark');
-    });
-
-    it('omits the scheme when the app configures none', async () => {
-      await CustomerIO.initialize(configWith({ siteId: 'site' }));
-
-      // Absent rather than 'auto': the native default is already AUTO, and the JS layer should
-      // not manufacture a value the host never set.
-      expect(forwardedInApp().colorScheme).toBeUndefined();
     });
   });
 
@@ -141,19 +125,6 @@ describe('in-app color scheme', () => {
       expect(warn).toHaveBeenCalledWith(
         expect.stringContaining('"inApp.colorScheme"')
       );
-    });
-
-    it('still forwards the value, leaving the native fallback to decide', async () => {
-      await CustomerIO.initialize(
-        configWith({
-          siteId: 'site',
-          colorScheme: 'DARK' as unknown as CioColorScheme,
-        })
-      );
-
-      // Warn, do not sanitize: dropping the key here would make the JS layer's opinion
-      // indistinguishable from the host omitting it.
-      expect(forwardedInApp().colorScheme).toBe('DARK');
     });
 
     it('stays quiet for a valid scheme', async () => {

@@ -114,6 +114,17 @@ public class NativeMessagingInApp: NSObject {
             )
             return
         }
+        // Without this the call is dropped in silence: `setColorScheme` forwards through the
+        // module's `implementation?`, which is nil until the SDK is initialized, and the only
+        // trace is an `.info` line the default `.error` log level discards. Android logs this
+        // case at error, so reporting it here is what keeps the two platforms diagnosable in the
+        // same way. Logged rather than failed, again to match Android, which completes the call.
+        guard MessagingInApp.shared.hasBeenInitialized else {
+            logger.error(
+                "In-app messaging is not available, so the color scheme was not applied. Ensure CustomerIO SDK is initialized with the inApp configuration."
+            )
+            return
+        }
         MessagingInApp.shared.setColorScheme(resolved)
     }
 
