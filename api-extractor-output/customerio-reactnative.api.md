@@ -16,6 +16,13 @@ import type { ViewProps } from 'react-native';
 import { ViewStyle } from 'react-native';
 
 // @public
+export enum CioColorScheme {
+    Auto = "auto",
+    Dark = "dark",
+    Light = "light"
+}
+
+// @public
 export type CioConfig = {
     cdpApiKey: string;
     migrationSiteId?: string;
@@ -30,6 +37,7 @@ export type CioConfig = {
     autoTrackDeviceAttributes?: boolean;
     inApp?: {
         siteId: string;
+        colorScheme?: CioColorScheme;
         notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
     };
     push?: {
@@ -144,6 +152,7 @@ export class CustomerIOInAppMessaging implements NativeInAppSpec {
     // (undocumented)
     registerEventsListener(listener: (event: InAppMessageEvent) => void): EventSubscription;
     registerInboxEventListener(listener: (event: InboxMessageEvent) => void): EventSubscription;
+    setColorScheme(colorScheme: CioColorScheme): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "NativeLiveActivitiesSpec" needs to be exported by the entry point index.d.ts

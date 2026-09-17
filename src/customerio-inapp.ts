@@ -187,7 +187,7 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
    * re-themed in place, so this can be called whenever the app's appearance setting
    * changes rather than only before a message is shown.
    *
-   * @param colorScheme scheme to render with; `CioColorScheme.Auto` returns to following
+   * @param colorScheme - scheme to render with; `CioColorScheme.Auto` returns to following
    * the device appearance
    */
   setColorScheme(colorScheme: CioColorScheme) {
