@@ -100,6 +100,37 @@ public class NativeMessagingInApp: NSObject {
         MessagingInApp.shared.dismissMessage()
     }
 
+    /// Overrides the color scheme used to render in-app messages.
+    ///
+    /// Receives the raw value of the JavaScript `CioColorScheme`, since the enum itself cannot
+    /// cross Codegen. An unrecognized value leaves the current scheme alone instead of resetting
+    /// it to `.auto`, so a typo cannot quietly undo a scheme the app set correctly earlier — the
+    /// Android bridge behaves the same way.
+    @objc(setColorScheme:)
+    public func setColorScheme(_ colorScheme: String) {
+        guard let resolved = Self.colorScheme(fromRawValue: colorScheme) else {
+            logger.error(
+                "Unrecognized in-app colorScheme '\(colorScheme)', expected one of auto, light, dark. Leaving the color scheme unchanged."
+            )
+            return
+        }
+        MessagingInApp.shared.setColorScheme(resolved)
+    }
+
+    /// Maps the wrapper's lowercase wire value onto the native `ColorScheme`.
+    ///
+    /// Matched explicitly rather than handed to `MessagingInAppConfigBuilder`, which resolves
+    /// anything unrecognized to `.auto`; here an unrecognized value has to stay distinguishable
+    /// so it can be reported.
+    private static func colorScheme(fromRawValue rawValue: String) -> ColorScheme? {
+        switch rawValue {
+        case "auto": return .auto
+        case "light": return .light
+        case "dark": return .dark
+        default: return nil
+        }
+    }
+
     // MARK: - Inbox Methods
 
     @objc(setupInboxListener)

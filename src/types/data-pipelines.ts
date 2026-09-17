@@ -1,3 +1,4 @@
+import type { CioColorScheme } from './in-app';
 import type { NotificationInboxAccessibilityLabels } from './inbox';
 import type { LiveActivitiesConfig } from './live-activities';
 import type { PushClickBehaviorAndroid } from './push';
@@ -68,6 +69,14 @@ export type CioConfig = {
   autoTrackDeviceAttributes?: boolean;
   inApp?: {
     siteId: string;
+    /**
+     * Color scheme used to render in-app messages. Defaults to `CioColorScheme.Auto`, which
+     * follows the device appearance. Set it when the app has its own appearance setting that
+     * can disagree with the operating system.
+     *
+     * Can be changed after initialization with `CustomerIO.inAppMessaging.setColorScheme`.
+     */
+    colorScheme?: CioColorScheme;
     /**
      * Accessibility labels for the Visual Notification Inbox. Optional; an omitted label leaves
      * that element unlabeled rather than falling back to English.

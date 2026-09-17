@@ -10,6 +10,7 @@ import io.customer.messaginginapp.di.inAppMessaging
 import io.customer.messaginginapp.gist.data.model.InboxMessage
 import io.customer.messaginginapp.gist.data.model.response.InboxMessageFactory
 import io.customer.messaginginapp.inbox.NotificationInbox
+import io.customer.messaginginapp.type.ColorScheme
 import io.customer.messaginginapp.type.NotificationInboxAccessibilityLabels
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingInAppSpec
 import io.customer.reactnative.sdk.constant.Keys
@@ -71,6 +72,27 @@ class NativeMessagingInAppModule(
 
     override fun dismissMessage() {
         inAppMessagingModule?.dismissMessage()
+    }
+
+    override fun setColorScheme(colorScheme: String) {
+        val resolved = colorSchemeFromRawValue(colorScheme, logger)
+        if (resolved == null) {
+            // Unrecognized value: leave the current scheme alone rather than resetting it to
+            // AUTO, so a typo cannot quietly undo a scheme the app set correctly earlier.
+            return
+        }
+        val module = inAppMessagingModule
+        if (module == null) {
+            // Reachable when the host calls this before CustomerIO.initialize, or without the
+            // in-app module configured. Logged rather than ignored: the scheme is silently not
+            // applied, and nothing else surfaces that.
+            logger.error(
+                "In-app messaging is not available, so the color scheme was not applied. " +
+                    "Ensure CustomerIO SDK is initialized with the inApp configuration."
+            )
+            return
+        }
+        module.setColorScheme(resolved)
     }
 
     override fun setupInboxListener() {
@@ -247,6 +269,9 @@ class NativeMessagingInAppModule(
             val module = ModuleMessagingInApp(
                 MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
+                    colorSchemeFromConfig(config)?.let { colorScheme ->
+                        setColorScheme(colorScheme)
+                    }
                     inboxAccessibilityLabelsFromConfig(config)?.let { labels ->
                         setNotificationInboxAccessibilityLabels(labels)
                     }
@@ -254,6 +279,39 @@ class NativeMessagingInAppModule(
             )
             builder.addCustomerIOModule(module)
         }
+
+        /**
+         * Maps the wrapper's `colorScheme` value onto the native [ColorScheme], or null when the
+         * host provided none — in which case the caller leaves the SDK's own AUTO default alone.
+         *
+         * The accepted values are lowercase because that is the wire contract the JavaScript
+         * `CioColorScheme` enum serializes to and the one iOS already matches. An unrecognized
+         * value returns null and logs, rather than falling back to AUTO silently: the failure mode
+         * is a message rendered in the wrong theme, which looks like a styling bug rather than a
+         * configuration mistake.
+         */
+        internal fun colorSchemeFromRawValue(rawValue: String?, logger: Logger): ColorScheme? {
+            if (rawValue == null) return null
+
+            return when (rawValue) {
+                "auto" -> ColorScheme.AUTO
+                "light" -> ColorScheme.LIGHT
+                "dark" -> ColorScheme.DARK
+                else -> {
+                    logger.error(
+                        "Unrecognized in-app colorScheme '$rawValue', expected one of " +
+                            "auto, light, dark. Leaving the color scheme unchanged."
+                    )
+                    null
+                }
+            }
+        }
+
+        private fun colorSchemeFromConfig(config: Map<String, Any>): ColorScheme? =
+            colorSchemeFromRawValue(
+                config.getTypedValue<String>(Keys.Config.COLOR_SCHEME),
+                SDKComponent.logger
+            )
 
         /**
          * Builds the host's inbox accessibility labels from the wrapper configuration, or null when

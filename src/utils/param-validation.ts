@@ -1,6 +1,7 @@
 // Argument validation utilities for SDK internal use
 // Ensures input safety and throws clear errors when validation fails
 
+import { CioColorScheme } from '../types';
 import type { CioConfig, CustomAttributes } from '../types';
 
 /**
@@ -179,6 +180,29 @@ function validateInboxAccessibilityLabels(value: unknown): void {
 }
 
 /**
+ * Warns when `inApp.colorScheme` is not one of the `CioColorScheme` values.
+ *
+ * TypeScript rejects a bad value already, but JavaScript callers reach this untyped and
+ * neither native layer can report the mistake: both resolve an unrecognized value to
+ * `auto`, so a typo renders whichever variant the device asks for instead of the one the
+ * app asked for — a wrong theme rather than a visible failure. Warning from JavaScript is
+ * the only place the developer sees it, on either platform and at any SDK log level.
+ */
+function validateColorScheme(value: unknown): void {
+  if (isUndefined(value)) {
+    return;
+  }
+
+  const allowed: string[] = Object.values(CioColorScheme);
+  warnIf(
+    !(typeof value === 'string' && allowed.includes(value)),
+    () =>
+      `"inApp.colorScheme" is not a valid CioColorScheme (expected one of ` +
+      `${allowed.join(', ')}), so in-app messages will follow the device appearance.`
+  );
+}
+
+/**
  * Validates that the given value is a valid CioConfig object.
  * Throws if required fields are missing or incorrectly typed.
  */
@@ -196,6 +220,7 @@ function validateConfig(value: unknown): asserts value is CioConfig {
     allowEmpty: false,
     usage: usage,
   });
+  validateColorScheme(obj.inApp?.colorScheme);
   validateInboxAccessibilityLabels(
     obj.inApp?.notificationInboxAccessibilityLabels
   );

@@ -9,7 +9,7 @@ import {
 import NativeCustomerIOMessagingInApp, {
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOMessagingInApp';
-import type { InAppMessageEventType } from './types';
+import type { CioColorScheme, InAppMessageEventType } from './types';
 import { InboxEventType, InboxMessageEvent } from './types';
 import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
 
@@ -178,6 +178,20 @@ class CustomerIOInAppMessaging implements NativeInAppSpec {
    */
   dismissMessage() {
     withNativeModule((native) => native.dismissMessage());
+  }
+
+  /**
+   * Overrides the color scheme used to render in-app messages.
+   *
+   * Takes effect immediately: messages already on screen — inline views included — are
+   * re-themed in place, so this can be called whenever the app's appearance setting
+   * changes rather than only before a message is shown.
+   *
+   * @param colorScheme scheme to render with; `CioColorScheme.Auto` returns to following
+   * the device appearance
+   */
+  setColorScheme(colorScheme: CioColorScheme) {
+    withNativeModule((native) => native.setColorScheme(colorScheme));
   }
 
   /**

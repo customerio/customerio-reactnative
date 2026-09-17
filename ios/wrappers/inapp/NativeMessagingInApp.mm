@@ -66,6 +66,11 @@ RCT_EXPORT_MODULE()
   [_swiftBridge dismissMessage];
 }
 
+- (void)setColorScheme:(NSString *)colorScheme {
+  [self assertBridgeAvailable:@"during setColorScheme"];
+  [_swiftBridge setColorScheme:colorScheme];
+}
+
 - (void)setupInboxListener {
   [self assertBridgeAvailable:@"during setupInboxListener"];
   [_swiftBridge setupInboxListener];
