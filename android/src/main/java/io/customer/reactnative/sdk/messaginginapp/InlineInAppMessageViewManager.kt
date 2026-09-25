@@ -50,6 +50,11 @@ class InlineInAppMessageViewManager :
         view?.elementId = value
     }
 
+    @ReactProp(name = "showScrollIndicators", defaultBoolean = true)
+    override fun setShowScrollIndicators(view: ReactInlineInAppMessageView?, value: Boolean) {
+        view?.showScrollIndicators = value
+    }
+
     companion object {
         internal const val NAME = "InlineMessageNative"
     }
