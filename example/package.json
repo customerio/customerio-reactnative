@@ -33,10 +33,10 @@
     "react-native-screens": "^4.11.1",
     "react-native-snackbar": "^2.9.0",
     "react-native-typography": "^1.4.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.10",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.26.9",
     "@babel/runtime": "^7.25.0",
     "@react-native-community/cli": "^20.0.0",
