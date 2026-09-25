@@ -1,0 +1,95 @@
+name: React Native remote push E2E
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-native-remote-push-e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  remote-push:
+    name: APNs delivery and opened attribution
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.action == 'labeled' &&
+      github.event.label.name == 'run-remote-push-e2e' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]')
+    runs-on: xcode-27
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out React Native SDK
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Verify Xcode 27 toolchain
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+          working-directory: example
+
+      - name: Configure APNs sample
+        shell: bash
+        env:
+          RN_CDP_API_KEY: ${{ secrets.CUSTOMERIO_APN_WORKSPACE_CDP_API_KEY }}
+          RN_SITE_ID: ${{ secrets.CUSTOMERIO_APN_WORKSPACE_SITE_ID }}
+        run: |
+          set -euo pipefail
+          cp -R example/ios/SampleApp.xcodeproj.tracked example/ios/SampleApp.xcodeproj
+          cp example/src/env.ts.sample example/src/env.ts
+          ruby -e '
+            path = "example/src/env.ts"
+            text = File.read(path)
+              .gsub("<CDP_API_KEY>", ENV.fetch("RN_CDP_API_KEY"))
+              .gsub("<SITE_ID>", ENV.fetch("RN_SITE_ID"))
+            File.write(path, text)
+          '
+
+      - name: Install pinned Maestro
+        shell: bash
+        run: |
+          set -euo pipefail
+          maestro_zip="$RUNNER_TEMP/maestro-2.8.0.zip"
+          maestro_dir="$RUNNER_TEMP/maestro-2.8.0"
+          curl -fsSL \
+            https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.8.0/maestro.zip \
+            -o "$maestro_zip"
+          echo 'b3e561161904fb391875ca5834d5b22cf0b01c052dd1b408ad83e30d8f8951b3  '"$maestro_zip" \
+            | shasum -a 256 -c -
+          unzip -q "$maestro_zip" -d "$maestro_dir"
+          echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Run remote push E2E
+        shell: bash
+        env:
+          CIO_E2E_ARTIFACT_DIR: ${{ runner.temp }}/react-native-remote-push-e2e
+          MAESTRO_APP_API_KEY: ${{ secrets.MOBILE_E2E_RN_APP_API_KEY }}
+        run: .maestro/run_remote_push.sh
+
+      - name: Upload sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: react-native-remote-push-e2e
+          path: ${{ runner.temp }}/react-native-remote-push-e2e
+          if-no-files-found: warn
+          retention-days: 14
