@@ -1,3 +1,9 @@
+## [6.13.0](https://github.com/customerio/customerio-reactnative/compare/6.12.0...6.13.0) (2026-09-25)
+
+### Features
+
+* update Customer.io native SDKs (iOS 4.9.0, Android 4.22.0) ([#662](https://github.com/customerio/customerio-reactnative/issues/662)) ([98b4258](https://github.com/customerio/customerio-reactnative/commit/98b4258be599c699c4117b2270eb72fdc0b334da))
+
 ## [6.12.0](https://github.com/customerio/customerio-reactnative/compare/6.11.0...6.12.0) (2026-09-17)
 
 ### Features
