@@ -1,3 +1,9 @@
+## [6.13.1](https://github.com/customerio/customerio-reactnative/compare/6.13.0...6.13.1) (2026-09-30)
+
+### Bug Fixes
+
+* **android:** include native rich push image memory fixes ([#663](https://github.com/customerio/customerio-reactnative/issues/663)) ([ec60a37](https://github.com/customerio/customerio-reactnative/commit/ec60a3705f8115dbdda375ac1078c9442b4b3acf))
+
 ## [6.13.0](https://github.com/customerio/customerio-reactnative/compare/6.12.0...6.13.0) (2026-09-25)
 
 ### Features
