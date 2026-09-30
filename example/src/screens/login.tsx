@@ -33,6 +33,7 @@ export const LogingScreen = ({
       <ScrollView>
         <View style={styles.container}>
           <TextField
+            testID="first_name_input"
             label="Name"
             value={user.traits.name}
             onChangeText={(name) => {
@@ -40,6 +41,7 @@ export const LogingScreen = ({
             }}
           />
           <TextField
+            testID="email_input"
             label="Email"
             value={user.traits.email}
             keyboardType="email-address"
@@ -50,6 +52,7 @@ export const LogingScreen = ({
           />
 
           <Button
+            testID="login_button"
             title="Login"
             experience={ButtonExperience.callToAction}
             onPress={async () => {

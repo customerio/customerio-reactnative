@@ -1,4 +1,5 @@
 eslint_report.json
+.maestro/.env
 
 # Config files
 env.js
