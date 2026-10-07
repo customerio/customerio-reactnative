@@ -44,7 +44,7 @@ export const SettingsScreen = () => {
           }}
           label="Site ID"
           placeholder="Enter your site ID"
-          footnote="Optional: Only needed for migration from older SDK versions and to enable in-app messaging"
+          footnote="Optional: Only needed for migration from older SDK versions, or for in-app messaging without a wk_ key"
           defaultValue={config.inApp?.siteId ?? ''}
         />
 
@@ -95,14 +95,13 @@ export const SettingsScreen = () => {
         <LargeBoldText>Features</LargeBoldText>
         <Switch
           label="Enable In-App Messaging"
-          value={config.inApp?.siteId !== undefined}
+          value={config.inApp !== undefined}
           onValueChange={(enableInApp) => {
             const inApp = enableInApp
-              ? { siteId: config.inApp?.siteId ?? '' }
+              ? { siteId: config.inApp?.siteId }
               : undefined;
             setConfig({ ...config, inApp });
           }}
-          disabled={!config.inApp?.siteId || config.inApp?.siteId.length === 0}
         />
 
         <HorizontalLineSeparator />
@@ -125,11 +124,7 @@ export const SettingsScreen = () => {
           onPress={() => {
             Storage.instance.setCioConfig(config as CioConfig);
             let missing = '';
-            if (!config.cdpApiKey && !config.inApp?.siteId) {
-              missing = 'CDP API Key and Site ID values are missing';
-            } else if (!config.inApp?.siteId) {
-              missing = 'Site ID value is missing';
-            } else if (!config.cdpApiKey) {
+            if (!config.cdpApiKey) {
               missing = 'CDP API Key value is missing';
             }
             if (missing.length > 0) {
