@@ -255,27 +255,38 @@ class NativeMessagingInAppModule(
     companion object {
         internal const val NAME = "NativeCustomerIOMessagingInApp"
 
+        private val publicKeyPrefix = Regex("^wk_(us|eu)_")
+
+        private fun regionFromKey(key: String): Region? =
+            publicKeyPrefix.find(key)?.groupValues?.get(1)?.let { Region.getRegion(it) }
+
         /**
          * Adds InAppMessaging module to native Android SDK based on configuration provided by customer
          * app.
          *
          * @param builder CustomerIOBuilder instance to add InAppMessaging module
          * @param config Configuration provided by customer app for InAppMessaging module
-         * @param region Region to be used for InAppMessaging module
+         * @param cdpApiKey CDP API key the SDK is initialized with
+         * @param region Region set by customer app, or null when not set
          */
         internal fun addNativeModuleFromConfig(
             builder: CustomerIOBuilder,
             config: Map<String, Any>,
-            region: Region
+            cdpApiKey: String,
+            region: String?
         ) {
+            // A public wk_ key is enough for in-app, so site ID is only needed for other keys.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
-            if (siteId.isNullOrBlank()) {
+            val isPublicKey = publicKeyPrefix.containsMatchIn(cdpApiKey)
+            if (siteId.isNullOrBlank() && !isPublicKey) {
                 SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
                 return
             }
+            // Like iOS, take the region from the key prefix (wk_eu_) when app doesn't set one.
+            val inAppRegion = Region.getRegion(region, fallback = regionFromKey(cdpApiKey) ?: Region.US)
 
             val module = ModuleMessagingInApp(
-                MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
+                MessagingInAppModuleConfig.Builder(siteId = siteId.orEmpty(), region = inAppRegion).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)
