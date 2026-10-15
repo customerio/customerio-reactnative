@@ -255,10 +255,10 @@ class NativeMessagingInAppModule(
     companion object {
         internal const val NAME = "NativeCustomerIOMessagingInApp"
 
-        private val publicKeyPrefix = Regex("^wk_(us|eu)_")
+        private val keyRegionPrefix = Regex("^[a-z]{2}_(us|eu)_")
 
         private fun regionFromKey(key: String): Region? =
-            publicKeyPrefix.find(key)?.groupValues?.get(1)?.let { Region.getRegion(it) }
+            keyRegionPrefix.find(key)?.groupValues?.get(1)?.let { Region.getRegion(it) }
 
         /**
          * Adds InAppMessaging module to native Android SDK based on configuration provided by customer
@@ -275,14 +275,14 @@ class NativeMessagingInAppModule(
             cdpApiKey: String,
             region: String?
         ) {
-            // A public wk_ key is enough for in-app, so site ID is only needed for other keys.
+            // A public pk_ key is enough for in-app, so site ID is only needed for other keys.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
-            val isPublicKey = publicKeyPrefix.containsMatchIn(cdpApiKey)
+            val isPublicKey = cdpApiKey.startsWith("pk_") && regionFromKey(cdpApiKey) != null
             if (siteId.isNullOrBlank() && !isPublicKey) {
                 SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
                 return
             }
-            // Like iOS, take the region from the key prefix (wk_eu_) when app doesn't set one.
+            // Like iOS, take the region from the key prefix (pk_eu_) when app doesn't set one.
             val inAppRegion = Region.getRegion(region, fallback = regionFromKey(cdpApiKey) ?: Region.US)
 
             val module = ModuleMessagingInApp(

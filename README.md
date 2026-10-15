@@ -51,7 +51,7 @@ useEffect(() => {
     logLevel: CioLogLevel.debug,
     trackApplicationLifecycleEvents: true,
     inApp: {
-      siteId: 'your-site-id', // Optional, not needed with a wk_ key
+      siteId: 'your-site-id', // Optional, not needed with a pk_ key
     },
     push: {
       android: {

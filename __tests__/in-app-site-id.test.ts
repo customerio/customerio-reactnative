@@ -1,5 +1,5 @@
 /**
- * `inApp.siteId` is optional: a workspace public (`wk_`) key carries enough for the native SDKs
+ * `inApp.siteId` is optional: a workspace public (`pk_`) key carries enough for the native SDKs
  * to resolve in-app messaging on their own. The JavaScript layer must accept an `inApp` config
  * without it and forward the config to native as given.
  */
@@ -42,7 +42,7 @@ const nativeInitialize = NativeModule.initialize as jest.Mock;
 
 describe('in-app site ID', () => {
   it('accepts an in-app config without a site ID', async () => {
-    const config: CioConfig = { cdpApiKey: 'wk_test-key', inApp: {} };
+    const config: CioConfig = { cdpApiKey: 'pk_us_test-key', inApp: {} };
 
     await CustomerIO.initialize(config);
 

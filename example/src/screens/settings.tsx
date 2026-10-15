@@ -44,7 +44,7 @@ export const SettingsScreen = () => {
           }}
           label="Site ID"
           placeholder="Enter your site ID"
-          footnote="Optional: Only needed for migration from older SDK versions, or for in-app messaging without a wk_ key"
+          footnote="Optional: Only needed for migration from older SDK versions, or for in-app messaging without a pk_ key"
           defaultValue={config.inApp?.siteId ?? ''}
         />
 
