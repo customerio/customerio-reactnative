@@ -68,7 +68,7 @@ export type CioConfig = {
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
   inApp?: {
-    siteId: string;
+    siteId?: string;
     /**
      * Color scheme used to render in-app messages. Defaults to `CioColorScheme.Auto`, which
      * follows the device appearance. Set it when the app has its own appearance setting that
