@@ -12,6 +12,10 @@ jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write # to comment on PRs
+      pull-requests: read # to read the PR title
     steps:
-    - uses: levibostian/action-conventional-pr-linter@acd7e6035a4c70ae2e6aab469c791cc5ca2a989d # v4.0.1
+    # Replaces levibostian/action-conventional-pr-linter, which has no node24 release. This one
+    # fails the check instead of commenting on the PR.
+    - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
