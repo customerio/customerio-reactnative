@@ -8,7 +8,9 @@ APP_NAME="CioRnSceneHost"
 APP_ID="org.reactjs.native.example.CioRnSceneHost"
 RN_CLI_VERSION="20.2.0"
 RN_TEMPLATE_VERSION="0.87.0"
-RN_VERSION="0.88.0-nightly-20260823-0c7f63a4e"
+RN_VERSION="0.88.0"
+# React Native 0.88.0 requires react ^19.3.0; the 0.87.0 template pins 19.2.3.
+REACT_VERSION="19.3.0"
 DEVELOPER_DIR="${DEVELOPER_DIR:-$(xcode-select -p)}"
 if [[ "$DEVELOPER_DIR" == */CommandLineTools && -d /Applications/Xcode.app/Contents/Developer ]]; then
   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
@@ -245,6 +247,7 @@ npx "@react-native-community/cli@$RN_CLI_VERSION" init "$APP_NAME" \
   --skip-install
 cd "$host"
 npm pkg set \
+  "dependencies.react=$REACT_VERSION" \
   "dependencies.react-native=$RN_VERSION" \
   "dependencies.@react-native/new-app-screen=$RN_VERSION"
 npm pkg set \
@@ -252,7 +255,8 @@ npm pkg set \
   "devDependencies.@react-native/eslint-config=$RN_VERSION" \
   "devDependencies.@react-native/jest-preset=$RN_VERSION" \
   "devDependencies.@react-native/metro-config=$RN_VERSION" \
-  "devDependencies.@react-native/typescript-config=$RN_VERSION"
+  "devDependencies.@react-native/typescript-config=$RN_VERSION" \
+  "devDependencies.react-test-renderer=$REACT_VERSION"
 current_phase="install"
 npm install
 npm install "$package_dir/$package_name"
