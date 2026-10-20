@@ -100,7 +100,7 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": ">=0.77.0"
   },
   "commitlint": {
     "extends": [
