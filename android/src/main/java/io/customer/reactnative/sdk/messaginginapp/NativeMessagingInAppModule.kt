@@ -275,10 +275,9 @@ class NativeMessagingInAppModule(
             cdpApiKey: String,
             region: String?
         ) {
-            // A public pk_ key is enough for in-app, so site ID is only needed for other keys.
+            // Site ID stays required until native and the in-app renderer support key-only setup.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
-            val isPublicKey = cdpApiKey.startsWith("pk_") && regionFromKey(cdpApiKey) != null
-            if (siteId.isNullOrBlank() && !isPublicKey) {
+            if (siteId.isNullOrBlank()) {
                 SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
                 return
             }
@@ -286,7 +285,7 @@ class NativeMessagingInAppModule(
             val inAppRegion = Region.getRegion(region, fallback = regionFromKey(cdpApiKey) ?: Region.US)
 
             val module = ModuleMessagingInApp(
-                MessagingInAppModuleConfig.Builder(siteId = siteId.orEmpty(), region = inAppRegion).apply {
+                MessagingInAppModuleConfig.Builder(siteId = siteId, region = inAppRegion).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)

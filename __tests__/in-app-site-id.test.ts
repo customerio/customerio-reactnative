@@ -1,7 +1,6 @@
 /**
- * `inApp.siteId` is optional: a workspace public (`pk_`) key carries enough for the native SDKs
- * to resolve in-app messaging on their own. The JavaScript layer must accept an `inApp` config
- * without it and forward the config to native as given.
+ * `inApp.siteId` stays required, even with a workspace public (`pk_`) key, until the native SDKs
+ * and the in-app renderer support key-only setup. The JavaScript layer forwards the config as given.
  */
 
 jest.mock('react-native', () => ({
@@ -41,14 +40,27 @@ import type { CioConfig } from '../src/types';
 const nativeInitialize = NativeModule.initialize as jest.Mock;
 
 describe('in-app site ID', () => {
-  it('accepts an in-app config without a site ID', async () => {
-    const config: CioConfig = { cdpApiKey: 'pk_us_test-key', inApp: {} };
+  it('forwards the site ID with a pk_ key', async () => {
+    const config: CioConfig = {
+      cdpApiKey: 'pk_eu_test-key',
+      inApp: { siteId: 'test-site-id' },
+    };
 
     await CustomerIO.initialize(config);
 
     expect(nativeInitialize).toHaveBeenCalledWith(
-      expect.objectContaining({ inApp: {} }),
+      expect.objectContaining({
+        cdpApiKey: 'pk_eu_test-key',
+        inApp: { siteId: 'test-site-id' },
+      }),
       expect.anything()
     );
+  });
+
+  it('requires a site ID in the in-app config type', () => {
+    // @ts-expect-error siteId is required for in-app
+    const config: CioConfig = { cdpApiKey: 'pk_eu_test-key', inApp: {} };
+
+    expect(config.inApp).toEqual({});
   });
 });
