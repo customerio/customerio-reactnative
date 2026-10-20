@@ -44,15 +44,20 @@ if [[ -z "$device_id" && -z "$simulator_name" ]]; then
     '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.state == "Booted") | select(.name | startswith("iPhone"))][0].udid // empty' \
     <<< "$simulator_devices")"
 fi
-if [[ -z "$device_id" ]]; then
-  simulator_name="${simulator_name:-iPhone 17 Pro}"
-  device_id="$(jq -r --arg name "$simulator_name" --arg runtime "$runtime_fragment" \
-    '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.name == $name)][0].udid // empty' \
+if [[ -z "$device_id" && -z "$simulator_name" ]]; then
+  # Runner images rename their simulators with each iPhone generation (the Xcode 27 GM image
+  # replaced "iPhone 17 Pro" with "iPhone 18 Pro"), so pick the newest numbered Pro on the
+  # runtime and fall back to any iPhone rather than pinning a model name.
+  device_id="$(jq -r --arg runtime "$runtime_fragment" \
+    '[.devices | to_entries[] | select(.key | contains($runtime)) | .value[] | select(.name | startswith("iPhone"))] as $iphones
+    | ([$iphones[] | select(.name | test("^iPhone [0-9]+ Pro$"))] | sort_by(.name | capture("(?<n>[0-9]+)").n | tonumber) | last)
+      // $iphones[0]
+    | .udid // empty' \
     <<< "$simulator_devices")"
-  if [[ -z "$device_id" ]]; then
-    echo "error: no available '$simulator_name' simulator on iOS $runtime_major; set E2E_DEVICE_ID, E2E_SIMULATOR_NAME, or E2E_IOS_RUNTIME_MAJOR" >&2
-    exit 2
-  fi
+fi
+if [[ -z "$device_id" ]]; then
+  echo "error: no available ${simulator_name:-iPhone} simulator on iOS $runtime_major; set E2E_DEVICE_ID, E2E_SIMULATOR_NAME, or E2E_IOS_RUNTIME_MAJOR" >&2
+  exit 2
 fi
 runtime_id="$(jq -r --arg id "$device_id" \
   '[.devices | to_entries[] | select(any(.value[]; .udid == $id))][0].key // empty' \
@@ -61,6 +66,8 @@ if [[ "$runtime_id" != *"$runtime_fragment"* ]]; then
   echo "error: selected simulator runtime '$runtime_id' is not iOS $runtime_major" >&2
   exit 2
 fi
+echo "Using simulator $(jq -r --arg id "$device_id" \
+  '[.devices[][] | select(.udid == $id)][0].name' <<< "$simulator_devices") ($device_id, $runtime_id)"
 simulator_started_by_runner=false
 created_host_parent=false
 host_parent=""
