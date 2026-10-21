@@ -1,3 +1,9 @@
+## [6.14.0](https://github.com/customerio/customerio-reactnative/compare/6.13.1...6.14.0) (2026-10-21)
+
+### Features
+
+* support Firebase Installation IDs (iOS 4.11.0, Android 4.24.0) ([#675](https://github.com/customerio/customerio-reactnative/issues/675)) ([c3b37ec](https://github.com/customerio/customerio-reactnative/commit/c3b37ec996aba45ee48c0db09777d409f79cd5ae))
+
 ## [6.13.1](https://github.com/customerio/customerio-reactnative/compare/6.13.0...6.13.1) (2026-09-30)
 
 ### Bug Fixes
