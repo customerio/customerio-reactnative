@@ -19,8 +19,8 @@
     },
     "./package.json": "./package.json"
   },
-  "cioNativeiOSSdkVersion": "= 4.9.0",
-  "cioiOSFirebaseWrapperSdkVersion": "= 1.0.0",
+  "cioNativeiOSSdkVersion": "= 4.11.0",
+  "cioiOSFirebaseWrapperSdkVersion": "= 1.1.0",
   "files": [
     "src",
     "lib",
