@@ -73,6 +73,10 @@ npm run ios     # Builds and runs on iOS
 npm run android # Builds and runs on Android
 ```
 
+On Android, `npm run android` builds the `token` flavor, which registers the FCM token. `npm run android:fid` builds the `fid` flavor, which registers the Firebase Installation ID (FID) instead.
+
+On iOS with the FCM setup, the `SampleApp` scheme registers the FCM token and the `SampleApp FID` scheme registers the FID. FID needs FirebaseMessaging 12.19.0 or later, so with an older `Podfile.lock` run `pod update FirebaseMessaging CioFirebaseWrapper` first.
+
 ---
 
 ## 🔁 Switching Between APNs and FCM (iOS Only)
