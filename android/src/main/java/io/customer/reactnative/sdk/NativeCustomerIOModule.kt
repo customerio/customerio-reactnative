@@ -104,9 +104,7 @@ class NativeCustomerIOModule(
                 packageConfig.getTypedValue<Map<String, Any>>(key = "inApp")?.let { inAppConfig ->
                     NativeMessagingInAppModule.addNativeModuleFromConfig(
                         builder = this,
-                        config = inAppConfig,
-                        cdpApiKey = cdpApiKey,
-                        region = regionRawValue
+                        config = inAppConfig
                     )
                 }
                 // Configure location module. Geofence implies location, so register location

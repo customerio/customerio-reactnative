@@ -20,7 +20,6 @@ import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
 import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.Logger
-import io.customer.sdk.data.model.Region
 
 /**
  * React Native module implementation for Customer.io In-App Messaging Native SDK
@@ -255,37 +254,26 @@ class NativeMessagingInAppModule(
     companion object {
         internal const val NAME = "NativeCustomerIOMessagingInApp"
 
-        private val keyRegionPrefix = Regex("^[a-z]{2}_(us|eu)_")
-
-        private fun regionFromKey(key: String): Region? =
-            keyRegionPrefix.find(key)?.groupValues?.get(1)?.let { Region.getRegion(it) }
-
         /**
          * Adds InAppMessaging module to native Android SDK based on configuration provided by customer
          * app.
          *
          * @param builder CustomerIOBuilder instance to add InAppMessaging module
          * @param config Configuration provided by customer app for InAppMessaging module
-         * @param cdpApiKey CDP API key the SDK is initialized with
-         * @param region Region set by customer app, or null when not set
          */
         internal fun addNativeModuleFromConfig(
             builder: CustomerIOBuilder,
-            config: Map<String, Any>,
-            cdpApiKey: String,
-            region: String?
+            config: Map<String, Any>
         ) {
-            // Site ID stays required until native and the in-app renderer support key-only setup.
+            // Site ID is still required. Native in-app reads the key and region from the CustomerIO setup.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
             if (siteId.isNullOrBlank()) {
                 SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
                 return
             }
-            // Like iOS, take the region from the key prefix (pk_eu_) when app doesn't set one.
-            val inAppRegion = Region.getRegion(region, fallback = regionFromKey(cdpApiKey) ?: Region.US)
 
             val module = ModuleMessagingInApp(
-                MessagingInAppModuleConfig.Builder(siteId = siteId, region = inAppRegion).apply {
+                MessagingInAppModuleConfig.Builder(siteId = siteId).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)
