@@ -1,80 +1,116 @@
 ## [6.13.1](https://github.com/customerio/customerio-reactnative/compare/6.13.0...6.13.1) (2026-09-30)
 
+### Upgrade notes
+
+* **Android:** The bundled Android SDK no longer brings in OkHttp's `okhttp-sse` and `logging-interceptor` artifacts as transitive dependencies. What to do: If your Android app uses APIs from `com.squareup.okhttp3:okhttp-sse` or `com.squareup.okhttp3:logging-interceptor`, declare those artifacts directly in your app's Gradle dependencies. ([#663](https://github.com/customerio/customerio-reactnative/issues/663)) ([ec60a37](https://github.com/customerio/customerio-reactnative/commit/ec60a3705f8115dbdda375ac1078c9442b4b3acf))
+
 ### Bug Fixes
 
-* **android:** include native rich push image memory fixes ([#663](https://github.com/customerio/customerio-reactnative/issues/663)) ([ec60a37](https://github.com/customerio/customerio-reactnative/commit/ec60a3705f8115dbdda375ac1078c9442b4b3acf))
+* **Push (Android):** Updates the bundled Android SDK from 4.22.0 to 4.23.2 to reduce the memory used by rich push images. Images are now downscaled to fit the notification, and images larger than 5 MiB are skipped so the notification displays without the image. ([#663](https://github.com/customerio/customerio-reactnative/issues/663)) ([ec60a37](https://github.com/customerio/customerio-reactnative/commit/ec60a3705f8115dbdda375ac1078c9442b4b3acf))
+* **In-app (Android):** The Android SDK update also lets in-app messaging run in apps that resolve OkHttp 5. ([#663](https://github.com/customerio/customerio-reactnative/issues/663)) ([ec60a37](https://github.com/customerio/customerio-reactnative/commit/ec60a3705f8115dbdda375ac1078c9442b4b3acf))
 
 ## [6.13.0](https://github.com/customerio/customerio-reactnative/compare/6.12.0...6.13.0) (2026-09-25)
 
 ### Features
 
-* update Customer.io native SDKs (iOS 4.9.0, Android 4.22.0) ([#662](https://github.com/customerio/customerio-reactnative/issues/662)) ([98b4258](https://github.com/customerio/customerio-reactnative/commit/98b4258be599c699c4117b2270eb72fdc0b334da))
+* **Geofencing:** Updates the bundled native SDKs to iOS 4.9.0 and Android 4.22.0, which add support for polygon geofences. Polygon geofences trigger based on the shape you draw, not a circle around it. ([#662](https://github.com/customerio/customerio-reactnative/issues/662)) ([98b4258](https://github.com/customerio/customerio-reactnative/commit/98b4258be599c699c4117b2270eb72fdc0b334da))
 
 ## [6.12.0](https://github.com/customerio/customerio-reactnative/compare/6.11.0...6.12.0) (2026-09-17)
 
 ### Features
 
-* **in-app:** allow overriding the in-app message color scheme ([#660](https://github.com/customerio/customerio-reactnative/issues/660)) ([223363c](https://github.com/customerio/customerio-reactnative/commit/223363cff35d015915116d7608c0115333b3a74e))
+* **In-app:** You can now choose whether in-app messages use their light or dark appearance instead of always following the device setting. Set `inApp.colorScheme` in your `CioConfig`, or call `CustomerIO.inAppMessaging.setColorScheme()` at runtime, with `CioColorScheme.Light`, `CioColorScheme.Dark`, or `CioColorScheme.Auto` (the default). Messages already on screen update to the new appearance. ([#660](https://github.com/customerio/customerio-reactnative/issues/660)) ([223363c](https://github.com/customerio/customerio-reactnative/commit/223363cff35d015915116d7608c0115333b3a74e))
+* **iOS:** Updates the bundled iOS SDK to 4.8.1, which pins the `LDSwiftEventSource` dependency to 3.3.0. This prevents iOS build failures caused by `LDSwiftEventSource` 3.3.1, which requires iOS 15. ([#660](https://github.com/customerio/customerio-reactnative/issues/660)) ([223363c](https://github.com/customerio/customerio-reactnative/commit/223363cff35d015915116d7608c0115333b3a74e))
 
 ## [6.11.0](https://github.com/customerio/customerio-reactnative/compare/6.10.0...6.11.0) (2026-09-15)
 
 ### Features
 
-* **inbox:** let apps configure visual inbox accessibility labels ([#658](https://github.com/customerio/customerio-reactnative/issues/658)) ([1d911c2](https://github.com/customerio/customerio-reactnative/commit/1d911c24b13c056f8276f8c9facb715ce077e166))
+* **Inbox:** You can now provide your own, localized accessibility labels for the Visual Notification Inbox instead of the SDK's built-in English text. Set `inApp.notificationInboxAccessibilityLabels` in your `CioConfig` with any of `bell`, `bellWithUnreadCount`, `loadingIndicator`, and `emptyState`. Include a `{count}` placeholder in `bellWithUnreadCount` to announce the unread count; the SDK logs a warning if it's missing. ([#658](https://github.com/customerio/customerio-reactnative/issues/658)) ([1d911c2](https://github.com/customerio/customerio-reactnative/commit/1d911c24b13c056f8276f8c9facb715ce077e166))
+* **Native SDKs:** Updates the bundled native SDKs to iOS 4.8.0 and Android 4.21.1. The Visual Notification Inbox empty state now shows a dimmed bell icon instead of text. On iOS, this fixes a crash when a network error occurred while the inbox loaded its content. On Android, spaces in in-app message open-URL query values are now preserved. ([#658](https://github.com/customerio/customerio-reactnative/issues/658)) ([1d911c2](https://github.com/customerio/customerio-reactnative/commit/1d911c24b13c056f8276f8c9facb715ce077e166))
 
 ## [6.10.0](https://github.com/customerio/customerio-reactnative/compare/6.9.0...6.10.0) (2026-08-28)
 
 ### Features
 
-* add acknowledged React Native deep-link routing (MBL-2301) ([#648](https://github.com/customerio/customerio-reactnative/issues/648)) ([859a37d](https://github.com/customerio/customerio-reactnative/commit/859a37d1fa69f09817751d3b84b7370925d8384a))
+* **Deep links (iOS):** Adds `CustomerIO.setDeepLinkHandler()`, an opt-in way for React Native 0.88+ `UIScene` apps to route Customer.io deep links from push, in-app, inbox, and Live Activities. Your handler returns `true` when it routes a URL, or `false` to let the SDK fall back to native handling; the SDK also falls back if the handler throws, isn't registered, or doesn't respond within ten seconds. What to do: To use it, call `NativeCustomerIO.configureAcknowledgedSceneDeepLinkRouting()` first in your `SceneDelegate`'s `scene(_:willConnectTo:options:)`, then register the handler before calling `CustomerIO.initialize`. The existing `Linking` path, AppDelegate apps, and Android are unchanged. ([#648](https://github.com/customerio/customerio-reactnative/issues/648)) ([859a37d](https://github.com/customerio/customerio-reactnative/commit/859a37d1fa69f09817751d3b84b7370925d8384a))
 
 ## [6.9.0](https://github.com/customerio/customerio-reactnative/compare/6.8.0...6.9.0) (2026-08-27)
 
 ### Features
 
-* expose Live Activity URL transformation (MBL-2304) ([#647](https://github.com/customerio/customerio-reactnative/issues/647)) ([6fe6a21](https://github.com/customerio/customerio-reactnative/commit/6fe6a214c5a693c6480414394d59aea7eb93c764))
+* **Live Activities:** Adds `CustomerIO.liveActivities.handleWidgetUrl(url)`, which reports a Live Activity tap and returns the destination URL to open. It returns other URLs unchanged, and returns `null` only for a Customer.io tracking URL that has no destination. Use it in places like Expo Router's `redirectSystemPath` so a Live Activity tap is attributed and opens the right screen. ([#647](https://github.com/customerio/customerio-reactnative/issues/647)) ([6fe6a21](https://github.com/customerio/customerio-reactnative/commit/6fe6a214c5a693c6480414394d59aea7eb93c764))
 
 ## [6.8.0](https://github.com/customerio/customerio-reactnative/compare/6.7.0...6.8.0) (2026-08-27)
 
 ### Features
 
-* add Expo scene deep-link readiness (MBL-2304) ([#646](https://github.com/customerio/customerio-reactnative/issues/646)) ([016f9ac](https://github.com/customerio/customerio-reactnative/commit/016f9ac4a521ae4c53834f77ffd41a1893f066c6))
+* **Deep links (iOS):** Adds `CustomerIO.setDeepLinkRoutingReady()` for Expo apps that initialize the SDK natively through the config plugin on a `UIScene` lifecycle. The SDK holds deep links from push, in-app, and inbox until you register your `Linking` listener and call this method. Apps that call `CustomerIO.initialize` don't need it, and AppDelegate apps and Android are unchanged. This release also fixes builds of the iOS wrapper when CocoaPods links it as a static library. ([#646](https://github.com/customerio/customerio-reactnative/issues/646)) ([016f9ac](https://github.com/customerio/customerio-reactnative/commit/016f9ac4a521ae4c53834f77ffd41a1893f066c6))
 
 ## [6.7.0](https://github.com/customerio/customerio-reactnative/compare/6.6.3...6.7.0) (2026-08-26)
 
 ### Features
 
-* support deep-link routing in React Native UIScene hosts ([0c6bb16](https://github.com/customerio/customerio-reactnative/commit/0c6bb16a7c5bae9452a79d66ca37dc75f1122cc5))
+* **Deep links (iOS):** Adds deep-link support for apps that use React Native's `UIScene` lifecycle. Deep links from push, in-app, and inbox messages that arrive during a cold launch are held and delivered through React Native's `Linking` API after initialization. What to do: In your `SceneDelegate`, call `NativeCustomerIO.configureSceneDeepLinkRouting()` first in `scene(_:willConnectTo:options:)`, and register your `Linking` URL listener before calling `CustomerIO.initialize`. For Live Activities, pass launch options through `NativeLiveActivities.reactNativeLaunchOptions(from:)` and forward opened URLs with `NativeLiveActivities.handleAndRouteWidgetUrl(_:)`. AppDelegate apps keep their existing setup. ([0c6bb16](https://github.com/customerio/customerio-reactnative/commit/0c6bb16a7c5bae9452a79d66ca37dc75f1122cc5))
+
+### Bug Fixes
+
+* **In-app (iOS):** Updates the bundled iOS SDK to 4.7.6, which fixes a crash that could occur when a modal in-app message was dismissed. ([#642](https://github.com/customerio/customerio-reactnative/issues/642)) ([624d593](https://github.com/customerio/customerio-reactnative/commit/624d5931ef03d6fe63f54a46154f082f31f3ab89))
 
 ## [6.6.3](https://github.com/customerio/customerio-reactnative/compare/6.6.2...6.6.3) (2026-08-21)
 
 ### Bug Fixes
 
-* update Customer.io native SDKs (iOS 4.7.5, Android 4.20.2) ([#638](https://github.com/customerio/customerio-reactnative/issues/638)) ([b7b3203](https://github.com/customerio/customerio-reactnative/commit/b7b3203a0f65715131a2d013fecd7e0c1b19134f))
+* Updates the bundled native SDKs to iOS 4.7.5 and Android 4.20.2. In-app message requests now include your app's identifier so messages can be filtered by app. On iOS, notification delegates set by your app or other SDKs keep receiving callbacks alongside Customer.io, and in-app and inbox content is fetched at a higher priority so it loads sooner at startup. ([#638](https://github.com/customerio/customerio-reactnative/issues/638)) ([b7b3203](https://github.com/customerio/customerio-reactnative/commit/b7b3203a0f65715131a2d013fecd7e0c1b19134f))
 
 ## [6.6.2](https://github.com/customerio/customerio-reactnative/compare/6.6.1...6.6.2) (2026-08-07)
 
+### Bug Fixes
+
+* Updates the bundled native SDKs to iOS 4.7.2 and Android 4.20.1. On iOS, in-app messages with page rules that contain a dot (such as `dashboard.settings`) now display. On both platforms, geofence monitoring is more reliable: the SDK keeps the right nearby regions registered and drops duplicate or unmatched enter and exit events. ([#628](https://github.com/customerio/customerio-reactnative/issues/628)) ([fd74b18](https://github.com/customerio/customerio-reactnative/commit/fd74b186f472bc8586009b88066fb13b4cc7a737))
+
 ## [6.6.1](https://github.com/customerio/customerio-reactnative/compare/6.6.0...6.6.1) (2026-07-30)
 
+### Bug Fixes
+
+* Publishes the 6.6.0 features to npm. Version 6.6.0 was tagged but never published, so 6.6.1 is the first installable version with them. ([#626](https://github.com/customerio/customerio-reactnative/issues/626)) ([7c6f6cd](https://github.com/customerio/customerio-reactnative/commit/7c6f6cdc46449100958a01a8d1c93e3367585b51))
+
 ## [6.6.0](https://github.com/customerio/customerio-reactnative/compare/6.5.2...6.6.0) (2026-07-30)
+
+This version was not published to npm. Install 6.6.1 or later to get these changes.
+
+### Upgrade notes
+
+* **Android:** The SDK now builds with Jetpack Compose to host the Visual Notification Inbox, so it applies the Kotlin Compose compiler Gradle plugin at your project's Kotlin version. That plugin is only available for Kotlin 2.0 and later. What to do: If your app sets `kotlinVersion` below 2.0, raise it to 2.0 or later. ([#625](https://github.com/customerio/customerio-reactnative/issues/625)) ([3beec5f](https://github.com/customerio/customerio-reactnative/commit/3beec5fd6c24857200bf713bf38ea56a72ea0b0a))
+
+### Features
+
+* **Inbox:** Adds the Visual Notification Inbox. Use `NotificationInboxBellView` for a bell icon that opens an SDK-managed inbox panel, or `NotificationInboxView` to show the message list inline. Call `CustomerIO.inAppMessaging.registerInboxEventListener()` to receive `InboxMessageEvent`s; while a listener is registered, your app handles inbox message actions instead of the SDK. ([#625](https://github.com/customerio/customerio-reactnative/issues/625)) ([3beec5f](https://github.com/customerio/customerio-reactnative/commit/3beec5fd6c24857200bf713bf38ea56a72ea0b0a))
+* **Geofencing:** Adds optional on-device geofencing. What to do: To use it, set `customerio_geofence_enabled=true` in your Android `gradle.properties`, add the `geofence` subspec to the `customerio-reactnative` pod on iOS, and add a `geofence` block to your `CioConfig`. Enabling geofencing also enables the Location module. Set `geofence.locationMode` to `CioGeofenceLocationMode.Automatic` or `CioGeofenceLocationMode.Manual`, and call `CustomerIO.geofence.refreshFromCurrentLocation()` to refresh nearby geofences. On iOS, `ios.allowBackgroundDelivery` controls background delivery and defaults to on when geofencing is configured. ([#620](https://github.com/customerio/customerio-reactnative/issues/620)) ([cb2b9f8](https://github.com/customerio/customerio-reactnative/commit/cb2b9f85ac004e3a7cc2b778e2c7fa8e32573f12))
+* **Live Activities:** Adds Live Activities on iOS and Live Notifications on Android. Start, update, and end them from JavaScript with `CustomerIO.liveActivities.start()`, `update()`, and `end()`, using the built-in Segments and Countdown Timer templates or a custom type, and configure them under `liveNotifications` in your `CioConfig`. What to do: On iOS, add `NSSupportsLiveActivities` to your `Info.plist`, add the `liveactivities` subspec and a Widget Extension target, and forward opened URLs to `NativeLiveActivities.handleWidgetUrl` in your `AppDelegate` so taps are attributed. ([#623](https://github.com/customerio/customerio-reactnative/issues/623)) ([00a278f](https://github.com/customerio/customerio-reactnative/commit/00a278f7285cb7f409f0a5216b0da4e1eed36030))
+* **In-app:** Updates the bundled native SDKs to iOS 4.7.0 and Android 4.20.0. In-app messages now follow the device's light or dark appearance, so messages designed with a dark mode variant show it automatically. ([#623](https://github.com/customerio/customerio-reactnative/issues/623)) ([00a278f](https://github.com/customerio/customerio-reactnative/commit/00a278f7285cb7f409f0a5216b0da4e1eed36030))
+
+### Bug Fixes
+
+* **Push (iOS):** The `customerio-reactnative-richpush` pod no longer compiles React Native bridge code into your Notification Service Extension, which could fail the extension build. ([#625](https://github.com/customerio/customerio-reactnative/issues/625)) ([3beec5f](https://github.com/customerio/customerio-reactnative/commit/3beec5fd6c24857200bf713bf38ea56a72ea0b0a))
 
 ## [6.5.2](https://github.com/customerio/customerio-reactnative/compare/6.5.1...6.5.2) (2026-06-23)
 
 ### Bug Fixes
 
-* update native SDKs — iOS 4.5.3 (resolve duplicate event delivery bugs) and Android 4.18.2 (scope in-app polling to process lifecycle) ([#603](https://github.com/customerio/customerio-reactnative/issues/603)) ([45312e5](https://github.com/customerio/customerio-reactnative/commit/45312e585d251d74174a4607494f99e165602b50))
+* Updates the bundled native SDKs to iOS 4.5.3 and Android 4.18.2. On iOS, this fixes a timing issue that could deliver the same internal SDK event twice. On Android, in-app message polling now runs for as long as the app is in the foreground instead of restarting on each activity change, which stops a message that failed to load from being re-requested repeatedly after a modal closes. ([#603](https://github.com/customerio/customerio-reactnative/issues/603)) ([45312e5](https://github.com/customerio/customerio-reactnative/commit/45312e585d251d74174a4607494f99e165602b50))
 
 ## [6.5.1](https://github.com/customerio/customerio-reactnative/compare/6.5.0...6.5.1) (2026-06-16)
 
 ### Bug Fixes
 
-* release native SDK update (iOS 4.5.1, Android 4.18.1) ([#600](https://github.com/customerio/customerio-reactnative/issues/600)) ([ec890fe](https://github.com/customerio/customerio-reactnative/commit/ec890fea05f0973b306b7a30bab0f3ffb9ecb255))
+* Updates the bundled native SDKs to iOS 4.5.1 and Android 4.18.1. On Android, this is a security update: other apps can no longer launch the SDK's notification-click activity, and the in-app message WebView no longer has file or content access. The iOS update contains no behavior changes. ([#600](https://github.com/customerio/customerio-reactnative/issues/600)) ([ec890fe](https://github.com/customerio/customerio-reactnative/commit/ec890fea05f0973b306b7a30bab0f3ffb9ecb255))
 
 ## [6.5.0](https://github.com/customerio/customerio-reactnative/compare/6.4.3...6.5.0) (2026-06-05)
 
 ### Features
 
-* update native SDKs to iOS 4.5.0 and Android 4.18.0 ([#596](https://github.com/customerio/customerio-reactnative/issues/596)) ([0a94e26](https://github.com/customerio/customerio-reactnative/commit/0a94e26dffced1551ec9dba75a1a6c5f1520d65a))
+* Updates the bundled native SDKs to iOS 4.5.0 and Android 4.18.0 to reduce event volume. Repeated `CustomerIO.identify` calls for the same user without traits are now sent only once per app session; calls with traits, a different user, or after `CustomerIO.clearIdentify()` are still sent. On Android, consecutive automatic screen views with the same name are deduplicated, and push delivered metrics are sent exactly once. ([#596](https://github.com/customerio/customerio-reactnative/issues/596)) ([0a94e26](https://github.com/customerio/customerio-reactnative/commit/0a94e26dffced1551ec9dba75a1a6c5f1520d65a))
 
 ## [6.4.3](https://github.com/customerio/customerio-reactnative/compare/6.4.2...6.4.3) (2026-05-21)
 
