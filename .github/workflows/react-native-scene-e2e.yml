@@ -75,3 +75,10 @@ jobs:
           path: ${{ runner.temp }}/react-native-scene-maestro-*
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Notify #squad-mobile-alerts of a scheduled failure
+        if: failure() && github.event_name == 'schedule'
+        uses: customerio/mobile-ci-tools/github-actions/slack-notify-scheduled-failure/v1@main
+        with:
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          label: scene notification routing
