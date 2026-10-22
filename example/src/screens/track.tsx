@@ -17,6 +17,7 @@ export const TrackScreen = () => {
     <ScrollView>
       <View style={styles.container}>
         <TextField
+          testID="event_name_input"
           label="Event name"
           autoCapitalize="none"
           value={event.name}
@@ -25,6 +26,7 @@ export const TrackScreen = () => {
           }}
         />
         <TextField
+          testID="property_name_input"
           label="Property name"
           value={event.propertyName}
           autoCapitalize="none"
@@ -37,6 +39,7 @@ export const TrackScreen = () => {
         />
 
         <TextField
+          testID="property_value_input"
           label="Property value"
           value={event.propertyValue}
           autoCapitalize="none"
@@ -49,6 +52,7 @@ export const TrackScreen = () => {
         />
 
         <Button
+          testID="send_event_button"
           title="Send Event"
           experience={ButtonExperience.callToAction}
           onPress={async () => {

@@ -40,6 +40,7 @@ export const HomeScreen = ({
             }}
           />
           <Button
+            testID="custom_event_button"
             title="Track an Event"
             onPress={() => navigation.navigate('Track')}
           />
@@ -56,9 +57,11 @@ export const HomeScreen = ({
             }}
           />
           <Button
+            testID="push_permission_button"
             title="Request Push Notification Permission"
             onPress={async () => {
-              const permission = await onPushNotificationRequestPermissionButtonPress();
+              const permission =
+                await onPushNotificationRequestPermissionButtonPress();
               if (permission === CioPushPermissionStatus.Granted) {
                 showMessage({
                   message: 'Push notifications enabled successfully',
