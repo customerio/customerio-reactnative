@@ -1,3 +1,9 @@
+## [6.15.0](https://github.com/customerio/customerio-reactnative/compare/6.14.0...6.15.0) (2026-10-22)
+
+### Features
+
+* **MBL-2546:** accept a public key and read the region from it ([#664](https://github.com/customerio/customerio-reactnative/issues/664)) ([418c892](https://github.com/customerio/customerio-reactnative/commit/418c8926f1671af3c5c58aad802b3c55edc00d09))
+
 ## [6.14.0](https://github.com/customerio/customerio-reactnative/compare/6.13.1...6.14.0) (2026-10-21)
 
 ### Features
