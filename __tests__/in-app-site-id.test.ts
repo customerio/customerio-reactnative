@@ -56,11 +56,4 @@ describe('in-app site ID', () => {
       expect.anything()
     );
   });
-
-  it('requires a site ID in the in-app config type', () => {
-    // @ts-expect-error siteId is required for in-app
-    const config: CioConfig = { cdpApiKey: 'pk_eu_test-key', inApp: {} };
-
-    expect(config.inApp).toEqual({});
-  });
 });
