@@ -29,16 +29,16 @@ jobs:
           client-id: ${{ secrets.CIO_APP_CLIENT_ID }}
           private-key: ${{ secrets.CIO_APP_SECRET }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           token: ${{ steps.generate_token.outputs.token }}
 
-      # If using sd on macos, "brew install" works great. for Linux, this is the recommended way.
+      # scripts/update-version.sh (run by semantic-release) uses sd to bump the Android config version.
       - name: Install sd CLI to use later in the workflow
-        uses: kenji-miyake/setup-sd@08c14e27d65a1c215342ef00c81583ae67f4c5ef # v2.0.0
+        uses: ./.github/actions/setup-sd
 
       - name: Deploy git tag via semantic release
-        uses: cycjimmy/semantic-release-action@0a51e81a6baff2acad3ee88f4121c589c73d0f0e # v4.2.0
+        uses: cycjimmy/semantic-release-action@b12c8f6015dc215fe37bc154d4ad456dd3833c90 # v6.0.0
         id: semantic-release
         with:
           # Every version here is pinned deliberately. The conventionalcommits 10.x line renders
@@ -58,9 +58,13 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
       - name: Notify team of git tag being created
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         if: steps.semantic-release.outputs.new_release_published == 'true'
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          # Leave `errors` at its default (false): failing this step would fail the job and skip
+          # deploy-npm, so a Slack outage must not block publishing a tag that already exists.
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
           payload: |
             {
@@ -88,14 +92,15 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          # The job is already failing; surface a broken webhook instead of only logging a warning.
+          errors: true
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
           payload: |
             {
@@ -123,9 +128,6 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
   # The only job that publishes to npm, and it cannot be started by hand: this workflow
   # runs on push to main, and nothing in the repo exposes a dispatchable publish.
@@ -142,11 +144,11 @@ jobs:
     environment: release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.deploy-git-tag.outputs.new_release_git_head }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: 'npm'
@@ -170,9 +172,13 @@ jobs:
         run: npm publish --tag latest
 
       - name: Notify team of successful deployment
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         if: ${{ success() }}
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          # `errors` stays false: npm already has the release, so a Slack failure must not report
+          # this deployment as failed.
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
           payload: |
             {
@@ -200,14 +206,15 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
       - name: Notify team of failure
-        uses: slackapi/slack-github-action@70cd7be8e40a46e8b0eced40b0de447bdb42f68e # v1.26.0
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         if: ${{ failure() }} # only run this if any previous step failed
         with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          # The job is already failing; surface a broken webhook instead of only logging a warning.
+          errors: true
           # Use block kit to format the Slack message: https://app.slack.com/block-kit-builder
           payload: |
             {
@@ -235,9 +242,6 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
   publish-sample-apps-public-builds:
     needs: deploy-npm

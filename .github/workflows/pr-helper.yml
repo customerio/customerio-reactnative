@@ -14,4 +14,31 @@ jobs:
     permissions:
       pull-requests: write # to comment on PRs
     steps:
-    - uses: levibostian/action-conventional-pr-linter@acd7e6035a4c70ae2e6aab469c791cc5ca2a989d # v4.0.1
+    # Same conventionalcommits parser as semantic-release (.releaserc), default types: feat, fix, docs, style,
+    # refactor, perf, test, build, ci, chore, revert.
+    - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+      id: lint-pr-title
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Help comment when the title is invalid. The error_message check skips it when the lint step failed for
+    # another reason (an API error). The comment is best effort: fork and Dependabot runs get a read-only token.
+    - uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+      if: failure() && steps.lint-pr-title.outputs.error_message != ''
+      continue-on-error: true
+      with:
+        header: pr-title-lint-error
+        message: |
+          This project uses [Conventional Commits](https://www.conventionalcommits.org/) for pull request titles, and the title of this pull request doesn't match. [The failed check](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) says what is wrong. Edit the title and it runs again.
+
+          Format: `<type>: short description`, with an optional scope (`fix(push): short description`). Add `!` for a breaking change: `refactor!: remove deprecated v1 endpoints`.
+
+          Types: `feat` (minor release), `fix` and `perf` (patch release), `docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`, `revert`. A `!` makes a major release.
+
+    # Remove the help comment once the title is valid.
+    - uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+      if: steps.lint-pr-title.outcome == 'success'
+      continue-on-error: true
+      with:
+        header: pr-title-lint-error
+        delete: true
