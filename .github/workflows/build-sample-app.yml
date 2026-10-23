@@ -53,11 +53,15 @@ on:
 env:
   RUBY_VERSION: '3.4'
   NODE_VERSION: '24'
+  # iOS sample apps build on the xcode-27 image (GitHub-hosted public preview, actions/runner-images#14404).
+  XCODE_VERSION: '27.0'
 
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'macos-26' }}
+    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'xcode-27' }}
+    # Execution time only; queueing for a runner doesn't count. iOS builds take 20-35 minutes, Android 10-16.
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
@@ -68,9 +72,24 @@ jobs:
 
     steps:
       - name: Check out code with conditional fetch-depth
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
+
+      # Select Xcode before anything that compiles or runs CocoaPods, so every iOS step uses it.
+      # Signing credentials are scoped to the distribution-only Fastlane step.
+      - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
+        if: ${{ inputs.platform == 'ios' }}
+        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Verify Xcode 27 toolchain
+        if: ${{ inputs.platform == 'ios' }}
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
 
       # This file is untracked and needs to be created dynamically
       - name: Create SampleApp.xcodeproj file
@@ -130,7 +149,7 @@ jobs:
 
       - name: Install sd CLI for Android builds
         if: ${{ inputs.platform == 'android' }}
-        uses: kenji-miyake/setup-sd@08c14e27d65a1c215342ef00c81583ae67f4c5ef # v2.0.0
+        uses: ./.github/actions/setup-sd
 
       - name: Install CLI tools for iOS builds
         if: ${{ inputs.platform == 'ios' }}
@@ -149,7 +168,7 @@ jobs:
       # Update version numbers and workspace credentials before building the app
 
       - name: Generate New Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: 'generate_new_version'
@@ -175,7 +194,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update React Native SDK Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: "update_react_native_sdk_version"
@@ -185,7 +204,7 @@ jobs:
           APP_VERSION_CODE: ${{ env.APP_VERSION_CODE }}
 
       - name: Update ${{ inputs.platform_name }} ${{ inputs.app_name }} Sample App Version
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: "update_react_native_app_version"
@@ -232,7 +251,7 @@ jobs:
 
       # Make sure to fetch dependencies only after updating version numbers and workspace credentials
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -241,7 +260,7 @@ jobs:
 
       - name: Cache CocoaPods downloaded dependencies for faster builds in the future
         if: ${{ inputs.platform == 'ios' }}
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: example/Pods
           key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
@@ -318,16 +337,10 @@ jobs:
         if: ${{ inputs.platform == 'android' }}
         uses: customerio/customerio-android/.github/actions/setup-android@main
 
-      - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
-        # This action only selects the repository's supported Xcode version.
-        # Signing credentials are scoped to the distribution-only Fastlane step.
-        if: ${{ inputs.platform == 'ios' }}
-        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
-
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         if: ${{ inputs.should_distribute }}
         id: build_app
-        uses: maierj/fastlane-action@5a3b971aaa26776459bb26894d6c1a1a84a311a7 # v3.1.0
+        uses: maierj/fastlane-action@182983d8f94bad9884001c03c1c2786f4c7165ed # v3.2.0
         with:
           subdirectory: example
           lane: '${{ inputs.platform }} build'
@@ -345,7 +358,7 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ inputs.platform }}" == 'android' ]]; then
-            ./android/gradlew -p android :app:assembleRelease
+            ./android/gradlew -p android :app:assembleTokenRelease
           else
             xcodebuild \
               -workspace ios/SampleApp.xcworkspace \

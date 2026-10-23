@@ -22,7 +22,7 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // debuggableVariants = ["liteDebug", "prodDebug"]
+    debuggableVariants = ["tokenDebug", "fidDebug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -86,6 +86,18 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+    flavorDimensions = ["push"]
+    productFlavors {
+        // Registers with the FCM token
+        token {
+            dimension "push"
+            isDefault = true
+        }
+        // Registers with the Firebase Installation ID (firebase-messaging 25.1.0+ and the flag in src/fid)
+        fid {
+            dimension "push"
+        }
+    }
     signingConfigs {
         debug {
             storeFile = file('debug.keystore')
@@ -122,4 +134,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    fidImplementation "com.google.firebase:firebase-messaging:25.1.3"
 }
