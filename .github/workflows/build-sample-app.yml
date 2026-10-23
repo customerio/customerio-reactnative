@@ -53,11 +53,15 @@ on:
 env:
   RUBY_VERSION: '3.4'
   NODE_VERSION: '24'
+  # iOS sample apps build on the xcode-27 image (GitHub-hosted public preview, actions/runner-images#14404).
+  XCODE_VERSION: '27.0'
 
 jobs:
   build-sample-app:
     name: Building ${{ inputs.platform_name }}  ${{ inputs.app_name }} sample app with SDK version ${{ inputs.sdk_version }}
-    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'macos-26' }}
+    runs-on: ${{ inputs.platform == 'android' && 'ubuntu-latest' || 'xcode-27' }}
+    # Execution time only; queueing for a runner doesn't count. iOS builds take 20-35 minutes, Android 10-16.
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: example # sets working directory for all steps in this job
@@ -71,6 +75,21 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Workaround for bug https://github.com/actions/checkout/issues/1471
+
+      # Select Xcode before anything that compiles or runs CocoaPods, so every iOS step uses it.
+      # Signing credentials are scoped to the distribution-only Fastlane step.
+      - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
+        if: ${{ inputs.platform == 'ios' }}
+        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Verify Xcode 27 toolchain
+        if: ${{ inputs.platform == 'ios' }}
+        uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
+        with:
+          expected-xcode-major: '27'
+          expected-ios-sdk-major: '27'
 
       # This file is untracked and needs to be created dynamically
       - name: Create SampleApp.xcodeproj file
@@ -317,12 +336,6 @@ jobs:
       - name: Setup Android environment for Android sample app
         if: ${{ inputs.platform == 'android' }}
         uses: customerio/customerio-android/.github/actions/setup-android@main
-
-      - name: Setup ${{ inputs.platform_name }} environment for the ${{ inputs.platform }} sample app
-        # This action only selects the repository's supported Xcode version.
-        # Signing credentials are scoped to the distribution-only Fastlane step.
-        if: ${{ inputs.platform == 'ios' }}
-        uses: customerio/mobile-ci-tools/github-actions/ios/setup-ios/v1@main
 
       - name: Build and upload ${{ inputs.platform_name }} ${{ inputs.app_name }} sample app via Fastlane
         if: ${{ inputs.should_distribute }}
