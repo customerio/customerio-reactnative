@@ -44,6 +44,8 @@ ios/SampleApp.xcodeproj
 
 .Debug.xcconfig
 .Release.xcconfig
+.Debug-FID.xcconfig
+.Release-FID.xcconfig
 
 
 

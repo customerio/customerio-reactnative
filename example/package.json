@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --mode tokenDebug",
+    "android:fid": "react-native run-android --mode fidDebug",
     "ios": "react-native run-ios",
     "pods": "bundle exec pod install --project-directory=ios",
     "lint": "eslint .",
