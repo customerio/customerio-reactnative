@@ -20,7 +20,6 @@ import io.customer.sdk.CustomerIO
 import io.customer.sdk.CustomerIOBuilder
 import io.customer.sdk.core.di.SDKComponent
 import io.customer.sdk.core.util.Logger
-import io.customer.sdk.data.model.Region
 
 /**
  * React Native module implementation for Customer.io In-App Messaging Native SDK
@@ -261,13 +260,12 @@ class NativeMessagingInAppModule(
          *
          * @param builder CustomerIOBuilder instance to add InAppMessaging module
          * @param config Configuration provided by customer app for InAppMessaging module
-         * @param region Region to be used for InAppMessaging module
          */
         internal fun addNativeModuleFromConfig(
             builder: CustomerIOBuilder,
-            config: Map<String, Any>,
-            region: Region
+            config: Map<String, Any>
         ) {
+            // Site ID is still required. Native in-app reads the key and region from the CustomerIO setup.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
             if (siteId.isNullOrBlank()) {
                 SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
@@ -275,7 +273,7 @@ class NativeMessagingInAppModule(
             }
 
             val module = ModuleMessagingInApp(
-                MessagingInAppModuleConfig.Builder(siteId = siteId, region = region).apply {
+                MessagingInAppModuleConfig.Builder(siteId = siteId).apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)

@@ -64,7 +64,6 @@ jobs:
         shell: bash
         env:
           E2E_IOS_RUNTIME_MAJOR: '27'
-          E2E_SIMULATOR_NAME: iPhone 17 Pro
         run: .maestro/run_scene_push.sh
 
       - name: Upload Maestro diagnostics
