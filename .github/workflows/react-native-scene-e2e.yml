@@ -23,30 +23,37 @@ jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
     runs-on: xcode-27
+    # Step budgets total 57 minutes, leaving room before the job cancellation.
+    # A step timeout fails the job while evidence and notification steps can still run.
     timeout-minutes: 60
 
     steps:
       - name: Check out React Native SDK
+        timeout-minutes: 2
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Verify Xcode 27 toolchain
+        timeout-minutes: 1
         uses: customerio/mobile-ci-tools/github-actions/ios/report-toolchain/v1@main
         with:
           expected-xcode-major: '27'
           expected-ios-sdk-major: '27'
 
       - name: Set up Node
+        timeout-minutes: 3
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '24'
           cache: npm
 
       - name: Set up Ruby
+        timeout-minutes: 3
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
           ruby-version: '3.4'
 
       - name: Install Maestro
+        timeout-minutes: 3
         shell: bash
         run: |
           set -euo pipefail
@@ -61,12 +68,14 @@ jobs:
           echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
 
       - name: Test warm and terminated notification routing
+        timeout-minutes: 40
         shell: bash
         env:
           E2E_IOS_RUNTIME_MAJOR: '27'
         run: .maestro/run_scene_push.sh
 
       - name: Upload Maestro diagnostics
+        timeout-minutes: 3
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -74,3 +83,11 @@ jobs:
           path: ${{ runner.temp }}/react-native-scene-maestro-*
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Notify #squad-mobile-alerts of a scheduled failure
+        timeout-minutes: 2
+        if: (failure() || cancelled()) && github.event_name == 'schedule'
+        uses: customerio/mobile-ci-tools/github-actions/slack-notify-scheduled-failure/v1@main
+        with:
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          label: scene notification routing
