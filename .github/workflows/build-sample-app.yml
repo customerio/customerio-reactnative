@@ -345,7 +345,7 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ inputs.platform }}" == 'android' ]]; then
-            ./android/gradlew -p android :app:assembleRelease
+            ./android/gradlew -p android :app:assembleTokenRelease
           else
             xcodebuild \
               -workspace ios/SampleApp.xcworkspace \

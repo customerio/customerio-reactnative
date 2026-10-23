@@ -108,6 +108,9 @@ installation_root = Pod::Config.instance.installation_root
 create_project_file_if_not_exists(installation_root, app_target_name)
 update_project_build_settings(installation_root, app_target_name, nse_target_name, widget_target_name, push_provider)
 
+# The "SampleApp FID" scheme builds these to register with the Firebase Installation ID
+project app_target_name, 'Debug-FID' => :debug, 'Release-FID' => :release
+
 # React Native 0.82 (New Architecture only) does not support dynamic frameworks yet, so where a
 # framework build type is needed it has to be the static one.
 # See: https://github.com/reactwg/react-native-new-architecture/discussions/115

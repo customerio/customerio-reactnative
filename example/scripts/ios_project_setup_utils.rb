@@ -15,7 +15,7 @@ def update_project_build_settings(installation_root, app_target_name, nse_target
   # to track the host app's per push provider — an extension id that isn't prefixed by its host's is
   # rejected at signing.
   [app_target_name, nse_target_name, widget_target_name].each do |target|
-    ["Debug", "Release"].each do |config|
+    ["Debug", "Release", "Debug-FID", "Release-FID"].each do |config|
       # This will create a symlink to the xcconfig file in the build settings folder
       # The xcconfig file contains the app id, provisioning profile, and other settings
       # that are specific to the sample app we build for testing
