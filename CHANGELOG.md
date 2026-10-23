@@ -1,3 +1,27 @@
+## [6.16.0](https://github.com/customerio/customerio-reactnative/compare/6.15.1...6.16.0) (2026-10-23)
+
+### Features
+
+* update native SDKs to iOS 4.13.0 and Android 4.26.0 (geofence dwell and visit duration) ([#682](https://github.com/customerio/customerio-reactnative/issues/682)) ([849b246](https://github.com/customerio/customerio-reactnative/commit/849b246a90e25aaf85f5808af8930bb8720be05f))
+
+## [6.15.1](https://github.com/customerio/customerio-reactnative/compare/6.15.0...6.15.1) (2026-10-23)
+
+### Bug Fixes
+
+* update native SDKs to iOS 4.12.3 and Android 4.25.2 ([#680](https://github.com/customerio/customerio-reactnative/issues/680)) ([3589eda](https://github.com/customerio/customerio-reactnative/commit/3589edadb6cbbafc1d43552579295a499acbb0e8))
+
+## [6.15.0](https://github.com/customerio/customerio-reactnative/compare/6.14.0...6.15.0) (2026-10-22)
+
+### Features
+
+* **MBL-2546:** accept a public key and read the region from it ([#664](https://github.com/customerio/customerio-reactnative/issues/664)) ([418c892](https://github.com/customerio/customerio-reactnative/commit/418c8926f1671af3c5c58aad802b3c55edc00d09))
+
+## [6.14.0](https://github.com/customerio/customerio-reactnative/compare/6.13.1...6.14.0) (2026-10-21)
+
+### Features
+
+* support Firebase Installation IDs (iOS 4.11.0, Android 4.24.0) ([#675](https://github.com/customerio/customerio-reactnative/issues/675)) ([c3b37ec](https://github.com/customerio/customerio-reactnative/commit/c3b37ec996aba45ee48c0db09777d409f79cd5ae))
+
 ## [6.13.1](https://github.com/customerio/customerio-reactnative/compare/6.13.0...6.13.1) (2026-09-30)
 
 ### Bug Fixes

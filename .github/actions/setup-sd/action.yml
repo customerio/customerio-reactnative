@@ -1,0 +1,45 @@
+name: Set up sd
+description: >-
+  Installs the sd find-and-replace CLI (https://github.com/chmln/sd) on a Linux runner from a
+  checksum-verified release archive. Replaces kenji-miyake/setup-sd, which only ships a node20
+  runtime. macOS jobs install sd with `brew install sd` instead.
+
+runs:
+  using: composite
+  steps:
+    - name: Install sd 1.1.0
+      shell: bash
+      env:
+        SD_VERSION: '1.1.0'
+        RUNNER_ARCH_NAME: ${{ runner.arch }}
+      run: |
+        set -euo pipefail
+        if [[ "$RUNNER_OS" != 'Linux' ]]; then
+          echo "error: setup-sd supports Linux runners only; use 'brew install sd' on $RUNNER_OS" >&2
+          exit 2
+        fi
+        # Digests from the GitHub release asset metadata of chmln/sd v1.1.0.
+        case "$RUNNER_ARCH_NAME" in
+          X64)
+            target='x86_64-unknown-linux-musl'
+            sha256='02f00f4777d43e8e95b7b8d49e1a0d6e502fed4b8e79c1c8b8063857a30caa2e'
+            ;;
+          ARM64)
+            target='aarch64-unknown-linux-musl'
+            sha256='ec8c93c0533ff21f4851d11566808d4082544baf063d9b96ea77c27e98b7cd99'
+            ;;
+          *)
+            echo "error: no sd $SD_VERSION build pinned for runner arch '$RUNNER_ARCH_NAME'" >&2
+            exit 2
+            ;;
+        esac
+        archive="$RUNNER_TEMP/sd-v$SD_VERSION-$target.tar.gz"
+        install_dir="$RUNNER_TEMP/sd-v$SD_VERSION"
+        curl -fsSL \
+          "https://github.com/chmln/sd/releases/download/v$SD_VERSION/sd-v$SD_VERSION-$target.tar.gz" \
+          -o "$archive"
+        echo "$sha256  $archive" | shasum -a 256 -c -
+        mkdir -p "$install_dir"
+        tar -xzf "$archive" -C "$install_dir" --strip-components=1 "sd-v$SD_VERSION-$target/sd"
+        echo "$install_dir" >> "$GITHUB_PATH"
+        "$install_dir/sd" --version

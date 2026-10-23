@@ -21,3 +21,8 @@ Run with Maestro 2.8.0 and a booted iPhone simulator:
 ```bash
 .maestro/run_scene_push.sh
 ```
+
+The script uses `E2E_DEVICE_ID` or `E2E_SIMULATOR_NAME` when set. Otherwise it
+takes a booted iPhone on the iOS runtime named by `E2E_IOS_RUNTIME_MAJOR`
+(default 27), then the newest numbered iPhone Pro on that runtime, then any
+iPhone, so CI keeps working when runner images rename their simulators.
