@@ -1,3 +1,9 @@
+## [6.16.1](https://github.com/customerio/customerio-reactnative/compare/6.16.0...6.16.1) (2026-10-23)
+
+### Bug Fixes
+
+* **android:** build under AGP 9 built-in Kotlin and new DSL ([#669](https://github.com/customerio/customerio-reactnative/issues/669)) ([1068ea0](https://github.com/customerio/customerio-reactnative/commit/1068ea0bd7f66f86232288a3c7e7857c6b6dfb1c))
+
 ## [6.16.0](https://github.com/customerio/customerio-reactnative/compare/6.15.1...6.16.0) (2026-10-23)
 
 ### Features
