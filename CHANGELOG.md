@@ -1,3 +1,9 @@
+## [6.16.0](https://github.com/customerio/customerio-reactnative/compare/6.15.1...6.16.0) (2026-10-23)
+
+### Features
+
+* update native SDKs to iOS 4.13.0 and Android 4.26.0 (geofence dwell and visit duration) ([#682](https://github.com/customerio/customerio-reactnative/issues/682)) ([849b246](https://github.com/customerio/customerio-reactnative/commit/849b246a90e25aaf85f5808af8930bb8720be05f))
+
 ## [6.15.1](https://github.com/customerio/customerio-reactnative/compare/6.15.0...6.15.1) (2026-10-23)
 
 ### Bug Fixes
