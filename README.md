@@ -6,9 +6,9 @@
 
 [![npm version](https://img.shields.io/npm/v/customerio-reactnative.svg)](https://www.npmjs.com/package/customerio-reactnative)
 [![npm downloads](https://img.shields.io/npm/dm/customerio-reactnative)](https://www.npmjs.com/package/customerio-reactnative)
-![min Android SDK version is 21](https://img.shields.io/badge/min%20Android%20SDK-21-green)
-![min iOS version is 13](https://img.shields.io/badge/min%20iOS%20version-13-blue)
-![min Swift version is 5.3](https://img.shields.io/badge/min%20Swift%20version-5.3-orange)
+![min React Native version is 0.77](https://img.shields.io/badge/min%20React%20Native-0.77-purple)
+![min Android SDK version is 24](https://img.shields.io/badge/min%20Android%20SDK-24-green)
+![min iOS version is 15.1](https://img.shields.io/badge/min%20iOS%20version-15.1-blue)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 # Customer.io React Native SDK
@@ -17,6 +17,33 @@ The official Customer.io SDK for React Native enables you to integrate mobile me
 
 > 📖 Full documentation: [customer.io/docs/sdk/react-native](https://customer.io/docs/sdk/react-native/)  
 > 🧪 Example apps: [see the `/example` directory](/example)
+
+---
+
+## Requirements
+
+| | Minimum | Where it comes from |
+|---|---|---|
+| React Native | 0.77, New Architecture enabled | The SDK supports only the New Architecture (since 6.0.0). Its Android module applies the Compose compiler plugin with your app's Kotlin version, which needs Kotlin 2.0 or later; React Native 0.77 is the first release whose template uses Kotlin 2.0. |
+| iOS | 15.1 | React Native 0.76 and later require iOS 15.1. |
+| Android | API 24 (Android 7.0) | React Native 0.76 and later require API 24. |
+| Android build | `compileSdkVersion` 36, Android Gradle Plugin 8.9.1 | The native Android SDK depends on AndroidX Core 1.17, which requires both. |
+
+The native Customer.io iOS and Android SDKs support older OS versions, but a React Native app cannot
+target an OS version below the minimum of the React Native release it uses.
+
+Apps created from the React Native 0.81 template or later meet the Android build requirement as
+generated. CI builds Android template apps with React Native 0.81 and 0.88, and iOS with the example
+app (React Native 0.83) and the scene E2E host (React Native 0.88). On React Native 0.77 to 0.80,
+update the app's Android build:
+
+- Set `compileSdkVersion = 36` and `buildToolsVersion = "36.0.0"` in `android/build.gradle`.
+- On 0.77 to 0.79, also raise the Android Gradle Plugin to 8.9.1 or later
+  (`classpath("com.android.tools.build:gradle:8.9.1")`), which needs Gradle 8.11.1 or later in
+  `android/gradle/wrapper/gradle-wrapper.properties`.
+
+Expo apps regenerate `android/` on prebuild and take the Android Gradle Plugin and Gradle versions
+from the Expo SDK; Expo SDK 54 (React Native 0.81) and later meet the Android build requirement.
 
 ---
 
