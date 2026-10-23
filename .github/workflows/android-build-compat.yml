@@ -1,0 +1,96 @@
+name: Android build compatibility
+
+# Builds a stock React Native template app against the packed SDK, so the Android module keeps
+# configuring and compiling from the oldest React Native it supports through AGP 9's defaults.
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'src/specs/**'
+      - 'src/postInstall.js'
+      - 'react-native.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/build-android-template-host.sh'
+      - '.github/workflows/android-build-compat.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  template-host:
+    name: RN ${{ matrix.rn }} (${{ matrix.mode }}, ${{ matrix.task }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Oldest React Native the module compiles on: AGP 8.7, Gradle 8.10, Kotlin 2.0.21. Only the
+          # module is built: the app as generated (compileSdk 35, AGP 8.7.2) can't take AndroidX
+          # Core 1.17 from the native SDK, which needs compileSdk 36 and AGP 8.9.1.
+          - rn: '0.77.3'
+            cli: '15.1.3'
+            mode: template-defaults
+            task: ':customerio-reactnative:assembleDebug'
+          # Oldest template whose app builds with this SDK as generated (compileSdk 36, AGP 8.11).
+          - rn: '0.81.6'
+            cli: '20.0.0'
+            mode: template-defaults
+            task: ':app:assembleDebug'
+          # Current template: AGP 9 with built-in Kotlin and the new DSL opted out.
+          - rn: '0.88.0'
+            cli: '20.2.0'
+            mode: template-defaults
+            task: ':app:assembleDebug'
+          # AGP 9 defaults, which AGP 10 makes mandatory.
+          - rn: '0.88.0'
+            cli: '20.2.0'
+            mode: agp9-defaults
+            task: ':app:assembleDebug'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+        with:
+          # The open-source provider; the default `enhanced` provider is proprietary.
+          cache-provider: basic
+
+      - name: Build template host
+        env:
+          RN_VERSION: ${{ matrix.rn }}
+          RN_CLI_VERSION: ${{ matrix.cli }}
+          GRADLE_TASK: ${{ matrix.task }}
+          CIO_HOST_PARENT: ${{ runner.temp }}/android-host
+          ANDROID_ABI: x86_64
+        run: scripts/build-android-template-host.sh ${{ matrix.mode }}
+
+      - name: Upload Gradle reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-host-${{ matrix.rn }}-${{ matrix.mode }}-reports
+          path: |
+            ${{ runner.temp }}/android-host/CioAndroidHost/android/build/reports
+            ${{ runner.temp }}/android-host/CioAndroidHost/android/app/build/reports
+            ${{ runner.temp }}/android-host/CioAndroidHost/node_modules/customerio-reactnative/android/build/reports
+          if-no-files-found: ignore
+          retention-days: 7
