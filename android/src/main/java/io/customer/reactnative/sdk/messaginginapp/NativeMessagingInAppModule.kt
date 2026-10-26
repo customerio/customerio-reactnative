@@ -265,15 +265,16 @@ class NativeMessagingInAppModule(
             builder: CustomerIOBuilder,
             config: Map<String, Any>
         ) {
-            // Site ID is still required. Native in-app reads the key and region from the CustomerIO setup.
+            // Site ID is optional with a public (pk_) key. Native in-app reads the key and region from the CustomerIO setup.
             val siteId = config.getTypedValue<String>(Keys.Config.SITE_ID)
-            if (siteId.isNullOrBlank()) {
-                SDKComponent.logger.error("Site ID is required to initialize InAppMessaging module")
-                return
+            val configBuilder = if (siteId.isNullOrBlank()) {
+                MessagingInAppModuleConfig.Builder()
+            } else {
+                MessagingInAppModuleConfig.Builder(siteId = siteId)
             }
 
             val module = ModuleMessagingInApp(
-                MessagingInAppModuleConfig.Builder(siteId = siteId).apply {
+                configBuilder.apply {
                     setEventListener(eventListener = ReactInAppEventListener.instance)
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)

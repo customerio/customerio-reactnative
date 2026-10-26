@@ -78,7 +78,7 @@ useEffect(() => {
     logLevel: CioLogLevel.debug,
     trackApplicationLifecycleEvents: true,
     inApp: {
-      siteId: 'your-site-id', // Required for in-app messaging
+      siteId: 'your-site-id', // Optional with a pk_ key
     },
     push: {
       android: {

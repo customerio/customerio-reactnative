@@ -68,7 +68,11 @@ export type CioConfig = {
   trackApplicationLifecycleEvents?: boolean;
   autoTrackDeviceAttributes?: boolean;
   inApp?: {
-    siteId: string;
+    /**
+     * Workspace site ID. Optional when `cdpApiKey` is a public `pk_` key, which identifies the
+     * workspace. Pass `inApp: {}` to turn on in-app messaging without one.
+     */
+    siteId?: string;
     /**
      * Color scheme used to render in-app messages. Defaults to `CioColorScheme.Auto`, which
      * follows the device appearance. Set it when the app has its own appearance setting that
