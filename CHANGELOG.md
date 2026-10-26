@@ -1,3 +1,13 @@
+## [7.0.0](https://github.com/customerio/customerio-reactnative/compare/6.16.1...7.0.0) (2026-10-26)
+
+### ⚠ BREAKING CHANGES
+
+* take native iOS and Android 5.0 (#684)
+
+### Features
+
+* take native iOS and Android 5.0 ([#684](https://github.com/customerio/customerio-reactnative/issues/684)) ([c16b1d5](https://github.com/customerio/customerio-reactnative/commit/c16b1d5ce508fde4a75f494bed3d900f52d51098))
+
 ## [6.16.1](https://github.com/customerio/customerio-reactnative/compare/6.16.0...6.16.1) (2026-10-23)
 
 ### Bug Fixes
