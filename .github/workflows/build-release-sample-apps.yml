@@ -8,6 +8,12 @@ on:
         required: false
         type: string
   workflow_call:
+    inputs:
+      sdk_version:
+        description: "Published SDK version to build the sample apps with. The deploy workflow passes the version it just published."
+        required: false
+        type: string
+        default: ""
 
 jobs:
   determine-branch:
@@ -21,19 +27,36 @@ jobs:
 
   determine-sdk-version:
     runs-on: ubuntu-latest
+    # The wait fails on its own after 60 minutes; the extra time lets it report what is missing.
+    timeout-minutes: 70
     outputs:
       resolved_version: ${{ steps.get_version.outputs.sdk_version }}
     steps:
       - name: Get Latest SDK Version (if not provided)
         id: get_version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SDK_VERSION_INPUT: ${{ inputs.sdk_version }}
         run: |
-          if [[ -z "${{ inputs.sdk_version }}" ]]; then
+          if [[ -n "$SDK_VERSION_INPUT" ]]; then
+            echo "sdk_version=$SDK_VERSION_INPUT" >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             LATEST_VERSION=$(npm show customerio-reactnative version)
             echo "Using latest SDK version: $LATEST_VERSION"
-            echo "sdk_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+            echo "sdk_version=$LATEST_VERSION" >> "$GITHUB_OUTPUT"
           else
-            echo "sdk_version=${{ inputs.sdk_version }}" >> $GITHUB_OUTPUT
+            # Right after publishing, npm's `latest` tag can still name the previous release.
+            echo "::error::A release build needs sdk_version passed in from the job that published the release."
+            exit 1
           fi
+
+      # Both build jobs need this job, so neither installs the SDK before npm serves it.
+      - name: Wait until customerio-reactnative is downloadable
+        uses: customerio/mobile-ci-tools/github-actions/wait-until-downloadable/v1@main
+        with:
+          ecosystem: npm
+          version: ${{ steps.get_version.outputs.sdk_version }}
+          packages: customerio-reactnative
 
   build-sample-app-ios:
     needs: [determine-branch, determine-sdk-version]
