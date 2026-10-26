@@ -29,8 +29,8 @@ The official Customer.io SDK for React Native enables you to integrate mobile me
 | Android | API 24 (Android 7.0) | React Native 0.76 and later require API 24. |
 | Android build | `compileSdkVersion` 36, Android Gradle Plugin 8.9.1 | The native Android SDK depends on AndroidX Core 1.17, which requires both. |
 
-The native Customer.io iOS and Android SDKs support older OS versions, but a React Native app cannot
-target an OS version below the minimum of the React Native release it uses.
+The native Customer.io SDKs (5.0.0) require iOS 15 and API 24, which these React Native minimums
+already cover.
 
 Apps created from the React Native 0.81 template or later meet the Android build requirement as
 generated. CI builds Android template apps with React Native 0.81 and 0.88, and iOS with the example
