@@ -6,10 +6,10 @@ Update the Customer.io **iOS** and/or **Android** native SDK versions used by th
 
 | Platform | File | What to change |
 |----------|------|----------------|
-| **iOS** | `package.json` | `cioNativeiOSSdkVersion` (and optionally `cioiOSFirebaseWrapperSdkVersion` if needed) |
+| **iOS** | `package.json` | `cioNativeiOSSdkVersion` |
 | **Android** | `android/gradle.properties` | `customerio.reactnative.cioSDKVersionAndroid=x.y.z` |
 
-- iOS version is read by `customerio-reactnative.podspec` and `customerio-reactnative-richpush.podspec` from `package.json`. Firebase wrapper version is read as `cioiOSFirebaseWrapperSdkVersion`.
+- iOS version is read by `customerio-reactnative.podspec` and `customerio-reactnative-richpush.podspec` from `package.json`. `CioFirebaseWrapper` ships in customerio-ios, so it uses the same version.
 - Android version is read by `android/build.gradle` as `ext.cioAndroidSDKVersion` from `gradle.properties`.
 
 ## Steps
@@ -23,7 +23,6 @@ Update the Customer.io **iOS** and/or **Android** native SDK versions used by th
 2. **Update iOS native SDK**
    - In **`package.json`**, set:
      - `"cioNativeiOSSdkVersion": "= X.Y.Z"` (e.g. `"= 4.1.3"`). Keep the `= ` prefix (CocoaPods “any compatible” style).
-   - Only change `cioiOSFirebaseWrapperSdkVersion` if the iOS SDK or docs require it.
 
 3. **Update Android native SDK**
    - In **`android/gradle.properties`**, update the line:

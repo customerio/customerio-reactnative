@@ -53,7 +53,7 @@ Pod::Spec.new do |s|
   s.subspec "fcm" do |ss|
     ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
     # Customer.io Firebase Wrapper - provides Firebase integration
-    ss.dependency "CioFirebaseWrapper", package["cioiOSFirebaseWrapperSdkVersion"]
+    ss.dependency "CioFirebaseWrapper", package["cioNativeiOSSdkVersion"]
   end
 
   # Location module is optional - customers must opt in by adding this subspec.
