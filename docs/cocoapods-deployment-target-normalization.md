@@ -18,14 +18,14 @@ from the installed npm package. When its behavior changes, update the helper, te
 together. It does not depend on a cross-repository source lock or require wrapper copies to remain
 byte-identical.
 
-Customer.io deliberately continues to publish native SDKs that support iOS versions below 15. A
-podspec can therefore correctly declare that lower library minimum even when React Native or the
-application consuming it requires a newer iOS version. CocoaPods carries deployment metadata from
-Customer.io and third-party podspecs into generated build targets, but Xcode 27 no longer accepts
-targets below the iOS SDK's supported build range. Raising every published podspec to iOS 15 would
-unnecessarily drop older applications and would not control metadata from transitive
-dependencies. The helper instead aligns the generated targets with the host application's chosen
-minimum while leaving the packages' published runtime compatibility unchanged.
+The native Customer.io SDKs declare iOS 15.0 from 5.0.0, below React Native's iOS 15.1, and
+dependencies such as Jist and third-party pods can declare older minimums. A podspec can correctly
+declare a lower library minimum even when the application consuming it requires a newer iOS
+version. CocoaPods carries deployment metadata from Customer.io and third-party podspecs into
+generated build targets, but Xcode 27 no longer accepts targets below the iOS SDK's supported build
+range, and raising published podspecs would not control metadata from transitive dependencies. The
+helper instead aligns the generated targets with the host application's chosen minimum while
+leaving the packages' published runtime compatibility unchanged.
 This is the supported integration policy for a React Native application that has moved its own
 minimum to the required iOS floor.
 
@@ -106,8 +106,8 @@ These cases fail before any project mutation.
 ## When the helper is no longer needed
 
 Keep the helper while a supported dependency graph can validly include deployment metadata below
-the host application's minimum. This is expected while Customer.io supports older iOS versions or
-supported third-party pods continue to declare lower minimums. A `platform` declaration in the
+the host application's minimum. This is expected while Customer.io pods (iOS 15.0 from 5.0.0) or
+supported third-party pods declare minimums below React Native's. A `platform` declaration in the
 application's Podfile alone does not guarantee that every generated target uses the same value.
 
 The helper becomes unnecessary only when a clean install without it proves that every
