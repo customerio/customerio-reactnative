@@ -6,8 +6,8 @@ import UIKit
 /// React Native wrapper hosting the SwiftUI `NotificationInboxView` (the Jist-rendered message
 /// list) inside a `UIHostingController`. No events; sizing is driven by the JS `style` prop.
 /// Message actions are handled by the existing global InboxEventListener.
-/// No `@available` annotation, matching `ReactInlineMessageView`: the native list view is iOS 13+,
-/// so the pod's own floor (`min_ios_version_supported`) governs.
+/// No `@available` annotation, matching `ReactInlineMessageView`: the native list view needs nothing
+/// newer than the pod's own floor (`min_ios_version_supported`), so that floor governs.
 @objc(ReactNotificationInboxView)
 class ReactNotificationInboxView: NSObject {
     private weak var containerView: UIView?
