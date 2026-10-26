@@ -108,7 +108,18 @@ jobs:
           # Get latest versions
           LATEST_IOS="${INPUT_IOS:-$(get_latest_release 'customerio/customerio-ios')}"
           LATEST_ANDROID="${INPUT_ANDROID:-$(get_latest_release 'customerio/customerio-android')}"
-          
+
+          # A native major needs a hand-written wrapper major (new pins, Firebase wrapper, minimums), so
+          # only a manual run that names the version can cross one.
+          if [[ -z "$INPUT_IOS" && -n "$LATEST_IOS" && "${LATEST_IOS%%.*}" != "${CURRENT_IOS%%.*}" ]]; then
+            echo "::warning::Skipping customerio-ios $LATEST_IOS: it's a new major from $CURRENT_IOS. Update the wrapper by hand."
+            LATEST_IOS=""
+          fi
+          if [[ -z "$INPUT_ANDROID" && -n "$LATEST_ANDROID" && "${LATEST_ANDROID%%.*}" != "${CURRENT_ANDROID%%.*}" ]]; then
+            echo "::warning::Skipping customerio-android $LATEST_ANDROID: it's a new major from $CURRENT_ANDROID. Update the wrapper by hand."
+            LATEST_ANDROID=""
+          fi
+
           # Check if updates needed
           IOS_NEEDS_UPDATE="false"
           ANDROID_NEEDS_UPDATE="false"
