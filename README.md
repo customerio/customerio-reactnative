@@ -99,6 +99,28 @@ useEffect(() => {
 
 This SDK supports [rich push notifications](https://customer.io/docs/sdk/react-native/rich-push/) using Firebase (for Android) and either Firebase or APNs (for iOS). Follow our [push setup guide](https://customer.io/docs/sdk/react-native/push/) to configure your project for push.
 
+### iOS FCM with React Native Firebase 26.1 or later
+
+React Native Firebase 26.1 and later adds Firebase through Swift Package Manager by default. The `fcm` subspec adds Firebase through CocoaPods as well, so the build fails with two copies of Firebase. Use the `fcm-core` subspec in its place. It adds no Firebase of its own and uses the FirebaseMessaging that React Native Firebase brings in:
+
+```ruby
+# React Native Firebase's Swift Package Manager setup needs dynamic frameworks.
+use_frameworks! :linkage => :dynamic
+
+target 'YourApp' do
+  config = use_native_modules!
+  pod 'customerio-reactnative/fcm-core', :path => '../node_modules/customerio-reactnative'
+end
+
+target 'NotificationServiceExtension' do
+  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+end
+```
+
+- Install `@react-native-firebase/messaging` as well as `@react-native-firebase/app`. Without FirebaseMessaging in the app, `MessagingPushFCM.initialize` stops the app at launch.
+- List `fcm-core` instead of `fcm`. Listing both brings Firebase back from CocoaPods.
+- The Expo plugin always uses `fcm` for now.
+
 On iOS, a React Native 0.88+ `UIScene` host using the acknowledged handler must declare that ownership before React Native starts. This API is not used on Android or by AppDelegate-only hosts. Call this first in `scene(_:willConnectTo:options:)` so cold destinations wait for the JavaScript handler instead of entering the legacy `Linking` path:
 
 ```swift
