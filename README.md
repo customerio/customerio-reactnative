@@ -158,6 +158,28 @@ This integration applies after the host has adopted React Native's UIScene lifec
 
 This release's compatibility scope is one simultaneous window scene. Multiple simultaneous React Native window scenes are not supported. React Native's URL notification is process-wide, so SDK-published destinations may reach every connected React Native instance rather than one selected window.
 
+### iOS FCM with React Native Firebase 26.1 or later
+
+React Native Firebase 26.1 and later adds Firebase through Swift Package Manager by default. The `fcm` subspec adds Firebase through CocoaPods as well, so the build fails with two copies of Firebase. Use the `fcm-core` subspec in its place. It adds no Firebase of its own and uses the FirebaseMessaging that React Native Firebase brings in:
+
+```ruby
+# React Native Firebase's Swift Package Manager setup needs dynamic frameworks.
+use_frameworks! :linkage => :dynamic
+
+target 'YourApp' do
+  config = use_native_modules!
+  pod 'customerio-reactnative/fcm-core', :path => '../node_modules/customerio-reactnative'
+end
+
+target 'NotificationServiceExtension' do
+  pod 'customerio-reactnative-richpush/fcm', :path => '../node_modules/customerio-reactnative'
+end
+```
+
+- Install `@react-native-firebase/messaging` as well as `@react-native-firebase/app`. Without FirebaseMessaging in the app, `MessagingPushFCM.initialize` stops the app at launch.
+- List `fcm-core` instead of `fcm`. Listing both brings Firebase back from CocoaPods.
+- The Expo plugin always uses `fcm` for now.
+
 ---
 
 ## 🔴 Live Activities

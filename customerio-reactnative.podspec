@@ -52,6 +52,15 @@ Pod::Spec.new do |s|
     ss.dependency "CioFirebaseWrapper", package["cioNativeiOSSdkVersion"]
   end
 
+  # FCM for apps that get FirebaseMessaging from somewhere else, such as React Native Firebase 26.1+ with its default
+  # Swift Package Manager setup. The `fcm` subspec adds Firebase from CocoaPods as well, and two copies of Firebase fail
+  # the build. This one adds only the adapter, which finds FirebaseMessaging at runtime; MessagingPushFCM.initialize
+  # stops the app if FirebaseMessaging isn't linked.
+  s.subspec "fcm-core" do |ss|
+    ss.dependency "CustomerIO/MessagingPushFCM", package["cioNativeiOSSdkVersion"]
+    ss.dependency "CioFirebaseWrapper/Core", package["cioNativeiOSSdkVersion"]
+  end
+
   # Location module is optional - customers must opt in by adding this subspec.
   s.subspec "location" do |ss|
     ss.dependency "CustomerIO/Location", package["cioNativeiOSSdkVersion"]
