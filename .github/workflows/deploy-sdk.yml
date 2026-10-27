@@ -244,6 +244,10 @@ jobs:
             }
 
   publish-sample-apps-public-builds:
-    needs: deploy-npm
+    # `deploy-git-tag` is needed for its `new_release_version` output, not for ordering. Right after
+    # publishing, npm's `latest` tag can still name the previous release.
+    needs: [deploy-git-tag, deploy-npm]
     uses: ./.github/workflows/build-release-sample-apps.yml
+    with:
+      sdk_version: ${{ needs.deploy-git-tag.outputs.new_release_version }}
     secrets: inherit
