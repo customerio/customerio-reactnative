@@ -36,7 +36,7 @@ export type CioConfig = {
     trackApplicationLifecycleEvents?: boolean;
     autoTrackDeviceAttributes?: boolean;
     inApp?: {
-        siteId: string;
+        siteId?: string;
         colorScheme?: CioColorScheme;
         notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
     };
