@@ -1,3 +1,9 @@
+## [7.1.0](https://github.com/customerio/customerio-reactnative/compare/7.0.0...7.1.0) (2026-10-27)
+
+### Features
+
+* add an fcm-core subspec for apps that get Firebase from Swift Package Manager ([#689](https://github.com/customerio/customerio-reactnative/issues/689)) ([195a10c](https://github.com/customerio/customerio-reactnative/commit/195a10c863ed62c2516ff99717d02a88cd549715))
+
 ## [7.0.0](https://github.com/customerio/customerio-reactnative/compare/6.16.1...7.0.0) (2026-10-26)
 
 ### ⚠ BREAKING CHANGES
