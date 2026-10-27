@@ -1,6 +1,6 @@
 /**
- * `inApp.siteId` stays required, even with a workspace public (`pk_`) key, until the native SDKs
- * and the in-app renderer support key-only setup. The JavaScript layer forwards the config as given.
+ * `inApp.siteId` is optional with a workspace public (`pk_`) key. The JavaScript layer forwards the
+ * config as given, and the native SDKs start in-app without a site ID when it is left out.
  */
 
 jest.mock('react-native', () => ({
@@ -52,6 +52,23 @@ describe('in-app site ID', () => {
       expect.objectContaining({
         cdpApiKey: 'pk_eu_test-key',
         inApp: { siteId: 'test-site-id' },
+      }),
+      expect.anything()
+    );
+  });
+
+  it('forwards an empty inApp config with a pk_ key', async () => {
+    const config: CioConfig = {
+      cdpApiKey: 'pk_eu_test-key',
+      inApp: {},
+    };
+
+    await CustomerIO.initialize(config);
+
+    expect(nativeInitialize).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cdpApiKey: 'pk_eu_test-key',
+        inApp: {},
       }),
       expect.anything()
     );
