@@ -1,3 +1,9 @@
+## [7.2.0](https://github.com/customerio/customerio-reactnative/compare/7.1.0...7.2.0) (2026-10-27)
+
+### Features
+
+* **MBL-2652:** make inApp.siteId optional with a pk_ key ([#685](https://github.com/customerio/customerio-reactnative/issues/685)) ([82ee722](https://github.com/customerio/customerio-reactnative/commit/82ee722cb985396390a9066aa87d62d6da379c5c))
+
 ## [7.1.0](https://github.com/customerio/customerio-reactnative/compare/7.0.0...7.1.0) (2026-10-27)
 
 ### Features
