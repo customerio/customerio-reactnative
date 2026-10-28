@@ -20,4 +20,4 @@ Run from the repo root.
 ## Conventions
 - After changing the exported TypeScript API, run `npm run prepare`, then `npx api-extractor run --local`, and commit the updated `api-extractor-output/customerio-reactnative.api.md`. CI validates with `npx api-extractor run` (`.github/workflows/api-validation.yml`). See `DEVELOPMENT.md`.
 - Native SDK versions are pinned in two places: iOS in `package.json` (`cioNativeiOSSdkVersion`, keep the `= ` prefix) and Android in `android/gradle.properties` (`customerio.reactnative.cioSDKVersionAndroid`). The steps are in `.cursor/commands/update-native-sdks.md`.
-- Run `npm run lint` before pushing. `lefthook.yml` runs it on pre-push and formats staged `*.tsx` files on pre-commit.
+- Run `npm run lint` before pushing. `lefthook.yml` runs it on pre-push. On pre-commit, when `*.tsx` files are staged, the hook runs `npm run format`, which rewrites `src/**/*.tsx` only. `example/` is neither formatted by the hook nor linted.
