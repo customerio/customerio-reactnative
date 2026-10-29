@@ -1,3 +1,9 @@
+## [7.2.1](https://github.com/customerio/customerio-reactnative/compare/7.2.0...7.2.1) (2026-10-29)
+
+### Bug Fixes
+
+* update Customer.io native SDKs (iOS 5.1.3, Android 5.0.3) ([#693](https://github.com/customerio/customerio-reactnative/issues/693)) ([9f67c25](https://github.com/customerio/customerio-reactnative/commit/9f67c255788b50db0dbbde42c7741f823439c0c3))
+
 ## [7.2.0](https://github.com/customerio/customerio-reactnative/compare/7.1.0...7.2.0) (2026-10-27)
 
 ### Features
