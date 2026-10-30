@@ -104,6 +104,12 @@ jobs:
             if [[ "$fcm_required" == 'true' ]]; then
               matrix=$(jq -c '. + [{"name":"FCM","cio-workspace-name":"Mobile: xReact Native FCM workspace","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false}]' <<< "$matrix")
             fi
+            # SPIKE (do not merge): variant rows beside the APN baselines, verification builds only.
+            matrix=$(jq -c '. + [
+              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"arch-arm64","ios_archs":"arm64"},
+              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"prebuilt-core","prebuilt_core":true},
+              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false,"variant":"abi-arm64","android_abis":"arm64-v8a"}
+            ]' <<< "$matrix")
             echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           else
             echo "matrix=$distribution_matrix" >> "$GITHUB_OUTPUT"
@@ -163,7 +169,7 @@ jobs:
       matrix: # Use a matrix allowing us to build multiple apps in parallel. Just add an entry to the matrix and it will build!
         sample-app: ${{ fromJSON(needs.prepare.outputs.matrix) }}
 
-    name: Building the ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }} sample app
+    name: Building the ${{ matrix.sample-app.platform_name }} ${{ matrix.sample-app.name }} sample app${{ matrix.sample-app.variant && format(' [{0}]', matrix.sample-app.variant) }}
     uses: ./.github/workflows/build-sample-app.yml
     with:
       app_name: ${{ matrix.sample-app.name }}
@@ -172,6 +178,9 @@ jobs:
       platform_name: ${{ matrix.sample-app.platform_name }}
       platform_name_upper: ${{ matrix.sample-app.platform_name_upper }}
       should_distribute: ${{ matrix.sample-app.should_distribute }}
+      ios_archs: ${{ matrix.sample-app.ios_archs || '' }}
+      android_abis: ${{ matrix.sample-app.android_abis || '' }}
+      prebuilt_core: ${{ matrix.sample-app.prebuilt_core == true }}
 
     secrets: inherit
 

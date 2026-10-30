@@ -37,7 +37,22 @@ on:
           required: false
           default: true
           type: boolean
-    
+      ios_archs:
+          description: "Verification builds only: iOS ARCHS override (e.g. arm64). Empty builds every architecture."
+          required: false
+          default: ""
+          type: string
+      android_abis:
+          description: "Verification builds only: reactNativeArchitectures override (e.g. arm64-v8a). Empty builds every ABI."
+          required: false
+          default: ""
+          type: string
+      prebuilt_core:
+          description: "iOS only: install prebuilt React Native core and dependencies instead of compiling them"
+          required: false
+          default: false
+          type: boolean
+
     outputs:
       sdk_version_name:
         description: "SDK version used in the build"
@@ -282,6 +297,9 @@ jobs:
         working-directory: example
         env:
           CUSTOMER_IO_USE_GIT_SOURCES: ${{ inputs.platform == 'ios' && 'true' || 'false' }}
+          # React Native only uses prebuilt artifacts when these equal "1".
+          RCT_USE_PREBUILT_RNCORE: ${{ inputs.prebuilt_core && '1' || '0' }}
+          RCT_USE_RN_DEP: ${{ inputs.prebuilt_core && '1' || '0' }}
 
       - name: Verify Customer.io pod resolution through CocoaPods trunk
         if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
@@ -355,10 +373,13 @@ jobs:
         if: ${{ !inputs.should_distribute }}
         id: verify_build
         shell: bash
+        env:
+          IOS_ARCHS: ${{ inputs.ios_archs }}
+          ANDROID_ABIS: ${{ inputs.android_abis }}
         run: |
           set -euo pipefail
           if [[ "${{ inputs.platform }}" == 'android' ]]; then
-            ./android/gradlew -p android :app:assembleTokenRelease
+            ./android/gradlew -p android :app:assembleTokenRelease ${ANDROID_ABIS:+-PreactNativeArchitectures=$ANDROID_ABIS}
           else
             xcodebuild \
               -workspace ios/SampleApp.xcworkspace \
@@ -367,6 +388,7 @@ jobs:
               -sdk iphonesimulator \
               -destination 'generic/platform=iOS Simulator' \
               CODE_SIGNING_ALLOWED=NO \
+              ${IOS_ARCHS:+ARCHS=$IOS_ARCHS} \
               build
           fi
 
