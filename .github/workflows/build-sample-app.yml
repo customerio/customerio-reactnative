@@ -282,6 +282,11 @@ jobs:
         working-directory: example
         env:
           CUSTOMER_IO_USE_GIT_SOURCES: ${{ inputs.platform == 'ios' && 'true' || 'false' }}
+          # Pull request verification builds install prebuilt React Native core and dependencies. Distribution
+          # and manually dispatched builds still compile them from source. React Native only uses the prebuilt
+          # artifacts when these equal "1".
+          RCT_USE_PREBUILT_RNCORE: ${{ github.event_name == 'pull_request' && !inputs.should_distribute && '1' || '0' }}
+          RCT_USE_RN_DEP: ${{ github.event_name == 'pull_request' && !inputs.should_distribute && '1' || '0' }}
 
       - name: Verify Customer.io pod resolution through CocoaPods trunk
         if: ${{ inputs.platform == 'ios' && inputs.app_name == 'APN' }}
@@ -355,10 +360,14 @@ jobs:
         if: ${{ !inputs.should_distribute }}
         id: verify_build
         shell: bash
+        env:
+          # Pull requests build one architecture (iOS arm64, Android arm64-v8a). Manual verification runs
+          # leave this empty and build every architecture.
+          PR_FAST_BUILD: ${{ github.event_name == 'pull_request' && '1' || '' }}
         run: |
           set -euo pipefail
           if [[ "${{ inputs.platform }}" == 'android' ]]; then
-            ./android/gradlew -p android :app:assembleTokenRelease
+            ./android/gradlew -p android :app:assembleTokenRelease ${PR_FAST_BUILD:+-PreactNativeArchitectures=arm64-v8a}
           else
             xcodebuild \
               -workspace ios/SampleApp.xcworkspace \
@@ -367,6 +376,7 @@ jobs:
               -sdk iphonesimulator \
               -destination 'generic/platform=iOS Simulator' \
               CODE_SIGNING_ALLOWED=NO \
+              ${PR_FAST_BUILD:+ARCHS=arm64} \
               build
           fi
 
