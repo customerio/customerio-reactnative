@@ -106,10 +106,7 @@ jobs:
             fi
             # SPIKE (do not merge): variant rows beside the APN baselines, verification builds only.
             matrix=$(jq -c '. + [
-              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"arch-arm64","ios_archs":"arm64"},
-              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"prebuilt-core","prebuilt_core":true},
-              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"prebuilt-arm64","ios_archs":"arm64","prebuilt_core":true},
-              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"android","platform_name":"Android","platform_name_upper":"ANDROID","should_distribute":false,"variant":"abi-arm64","android_abis":"arm64-v8a"}
+              {"name":"APN","cio-workspace-name":"Mobile: React Native","platform":"ios","platform_name":"iOS","platform_name_upper":"IOS","should_distribute":false,"variant":"prebuilt-arm64","ios_archs":"arm64","prebuilt_core":true}
             ]' <<< "$matrix")
             echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           else
