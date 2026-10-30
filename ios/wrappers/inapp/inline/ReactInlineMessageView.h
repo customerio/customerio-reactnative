@@ -28,6 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Sets the element ID for the inline message
 - (void)setElementId:(NSString *)elementId;
 
+/// Sets container scroll indicators visibility
+- (void)setShowScrollIndicators:(BOOL)showScrollIndicators;
+
 /// Prepares the view for reuse in React Native lifecycle
 - (void)setupForReuse;
 
