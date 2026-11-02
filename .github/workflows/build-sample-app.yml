@@ -262,10 +262,13 @@ jobs:
         if: ${{ inputs.platform == 'ios' }}
         uses: actions/cache@v6
         with:
-          path: example/Pods
-          key: ${{ runner.os }}-${{ inputs.app_name }}-Pods-${{ github.ref }}
+          # CocoaPods' own download cache. The old `example/Pods` path never existed (the Podfile is in
+          # `example/ios`), so nothing was saved. The generated `example/ios/Pods` is rebuilt every run.
+          path: |
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-${{ inputs.app_name }}-PodsDownloads-${{ github.ref }}
           restore-keys: |
-            ${{ runner.os }}-${{ inputs.app_name }}-Pods
+            ${{ runner.os }}-${{ inputs.app_name }}-PodsDownloads
 
       - name: Install dependencies to build SDK
         run: npm ci
