@@ -33,6 +33,28 @@ export type CioPushPermissionOptions = {
 };
 
 /**
+ * A Customer.io silent push, which shows nothing and hands the app the data set on the message.
+ *
+ * @public
+ */
+export type CioBackgroundPush = {
+  /** The same push can arrive more than once with the same ID, so key your work on it. */
+  deliveryId: string;
+  data: Record<string, string>;
+  /** Only needed to track delivery yourself when automatic push tracking is off. */
+  deliveryToken: string;
+};
+
+/**
+ * Receives Customer.io silent pushes. The SDK waits up to 25 seconds for the returned promise.
+ *
+ * @public
+ */
+export type CioBackgroundPushHandler = (
+  push: CioBackgroundPush
+) => void | Promise<void>;
+
+/**
  * Current push notification permission status.
  *
  * Indicates whether the user has granted, denied, or not yet

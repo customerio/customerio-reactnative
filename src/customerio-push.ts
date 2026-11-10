@@ -1,8 +1,11 @@
-import { Platform, type TurboModule } from 'react-native';
+import { AppRegistry, Platform, type TurboModule } from 'react-native';
+import { NativeLoggerListener } from './native-logger-listener';
 import NativeCustomerIOMessagingPush, {
   type Spec as CodegenSpec,
 } from './specs/modules/NativeCustomerIOMessagingPush';
 import {
+  type CioBackgroundPush,
+  type CioBackgroundPushHandler,
   type CioPushPermissionOptions,
   CioPushPermissionStatus,
 } from './types';
@@ -13,7 +16,14 @@ import { callNativeModule, ensureNativeModule } from './utils/native-bridge';
  *
  * @internal
  */
-interface NativePushSpec extends Omit<CodegenSpec, keyof TurboModule> {}
+interface NativePushSpec extends Omit<
+  CodegenSpec,
+  | keyof TurboModule
+  | 'registerBackgroundPushHandler'
+  | 'unregisterBackgroundPushHandler'
+  | 'acknowledgeBackgroundPush'
+  | 'onBackgroundPushReceived'
+> {}
 
 // Reference to the native CustomerIO Data Pipelines module for SDK operations
 const nativeModule = ensureNativeModule(NativeCustomerIOMessagingPush);
@@ -21,6 +31,25 @@ const nativeModule = ensureNativeModule(NativeCustomerIOMessagingPush);
 // Wrapper function that ensures SDK is initialized before calling native methods
 const withNativeModule = <R>(fn: (native: CodegenSpec) => R): R => {
   return callNativeModule(nativeModule, fn);
+};
+
+// Keep in sync with `TASK_KEY` in ReactBackgroundPush.kt.
+const BACKGROUND_PUSH_TASK = 'CustomerIOBackgroundPush';
+
+type BackgroundPushEvent = { id: string; push: CioBackgroundPush };
+
+let backgroundPushHandler: CioBackgroundPushHandler | undefined;
+let backgroundPushSubscription: { remove(): void } | undefined;
+let backgroundPushListening = false;
+
+// Runs the handler, then acknowledges the push so native can end the OS's background time.
+const handleBackgroundPush = async (event: BackgroundPushEvent) => {
+  try {
+    await backgroundPushHandler?.(event.push);
+  } catch (error) {
+    NativeLoggerListener.warn('Silent push handler failed:', error);
+  }
+  withNativeModule((native) => native.acknowledgeBackgroundPush(event.id));
 };
 
 /** @public */
@@ -117,6 +146,52 @@ class CustomerIOPushMessaging implements NativePushSpec {
     return withNativeModule((native) => native.getPushPermissionStatus()).then(
       (status) => status as CioPushPermissionStatus
     );
+  }
+
+  /**
+   * Sets the handler for Customer.io silent pushes. Call it at the top level of your entry file
+   * (`index.js`), before `AppRegistry.registerComponent`: on Android, a silent push that starts the
+   * app in the background runs that file without mounting your app.
+   *
+   * The SDK waits up to 25 seconds for the returned promise, including the time React Native takes
+   * to start. Setting a new handler replaces the previous one.
+   *
+   * @param handler - receives each silent push
+   * @returns a subscription whose `remove()` stops delivery to this handler
+   */
+  setBackgroundPushHandler(handler: CioBackgroundPushHandler): {
+    remove(): void;
+  } {
+    return withNativeModule((native) => {
+      if (!backgroundPushListening) {
+        if (Platform.OS === 'android') {
+          AppRegistry.registerHeadlessTask(
+            BACKGROUND_PUSH_TASK,
+            () => handleBackgroundPush
+          );
+        } else {
+          native.onBackgroundPushReceived((event) =>
+            handleBackgroundPush(event as BackgroundPushEvent)
+          );
+        }
+        backgroundPushListening = true;
+      }
+      backgroundPushHandler = handler;
+      native.registerBackgroundPushHandler();
+
+      const subscription = {
+        remove: () => {
+          if (backgroundPushSubscription !== subscription) {
+            return;
+          }
+          backgroundPushSubscription = undefined;
+          backgroundPushHandler = undefined;
+          native.unregisterBackgroundPushHandler();
+        },
+      };
+      backgroundPushSubscription = subscription;
+      return subscription;
+    });
   }
 
   isAndroid(): boolean {

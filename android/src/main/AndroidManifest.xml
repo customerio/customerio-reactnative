@@ -14,6 +14,13 @@
         <meta-data
             android:name="io.customer.sdk.android.core.SDK_VERSION"
             android:value="@string/customer_io_react_native_sdk_client_version" />
+
+        <!-- Registers the silent push callback at process start, so a push that starts a killed
+        app can reach the JavaScript handler. Inert for apps that don't set one. -->
+        <provider
+            android:name="io.customer.reactnative.sdk.messagingpush.ReactBackgroundPushInitProvider"
+            android:authorities="${applicationId}.customerio.backgroundpush"
+            android:exported="false" />
     </application>
 
 </manifest>

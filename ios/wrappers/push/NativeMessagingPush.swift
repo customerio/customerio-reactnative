@@ -1,6 +1,7 @@
 import CioInternalCommon
-import CioMessagingPush
+@_spi(Internal) import CioMessagingPush
 import Foundation
+import UIKit
 
 enum PushPermissionStatus: String, CaseIterable {
     case denied
@@ -15,6 +16,78 @@ enum PushPermissionStatus: String, CaseIterable {
 @objc(NativeMessagingPush)
 public class NativeMessagingPush: NSObject {
     private let logger: CioInternalCommon.Logger = DIGraphShared.shared.logger
+    private weak var objcEventEmitter: AnyObject?
+
+    /// Lets `CioAppDelegateWrapper` hand Customer.io silent pushes to JavaScript, after the native SDK
+    /// records Delivered. Called at process start from NativeMessagingPush.mm, before iOS can deliver
+    /// a push that launched the app. Other pushes, and every push in apps whose JavaScript never set a
+    /// handler, go to the app delegate as before.
+    @available(iOSApplicationExtension, unavailable)
+    @objc
+    public static func installWrapperBackgroundPushHandler() {
+        MessagingPush.wrapperBackgroundPushHandler = { push, completion in
+            guard CustomerIOReactNativeBackgroundPushRouter.isHandlerExpected else { return false }
+            CustomerIOReactNativeBackgroundPushRouter.accept(push, completion: completion)
+            return true
+        }
+    }
+
+    /// For an app delegate that isn't wrapped with `CioAppDelegateWrapper`: call it first in
+    /// `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`. Returns `true` for a
+    /// Customer.io silent push, and then calls `completionHandler` itself; returns `false` for any
+    /// other push and leaves `completionHandler` to the caller.
+    @available(iOSApplicationExtension, unavailable)
+    @objc(handleBackgroundPushWithUserInfo:completionHandler:)
+    public static func handleBackgroundPush(
+        userInfo: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) -> Bool {
+        switch MessagingPush.shared.handleBackgroundPush(userInfo: userInfo) {
+        case .notBackground:
+            return false
+        case .unsupported:
+            completionHandler(.noData)
+            return true
+        case .received(let push):
+            CustomerIOReactNativeBackgroundPushRouter.accept(push, completion: completionHandler)
+            return true
+        }
+    }
+
+    @objc
+    public func setEventEmitter(_ emitter: AnyObject) {
+        objcEventEmitter = emitter
+    }
+
+    @objc
+    func registerBackgroundPushHandler() {
+        DispatchQueue.main.async { CustomerIOReactNativeBackgroundPushRouter.register(self) }
+    }
+
+    @objc
+    func unregisterBackgroundPushHandler() {
+        DispatchQueue.main.async { CustomerIOReactNativeBackgroundPushRouter.unregister(self) }
+    }
+
+    @objc
+    func acknowledgeBackgroundPush(_ id: String) {
+        DispatchQueue.main.async { CustomerIOReactNativeBackgroundPushRouter.acknowledge(id) }
+    }
+
+    @objc
+    func invalidate() {
+        DispatchQueue.main.async { CustomerIOReactNativeBackgroundPushRouter.release(self) }
+    }
+
+    func emitBackgroundPush(_ body: [String: Any]) {
+        // Codegen derives this selector from `onBackgroundPushReceived` in NativeCustomerIOMessagingPush.ts.
+        let selector = Selector(("emitOnBackgroundPushReceived:"))
+        guard let emitter = objcEventEmitter, emitter.responds(to: selector) else {
+            assertionFailure("ObjC event emitter does not respond to selector: emitOnBackgroundPushReceived:")
+            return
+        }
+        _ = emitter.perform(selector, with: body as NSDictionary)
+    }
 
     @objc
     public func onMessageReceived(
