@@ -16,6 +16,16 @@ import type { ViewProps } from 'react-native';
 import { ViewStyle } from 'react-native';
 
 // @public
+export type CioBackgroundPush = {
+    deliveryId: string;
+    data: Record<string, string>;
+    deliveryToken: string;
+};
+
+// @public
+export type CioBackgroundPushHandler = (push: CioBackgroundPush) => void | Promise<void>;
+
+// @public
 export enum CioColorScheme {
     Auto = "auto",
     Dark = "dark",
@@ -184,6 +194,9 @@ export class CustomerIOPushMessaging implements NativePushSpec {
     isAndroid(): boolean;
     onBackgroundMessageReceived(message: any): Promise<boolean>;
     onMessageReceived(message: any, handleNotificationTrigger?: boolean): Promise<boolean>;
+    setBackgroundPushHandler(handler: CioBackgroundPushHandler): {
+        remove(): void;
+    };
     // (undocumented)
     showPromptForPushNotifications(options?: CioPushPermissionOptions): Promise<CioPushPermissionStatus>;
     trackNotificationReceived(payload: Object): void;

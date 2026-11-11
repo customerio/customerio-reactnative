@@ -1,11 +1,27 @@
 #import "../utils/RCTCustomerIOUtils.h"
 #import <React/RCTBridgeModule.h>
+#import <React/RCTInvalidating.h>
 #import <RNCustomerIOSpec/RNCustomerIOSpec.h>
 
+@protocol NativeMessagingPushBridge <NativeCustomerIOMessagingPushSpec, RCTInvalidating>
+- (void)setEventEmitter:(id)emitter;
+@end
+
+// Runs at process start, before iOS can deliver a silent push that launched the app. A constructor
+// because RCT_EXPORT_MODULE already defines +load.
+__attribute__((constructor)) static void RCTNativeMessagingPushInstallBackgroundPushHandler(void) {
+  Class swiftClass = NSClassFromString(@"NativeMessagingPush");
+  SEL selector = NSSelectorFromString(@"installWrapperBackgroundPushHandler");
+  if ([swiftClass respondsToSelector:selector]) {
+    ((void (*)(id, SEL))[swiftClass methodForSelector:selector])(swiftClass, selector);
+  }
+}
+
 // Objective-C wrapper for new architecture TurboModule implementation
-@interface RCTNativeMessagingPush : NSObject <NativeCustomerIOMessagingPushSpec>
+@interface RCTNativeMessagingPush
+    : NativeCustomerIOMessagingPushSpecBase <NativeCustomerIOMessagingPushSpec>
 // Bridge to Swift implementation for cross-language compatibility
-@property(nonatomic, strong) id<NativeCustomerIOMessagingPushSpec> swiftBridge;
+@property(nonatomic, strong) id<NativeMessagingPushBridge> swiftBridge;
 @end
 
 @implementation RCTNativeMessagingPush
@@ -30,8 +46,14 @@ RCT_EXPORT_MODULE()
     RCT_ASSERT_NOT_NIL(swiftClass, @"NativeMessagingPush Swift class", @"during runtime lookup");
     _swiftBridge = [[swiftClass alloc] init];
     [self assertBridgeAvailable:@"creating NativeMessagingPush Swift instance"];
+    [_swiftBridge setEventEmitter:self];
   }
   return self;
+}
+
+- (void)invalidate {
+  [self assertBridgeAvailable:@"during invalidate"];
+  [_swiftBridge invalidate];
 }
 
 // Module initialization can happen on background thread
@@ -77,6 +99,25 @@ RCT_EXPORT_MODULE()
                          reject:(RCTPromiseRejectBlock)reject {
   [self assertBridgeAvailable:@"during getPushPermissionStatus"];
   [_swiftBridge getPushPermissionStatus:resolve reject:reject];
+}
+
+- (void)registerBackgroundPushHandler {
+  [self assertBridgeAvailable:@"during registerBackgroundPushHandler"];
+  [_swiftBridge registerBackgroundPushHandler];
+}
+
+- (void)unregisterBackgroundPushHandler {
+  [self assertBridgeAvailable:@"during unregisterBackgroundPushHandler"];
+  [_swiftBridge unregisterBackgroundPushHandler];
+}
+
+- (void)acknowledgeBackgroundPush:(NSString *)id {
+  [self assertBridgeAvailable:@"during acknowledgeBackgroundPush"];
+  [_swiftBridge acknowledgeBackgroundPush:id];
+}
+
+- (void)emitOnBackgroundPushReceived:(NSDictionary *)value {
+  [super emitOnBackgroundPushReceived:value];
 }
 
 // Export class factory function for React Native component registration

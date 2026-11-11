@@ -1,5 +1,8 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
-import type { UnsafeObject } from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  EventEmitter,
+  UnsafeObject,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
 /**
  * Native module specification for CustomerIO Push Messaging React Native SDK
@@ -20,6 +23,11 @@ export interface Spec extends TurboModule {
   getRegisteredDeviceToken(): Promise<string>;
   showPromptForPushNotifications(options: NativeBridgeObject): Promise<string>;
   getPushPermissionStatus(): Promise<string>;
+  registerBackgroundPushHandler(): void;
+  unregisterBackgroundPushHandler(): void;
+  acknowledgeBackgroundPush(id: string): void;
+  // iOS only. Android runs the handler as a Headless JS task.
+  readonly onBackgroundPushReceived: EventEmitter<UnsafeObject>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(

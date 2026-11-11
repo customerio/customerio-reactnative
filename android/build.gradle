@@ -161,6 +161,10 @@ dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  // Silent push runs the JavaScript handler in a WorkManager job, which waits without holding a
+  // WorkManager thread. The native push module already ships both at runtime.
+  implementation "androidx.work:work-runtime:2.12.0"
+  implementation "androidx.concurrent:concurrent-futures:1.1.0"
 
   // Jetpack Compose — needed because the Visual Notification Inbox view managers host
   // the native `@Composable` inbox components inside a ComposeView.

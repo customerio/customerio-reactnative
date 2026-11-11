@@ -54,7 +54,20 @@ class NativeMessagingPushModule(
 
     override fun invalidate() {
         reactContext.removeActivityEventListener(this)
+        ReactBackgroundPush.release(reactContext)
         super.invalidate()
+    }
+
+    override fun registerBackgroundPushHandler() {
+        ReactBackgroundPush.register(reactContext)
+    }
+
+    override fun unregisterBackgroundPushHandler() {
+        ReactBackgroundPush.unregister(reactContext)
+    }
+
+    override fun acknowledgeBackgroundPush(id: String) {
+        ReactBackgroundPush.acknowledge(id)
     }
 
     override fun getPushPermissionStatus(promise: Promise?) {
