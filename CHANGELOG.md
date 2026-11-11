@@ -1,3 +1,9 @@
+## [7.3.0](https://github.com/customerio/customerio-reactnative/compare/7.2.1...7.3.0) (2026-11-11)
+
+### Features
+
+* **MBL-2666:** hand Customer.io silent pushes to a JavaScript handler ([#698](https://github.com/customerio/customerio-reactnative/issues/698)) ([df61523](https://github.com/customerio/customerio-reactnative/commit/df615232d8533296bbca3524fa07356f3da1ac85))
+
 ## [7.2.1](https://github.com/customerio/customerio-reactnative/compare/7.2.0...7.2.1) (2026-10-29)
 
 ### Bug Fixes
