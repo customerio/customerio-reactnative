@@ -34,15 +34,17 @@ public class NativeMessagingPush: NSObject {
 
     /// For an app delegate that isn't wrapped with `CioAppDelegateWrapper`: call it first in
     /// `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`. Returns `true` for a
-    /// Customer.io silent push, and then calls `completionHandler` itself; returns `false` for any
-    /// other push and leaves `completionHandler` to the caller.
+    /// Customer.io silent push once JavaScript has set a handler, and then calls `completionHandler`
+    /// itself; returns `false` for any other push and leaves `completionHandler` to the caller.
     @available(iOSApplicationExtension, unavailable)
     @objc(handleBackgroundPushWithUserInfo:completionHandler:)
     public static func handleBackgroundPush(
         userInfo: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) -> Bool {
-        switch MessagingPush.shared.handleBackgroundPush(userInfo: userInfo) {
+        let result = MessagingPush.shared.handleBackgroundPush(userInfo: userInfo)
+        guard CustomerIOReactNativeBackgroundPushRouter.isHandlerExpected else { return false }
+        switch result {
         case .notBackground:
             return false
         case .unsupported:

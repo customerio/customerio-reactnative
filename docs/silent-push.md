@@ -127,7 +127,7 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 
 On Android, `onMessageReceived` and `onBackgroundMessageReceived` show nothing for a silent push, track Delivered
 and resolve `true`. React Native Firebase runs `setBackgroundMessageHandler` by starting a service, which Android 8
-and later refuse for a normal-priority message once the app has been in the background for about a minute; then
+and later refuse for a normal-priority message once the app has been in the background for a few minutes; then
 neither your handler nor Customer.io sees the push. Choose high priority for Android silent pushes on this route.
 
 On iOS, add the Remote notifications background mode as above. `onMessageReceived` and
