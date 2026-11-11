@@ -5,7 +5,7 @@ the message, so the app can refresh state in the background. The SDK tracks the 
 pushes have no opened metric.
 
 Silent push needs the customerio-reactnative release that adds `setBackgroundPushHandler`, which bundles native
-SDKs that support it (Android 5.1.0, iOS 5.2.0). Customer.io sends a silent push to every iOS and Android device
+SDKs that support it (Android 5.1.1, iOS 5.2.1). Customer.io sends a silent push to every iOS and Android device
 on the profile, so handling it is up to the app. An app that doesn't handle it shows nothing.
 
 Use one route on each platform:
