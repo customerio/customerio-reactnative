@@ -144,44 +144,40 @@ package_dir="$host_parent/package"
 derived_data="$host_parent/derived-data"
 mkdir -p "$package_dir"
 
-# Starts a Maestro flow and runs the injection command only once the flow's output shows
-# the milestone step completed, so the event reaches the simulator while the flow is
-# already waiting for it.
-run_flow_after_milestone() {
-  local flow_name="$1"
-  local milestone="$2"
-  shift 2
-  local maestro_args=(--device "$device_id" test)
+run_notification_flow() {
+  local flow="$1"
+  local payload="$2"
   local ready=false
   local status=0
+  local flow_name="${flow##*/}"
+  local maestro_args=(--device "$device_id" test "$flow")
 
+  flow_name="${flow_name%.yaml}"
   if [[ -n "${RUNNER_TEMP:-}" ]]; then
-    maestro_args+=(
+    maestro_args=(
+      --device "$device_id"
+      test
       --debug-output "$RUNNER_TEMP/react-native-scene-maestro-$flow_name"
       --flatten-debug-output
+      "$flow"
     )
   fi
-  while [[ "$1" != -- ]]; do
-    maestro_args+=("$1")
-    shift
-  done
-  shift
 
   flow_log="$(mktemp "${TMPDIR:-/tmp}/cio-rn-maestro-flow.XXXXXX")"
   maestro "${maestro_args[@]}" > >(tee "$flow_log") 2>&1 &
   flow_pid=$!
 
   for _ in {1..240}; do
-    if grep -qF "$milestone" "$flow_log"; then
+    if grep -q 'Press Home key.*COMPLETED' "$flow_log"; then
       ready=true
       break
     fi
     if ! kill -0 "$flow_pid" >/dev/null 2>&1; then
       if wait "$flow_pid"; then
-        echo "error: Maestro completed before '$milestone'" >&2
+        echo "error: Maestro completed before reaching the Home screen" >&2
       else
         status=$?
-        echo "error: Maestro exited before '$milestone' (status $status)" >&2
+        echo "error: Maestro exited before reaching the Home screen (status $status)" >&2
       fi
       flow_pid=""
       return 1
@@ -190,22 +186,10 @@ run_flow_after_milestone() {
   done
 
   if [[ "$ready" != true ]]; then
-    echo "error: Maestro did not reach '$milestone' before injection" >&2
+    echo "error: Maestro did not reach the Home screen before notification injection" >&2
     return 1
   fi
 
-  "$@" || return 1
-  if ! wait "$flow_pid"; then
-    flow_pid=""
-    return 1
-  fi
-  flow_pid=""
-  rm -f "$flow_log"
-  flow_log=""
-}
-
-push_notification() {
-  local payload="$1"
   local push_output
   if ! push_output="$(xcrun simctl push "$device_id" "$APP_ID" "$payload" 2>&1)"; then
     printf '%s\n' "$push_output" >&2
@@ -217,30 +201,18 @@ push_notification() {
     return 1
   fi
   printf '%s\n' "$push_output"
+  if ! wait "$flow_pid"; then
+    flow_pid=""
+    return 1
+  fi
+  flow_pid=""
+  rm -f "$flow_log"
+  flow_log=""
 }
 
-run_notification_flow() {
-  local flow="$1"
-  local payload="$2"
-  local flow_name="${flow##*/}"
-
-  run_flow_after_milestone "${flow_name%.yaml}" 'Press Home key... COMPLETED' \
-    "$flow" -- push_notification "$payload"
-}
-
-# A URL opened while the app is running gets SpringBoard's "Open in" prompt. Opening it
-# before Maestro starts left that prompt up for 40-75s while Maestro relaunched its test
-# runner, and the accepted open sometimes never reached the app. The warm flow opens the
-# URL from inside the running flow instead, so the prompt is answered as soon as it shows.
-run_warm_url_flow() {
+run_ordinary_url_flow() {
   local url="$1"
-
-  run_flow_after_milestone scene_url_open-warm 'Assert that "Routing: acknowledged" is visible... COMPLETED' \
-    -e "EXPECTED_URL=$url" .maestro/scene_url_warm.yaml -- xcrun simctl openurl "$device_id" "$url"
-}
-
-run_cold_url_flow() {
-  local url="$1"
+  local state="$2"
   local ordinary_args=(
     --device "$device_id"
     test
@@ -253,7 +225,7 @@ run_cold_url_flow() {
     ordinary_args=(
       --device "$device_id"
       test
-      --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_url_open-cold"
+      --debug-output "$RUNNER_TEMP/react-native-scene-maestro-scene_url_open-$state"
       --flatten-debug-output
       -e "EXPECTED_URL=$url"
       .maestro/scene_url_open.yaml
@@ -328,6 +300,11 @@ test -d "$app_path"
 xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$device_id" "$app_path"
 installed_app=true
+# Approve the URL scheme for simctl openurl, as tapping Open once on SpringBoard's
+# "Open in" prompt would. Without it the first open of the warm URL waits on that prompt,
+# and the open accepted there sometimes never reached the app.
+xcrun simctl spawn "$device_id" defaults write com.apple.launchservices.schemeapproval \
+  'com.apple.CoreSimulator.CoreSimulatorBridge-->cio-rn-scene-e2e' -string "$APP_ID"
 
 cd "$REPO_ROOT"
 for routing_mode in acknowledged linking; do
@@ -347,11 +324,11 @@ for routing_mode in acknowledged linking; do
 
   if [[ "$routing_mode" == acknowledged ]]; then
     current_phase="ordinary-link-warm-$routing_mode"
-    run_warm_url_flow 'cio-rn-scene-e2e://ordinary-warm'
+    run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-warm' warm
     xcrun simctl terminate "$device_id" "$APP_ID"
 
     current_phase="ordinary-link-cold-$routing_mode"
-    run_cold_url_flow 'cio-rn-scene-e2e://ordinary-cold'
+    run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-cold' cold
   fi
   xcrun simctl terminate "$device_id" "$APP_ID"
 
