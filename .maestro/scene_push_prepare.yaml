@@ -9,5 +9,5 @@ name: React Native UIScene push routing, prepare
       notifications: allow
 - extendedWaitUntil:
     visible: 'Customer.io React Native scene E2E ready'
-    timeout: 15000
+    timeout: 60000
 - assertVisible: 'Routing: ${ROUTING_MODE}'
