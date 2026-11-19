@@ -297,12 +297,12 @@ xcodebuild -quiet \
 
 app_path="$derived_data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
 test -d "$app_path"
+current_phase="app-install"
 xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$device_id" "$app_path"
 installed_app=true
-# Approve the URL scheme for simctl openurl, as tapping Open once on SpringBoard's
-# "Open in" prompt would. Without it the first open of the warm URL waits on that prompt,
-# and the open accepted there sometimes never reached the app.
+# Pre-approve the URL scheme so simctl openurl never shows SpringBoard's "Open in" prompt,
+# like preApproveDeepLinkPromptAsync in Expo's apps/bare-expo/scripts/start-ios-e2e-test.ts.
 xcrun simctl spawn "$device_id" defaults write com.apple.launchservices.schemeapproval \
   'com.apple.CoreSimulator.CoreSimulatorBridge-->cio-rn-scene-e2e' -string "$APP_ID"
 
