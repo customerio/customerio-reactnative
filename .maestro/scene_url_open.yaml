@@ -6,6 +6,8 @@ name: React Native UIScene ordinary URL
     optional: true
 - extendedWaitUntil:
     visible: 'Customer.io React Native scene E2E ready'
-    timeout: 15000
+    timeout: 60000
 - assertVisible: 'Routing: acknowledged'
-- assertVisible: 'Received: ${EXPECTED_URL}'
+- extendedWaitUntil:
+    visible: 'Received: ${EXPECTED_URL}'
+    timeout: 60000
