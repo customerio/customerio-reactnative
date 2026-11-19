@@ -18,7 +18,7 @@ fi
 export DEVELOPER_DIR
 export MAESTRO_CLI_NO_ANALYTICS=1
 
-for command in bundle jq maestro node npm npx ruby xcodebuild xcrun; do
+for command in bundle jq maestro node npm npx python3 ruby xcodebuild xcrun; do
   command -v "$command" >/dev/null 2>&1 || {
     echo "error: required command '$command' is not installed" >&2
     exit 2
@@ -301,6 +301,21 @@ current_phase="app-install"
 xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$device_id" "$app_path"
 installed_app=true
+
+# iOS revokes a temporary banner about six seconds after it appears, so a slow banner tap
+# found the Home screen instead. Allow the app's notifications with the Persistent banner
+# style, which stays until tapped. SpringBoard rewrites this file from memory while it
+# runs, so the record is written with the simulator shut down.
+current_phase="notification-settings"
+section_store="$(xcrun simctl list devices -j | jq -r --arg id "$device_id" \
+  '[.devices[][] | select(.udid == $id)][0].dataPath')/Library/BulletinBoard/VersionedSectionInfo.plist"
+notification_settings_log="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/react-native-scene-maestro-notification-settings.log"
+xcrun simctl shutdown "$device_id"
+python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" "$section_store" "$APP_ID" "$APP_NAME"
+python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" --check "$section_store" "$APP_ID" \
+  | sed 's/^/written: /' | tee "$notification_settings_log"
+xcrun simctl boot "$device_id"
+xcrun simctl bootstatus "$device_id" -b
 # Pre-approve the URL scheme so simctl openurl never shows SpringBoard's "Open in" prompt,
 # like preApproveDeepLinkPromptAsync in Expo's apps/bare-expo/scripts/start-ios-e2e-test.ts.
 xcrun simctl spawn "$device_id" defaults write com.apple.launchservices.schemeapproval \
@@ -321,6 +336,8 @@ for routing_mode in acknowledged linking; do
     )
   fi
   maestro "${prepare_args[@]}"
+  python3 .maestro/set_persistent_banners.py --check "$section_store" "$APP_ID" \
+    | sed "s/^/after prepare-$routing_mode: /" | tee -a "$notification_settings_log"
 
   if [[ "$routing_mode" == acknowledged ]]; then
     current_phase="ordinary-link-warm-$routing_mode"
