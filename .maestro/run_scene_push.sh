@@ -80,7 +80,6 @@ flow_pid=""
 boot_pid=""
 installed_app=false
 current_phase="setup"
-# Phase markers give the step log's timestamps a boundary for every phase.
 enter_phase() {
   current_phase="$1"
   echo "==> phase: $current_phase"
@@ -142,6 +141,7 @@ if ! jq -e --arg id "$device_id" \
   # need the simulator; the app-install phase waits for it.
   xcrun simctl boot "$device_id" &
   boot_pid=$!
+  echo "Booting $device_id in the background (pid $boot_pid)"
   simulator_started_by_runner=true
 fi
 
@@ -312,7 +312,13 @@ app_path="$derived_data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
 test -d "$app_path"
 enter_phase boot
 if [[ -n "$boot_pid" ]]; then
-  wait "$boot_pid"
+  if wait "$boot_pid"; then
+    :
+  else
+    status=$?
+    echo "error: simctl boot failed (status $status)" >&2
+    exit "$status"
+  fi
   boot_pid=""
 fi
 xcrun simctl bootstatus "$device_id" -b
