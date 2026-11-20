@@ -304,18 +304,21 @@ installed_app=true
 
 # iOS revokes a temporary banner about six seconds after it appears, so a slow banner tap
 # found the Home screen instead. Allow the app's notifications with the Persistent banner
-# style, which stays until tapped. SpringBoard rewrites this file from memory while it
-# runs, so the record is written with the simulator shut down.
+# style, which stays until tapped. SpringBoard keeps this file in memory and rewrites it as
+# it stops, so it is stopped before the write and started after (as ios-sim-notification-permission does).
 current_phase="notification-settings"
 section_store="$(xcrun simctl list devices -j | jq -r --arg id "$device_id" \
   '[.devices[][] | select(.udid == $id)][0].dataPath')/Library/BulletinBoard/VersionedSectionInfo.plist"
 notification_settings_log="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/react-native-scene-maestro-notification-settings.log"
-xcrun simctl shutdown "$device_id"
+for service in com.apple.SpringBoard com.apple.usernotificationsd; do
+  xcrun simctl spawn "$device_id" launchctl stop "$service"
+done
 python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" "$section_store" "$APP_ID" "$APP_NAME"
+for service in com.apple.SpringBoard com.apple.usernotificationsd; do
+  xcrun simctl spawn "$device_id" launchctl start "$service"
+done
 python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" --check "$section_store" "$APP_ID" \
   | sed 's/^/written: /' | tee "$notification_settings_log"
-xcrun simctl boot "$device_id"
-xcrun simctl bootstatus "$device_id" -b
 # Pre-approve the URL scheme so simctl openurl never shows SpringBoard's "Open in" prompt,
 # like preApproveDeepLinkPromptAsync in Expo's apps/bare-expo/scripts/start-ios-e2e-test.ts.
 xcrun simctl spawn "$device_id" defaults write com.apple.launchservices.schemeapproval \

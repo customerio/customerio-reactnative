@@ -35,9 +35,10 @@ saves after a user allows notifications, with alertType 2 (Alert, which Settings
 as the Persistent banner style) instead of 1 (Banner, the Temporary style).
 applesimutils edits the same file for its notifications permission.
 
-SpringBoard rewrites the file from memory, so run_scene_push.sh writes it while the
-simulator is shut down. --check decodes the saved record and fails unless it is still
-authorized with the persistent style, so a run shows whether SpringBoard kept it.
+SpringBoard rewrites the file from memory as it stops, so run_scene_push.sh stops it and
+usernotificationsd before the write and starts them after. --check decodes the saved
+record and fails unless it is still authorized with the persistent style, so a run shows
+whether SpringBoard kept it.
 """
 
 import os
