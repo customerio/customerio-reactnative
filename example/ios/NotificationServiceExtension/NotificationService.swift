@@ -25,7 +25,11 @@ class NotificationService: UNNotificationServiceExtension {
         .build()
     )
 
-    MessagingPush.shared.didReceive(request, withContentHandler: contentHandler)
+    // Returns false for a push Customer.io didn't send (for example from another push provider) and never
+    // calls the handler for it, so deliver that push unchanged.
+    if !MessagingPush.shared.didReceive(request, withContentHandler: contentHandler) {
+      contentHandler(request.content)
+    }
   }
 
   override func serviceExtensionTimeWillExpire() {
