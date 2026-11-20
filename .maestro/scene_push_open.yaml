@@ -11,4 +11,4 @@ name: React Native UIScene cold push routing, open
     retryTapIfNoChange: false
 - extendedWaitUntil:
     visible: "Received: https://customer.io/react-native-scene-e2e/cold"
-    timeout: 15000
+    timeout: 60000

@@ -18,7 +18,7 @@ fi
 export DEVELOPER_DIR
 export MAESTRO_CLI_NO_ANALYTICS=1
 
-for command in bundle jq maestro node npm npx ruby xcodebuild xcrun; do
+for command in bundle jq maestro node npm npx python3 ruby xcodebuild xcrun; do
   command -v "$command" >/dev/null 2>&1 || {
     echo "error: required command '$command' is not installed" >&2
     exit 2
@@ -77,8 +77,13 @@ package_dir=""
 derived_data=""
 flow_log=""
 flow_pid=""
+boot_pid=""
 installed_app=false
 current_phase="setup"
+enter_phase() {
+  current_phase="$1"
+  echo "==> phase: $current_phase"
+}
 cleanup() {
   local exit_code=$?
   set +e
@@ -97,6 +102,10 @@ cleanup() {
   fi
   if [[ -n "$flow_log" ]]; then
     rm -f "$flow_log"
+  fi
+  if [[ -n "$boot_pid" ]]; then
+    kill "$boot_pid" >/dev/null 2>&1 || true
+    wait "$boot_pid" 2>/dev/null || true
   fi
   if [[ "$installed_app" == true ]]; then
     xcrun simctl terminate "$device_id" "$APP_ID" >/dev/null 2>&1 || true
@@ -128,10 +137,13 @@ trap cleanup EXIT
 
 if ! jq -e --arg id "$device_id" \
   'any(.devices[][]; .udid == $id and .state == "Booted")' <<< "$simulator_devices" >/dev/null; then
-  xcrun simctl boot "$device_id"
+  # Boot in the background so it overlaps the package, pods and compile phases, none of which
+  # need the simulator; the app-install phase waits for it.
+  xcrun simctl boot "$device_id" &
+  boot_pid=$!
+  echo "Booting $device_id in the background (pid $boot_pid)"
   simulator_started_by_runner=true
 fi
-xcrun simctl bootstatus "$device_id" -b
 
 if [[ -n "${CIO_E2E_HOST_PARENT:-}" ]]; then
   host_parent="$CIO_E2E_HOST_PARENT"
@@ -235,12 +247,12 @@ run_ordinary_url_flow() {
 }
 
 cd "$REPO_ROOT"
-current_phase="package"
+enter_phase package
 npm ci
 package_name="$(npm pack --silent --pack-destination "$package_dir" | tail -n 1)"
 
 cd "$host_parent"
-current_phase="generate"
+enter_phase generate
 npx "@react-native-community/cli@$RN_CLI_VERSION" init "$APP_NAME" \
   --version "$RN_VERSION" \
   --template "@react-native-community/template@$RN_TEMPLATE_VERSION" \
@@ -257,8 +269,7 @@ npm pkg set \
   "devDependencies.@react-native/metro-config=$RN_VERSION" \
   "devDependencies.@react-native/typescript-config=$RN_VERSION" \
   "devDependencies.react-test-renderer=$REACT_VERSION"
-current_phase="install"
-npm install
+enter_phase install
 npm install "$package_dir/$package_name"
 
 cp "$FIXTURE_DIR/App.tsx" App.tsx
@@ -279,31 +290,67 @@ plist="ios/$APP_NAME/Info.plist"
 /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' "$plist"
 /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string cio-rn-scene-e2e' "$plist"
 
-current_phase="pods"
+enter_phase pods
 bundle install
 bundle exec ruby "$FIXTURE_DIR/configure_podfile.rb" ios/Podfile
 bundle exec ruby "$FIXTURE_DIR/configure.rb" "ios/$APP_NAME.xcodeproj" "$APP_NAME"
 bundle exec pod install --project-directory=ios
 
-current_phase="compile"
+enter_phase compile
+# Release builds every simulator architecture by default; the test only runs the destination's.
 xcodebuild -quiet \
   -workspace "ios/$APP_NAME.xcworkspace" \
   -scheme "$APP_NAME" \
   -configuration Release \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath "$derived_data" \
+  ONLY_ACTIVE_ARCH=YES \
   CODE_SIGNING_ALLOWED=NO \
   build
 
 app_path="$derived_data/Build/Products/Release-iphonesimulator/$APP_NAME.app"
 test -d "$app_path"
+enter_phase boot
+if [[ -n "$boot_pid" ]]; then
+  if wait "$boot_pid"; then
+    :
+  else
+    status=$?
+    echo "error: simctl boot failed (status $status)" >&2
+    exit "$status"
+  fi
+  boot_pid=""
+fi
+xcrun simctl bootstatus "$device_id" -b
+enter_phase app-install
 xcrun simctl uninstall "$device_id" "$APP_ID" >/dev/null 2>&1 || true
 xcrun simctl install "$device_id" "$app_path"
 installed_app=true
 
+# Persistent notification banners, so a slow tap still finds the banner; why and how in set_persistent_banners.py.
+enter_phase notification-settings
+section_store="$(xcrun simctl list devices -j | jq -r --arg id "$device_id" \
+  '[.devices[][] | select(.udid == $id)][0].dataPath')/Library/BulletinBoard/VersionedSectionInfo.plist"
+notification_settings_log="${RUNNER_TEMP:-${TMPDIR:-/tmp}}/react-native-scene-maestro-notification-settings.log"
+for service in com.apple.SpringBoard com.apple.usernotificationsd; do
+  xcrun simctl spawn "$device_id" launchctl stop "$service"
+done
+python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" "$section_store" "$APP_ID" "$APP_NAME"
+for service in com.apple.SpringBoard com.apple.usernotificationsd; do
+  xcrun simctl spawn "$device_id" launchctl start "$service"
+done
+# Right after the write this reads back our own write, so it is a log baseline, not proof
+# SpringBoard kept the record. The check after each prepare flow is the gate.
+python3 "$REPO_ROOT/.maestro/set_persistent_banners.py" --check "$section_store" "$APP_ID" \
+  | sed 's/^/after write: /' | tee "$notification_settings_log"
+# Pre-approve the URL scheme so simctl openurl never shows SpringBoard's "Open in" prompt,
+# like preApproveDeepLinkPromptAsync in Expo's apps/bare-expo/scripts/start-ios-e2e-test.ts.
+xcrun simctl spawn "$device_id" defaults write com.apple.launchservices.schemeapproval \
+  'com.apple.CoreSimulator.CoreSimulatorBridge-->cio-rn-scene-e2e' -string "$APP_ID"
+
 cd "$REPO_ROOT"
 for routing_mode in acknowledged linking; do
-  current_phase="prepare-$routing_mode"
+  enter_phase "prepare-$routing_mode"
   prepare_args=(--device "$device_id" test -e "ROUTING_MODE=$routing_mode" .maestro/scene_push_prepare.yaml)
   if [[ -n "${RUNNER_TEMP:-}" ]]; then
     prepare_args=(
@@ -316,18 +363,21 @@ for routing_mode in acknowledged linking; do
     )
   fi
   maestro "${prepare_args[@]}"
+  enter_phase "notification-settings-$routing_mode"
+  python3 .maestro/set_persistent_banners.py --check "$section_store" "$APP_ID" \
+    | sed "s/^/after prepare-$routing_mode: /" | tee -a "$notification_settings_log"
 
   if [[ "$routing_mode" == acknowledged ]]; then
-    current_phase="ordinary-link-warm-$routing_mode"
+    enter_phase "ordinary-link-warm-$routing_mode"
     run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-warm' warm
     xcrun simctl terminate "$device_id" "$APP_ID"
 
-    current_phase="ordinary-link-cold-$routing_mode"
+    enter_phase "ordinary-link-cold-$routing_mode"
     run_ordinary_url_flow 'cio-rn-scene-e2e://ordinary-cold' cold
   fi
   xcrun simctl terminate "$device_id" "$APP_ID"
 
-  current_phase="routing-$routing_mode"
+  enter_phase "routing-$routing_mode"
   run_notification_flow .maestro/scene_push_open.yaml .maestro/fixtures/customerio_scene_cold.apns
   run_notification_flow .maestro/scene_push_warm.yaml .maestro/fixtures/customerio_scene_warm.apns
   if [[ "$routing_mode" == acknowledged ]]; then
