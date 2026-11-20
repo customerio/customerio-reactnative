@@ -2,6 +2,8 @@ package io.customer.reactnative.sdk.messaginginapp
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import io.customer.messaginginapp.type.InAppMessage
@@ -27,6 +29,26 @@ class ReactInlineInAppMessageView @JvmOverloads constructor(
     init {
         initializeView()
         setActionListener(this)
+    }
+
+    var showScrollIndicators: Boolean = true
+        set(value) {
+            if (field == value) return
+            field = value
+            applyScrollIndicators(this)
+        }
+
+    override fun onViewAdded(child: View) {
+        super.onViewAdded(child)
+        applyScrollIndicators(child)
+    }
+
+    private fun applyScrollIndicators(view: View) {
+        view.isVerticalScrollBarEnabled = showScrollIndicators
+        view.isHorizontalScrollBarEnabled = showScrollIndicators
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) applyScrollIndicators(view.getChildAt(i))
+        }
     }
 
     override fun onActionClick(message: InAppMessage, actionValue: String, actionName: String) {
