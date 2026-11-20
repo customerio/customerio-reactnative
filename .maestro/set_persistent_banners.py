@@ -33,12 +33,13 @@ iOS keeps the setting in data/Library/BulletinBoard/VersionedSectionInfo.plist a
 NSKeyedArchiver-encoded BBSectionInfo per bundle id. This writes the record iOS 27.2
 saves after a user allows notifications, with alertType 2 (Alert, which Settings shows
 as the Persistent banner style) instead of 1 (Banner, the Temporary style).
-applesimutils edits the same file for its notifications permission.
 
 SpringBoard rewrites the file from memory as it stops, so run_scene_push.sh stops it and
 usernotificationsd before the write and starts them after. --check decodes the saved
 record and fails unless it is still authorized with the persistent style, so a run shows
-whether SpringBoard kept it.
+whether SpringBoard kept it. --check reads the file on disk, not SpringBoard's memory: an
+iOS release that ignores alertType would still pass it and bring the late-tap failure
+back. The live signal is `alertStyle: Alert` for the app in the simulator's device log.
 """
 
 import os

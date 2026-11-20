@@ -26,9 +26,3 @@ The script uses `E2E_DEVICE_ID` or `E2E_SIMULATOR_NAME` when set. Otherwise it
 takes a booted iPhone on the iOS runtime named by `E2E_IOS_RUNTIME_MAJOR`
 (default 27), then the newest numbered iPhone Pro on that runtime, then any
 iPhone, so CI keeps working when runner images rename their simulators.
-
-After installing the host, the script stops SpringBoard, allows the host's
-notifications with the Persistent banner style (`set_persistent_banners.py`),
-and starts SpringBoard again. A temporary banner leaves the screen about six
-seconds after it appears, so a slow tap would miss it; a persistent banner
-waits for the tap.
