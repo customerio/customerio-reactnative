@@ -1,3 +1,9 @@
+## [7.3.1](https://github.com/customerio/customerio-reactnative/compare/7.3.0...7.3.1) (2026-11-23)
+
+### Bug Fixes
+
+* deliver pushes from other providers in the example notification extension ([#702](https://github.com/customerio/customerio-reactnative/issues/702)) ([e481bc8](https://github.com/customerio/customerio-reactnative/commit/e481bc8beccf44ecb419c3246453984340eaeea3))
+
 ## [7.3.0](https://github.com/customerio/customerio-reactnative/compare/7.2.1...7.3.0) (2026-11-11)
 
 ### Features
