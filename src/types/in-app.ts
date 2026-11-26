@@ -51,6 +51,22 @@ export enum CioColorScheme {
 }
 
 /**
+ * How modal in-app messages are shown on Android. Android only; no effect on iOS.
+ *
+ * @public
+ */
+export enum ModalPresentationAndroid {
+  /** Show modal messages in their own activity. The default. */
+  Activity = 'ACTIVITY',
+  /**
+   * Show modal messages in the window of the app's current activity. Use when the main
+   * activity uses `singleInstance`, a custom or empty `taskAffinity`, or a document launch
+   * mode, where modal messages can behave incorrectly.
+   */
+  HostWindow = 'HOST_WINDOW',
+}
+
+/**
  * Represents an inbox message for a user.
  *
  * Inbox messages are persistent messages that can be displayed in a message center or inbox UI.

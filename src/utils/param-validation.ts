@@ -1,7 +1,7 @@
 // Argument validation utilities for SDK internal use
 // Ensures input safety and throws clear errors when validation fails
 
-import { CioColorScheme } from '../types';
+import { CioColorScheme, ModalPresentationAndroid } from '../types';
 import type { CioConfig, CustomAttributes } from '../types';
 
 /**
@@ -235,6 +235,24 @@ function validateColorSchemeArgument(value: unknown): void {
 }
 
 /**
+ * Validates `inApp.android.modalPresentation`. Absent is fine (Android keeps its default);
+ * a value Android does not recognize is warned about here, since it is otherwise ignored.
+ */
+function validateConfigModalPresentation(value: unknown): void {
+  if (isUndefined(value)) {
+    return;
+  }
+
+  const allowed: string[] = Object.values(ModalPresentationAndroid);
+  warnIf(
+    !(typeof value === 'string' && allowed.includes(value)),
+    () =>
+      `"inApp.android.modalPresentation" is not a valid ModalPresentationAndroid ` +
+      `(expected one of ${allowed.join(', ')}), so the default will be used.`
+  );
+}
+
+/**
  * Validates that the given value is a valid CioConfig object.
  * Throws if required fields are missing or incorrectly typed.
  */
@@ -253,6 +271,7 @@ function validateConfig(value: unknown): asserts value is CioConfig {
     usage: usage,
   });
   validateConfigColorScheme(obj.inApp?.colorScheme);
+  validateConfigModalPresentation(obj.inApp?.android?.modalPresentation);
   validateInboxAccessibilityLabels(
     obj.inApp?.notificationInboxAccessibilityLabels
   );
