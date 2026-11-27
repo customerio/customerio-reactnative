@@ -1,3 +1,9 @@
+## [7.4.0](https://github.com/customerio/customerio-reactnative/compare/7.3.2...7.4.0) (2026-11-27)
+
+### Features
+
+* **in-app:** add Android modal presentation option and update Android SDK to 5.2.0 ([#707](https://github.com/customerio/customerio-reactnative/issues/707)) ([ef95a26](https://github.com/customerio/customerio-reactnative/commit/ef95a26e58ee0725f355de3463a4249cbb7b74b9))
+
 ## [7.3.2](https://github.com/customerio/customerio-reactnative/compare/7.3.1...7.3.2) (2026-11-23)
 
 ### Bug Fixes
