@@ -134,6 +134,8 @@ class NativeCustomerIOModule(
                 }
             }.build()
 
+            NativeMessagingInAppModule.seedHostActivity(reactContext.currentActivity)
+
             logger.info("Customer.io instance initialized successfully from app")
             promise?.resolve(true)
         } catch (ex: Exception) {

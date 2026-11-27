@@ -16,6 +16,8 @@ internal object Keys {
         const val CDN_HOST = "cdnHost"
         const val NOTIFICATION_INBOX_ACCESSIBILITY_LABELS = "notificationInboxAccessibilityLabels"
         const val COLOR_SCHEME = "colorScheme"
+        const val ANDROID = "android"
+        const val MODAL_PRESENTATION = "modalPresentation"
         // Push messaging
         const val PUSH_CLICK_BEHAVIOR = "pushClickBehavior"
     }

@@ -49,6 +49,9 @@ export type CioConfig = {
         siteId?: string;
         colorScheme?: CioColorScheme;
         notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
+        android?: {
+            modalPresentation?: ModalPresentationAndroid;
+        };
     };
     push?: {
         android?: {
@@ -360,6 +363,12 @@ export enum MetricEvent {
     Converted = "converted",
     Delivered = "delivered",
     Opened = "opened"
+}
+
+// @public
+export enum ModalPresentationAndroid {
+    Activity = "ACTIVITY",
+    HostWindow = "HOST_WINDOW"
 }
 
 // Warning: (ae-forgotten-export) The symbol "NotificationInboxPublicSpec" needs to be exported by the entry point index.d.ts

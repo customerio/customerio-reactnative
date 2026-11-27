@@ -1,5 +1,6 @@
 package io.customer.reactnative.sdk.messaginginapp
 
+import android.app.Activity
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -11,6 +12,7 @@ import io.customer.messaginginapp.gist.data.model.InboxMessage
 import io.customer.messaginginapp.gist.data.model.response.InboxMessageFactory
 import io.customer.messaginginapp.inbox.NotificationInbox
 import io.customer.messaginginapp.type.ColorScheme
+import io.customer.messaginginapp.type.ModalPresentation
 import io.customer.messaginginapp.type.NotificationInboxAccessibilityLabels
 import io.customer.reactnative.sdk.NativeCustomerIOMessagingInAppSpec
 import io.customer.reactnative.sdk.constant.Keys
@@ -279,12 +281,47 @@ class NativeMessagingInAppModule(
                     colorSchemeFromConfig(config)?.let { colorScheme ->
                         setColorScheme(colorScheme)
                     }
+                    modalPresentationFromConfig(config)?.let { modalPresentation ->
+                        setModalPresentation(modalPresentation)
+                    }
                     inboxAccessibilityLabelsFromConfig(config)?.let { labels ->
                         setNotificationInboxAccessibilityLabels(labels)
                     }
                 }.build(),
             )
             builder.addCustomerIOModule(module)
+        }
+
+        /**
+         * Tells the SDK which activity is already resumed. React Native initializes the SDK after
+         * its first activity resumed, so with [ModalPresentation.HOST_WINDOW] a modal would wait
+         * for the next resume. Does nothing for the default presentation or when in-app is off.
+         * Never throws: it runs after the SDK is up, and a failed seed only delays the first
+         * modal to the next resume, so it must not fail initialization.
+         */
+        internal fun seedHostActivity(activity: Activity?) {
+            if (activity == null) return
+            runCatching { CustomerIO.instance().inAppMessaging().seedHostActivity(activity) }
+                .onFailure { SDKComponent.logger.debug("Could not seed the host activity for in-app modals: ${it.message}") }
+        }
+
+        /**
+         * Reads `android.modalPresentation`, or null when absent or unrecognized. Values match the
+         * native enum names, the same contract as the push click behavior.
+         */
+        private fun modalPresentationFromConfig(config: Map<String, Any>): ModalPresentation? {
+            val rawValue = config.getTypedValue<Map<String, Any>>(Keys.Config.ANDROID)
+                ?.getTypedValue<String>(Keys.Config.MODAL_PRESENTATION)
+                ?: return null
+
+            return runCatching { enumValueOf<ModalPresentation>(rawValue) }.getOrNull().also { resolved ->
+                if (resolved == null) {
+                    SDKComponent.logger.error(
+                        "Unrecognized in-app modalPresentation '$rawValue', expected one of " +
+                            "ACTIVITY, HOST_WINDOW. Using the default."
+                    )
+                }
+            }
         }
 
         /**

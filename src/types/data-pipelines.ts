@@ -1,4 +1,4 @@
-import type { CioColorScheme } from './in-app';
+import type { CioColorScheme, ModalPresentationAndroid } from './in-app';
 import type { NotificationInboxAccessibilityLabels } from './inbox';
 import type { LiveActivitiesConfig } from './live-activities';
 import type { PushClickBehaviorAndroid } from './push';
@@ -86,6 +86,16 @@ export type CioConfig = {
      * that element unlabeled rather than falling back to English.
      */
     notificationInboxAccessibilityLabels?: NotificationInboxAccessibilityLabels;
+    /** Android-only in-app configuration. Has no effect on iOS. */
+    android?: {
+      /**
+       * How modal in-app messages are shown on Android. Use
+       * `ModalPresentationAndroid.HostWindow` when your main activity uses `singleInstance`, a
+       * custom or empty `taskAffinity`, or a document launch mode, where modal messages can
+       * behave incorrectly. Defaults to `ModalPresentationAndroid.Activity`.
+       */
+      modalPresentation?: ModalPresentationAndroid;
+    };
   };
   push?: {
     android?: {
