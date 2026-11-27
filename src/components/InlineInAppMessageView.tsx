@@ -22,7 +22,7 @@ import type { InAppMessage } from '../types';
 /** @public */
 export interface InlineInAppMessageViewProps extends Omit<
   NativeProps,
-  'onSizeChange' | 'onStateChange' | 'onActionClick'
+  'onSizeChange' | 'onStateChange' | 'onActionClick' | 'showScrollIndicators'
 > {
   /** Custom loading component to display while message is loading */
   loadingComponent?: React.ReactNode;
@@ -33,6 +33,8 @@ export interface InlineInAppMessageViewProps extends Omit<
   };
   /** Custom styles for the loading container */
   loadingContainerStyle?: ViewStyle;
+  /** Controls whether the inline message's scroll indicators are visible. (default: true) */
+  showScrollIndicators?: boolean;
   /** Callback triggered when a user clicks an action button in the inline message */
   onActionClick?: (
     message: InAppMessage,
