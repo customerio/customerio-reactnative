@@ -296,12 +296,12 @@ class NativeMessagingInAppModule(
          * Tells the SDK which activity is already resumed. React Native initializes the SDK after
          * its first activity resumed, so with [ModalPresentation.HOST_WINDOW] a modal would wait
          * for the next resume. Does nothing for the default presentation or when in-app is off.
+         * Never throws: it runs after the SDK is up, and a failed seed only delays the first
+         * modal to the next resume, so it must not fail initialization.
          */
         internal fun seedHostActivity(activity: Activity?) {
             if (activity == null) return
-            runCatching { CustomerIO.instance().inAppMessaging() }
-                .getOrNull()
-                ?.seedHostActivity(activity)
+            runCatching { CustomerIO.instance().inAppMessaging().seedHostActivity(activity) }
         }
 
         /**
