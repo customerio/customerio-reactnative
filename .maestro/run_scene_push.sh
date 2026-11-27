@@ -31,6 +31,16 @@ if [[ "$maestro_version" != '2.8.0' ]]; then
   exit 2
 fi
 
+# A Maestro call whose iOS driver dies can log the exception and never exit, which used to
+# burn the rest of the step budget. The slowest passing call seen, the first prepare flow on a
+# slow host (it also starts the driver), took just under 5 minutes.
+maestro_timeout_seconds="${E2E_MAESTRO_TIMEOUT_SECONDS:-480}"
+if [[ ! "$maestro_timeout_seconds" =~ ^[1-9][0-9]*$ ]]; then
+  echo "error: E2E_MAESTRO_TIMEOUT_SECONDS must be a positive number of seconds; found '$maestro_timeout_seconds'" >&2
+  exit 2
+fi
+maestro_timeout_status=124
+
 runtime_major="${E2E_IOS_RUNTIME_MAJOR:-27}"
 runtime_fragment=".iOS-${runtime_major}-"
 simulator_devices="$(xcrun simctl list devices available -j)"
@@ -77,6 +87,8 @@ package_dir=""
 derived_data=""
 flow_log=""
 flow_pid=""
+watchdog_pid=""
+watchdog_marker=""
 boot_pid=""
 installed_app=false
 current_phase="setup"
@@ -99,6 +111,13 @@ cleanup() {
   if [[ -n "$flow_pid" ]]; then
     kill "$flow_pid" >/dev/null 2>&1 || true
     wait "$flow_pid" 2>/dev/null || true
+  fi
+  if [[ -n "$watchdog_pid" ]]; then
+    kill "$watchdog_pid" >/dev/null 2>&1 || true
+    wait "$watchdog_pid" 2>/dev/null || true
+  fi
+  if [[ -n "$watchdog_marker" ]]; then
+    rm -f "$watchdog_marker"
   fi
   if [[ -n "$flow_log" ]]; then
     rm -f "$flow_log"
@@ -156,6 +175,66 @@ package_dir="$host_parent/package"
 derived_data="$host_parent/derived-data"
 mkdir -p "$package_dir"
 
+# Stops Maestro process $1 once it has run for maestro_timeout_seconds.
+start_maestro_watchdog() {
+  local target_pid="$1"
+  local label="$2"
+  local deadline=$((SECONDS + maestro_timeout_seconds))
+
+  watchdog_marker="$(mktemp "${TMPDIR:-/tmp}/cio-rn-maestro-timeout.XXXXXX")"
+  (
+    while kill -0 "$target_pid" 2>/dev/null; do
+      if ((SECONDS >= deadline)); then
+        echo "::error::Maestro did not finish $label within ${maestro_timeout_seconds}s; stopping it"
+        echo timeout > "$watchdog_marker"
+        kill -TERM "$target_pid" 2>/dev/null || true
+        deadline=$((SECONDS + 10))
+        while kill -0 "$target_pid" 2>/dev/null && ((SECONDS < deadline)); do
+          sleep 1
+        done
+        kill -KILL "$target_pid" 2>/dev/null || true
+        exit 0
+      fi
+      sleep 1
+    done
+  ) &
+  watchdog_pid=$!
+}
+
+# Call once the watched Maestro process has exited; fails with maestro_timeout_status if the
+# watchdog stopped it.
+finish_maestro_watchdog() {
+  local timed_out=false
+
+  if [[ -n "$watchdog_pid" ]]; then
+    wait "$watchdog_pid" 2>/dev/null || true
+    watchdog_pid=""
+  fi
+  if [[ -s "$watchdog_marker" ]]; then
+    timed_out=true
+  fi
+  rm -f "$watchdog_marker"
+  watchdog_marker=""
+  if [[ "$timed_out" == true ]]; then
+    return "$maestro_timeout_status"
+  fi
+}
+
+# Runs Maestro under the watchdog; label names the phase in the timeout error.
+run_maestro() {
+  local label="$1"
+  local status=0
+  shift
+
+  maestro "$@" &
+  flow_pid=$!
+  start_maestro_watchdog "$flow_pid" "$label"
+  wait "$flow_pid" || status=$?
+  flow_pid=""
+  finish_maestro_watchdog || status=$?
+  return "$status"
+}
+
 run_notification_flow() {
   local flow="$1"
   local payload="$2"
@@ -178,6 +257,7 @@ run_notification_flow() {
   flow_log="$(mktemp "${TMPDIR:-/tmp}/cio-rn-maestro-flow.XXXXXX")"
   maestro "${maestro_args[@]}" > >(tee "$flow_log") 2>&1 &
   flow_pid=$!
+  start_maestro_watchdog "$flow_pid" "$current_phase $flow_name"
 
   for _ in {1..240}; do
     if grep -q 'Press Home key.*COMPLETED' "$flow_log"; then
@@ -192,6 +272,7 @@ run_notification_flow() {
         echo "error: Maestro exited before reaching the Home screen (status $status)" >&2
       fi
       flow_pid=""
+      finish_maestro_watchdog || return "$?"
       return 1
     fi
     sleep 0.5
@@ -213,11 +294,12 @@ run_notification_flow() {
     return 1
   fi
   printf '%s\n' "$push_output"
-  if ! wait "$flow_pid"; then
-    flow_pid=""
+  wait "$flow_pid" || status=$?
+  flow_pid=""
+  finish_maestro_watchdog || return "$?"
+  if [[ "$status" -ne 0 ]]; then
     return 1
   fi
-  flow_pid=""
   rm -f "$flow_log"
   flow_log=""
 }
@@ -243,7 +325,7 @@ run_ordinary_url_flow() {
       .maestro/scene_url_open.yaml
     )
   fi
-  maestro "${ordinary_args[@]}"
+  run_maestro "$current_phase" "${ordinary_args[@]}"
 }
 
 cd "$REPO_ROOT"
@@ -362,7 +444,10 @@ for routing_mode in acknowledged linking; do
       .maestro/scene_push_prepare.yaml
     )
   fi
-  maestro "${prepare_args[@]}"
+  # The previous flow can leave the app running, and XCTest has hung terminating a live app
+  # from Maestro's launchApp, so make launchApp start from a terminated app.
+  xcrun simctl terminate "$device_id" "$APP_ID" >/dev/null 2>&1 || true
+  run_maestro "$current_phase" "${prepare_args[@]}"
   enter_phase "notification-settings-$routing_mode"
   python3 .maestro/set_persistent_banners.py --check "$section_store" "$APP_ID" \
     | sed "s/^/after prepare-$routing_mode: /" | tee -a "$notification_settings_log"
