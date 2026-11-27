@@ -302,6 +302,7 @@ class NativeMessagingInAppModule(
         internal fun seedHostActivity(activity: Activity?) {
             if (activity == null) return
             runCatching { CustomerIO.instance().inAppMessaging().seedHostActivity(activity) }
+                .onFailure { SDKComponent.logger.debug("Could not seed the host activity for in-app modals: ${it.message}") }
         }
 
         /**
