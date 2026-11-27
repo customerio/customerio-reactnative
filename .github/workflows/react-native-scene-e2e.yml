@@ -23,8 +23,9 @@ jobs:
   route-notifications:
     name: RN scene notification routing on Xcode 27
     runs-on: xcode-27
-    # Step budgets total 57 minutes, leaving room before the job cancellation.
-    # A step timeout fails the job while evidence and notification steps can still run.
+    # The test step is capped at 50 minutes and the other steps normally take about 2 minutes
+    # together, leaving room before the job cancellation. A step timeout fails the job while
+    # evidence and notification steps can still run.
     timeout-minutes: 60
 
     steps:
@@ -68,7 +69,7 @@ jobs:
           echo "$maestro_dir/maestro/bin" >> "$GITHUB_PATH"
 
       - name: Test warm and terminated notification routing
-        timeout-minutes: 40
+        timeout-minutes: 50
         shell: bash
         env:
           E2E_IOS_RUNTIME_MAJOR: '27'
